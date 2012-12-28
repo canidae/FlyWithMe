@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <ListPreference
+        android:key="pref_takeoff_list_radius"
+        android:title="@string/takeoff_list_radius"
+        android:dialogTitle="@string/takeoff_list_radius"
+        android:entries="@array/takeoff_list_radius_entries"
+        android:entryValues="@array/takeoff_list_radius_values"
+        android:defaultValue="@string/takeoff_list_radius_default" />
+</PreferenceScreen>

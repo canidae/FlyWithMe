@@ -1,0 +1,25 @@
+<resources>
+
+    <string name="app_name">Fly With Me!</string>
+    <string name="menu_settings">Settings</string>
+    
+    <string name="takeoff_details_watch">Watch</string>
+    
+    <string name="takeoff_list_radius">Show takeoffs within</string>
+    <string name="takeoff_list_radius_default">50km</string>
+    <string-array name="takeoff_list_radius_entries">
+        <item>None</item>
+        <item>25km</item>
+        <item>50km</item>
+        <item>100km</item>
+        <item>250km</item>
+    </string-array>
+    <string-array name="takeoff_list_radius_values">
+        <item>0</item>
+        <item>25000</item>
+        <item>50000</item>
+        <item>100000</item>
+        <item>250000</item>
+    </string-array>
+    
+</resources>
