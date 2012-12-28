@@ -24,10 +24,6 @@
         </activity>
         
         <activity android:name=".Preferences" />
-        
-        <meta-data
-    		android:name="com.google.android.maps.v2.API_KEY"
-    		android:value="AIzaSyDxop_2QoIHu-zgof2EhWMC6f5gxAZQOpI"/>
     </application>
 
 </manifest>
