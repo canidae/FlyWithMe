@@ -1,7 +1,6 @@
 package net.exent.flywithme.dao;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -32,7 +31,7 @@ public class Flightlog extends SQLiteOpenHelper {
 	@Override
 	public void onCreate(SQLiteDatabase db) {
 		Log.i("Flightlog", "Creating database");
-		db.execSQL("CREATE TABLE takeoff(id INTEGER PRIMARY KEY, name TEXT, latitude REAL, longitude REAL)");
+		db.execSQL("CREATE TABLE takeoff(id INTEGER PRIMARY KEY, name TEXT, description TEXT, asl INTEGER, height INTEGER, latitude REAL, longitude REAL)");
 		// TODO: database should be supplied with FWM, this is a hack while testing:
 		crawl(db);
 	}
@@ -78,7 +77,7 @@ public class Flightlog extends SQLiteOpenHelper {
 	 */
 	public void crawl(SQLiteDatabase db) {
 		Log.i("Flightlog", "crawling");
-		SQLiteStatement addTakeoff = db.compileStatement("INSERT OR REPLACE INTO takeoff(id, name, latitude, longitude) VALUES (?, ?, ?, ?)");
+		SQLiteStatement addTakeoff = db.compileStatement("INSERT OR REPLACE INTO takeoff(id, name, description, asl, height, latitude, longitude) VALUES (?, ?, ?, ?, ?, ?, ?)");
 		int takeoff = 0;
 		int lastValidTakeoff = 0;
 		while (takeoff++ < lastValidTakeoff + 50) { // when we haven't found a takeoff within the last 50 fetches from flightlog, assume all is found
@@ -97,13 +96,27 @@ public class Flightlog extends SQLiteOpenHelper {
 					br.close();
 					
 					String text = sb.toString();
+					Log.i("Flightlog", "text length: " + text.length());
 					Pattern namePattern = Pattern.compile(".*<title>.* - .* - .* - (.*)</title>.*", Pattern.DOTALL);
 					Matcher nameMatcher = namePattern.matcher(text);
-					Pattern coordPattern = Pattern.compile(".*DMS: ([NS]) (\\d+)&deg; (\\d+)&#039; (\\d+)&#039;&#039; &nbsp;([EW]) (\\d+)&deg; (\\d+)&#039; (\\d+)&#039;&#039;.*", Pattern.DOTALL);
+					Pattern descriptionPattern = Pattern.compile(".*Description</td>.*('right'>|'left'></a>)(.*)</td></tr>.*Coordinates</td>.*", Pattern.DOTALL);
+					Matcher descriptionMatcher = descriptionPattern.matcher(text);
+					Pattern altitudePattern = Pattern.compile(".*Altitude</td><td bgcolor='white'>(\\d+) meters asl Top to bottom (\\d+) meters</td>.*", Pattern.DOTALL);
+					Matcher altitudeMatcher = altitudePattern.matcher(text);
+					Pattern coordPattern = Pattern.compile(".*Coordinates</td>.*DMS: ([NS]) (\\d+)&deg; (\\d+)&#039; (\\d+)&#039;&#039; &nbsp;([EW]) (\\d+)&deg; (\\d+)&#039; (\\d+)&#039;&#039;.*", Pattern.DOTALL);
 					Matcher coordMatcher = coordPattern.matcher(text);
 					
 					if (nameMatcher.matches() && coordMatcher.matches()) {
 						String takeoffName = nameMatcher.group(1).trim();
+						String description = "";
+						if (descriptionMatcher.matches())
+							description = descriptionMatcher.group(2).replace("<br />", "").trim();
+						int aboveSeaLevel = 0;
+						int height = 0;
+						if (altitudeMatcher.matches()) {
+							aboveSeaLevel = Integer.parseInt(altitudeMatcher.group(1).trim());
+							height = Integer.parseInt(altitudeMatcher.group(2).trim());
+						}
 	
 						String northOrSouth = coordMatcher.group(1);
 						int latDeg = Integer.parseInt(coordMatcher.group(2));
@@ -123,11 +136,14 @@ public class Flightlog extends SQLiteOpenHelper {
 						if ("W".equals(eastOrWest))
 							longitude *= -1.0;
 	
-						Log.i("Flightlog", "Adding takeoff: " + takeoff + ", " + takeoffName + ", " + latitude + ", " + longitude);
+						Log.i("Flightlog", "Adding takeoff: " + takeoff + ", " + takeoffName + ", " + description + ", " + aboveSeaLevel + ", " + height + ", " + latitude + ", " + longitude);
 						addTakeoff.bindLong(1, takeoff);
 						addTakeoff.bindString(2, takeoffName);
-						addTakeoff.bindDouble(3, latitude);
-						addTakeoff.bindDouble(4, longitude);
+						addTakeoff.bindString(3, description);
+						addTakeoff.bindLong(4, aboveSeaLevel);
+						addTakeoff.bindLong(5, height);
+						addTakeoff.bindDouble(6, latitude);
+						addTakeoff.bindDouble(7, longitude);
 						addTakeoff.executeInsert();
 						lastValidTakeoff = takeoff;
 					}
@@ -137,8 +153,8 @@ public class Flightlog extends SQLiteOpenHelper {
 					Log.w("Flightlog", "Whoops, not good! Response code " + httpUrlConnection.getResponseCode() + " when fetching takeoff with ID " + takeoff);
 					break;
 				}
-			} catch (IOException e) {
-				Log.w("Flightlog", "Exception when trying to fetch takeoff", e);
+			} catch (Exception e) {
+				Log.w("Flightlog", "Exception when trying to fetch takeoff with ID " + takeoff, e);
 			}
 		}
 	}
