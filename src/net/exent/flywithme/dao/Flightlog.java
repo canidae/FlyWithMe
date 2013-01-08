@@ -44,22 +44,15 @@ public class Flightlog extends SQLiteOpenHelper {
 		SQLiteDatabase db = getWritableDatabase();
 		final Location loc = FlyWithMe.getLocation();
 		String where = "ABS(latitude - " + loc.getLatitude() + ") < " + maxDegrees + " AND ABS(longitude - " + loc.getLongitude() + ") < " + maxDegrees;
-		Cursor cursor = db.query(false, "takeoff", new String[] {"id AS _id", "name", "latitude", "longitude"}, where, null, null, null, null, null);
+		Cursor cursor = db.query(false, "takeoff", new String[] {"id AS _id", "name", "description", "asl", "height", "latitude", "longitude"}, where, null, null, null, null, null);
 		List<Takeoff> takeoffs = new ArrayList<Takeoff>();
 		while (cursor.moveToNext())
-			takeoffs.add(new Takeoff(cursor.getInt(0), cursor.getString(1), cursor.getFloat(2), cursor.getFloat(3)));
+			takeoffs.add(new Takeoff(cursor.getInt(0), cursor.getString(1), cursor.getString(2), cursor.getInt(3), cursor.getInt(4), cursor.getFloat(5), cursor.getFloat(6)));
+		cursor.close();
 		
-		/* sorting by pilots present/pilots coming/distance */
+		/* sorting by distance */
 		Collections.sort(takeoffs, new Comparator<Takeoff>() {
 			public int compare(Takeoff lhs, Takeoff rhs) {
-				if (lhs.getPilotsPresent() < rhs.getPilotsPresent())
-					return 1;
-				else if (lhs.getPilotsPresent() > rhs.getPilotsPresent())
-					return -1;
-				if (lhs.getPilotsComing() < rhs.getPilotsComing())
-					return 1;
-				else if (lhs.getPilotsComing() > rhs.getPilotsComing())
-					return -1;
 				if (loc.distanceTo(lhs.getLocation()) > loc.distanceTo(rhs.getLocation()))
 					return 1;
 				else if (loc.distanceTo(lhs.getLocation()) < loc.distanceTo(rhs.getLocation()))
@@ -96,7 +89,6 @@ public class Flightlog extends SQLiteOpenHelper {
 					br.close();
 					
 					String text = sb.toString();
-					Log.i("Flightlog", "text length: " + text.length());
 					Pattern namePattern = Pattern.compile(".*<title>.* - .* - .* - (.*)</title>.*", Pattern.DOTALL);
 					Matcher nameMatcher = namePattern.matcher(text);
 					Pattern descriptionPattern = Pattern.compile(".*Description</td>.*('right'>|'left'></a>)(.*)</td></tr>.*Coordinates</td>.*", Pattern.DOTALL);

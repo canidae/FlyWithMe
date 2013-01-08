@@ -15,29 +15,23 @@ public final class R {
     public static final class attr {
     }
     public static final class drawable {
-        public static final int ic_action_search=0x7f020000;
-        public static final int ic_launcher=0x7f020001;
+        public static final int google_maps=0x7f020000;
+        public static final int google_maps_icon=0x7f020001;
+        public static final int ic_action_search=0x7f020002;
+        public static final int ic_launcher=0x7f020003;
     }
     public static final class id {
-        public static final int RelativeLayout1=0x7f090001;
-        public static final int menu_settings=0x7f090012;
-        public static final int takeoffDetailCoordinates=0x7f090005;
-        public static final int takeoffDetailGoingButton=0x7f090006;
-        public static final int takeoffDetailLaterList=0x7f09000c;
-        public static final int takeoffDetailLaterTab=0x7f09000b;
-        public static final int takeoffDetailMapButton=0x7f090007;
+        public static final int mainViewSwitcher=0x7f090000;
+        public static final int menu_settings=0x7f09000a;
+        public static final int takeoffDetailCoordAslHeight=0x7f090006;
+        public static final int takeoffDetailDescription=0x7f090007;
+        public static final int takeoffDetailLayout=0x7f090003;
+        public static final int takeoffDetailMapButton=0x7f090005;
         public static final int takeoffDetailName=0x7f090004;
-        public static final int takeoffDetailTodayList=0x7f09000a;
-        public static final int takeoffDetailTodayTab=0x7f090009;
-        public static final int takeoffDetailWatch=0x7f090008;
-        public static final int takeoffListComing=0x7f09000f;
-        public static final int takeoffListDistance=0x7f090011;
-        public static final int takeoffListLayout=0x7f09000d;
-        public static final int takeoffListName=0x7f09000e;
-        public static final int takeoffListPresent=0x7f090010;
+        public static final int takeoffListDistance=0x7f090009;
+        public static final int takeoffListLayout=0x7f090001;
+        public static final int takeoffListName=0x7f090008;
         public static final int takeoffs=0x7f090002;
-        public static final int takeoffsSortSpinner=0x7f090003;
-        public static final int viewSwitcher1=0x7f090000;
     }
     public static final class layout {
         public static final int fly_with_me=0x7f030000;

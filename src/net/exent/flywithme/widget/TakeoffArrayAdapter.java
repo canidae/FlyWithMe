@@ -24,12 +24,8 @@ public class TakeoffArrayAdapter extends ArrayAdapter<Takeoff> {
 		View rowView = inflater.inflate(R.layout.takeoff_list_layout, parent, false);
 		TextView takeoffName = (TextView) rowView.findViewById(R.id.takeoffListName);
 		TextView takeoffDistance = (TextView) rowView.findViewById(R.id.takeoffListDistance);
-		TextView takeoffPresent = (TextView) rowView.findViewById(R.id.takeoffListPresent);
-		TextView takeoffComing = (TextView) rowView.findViewById(R.id.takeoffListComing);
 		takeoffName.setText(takeoff.toString());
 		takeoffDistance.setText("Distance: " + (int) FlyWithMe.getLocation().distanceTo(takeoff.getLocation()) / 1000 + "km");
-		takeoffPresent.setText("Present: " + takeoff.getPilotsPresent());
-		takeoffComing.setText("Coming: " + takeoff.getPilotsComing());
 
 		return rowView;
 	}

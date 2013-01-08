@@ -21,9 +21,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
 import android.widget.AdapterView.OnItemClickListener;
@@ -65,17 +63,6 @@ public class FlyWithMe extends FragmentActivity {
 		/* create our database handler */
 		flightlog = new Flightlog(this);
 		
-		/* spinner (dropdown menu) for what to sort after */
-		/* TODO: do we really need this? just sort first after pilots present, if equal then pilots coming, if equal then distance */
-		Spinner takeoffsSortSpinner = (Spinner) findViewById(R.id.takeoffsSortSpinner);
-		List<String> list = new ArrayList<String>();
-		list.add("Sort by distance");
-		list.add("Sort by pilots present");
-		list.add("Sort by pilots coming");
-		ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, list);
-		dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		takeoffsSortSpinner.setAdapter(dataAdapter);
-		
 		/* set initial location & listener */
 		LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, /* TODO: setting */300000, /* TODO: setting */100, locationListener);
@@ -92,11 +79,13 @@ public class FlyWithMe extends FragmentActivity {
 				final Takeoff takeoff = takeoffs.get(position);
 
 				TextView takeoffName = (TextView) findViewById(R.id.takeoffDetailName);
-				TextView takeoffCoordinates = (TextView) findViewById(R.id.takeoffDetailCoordinates);
+				TextView takeoffCoordAslHeight = (TextView) findViewById(R.id.takeoffDetailCoordAslHeight);
+				TextView takeoffDescription = (TextView) findViewById(R.id.takeoffDetailDescription);
 				ImageButton mapButton = (ImageButton) findViewById(R.id.takeoffDetailMapButton);
 				
 				takeoffName.setText(takeoff.getName());
-				takeoffCoordinates.setText("Loc: " + takeoff.getLocation().getLatitude() + ", " + takeoff.getLocation().getLongitude());
+				takeoffCoordAslHeight.setText(String.format("[%.2f,%.2f] ASL: %d Height: %d", takeoff.getLocation().getLatitude(), takeoff.getLocation().getLongitude(), takeoff.getAsl(), takeoff.getHeight()));
+				takeoffDescription.setText(takeoff.getDescription());
 				mapButton.setOnClickListener(new OnClickListener() {
 					public void onClick(View v) {
 						Location loc = takeoff.getLocation();
@@ -106,7 +95,7 @@ public class FlyWithMe extends FragmentActivity {
 					}
 				});
 				
-				ViewSwitcher switcher = (ViewSwitcher) findViewById(R.id.viewSwitcher1);
+				ViewSwitcher switcher = (ViewSwitcher) findViewById(R.id.mainViewSwitcher);
 				switcher.showNext();
 			}
 		});
@@ -129,6 +118,15 @@ public class FlyWithMe extends FragmentActivity {
 	        default:
 	            return super.onOptionsItemSelected(item);
 	    }
+	}
+
+	@Override
+	public void onBackPressed() {
+		ViewSwitcher switcher = (ViewSwitcher) findViewById(R.id.mainViewSwitcher);
+		if (switcher.getCurrentView().getId() == R.id.takeoffDetailLayout)
+			switcher.showPrevious();
+		else
+			super.onBackPressed();
 	}
 	
 	private void updateLocation(Location newLocation) {
