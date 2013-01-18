@@ -1,7 +1,13 @@
 package net.exent.flywithme.dao;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -12,6 +18,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.exent.flywithme.FlyWithMe;
+import net.exent.flywithme.R;
 import net.exent.flywithme.data.Takeoff;
 
 import android.content.Context;
@@ -23,28 +30,63 @@ import android.location.Location;
 import android.util.Log;
 
 public class Flightlog extends SQLiteOpenHelper {
+	private static final String DATABASE_NAME = "flywithme.db";
+	//private boolean doCrawl = false;
 	
 	public Flightlog(Context context) {
-		super(context, "flywithme.db", null, 1);
+		super(context, DATABASE_NAME, null, 1);
+		/* Why this weird & clumsy approach?
+		 * 1. Because you seemingly can't open a supplied (READONLY) database, you must copy it somewhere first(!).
+		 * 2. The idea was to somewhere in the future make it possible to have the app update the database on its own.
+		 * 3. Removing the supplied database and wiping the user data for the application will force crawling.
+		 */
+		Log.i("Flightlog", "Checking if internal database exists");
+		File internalDatabaseFile = context.getDatabasePath(DATABASE_NAME);
+		if (internalDatabaseFile.exists())
+			return;
+		
+		Log.i("Flightlog", "Unable to find internal database, trying to copy supplied database");
+		/* database does not exist, copy it from assets */
+		try {
+			// create missing "database" directory upon first install
+			if (!internalDatabaseFile.getParentFile().exists())
+				internalDatabaseFile.getParentFile().mkdir();
+			InputStream inputStream = context.getResources().openRawResource(R.raw.flywithme);
+			OutputStream outputStream = new FileOutputStream(internalDatabaseFile);
+			int length;
+			byte[] buffer = new byte[1024];
+			while ((length = inputStream.read(buffer, 0, buffer.length)) != -1) {
+	            outputStream.write(buffer, 0, length);
+	        }
+	        outputStream.close();
+	        inputStream.close();
+		} catch (FileNotFoundException e2) {
+			/* no database supplied, we'll need to crawl */
+			//doCrawl = true;
+			Log.w("Flightlog", "No database supplied, have to crawl, will take some time", e2);
+			throw new RuntimeException("AAAAAH");
+		} catch (IOException e2) {
+			Log.e("Flightlog", "Error copying database", e2);
+			throw new RuntimeException("AAAAAH");
+		}
 	}
 
 	@Override
-	public void onCreate(SQLiteDatabase db) {
+	public void onCreate(SQLiteDatabase database) {
 		Log.i("Flightlog", "Creating database");
-		db.execSQL("CREATE TABLE takeoff(id INTEGER PRIMARY KEY, name TEXT, description TEXT, asl INTEGER, height INTEGER, latitude REAL, longitude REAL)");
-		// TODO: database should be supplied with FWM, this is a hack while testing:
-		crawl(db);
+		database.execSQL("CREATE TABLE takeoff(id INTEGER PRIMARY KEY, name TEXT, description TEXT, asl INTEGER, height INTEGER, latitude REAL, longitude REAL)");
+		crawl(database);
 	}
 
 	@Override
-	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+	public void onUpgrade(SQLiteDatabase arg0, int arg1, int arg2) {
 	}
 	
 	public List<Takeoff> getTakeoffs(double maxDegrees) {
-		SQLiteDatabase db = getWritableDatabase();
+		SQLiteDatabase database = getReadableDatabase();
 		final Location loc = FlyWithMe.getLocation();
 		String where = "ABS(latitude - " + loc.getLatitude() + ") < " + maxDegrees + " AND ABS(longitude - " + loc.getLongitude() + ") < " + maxDegrees;
-		Cursor cursor = db.query(false, "takeoff", new String[] {"id AS _id", "name", "description", "asl", "height", "latitude", "longitude"}, where, null, null, null, null, null);
+		Cursor cursor = database.query(false, "takeoff", new String[] {"id AS _id", "name", "description", "asl", "height", "latitude", "longitude"}, where, null, null, null, null, null);
 		List<Takeoff> takeoffs = new ArrayList<Takeoff>();
 		while (cursor.moveToNext())
 			takeoffs.add(new Takeoff(cursor.getInt(0), cursor.getString(1), cursor.getString(2), cursor.getInt(3), cursor.getInt(4), cursor.getFloat(5), cursor.getFloat(6)));
@@ -68,11 +110,12 @@ public class Flightlog extends SQLiteOpenHelper {
 	 * http://flightlog.org/fl.html?l=1&a=22&country_id=160&start_id=4
 	 * we can set "country_id" to a fixed value, it only means that wrong country will be displayed (which we don't care about)
 	 */
-	public void crawl(SQLiteDatabase db) {
+	public void crawl(SQLiteDatabase database) {
 		Log.i("Flightlog", "crawling");
-		SQLiteStatement addTakeoff = db.compileStatement("INSERT OR REPLACE INTO takeoff(id, name, description, asl, height, latitude, longitude) VALUES (?, ?, ?, ?, ?, ?, ?)");
+		SQLiteStatement addTakeoff = database.compileStatement("INSERT OR REPLACE INTO takeoff(id, name, description, asl, height, latitude, longitude) VALUES (?, ?, ?, ?, ?, ?, ?)");
 		int takeoff = 0;
 		int lastValidTakeoff = 0;
+		boolean tryAgain = true;
 		while (takeoff++ < lastValidTakeoff + 50) { // when we haven't found a takeoff within the last 50 fetches from flightlog, assume all is found
 			try {
 				URL url = new URL("http://flightlog.org/fl.html?l=1&a=22&country_id=160&start_id=" + takeoff);
@@ -145,8 +188,14 @@ public class Flightlog extends SQLiteOpenHelper {
 					Log.w("Flightlog", "Whoops, not good! Response code " + httpUrlConnection.getResponseCode() + " when fetching takeoff with ID " + takeoff);
 					break;
 				}
+				tryAgain = true;
 			} catch (Exception e) {
-				Log.w("Flightlog", "Exception when trying to fetch takeoff with ID " + takeoff, e);
+				/* try one more time if we get an exception */
+				if (tryAgain)
+					--takeoff;
+				else
+					Log.w("Flightlog", "Exception when trying to fetch takeoff with ID " + takeoff, e);
+				tryAgain = false;
 			}
 		}
 	}
