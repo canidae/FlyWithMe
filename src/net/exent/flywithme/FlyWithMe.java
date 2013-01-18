@@ -16,8 +16,7 @@ import android.os.Bundle;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -84,8 +83,9 @@ public class FlyWithMe extends FragmentActivity {
 				ImageButton mapButton = (ImageButton) findViewById(R.id.takeoffDetailMapButton);
 				
 				takeoffName.setText(takeoff.getName());
-				takeoffCoordAslHeight.setText(String.format("[%.2f,%.2f] ASL: %d Height: %d", takeoff.getLocation().getLatitude(), takeoff.getLocation().getLongitude(), takeoff.getAsl(), takeoff.getHeight()));
+				takeoffCoordAslHeight.setText(String.format("[%.2f,%.2f] " + getString(R.string.asl) + ": %d " + getString(R.string.height) + ": %d", takeoff.getLocation().getLatitude(), takeoff.getLocation().getLongitude(), takeoff.getAsl(), takeoff.getHeight()));
 				takeoffDescription.setText(takeoff.getDescription());
+				takeoffDescription.setMovementMethod(new ScrollingMovementMethod());
 				mapButton.setOnClickListener(new OnClickListener() {
 					public void onClick(View v) {
 						Location loc = takeoff.getLocation();
@@ -102,25 +102,6 @@ public class FlyWithMe extends FragmentActivity {
 	}
 
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
-	}
-	
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-	    switch (item.getItemId()) {
-	        case R.id.menu_settings:
-	            Intent settingsActivity = new Intent(this, Preferences.class);
-            	startActivity(settingsActivity);
-	            return true;
-
-	        default:
-	            return super.onOptionsItemSelected(item);
-	    }
-	}
-
-	@Override
 	public void onBackPressed() {
 		ViewSwitcher switcher = (ViewSwitcher) findViewById(R.id.mainViewSwitcher);
 		if (switcher.getCurrentView().getId() == R.id.takeoffDetailLayout)
@@ -133,8 +114,7 @@ public class FlyWithMe extends FragmentActivity {
 		if (newLocation == null)
 			return;
 		location = newLocation;
-		/* TODO: maxDegrees (parameter to updateTakeoffsList) should be a setting */
-		takeoffs = flightlog.getTakeoffs(1);
+		takeoffs = flightlog.getTakeoffs();
 
 		ListView takeoffsView = (ListView) findViewById(R.id.takeoffs);
 		takeoffsView.invalidateViews();

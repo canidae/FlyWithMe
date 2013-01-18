@@ -25,7 +25,7 @@ public class TakeoffArrayAdapter extends ArrayAdapter<Takeoff> {
 		TextView takeoffName = (TextView) rowView.findViewById(R.id.takeoffListName);
 		TextView takeoffDistance = (TextView) rowView.findViewById(R.id.takeoffListDistance);
 		takeoffName.setText(takeoff.toString());
-		takeoffDistance.setText("Distance: " + (int) FlyWithMe.getLocation().distanceTo(takeoff.getLocation()) / 1000 + "km");
+		takeoffDistance.setText(getContext().getString(R.string.geodesic_distance) + ": " + (int) FlyWithMe.getLocation().distanceTo(takeoff.getLocation()) / 1000 + "km");
 
 		return rowView;
 	}

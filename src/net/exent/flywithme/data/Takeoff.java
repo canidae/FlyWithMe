@@ -1,7 +1,6 @@
 package net.exent.flywithme.data;
 
 import android.location.Location;
-import android.location.LocationManager;
 
 public class Takeoff {
 	private int id;
@@ -11,15 +10,13 @@ public class Takeoff {
 	private int height;
 	private Location location;
 
-	public Takeoff(int id, String name, String description, int asl, int height, double latitude, double longitude) {
+	public Takeoff(int id, String name, String description, int asl, int height, Location location) {
 		this.id = id;
 		this.name = name;
 		this.description = description;
 		this.asl = asl;
 		this.height = height;
-		this.location = new Location(LocationManager.PASSIVE_PROVIDER);
-		this.location.setLatitude(latitude);
-		this.location.setLongitude(longitude);
+		this.location = location;
 	}
 
 	public int getId() {
