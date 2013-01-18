@@ -15,8 +15,10 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.support.v4.app.FragmentActivity;
 import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -55,8 +57,13 @@ public class FlyWithMe extends FragmentActivity {
 	}
 
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
+	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		Log.i("FlyWithMe", "onCreate()");
+		// TODO: onCreate() is called all the time (like when changing orientation), must move a lot of this code somewhere else
+		// TODO: this answers some things: http://stackoverflow.com/questions/456211/activity-restart-on-rotation-android
+		// TODO: this too: http://developer.android.com/reference/android/R.attr.html#configChanges
+		// TODO: read this too: http://developer.android.com/guide/topics/resources/runtime-changes.html
 		setContentView(R.layout.fly_with_me);
 
 		/* create our database handler */
@@ -100,7 +107,13 @@ public class FlyWithMe extends FragmentActivity {
 			}
 		});
 	}
-
+	
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+	  super.onConfigurationChanged(newConfig);
+	  setContentView(R.layout.fly_with_me);
+	}
+	
 	@Override
 	public void onBackPressed() {
 		ViewSwitcher switcher = (ViewSwitcher) findViewById(R.id.mainViewSwitcher);
