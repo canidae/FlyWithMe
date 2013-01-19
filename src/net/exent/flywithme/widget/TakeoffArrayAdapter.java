@@ -2,6 +2,7 @@ package net.exent.flywithme.widget;
 
 import net.exent.flywithme.FlyWithMe;
 import net.exent.flywithme.R;
+import net.exent.flywithme.dao.Flightlog;
 import net.exent.flywithme.data.Takeoff;
 
 import android.content.Context;
@@ -18,7 +19,7 @@ public class TakeoffArrayAdapter extends ArrayAdapter<Takeoff> {
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		Takeoff takeoff = FlyWithMe.getTakeoffs().get(position);
+		Takeoff takeoff = Flightlog.getTakeoffs(getContext()).get(position);
 		
 		LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		View rowView = inflater.inflate(R.layout.takeoff_list_layout, parent, false);
@@ -32,6 +33,6 @@ public class TakeoffArrayAdapter extends ArrayAdapter<Takeoff> {
 	
 	@Override
 	public int getCount() {
-		return FlyWithMe.getTakeoffs().size();
+		return Flightlog.getTakeoffs(getContext()).size();
 	}
 }

@@ -1,8 +1,5 @@
 package net.exent.flywithme;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import net.exent.flywithme.R;
 import net.exent.flywithme.dao.Flightlog;
 import net.exent.flywithme.data.Takeoff;
@@ -15,7 +12,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.support.v4.app.FragmentActivity;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
@@ -29,9 +25,10 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
 public class FlyWithMe extends FragmentActivity {
+	private static final int LOCATION_UPDATE_TIME = 300000; // update location every 5 minute
+	private static final int LOCATION_UPDATE_DISTANCE = 100; // or when we've moved more than 100 meters
 	private static Location location;
-	private static Flightlog flightlog;
-	private static List<Takeoff> takeoffs = new ArrayList<Takeoff>();
+	private static Takeoff showTakeoff;
 	
 	private LocationListener locationListener = new LocationListener() {
 		public void onStatusChanged(String provider, int status, Bundle extras) {
@@ -52,8 +49,15 @@ public class FlyWithMe extends FragmentActivity {
 		return location;
 	}
 	
-	public static List<Takeoff> getTakeoffs() {
-		return takeoffs;
+	@Override
+	public void onBackPressed() {
+		ViewSwitcher switcher = (ViewSwitcher) findViewById(R.id.mainViewSwitcher);
+		if (switcher.getCurrentView().getId() == R.id.takeoffDetailLayout) {
+			switcher.showPrevious();
+			showTakeoff = null;
+		} else {
+			super.onBackPressed();
+		}
 	}
 
 	@Override
@@ -66,12 +70,9 @@ public class FlyWithMe extends FragmentActivity {
 		// TODO: read this too: http://developer.android.com/guide/topics/resources/runtime-changes.html
 		setContentView(R.layout.fly_with_me);
 
-		/* create our database handler */
-		flightlog = new Flightlog(this);
-		
 		/* set initial location & listener */
 		LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-		locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, /* TODO: setting */300000, /* TODO: setting */100, locationListener);
+		locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, LOCATION_UPDATE_TIME, LOCATION_UPDATE_DISTANCE, locationListener);
 		Location newLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
 		if (newLocation == null)
 			newLocation = new Location(LocationManager.PASSIVE_PROVIDER); // no location set, let's pretend we're skinny dipping in the gulf of guinea
@@ -80,54 +81,49 @@ public class FlyWithMe extends FragmentActivity {
 		TakeoffArrayAdapter adapter = new TakeoffArrayAdapter(this);
 		ListView takeoffsView = (ListView) findViewById(R.id.takeoffs);
 		takeoffsView.setAdapter(adapter);
+		final Context context = this;
 		takeoffsView.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				final Takeoff takeoff = takeoffs.get(position);
-
-				TextView takeoffName = (TextView) findViewById(R.id.takeoffDetailName);
-				TextView takeoffCoordAslHeight = (TextView) findViewById(R.id.takeoffDetailCoordAslHeight);
-				TextView takeoffDescription = (TextView) findViewById(R.id.takeoffDetailDescription);
-				ImageButton mapButton = (ImageButton) findViewById(R.id.takeoffDetailMapButton);
-				
-				takeoffName.setText(takeoff.getName());
-				takeoffCoordAslHeight.setText(String.format("[%.2f,%.2f] " + getString(R.string.asl) + ": %d " + getString(R.string.height) + ": %d", takeoff.getLocation().getLatitude(), takeoff.getLocation().getLongitude(), takeoff.getAsl(), takeoff.getHeight()));
-				takeoffDescription.setText(takeoff.getDescription());
-				takeoffDescription.setMovementMethod(new ScrollingMovementMethod());
-				mapButton.setOnClickListener(new OnClickListener() {
-					public void onClick(View v) {
-						Location loc = takeoff.getLocation();
-						String uri = "http://maps.google.com/maps?saddr=" + location.getLatitude() + "," + location.getLongitude() + "&daddr=" + loc.getLatitude() + "," + loc.getLongitude(); 
-						Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(uri));
-						startActivity(intent);
-					}
-				});
+				showTakeoff = Flightlog.getTakeoffs(context).get(position);
+				showTakeoffDetails();
 				
 				ViewSwitcher switcher = (ViewSwitcher) findViewById(R.id.mainViewSwitcher);
 				switcher.showNext();
 			}
 		});
+		
+		if (showTakeoff != null) {
+			showTakeoffDetails();
+			ViewSwitcher switcher = (ViewSwitcher) findViewById(R.id.mainViewSwitcher);
+			switcher.showNext();
+		}
 	}
 	
-	@Override
-	public void onConfigurationChanged(Configuration newConfig) {
-	  super.onConfigurationChanged(newConfig);
-	  setContentView(R.layout.fly_with_me);
-	}
-	
-	@Override
-	public void onBackPressed() {
-		ViewSwitcher switcher = (ViewSwitcher) findViewById(R.id.mainViewSwitcher);
-		if (switcher.getCurrentView().getId() == R.id.takeoffDetailLayout)
-			switcher.showPrevious();
-		else
-			super.onBackPressed();
+	private void showTakeoffDetails() {
+		TextView takeoffName = (TextView) findViewById(R.id.takeoffDetailName);
+		TextView takeoffCoordAslHeight = (TextView) findViewById(R.id.takeoffDetailCoordAslHeight);
+		TextView takeoffDescription = (TextView) findViewById(R.id.takeoffDetailDescription);
+		ImageButton mapButton = (ImageButton) findViewById(R.id.takeoffDetailMapButton);
+		
+		takeoffName.setText(showTakeoff.getName());
+		takeoffCoordAslHeight.setText(String.format("[%.2f,%.2f] " + getString(R.string.asl) + ": %d " + getString(R.string.height) + ": %d", showTakeoff.getLocation().getLatitude(), showTakeoff.getLocation().getLongitude(), showTakeoff.getAsl(), showTakeoff.getHeight()));
+		takeoffDescription.setText(showTakeoff.getDescription());
+		takeoffDescription.setMovementMethod(new ScrollingMovementMethod());
+
+		mapButton.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				Location loc = showTakeoff.getLocation();
+				String uri = "http://maps.google.com/maps?saddr=" + location.getLatitude() + "," + location.getLongitude() + "&daddr=" + loc.getLatitude() + "," + loc.getLongitude(); 
+				Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(uri));
+				startActivity(intent);
+			}
+		});
 	}
 	
 	private void updateLocation(Location newLocation) {
 		if (newLocation == null)
 			return;
 		location = newLocation;
-		takeoffs = flightlog.getTakeoffs();
 
 		ListView takeoffsView = (ListView) findViewById(R.id.takeoffs);
 		takeoffsView.invalidateViews();
