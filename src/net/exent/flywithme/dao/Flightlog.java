@@ -62,9 +62,10 @@ public class Flightlog {
 				Location takeoffLocation = new Location(LocationManager.PASSIVE_PROVIDER);
 				takeoffLocation.setLatitude(inputStream.readFloat());
 				takeoffLocation.setLongitude(inputStream.readFloat());
+				String windpai = inputStream.readUTF();
 
 				if (myLocation.distanceTo(takeoffLocation) <= MAX_DISTANCE)
-					takeoffs.add(new Takeoff(takeoff, name, description, asl, height, takeoffLocation));
+					takeoffs.add(new Takeoff(takeoff, name, description, asl, height, takeoffLocation, windpai));
 			}
 		} catch (EOFException e) {
 			/* expected, do nothing */

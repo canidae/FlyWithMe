@@ -18,6 +18,11 @@ public class FlightlogCrawler {
 	 */
 	public static void crawl(DataOutputStream outputStream) {
 		System.out.println("Crawling...");
+		Pattern namePattern = Pattern.compile(".*<title>.* - .* - .* - (.*)</title>.*", Pattern.DOTALL);
+		Pattern descriptionPattern = Pattern.compile(".*Description</td>.*('right'>|'left'></a>)(.*)</td></tr>.*Coordinates</td>.*", Pattern.DOTALL);
+		Pattern altitudePattern = Pattern.compile(".*Altitude</td><td bgcolor='white'>(\\d+) meters asl Top to bottom (\\d+) meters</td>.*", Pattern.DOTALL);
+		Pattern coordPattern = Pattern.compile(".*Coordinates</td>.*DMS: ([NS]) (\\d+)&deg; (\\d+)&#039; (\\d+)&#039;&#039; &nbsp;([EW]) (\\d+)&deg; (\\d+)&#039; (\\d+)&#039;&#039;.*", Pattern.DOTALL);
+		Pattern windpaiPattern = Pattern.compile(".*<img src='fl_b5/windpai\\.html\\?[^']*' alt='([^']*)'.*", Pattern.DOTALL);
 		int takeoff = 0;
 		int lastValidTakeoff = 0;
 		boolean tryAgain = true;
@@ -37,14 +42,11 @@ public class FlightlogCrawler {
 					br.close();
 					
 					String text = sb.toString();
-					Pattern namePattern = Pattern.compile(".*<title>.* - .* - .* - (.*)</title>.*", Pattern.DOTALL);
 					Matcher nameMatcher = namePattern.matcher(text);
-					Pattern descriptionPattern = Pattern.compile(".*Description</td>.*('right'>|'left'></a>)(.*)</td></tr>.*Coordinates</td>.*", Pattern.DOTALL);
 					Matcher descriptionMatcher = descriptionPattern.matcher(text);
-					Pattern altitudePattern = Pattern.compile(".*Altitude</td><td bgcolor='white'>(\\d+) meters asl Top to bottom (\\d+) meters</td>.*", Pattern.DOTALL);
 					Matcher altitudeMatcher = altitudePattern.matcher(text);
-					Pattern coordPattern = Pattern.compile(".*Coordinates</td>.*DMS: ([NS]) (\\d+)&deg; (\\d+)&#039; (\\d+)&#039;&#039; &nbsp;([EW]) (\\d+)&deg; (\\d+)&#039; (\\d+)&#039;&#039;.*", Pattern.DOTALL);
 					Matcher coordMatcher = coordPattern.matcher(text);
+					Matcher windpaiMatcher = windpaiPattern.matcher(text);
 					
 					if (nameMatcher.matches() && coordMatcher.matches()) {
 						String takeoffName = nameMatcher.group(1).trim();
@@ -75,8 +77,12 @@ public class FlightlogCrawler {
 						longitude = (float) lonDeg + (float) (lonMin * 60 + lonSec) / (float) 3600;
 						if ("W".equals(eastOrWest))
 							longitude *= -1.0;
+						
+						String windpai = "";
+						if (windpaiMatcher.matches())
+							windpai = windpaiMatcher.group(1).trim();
 	
-						System.out.println("[" + takeoff + "] " + takeoffName + " (ASL: " + aboveSeaLevel + ", Height: " + height + ") [" + latitude + "," + longitude + "]");
+						System.out.println("[" + takeoff + "] " + takeoffName + " (ASL: " + aboveSeaLevel + ", Height: " + height + ") [" + latitude + "," + longitude + "] <" + windpai + ">");
 						outputStream.writeShort(takeoff);
 						outputStream.writeUTF(takeoffName);
 						outputStream.writeUTF(description);
@@ -84,6 +90,7 @@ public class FlightlogCrawler {
 						outputStream.writeShort(height);
 						outputStream.writeFloat(latitude);
 						outputStream.writeFloat(longitude);
+						outputStream.writeUTF(windpai);
 						lastValidTakeoff = takeoff;
 					}
 					break;
