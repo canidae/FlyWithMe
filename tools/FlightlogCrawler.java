@@ -2,6 +2,7 @@ import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.FileOutputStream;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.regex.Matcher;
@@ -16,7 +17,7 @@ public class FlightlogCrawler {
 	 * http://flightlog.org/fl.html?l=1&a=22&country_id=160&start_id=4
 	 * we can set "country_id" to a fixed value, it only means that wrong country will be displayed (which we don't care about)
 	 */
-	public static void crawl(DataOutputStream outputStream) {
+	public static void crawl(DataOutputStream outputStream, PrintWriter kmlWriter) {
 		System.out.println("Crawling...");
 		Pattern namePattern = Pattern.compile(".*<title>.* - .* - .* - (.*)</title>.*", Pattern.DOTALL);
 		Pattern descriptionPattern = Pattern.compile(".*Description</td>.*('right'>|'left'></a>)(.*)</td></tr>.*Coordinates</td>.*", Pattern.DOTALL);
@@ -26,6 +27,9 @@ public class FlightlogCrawler {
 		int takeoff = 0;
 		int lastValidTakeoff = 0;
 		boolean tryAgain = true;
+		kmlWriter.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+		kmlWriter.println("<kml xmlns=\"http://www.opengis.net/kml/2.2\">");
+		kmlWriter.println("<Document>");
 		while (takeoff++ < lastValidTakeoff + 50) { // when we haven't found a takeoff within the last 50 fetches from flightlog, assume all is found
 			try {
 				URL url = new URL("http://flightlog.org/fl.html?l=1&a=22&country_id=160&start_id=" + takeoff);
@@ -92,6 +96,24 @@ public class FlightlogCrawler {
 						outputStream.writeFloat(longitude);
 						outputStream.writeUTF(windpai);
 						lastValidTakeoff = takeoff;
+						
+						kmlWriter.print("<Placemark>");
+						// just in case some smartass wrote "]]>" in takeoff name
+						takeoffName = takeoffName.replace("]]>", "]] >");
+						kmlWriter.print("<name><![CDATA[" + takeoffName + "]]></name>");
+						kmlWriter.print("<description><![CDATA[");
+						kmlWriter.print("<h1>" + takeoffName + "</h1>");
+						kmlWriter.print("<h2>Takeoff directions: " + windpai + "</h2>");
+						kmlWriter.print("<h2>Above Sea Level: " + aboveSeaLevel + ", Height: " + height + "</h2>");
+						// just in case some smartass wrote "]]>" in description
+						description = description.replace("]]>", "]] >");
+						kmlWriter.print("<p>" + description + "</p>");
+						kmlWriter.print("]]></description>");
+					    kmlWriter.print("<Point>");
+						// bloody americans, why do you have to do everything backwards? latitude usually comes before longitude...
+						kmlWriter.print("<coordinates>" + longitude + "," + latitude + "</coordinates>");
+						kmlWriter.print("</Point>");
+						kmlWriter.println("</Placemark>");
 					}
 					break;
 	
@@ -109,6 +131,8 @@ public class FlightlogCrawler {
 				tryAgain = false;
 			}
 		}
+		kmlWriter.println("</Document>");
+		kmlWriter.println("</kml>");
 	}
 	
 	private static String getCharsetFromHeaderValue(String text) {
@@ -134,8 +158,10 @@ public class FlightlogCrawler {
 	}
 	
 	public static void main(String... args) throws Exception {
+		PrintWriter kmlWriter = new PrintWriter("takeoffs.kml");
 		DataOutputStream outputStream = new DataOutputStream(new FileOutputStream("flywithme.dat"));
-		crawl(outputStream);
+		crawl(outputStream, kmlWriter);
 		outputStream.close();
+		kmlWriter.close();
 	}
 }
