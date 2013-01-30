@@ -15,7 +15,7 @@ import android.widget.TextView;
 
 public class TakeoffArrayAdapter extends ArrayAdapter<Takeoff> {
 	public TakeoffArrayAdapter(Context context) {
-		super(context, R.layout.takeoff_list_layout);
+		super(context, R.layout.takeoff_list_entry);
 	}
 
 	@Override
@@ -23,7 +23,7 @@ public class TakeoffArrayAdapter extends ArrayAdapter<Takeoff> {
 		Takeoff takeoff = Flightlog.getTakeoffs(getContext()).get(position);
 		
 		LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		View rowView = inflater.inflate(R.layout.takeoff_list_layout, parent, false);
+		View rowView = inflater.inflate(R.layout.takeoff_list_entry, parent, false);
 		TextView takeoffName = (TextView) rowView.findViewById(R.id.takeoffListName);
 		TextView takeoffDistance = (TextView) rowView.findViewById(R.id.takeoffListDistance);
 		takeoffName.setText(takeoff.toString());
