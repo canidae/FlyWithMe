@@ -1,5 +1,15 @@
 package net.exent.flywithme;
 
+import java.util.List;
+
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+
 import net.exent.flywithme.R;
 import net.exent.flywithme.dao.Flightlog;
 import net.exent.flywithme.data.Takeoff;
@@ -17,6 +27,7 @@ import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -32,38 +43,68 @@ public class FlyWithMe extends FragmentActivity {
 	
 	private enum LayoutView {
 		MAP {
-			public void draw(final FlyWithMe activity) {
-				Log.d("Flightlog", "MAP.draw(" + activity + ")");
-				activity.setContentView(R.layout.map);
+			@Override
+			public void drawView(final FlyWithMe activity) {
+				Log.d("FlyWithMe", "MAP.draw(" + activity + ")");
+				if (view == null)
+					view = activity.getLayoutInflater().inflate(R.layout.map, null);
+				activity.setContentView(view);
+				activeView.setupLocationListener(activity);
+
+				SupportMapFragment mapFragment = (SupportMapFragment) activity.getSupportFragmentManager().findFragmentById(R.id.takeoffMap);
+				GoogleMap map = mapFragment.getMap();
+				if (map == null) {
+					Log.w("FlyWithMe", "map is null?");
+					return;
+				}
+				map.setMyLocationEnabled(true);
+				map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), (float) 10.0));
+				map.getUiSettings().setZoomControlsEnabled(false);
+				map.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+					public void onInfoWindowClick(Marker marker) {
+						Log.d("FlyWithMe", "TODO: open takeoff details");
+					}
+				});
+
+				updateLocation(activity);
+			}
+			
+			@Override
+			protected void updateLocation(final FlyWithMe activity) {
+				Log.d("FlyWithMe", "MAP.updateLocation(" + activity + ")");
+				GoogleMap map = ((SupportMapFragment) activity.getSupportFragmentManager().findFragmentById(R.id.takeoffMap)).getMap();
+				if (map == null)
+					return;
+
+				map.clear();
+				List<Takeoff> takeoffs = Flightlog.getTakeoffs(activity);
+				for (int i = 0; i < takeoffs.size(); i++) {
+					Takeoff takeoff = takeoffs.get(i);
+					map.addMarker(new MarkerOptions()
+                		.position(new LatLng(takeoff.getLocation().getLatitude(), takeoff.getLocation().getLongitude()))
+                		.title(takeoff.getName())
+                		.snippet("Height: " + takeoff.getHeight() + ", Start: " + takeoff.getStartDirections())
+                		.icon(BitmapDescriptorFactory.defaultMarker((float) 42)));
+				}
 			}
 		},
 		
 		TAKEOFF_LIST {
-			public void draw(final FlyWithMe activity) {
-				Log.d("Flightlog", "TAKEOFF_LIST.draw(" + activity + ")");
-				activity.setContentView(R.layout.takeoff_list);
-
-				/* set initial location & listener */
-				LocationListener locationListener = new LocationListener() {
-					public void onStatusChanged(String provider, int status, Bundle extras) {
+			@Override
+			public void drawView(final FlyWithMe activity) {
+				Log.d("FlyWithMe", "TAKEOFF_LIST.draw(" + activity + ")");
+				if (view == null)
+					view = activity.getLayoutInflater().inflate(R.layout.takeoff_list, null);
+				activity.setContentView(view);
+				activeView.setupLocationListener(activity);
+				
+				ImageButton mapButton = (ImageButton) activity.findViewById(R.id.takeoffListMapButton);
+				mapButton.setOnClickListener(new OnClickListener() {
+					public void onClick(View v) {
+						activeView = LayoutView.MAP;
+						activeView.draw(activity);
 					}
-					
-					public void onProviderEnabled(String provider) {
-					}
-					
-					public void onProviderDisabled(String provider) {
-					}
-					
-					public void onLocationChanged(Location newLocation) {
-						activity.updateLocation(newLocation);
-					}
-				};
-				LocationManager locationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
-				locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, LOCATION_UPDATE_TIME, LOCATION_UPDATE_DISTANCE, locationListener);
-				Location newLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-				if (newLocation == null)
-					newLocation = new Location(LocationManager.PASSIVE_PROVIDER); // no location set, let's pretend we're skinny dipping in the gulf of guinea
-				activity.updateLocation(newLocation);
+				});
 
 				TakeoffArrayAdapter adapter = new TakeoffArrayAdapter(activity);
 				ListView takeoffsView = (ListView) activity.findViewById(R.id.takeoffList);
@@ -76,12 +117,22 @@ public class FlyWithMe extends FragmentActivity {
 					}
 				});
 			}
+			
+			@Override
+			protected void updateLocation(final FlyWithMe activity) {
+				Log.d("FlyWithMe", "TAKEOFF_LIST.updateLocation(" + activity + ")");
+				ListView takeoffsView = (ListView) activity.findViewById(R.id.takeoffList);
+				if (takeoffsView != null)
+					takeoffsView.invalidateViews();
+			}
 		},
 		
 		TAKEOFF_DETAIL {
-			public void draw(final FlyWithMe activity) {
-				Log.d("Flightlog", "TAKEOFF_DETAIL.draw(" + activity + ")");
-				activity.setContentView(R.layout.takeoff_detail);
+			public void drawView(final FlyWithMe activity) {
+				Log.d("FlyWithMe", "TAKEOFF_DETAIL.draw(" + activity + ")");
+				if (view == null)
+					view = activity.getLayoutInflater().inflate(R.layout.takeoff_detail, null);
+				activity.setContentView(view);
 
 				TextView takeoffName = (TextView) activity.findViewById(R.id.takeoffDetailName);
 				TextView takeoffCoordAslHeight = (TextView) activity.findViewById(R.id.takeoffDetailCoordAslHeight);
@@ -104,17 +155,59 @@ public class FlyWithMe extends FragmentActivity {
 			}
 		};
 		
-		public abstract void draw(final FlyWithMe activity);
+		protected View view;
+		
+		public final void draw(final FlyWithMe activity) {
+			if (view != null) {
+				ViewGroup parent = (ViewGroup) view.getParent();
+				if (parent != null)
+					parent.removeView(view);
+			}
+			drawView(activity);
+		}
+		
+		protected abstract void drawView(final FlyWithMe activity);
+		
+		protected void updateLocation(final FlyWithMe activity) {
+			Log.w("FlyWithMe", "LayoutView." + activeView + " has not implemented method updateLocation(), yet it receives location updates");
+		}
+		
+		private void setupLocationListener(final FlyWithMe activity) {
+			Log.d("FlyWithMe", "LayoutView.setupLocationListener(" + activity + ")");
+			LocationListener locationListener = new LocationListener() {
+				public void onStatusChanged(String provider, int status, Bundle extras) {
+				}
+				
+				public void onProviderEnabled(String provider) {
+				}
+				
+				public void onProviderDisabled(String provider) {
+				}
+				
+				public void onLocationChanged(Location newLocation) {
+					if (newLocation == null)
+						return;
+					location = newLocation;
+					updateLocation(activity);
+				}
+			};
+			LocationManager locationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
+			locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, LOCATION_UPDATE_TIME, LOCATION_UPDATE_DISTANCE, locationListener);
+			if (location == null) {
+				location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+				if (location == null)
+					location = new Location(LocationManager.PASSIVE_PROVIDER); // no location set, let's pretend we're skinny dipping in the gulf of guinea
+			}
+		}
 	}
 	
 	public static Location getLocation() {
-		Log.d("Flightlog", "getLocation()");
 		return location;
 	}
 	
 	@Override
 	public void onBackPressed() {
-		Log.d("FlightLog", "onBackPressed()");
+		Log.d("FlyWithMe", "onBackPressed()");
 		if (activeView == LayoutView.TAKEOFF_LIST) {
 			super.onBackPressed();
 		} else {
@@ -127,20 +220,9 @@ public class FlyWithMe extends FragmentActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		Log.d("FlyWithMe", "onCreate(" + savedInstanceState + ")");
 		super.onCreate(savedInstanceState);
+        
 		if (activeView == null)
 			activeView = LayoutView.TAKEOFF_LIST;
 		activeView.draw(this);
-
-	}
-	
-	private void updateLocation(Location newLocation) {
-		Log.d("FlyWithMe", "updateLocation(" + newLocation + ")");
-		if (newLocation == null)
-			return;
-		location = newLocation;
-
-		ListView takeoffsView = (ListView) findViewById(R.id.takeoffList);
-		if (takeoffsView != null)
-			takeoffsView.invalidateViews();
 	}
 }
