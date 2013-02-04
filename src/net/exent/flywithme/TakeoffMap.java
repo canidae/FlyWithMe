@@ -14,7 +14,6 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
-import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,11 +51,8 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener {
             if (parent != null)
                 parent.removeView(view);
         }
-        try {
+        if (getFragmentManager().findFragmentById(R.id.takeoffMapFragment) == null)
             view = inflater.inflate(R.layout.takeoff_map, container, false);
-        } catch (InflateException e) {
-            /* map is already there, just return view as it is */
-        }
         return view;
     }
 
