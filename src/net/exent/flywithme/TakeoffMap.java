@@ -25,8 +25,17 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener {
 
     private static View view;
     private TakeoffMapListener callback;
-    private GoogleMap map;
     private Map<Marker, Takeoff> takeoffMarkers = new HashMap<Marker, Takeoff>();
+
+    public void drawMap() {
+        SupportMapFragment fragment = (SupportMapFragment) getFragmentManager().findFragmentById(R.id.takeoffMapFragment);
+        if (fragment == null)
+            return;
+        GoogleMap map = fragment.getMap();
+        if (map == null)
+            return;
+        /* TODO: draw markers and stuff */
+    }
 
     public void onInfoWindowClick(Marker marker) {
         Log.d("TakeoffMap", "onInfoWindowClick(" + marker + ")");
@@ -60,24 +69,6 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener {
     public void onStart() {
         Log.d("TakeoffMap", "onStart()");
         super.onStart();
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        Log.d("TakeoffMap", "onSaveInstanceState(" + outState + ")");
-        super.onSaveInstanceState(outState);
-    }
-
-    private void initMap() {
-        if (map != null) {
-            map = ((SupportMapFragment) getFragmentManager().findFragmentById(R.id.takeoffMapFragment)).getMap();
-            drawMap();
-        }
-    }
-
-    private void drawMap() {
-        if (map == null)
-            return;
-        /* TODO: draw markers and stuff */
+        drawMap();
     }
 }

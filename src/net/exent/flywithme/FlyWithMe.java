@@ -43,6 +43,8 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
         takeoffDetails.setArguments(args);
         /* replace fragment container & add transaction to the back stack */
         getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, takeoffDetails).addToBackStack(null).commit();
+        
+        /* TODO: strange things happen if you enter map from details and then push back... */
     }
 
     public void showTakeoffList() {
