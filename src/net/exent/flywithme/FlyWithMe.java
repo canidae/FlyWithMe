@@ -20,7 +20,8 @@ import android.widget.ImageButton;
 public class FlyWithMe extends FragmentActivity implements TakeoffListListener, TakeoffMapListener, TakeoffDetailsListener {
     private static final int LOCATION_UPDATE_TIME = 300000; // update location every 5 minute
     private static final int LOCATION_UPDATE_DISTANCE = 100; // or when we've moved more than 100 meters
-    private Location location = new Location(LocationManager.PASSIVE_PROVIDER);;
+    private Location location = new Location(LocationManager.PASSIVE_PROVIDER);
+    private Fragment previousFragment;
 
     public Location getLocation() {
         Log.d("FlyWithMe", "getLocation()");
@@ -34,6 +35,7 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
             ((TakeoffDetails) fragment).showTakeoffDetails(takeoff);
             return;
         }
+        previousFragment = fragment;
 
         /* fragment not visible, need to create it */
         TakeoffDetails takeoffDetails = new TakeoffDetails();
@@ -42,9 +44,7 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
         args.putParcelable(TakeoffDetails.ARG_TAKEOFF, takeoff);
         takeoffDetails.setArguments(args);
         /* replace fragment container & add transaction to the back stack */
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, takeoffDetails).addToBackStack(null).commit();
-        
-        /* TODO: strange things happen if you enter map from details and then push back... */
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, takeoffDetails).commit();
     }
 
     public void showTakeoffList() {
@@ -123,5 +123,21 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
         /* takeoff list is default view */
         TakeoffList takeoffList = new TakeoffList();
         getSupportFragmentManager().beginTransaction().add(R.id.fragmentContainer, takeoffList).commit();
+    }
+
+    @Override
+    public void onBackPressed() {
+        /* implementing my own backstack, because the one in FragmentTransaction is on acid */
+        Log.d("FlyWithMe", "onBackPressed()");
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragmentContainer);
+        if (fragment == null || fragment instanceof TakeoffList) {
+            super.onBackPressed();
+        } else if (fragment != null && fragment instanceof TakeoffMap) {
+            showTakeoffList();
+        } else if (previousFragment != null && previousFragment instanceof TakeoffList) {
+            showTakeoffList();
+        } else if (previousFragment != null && previousFragment instanceof TakeoffMap) {
+            showMap();
+        }
     }
 }
