@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class TakeoffDetails extends Fragment {
@@ -26,7 +27,7 @@ public class TakeoffDetails extends Fragment {
     private TakeoffDetailsListener callback;
 
     public void showTakeoffDetails(final Takeoff takeoff) {
-        Log.d("TakeoffDetails", "showTakeoffDetails(" + takeoff + ")");
+        Log.d(getClass().getSimpleName(), "showTakeoffDetails(" + takeoff + ")");
         this.takeoff = takeoff;
         if (takeoff == null)
             return;
@@ -43,6 +44,24 @@ public class TakeoffDetails extends Fragment {
             }
         });
 
+        /* windpai */
+        ImageView windroseNorth = (ImageView) getActivity().findViewById(R.id.takeoffDetailsWindroseNorth);
+        ImageView windroseNorthwest = (ImageView) getActivity().findViewById(R.id.takeoffDetailsWindroseNorthwest);
+        ImageView windroseWest = (ImageView) getActivity().findViewById(R.id.takeoffDetailsWindroseWest);
+        ImageView windroseSouthwest = (ImageView) getActivity().findViewById(R.id.takeoffDetailsWindroseSouthwest);
+        ImageView windroseSouth = (ImageView) getActivity().findViewById(R.id.takeoffDetailsWindroseSouth);
+        ImageView windroseSoutheast = (ImageView) getActivity().findViewById(R.id.takeoffDetailsWindroseSoutheast);
+        ImageView windroseEast = (ImageView) getActivity().findViewById(R.id.takeoffDetailsWindroseEast);
+        ImageView windroseNortheast = (ImageView) getActivity().findViewById(R.id.takeoffDetailsWindroseNortheast);
+        windroseNorth.setVisibility(takeoff.hasNorthExit() ? ImageView.VISIBLE : ImageView.INVISIBLE);
+        windroseNorthwest.setVisibility(takeoff.hasNorthwestExit() ? ImageView.VISIBLE : ImageView.INVISIBLE);
+        windroseWest.setVisibility(takeoff.hasWestExit() ? ImageView.VISIBLE : ImageView.INVISIBLE);
+        windroseSouthwest.setVisibility(takeoff.hasSouthwestExit() ? ImageView.VISIBLE : ImageView.INVISIBLE);
+        windroseSouth.setVisibility(takeoff.hasSouthExit() ? ImageView.VISIBLE : ImageView.INVISIBLE);
+        windroseSoutheast.setVisibility(takeoff.hasSoutheastExit() ? ImageView.VISIBLE : ImageView.INVISIBLE);
+        windroseEast.setVisibility(takeoff.hasEastExit() ? ImageView.VISIBLE : ImageView.INVISIBLE);
+        windroseNortheast.setVisibility(takeoff.hasNortheastExit() ? ImageView.VISIBLE : ImageView.INVISIBLE);
+
         TextView takeoffName = (TextView) getActivity().findViewById(R.id.takeoffDetailsName);
         TextView takeoffCoordAslHeight = (TextView) getActivity().findViewById(R.id.takeoffDetailsCoordAslHeight);
         TextView takeoffDescription = (TextView) getActivity().findViewById(R.id.takeoffDetailsDescription);
@@ -55,14 +74,14 @@ public class TakeoffDetails extends Fragment {
 
     @Override
     public void onAttach(Activity activity) {
-        Log.d("TakeoffDetails", "onAttach(" + activity + ")");
+        Log.d(getClass().getSimpleName(), "onAttach(" + activity + ")");
         super.onAttach(activity);
         callback = (TakeoffDetailsListener) activity;
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Log.d("TakeoffDetails", "onCreateView(" + inflater + ", " + container + ", " + savedInstanceState + ")");
+        Log.d(getClass().getSimpleName(), "onCreateView(" + inflater + ", " + container + ", " + savedInstanceState + ")");
         if (savedInstanceState != null)
             takeoff = savedInstanceState.getParcelable("takeoff");
         return inflater.inflate(R.layout.takeoff_details, container, false);
@@ -70,7 +89,7 @@ public class TakeoffDetails extends Fragment {
 
     @Override
     public void onStart() {
-        Log.d("TakeoffDetails", "onStart()");
+        Log.d(getClass().getSimpleName(), "onStart()");
         super.onStart();
         Bundle args = getArguments();
         if (args != null)
@@ -80,7 +99,7 @@ public class TakeoffDetails extends Fragment {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        Log.d("TakeoffDetails", "onSaveInstanceState(" + outState + ")");
+        Log.d(getClass().getSimpleName(), "onSaveInstanceState(" + outState + ")");
         super.onSaveInstanceState(outState);
         outState.putParcelable(ARG_TAKEOFF, takeoff);
     }

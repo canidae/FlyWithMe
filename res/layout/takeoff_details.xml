@@ -11,7 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_alignRight="@+id/takeoffDetailsCoordAslHeight"
+        android:layout_toLeftOf="@+id/takeoffDetailsWindroseNorth"
         android:maxLines="1"
         android:text="@string/app_name"
         android:textAppearance="?android:attr/textAppearanceLarge" />
@@ -21,8 +21,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
+        android:layout_alignRight="@+id/takeoffDetailsName"
         android:layout_below="@+id/takeoffDetailsName"
-        android:layout_toLeftOf="@+id/takeoffDetailsNavigationButton"
         android:maxLines="1"
         android:text="@string/app_name"
         android:textAppearance="?android:attr/textAppearanceSmall" />
@@ -46,5 +46,77 @@
         android:layout_alignParentTop="true"
         android:background="@null"
         android:src="@drawable/navigation" />
+
+    <ImageView
+        android:id="@+id/takeoffDetailsWindroseNorth"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@+id/takeoffDetailsNavigationButton"
+        android:src="@drawable/windrose_north" />
+
+    <ImageView
+        android:id="@+id/takeoffDetailsWindroseNorthwest"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@+id/takeoffDetailsNavigationButton"
+        android:src="@drawable/windrose_northwest" />
+
+    <ImageView
+        android:id="@+id/takeoffDetailsWindroseWest"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@+id/takeoffDetailsNavigationButton"
+        android:src="@drawable/windrose_west" />
+
+    <ImageView
+        android:id="@+id/takeoffDetailsWindroseSouthwest"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@+id/takeoffDetailsNavigationButton"
+        android:src="@drawable/windrose_southwest" />
+
+    <ImageView
+        android:id="@+id/takeoffDetailsWindroseSouth"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@+id/takeoffDetailsNavigationButton"
+        android:src="@drawable/windrose_south" />
+
+    <ImageView
+        android:id="@+id/takeoffDetailsWindroseSoutheast"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@+id/takeoffDetailsNavigationButton"
+        android:src="@drawable/windrose_southeast" />
+
+    <ImageView
+        android:id="@+id/takeoffDetailsWindroseEast"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@+id/takeoffDetailsNavigationButton"
+        android:src="@drawable/windrose_east" />
+
+    <ImageView
+        android:id="@+id/takeoffDetailsWindroseNortheast"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@+id/takeoffDetailsNavigationButton"
+        android:src="@drawable/windrose_northeast" />
+
+    <ImageView
+        android:id="@+id/takeoffDetailsWindroseCircle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@+id/takeoffDetailsNavigationButton"
+        android:src="@drawable/windrose_circle" />
 
 </RelativeLayout>

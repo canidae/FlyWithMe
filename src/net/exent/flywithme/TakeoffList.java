@@ -1,6 +1,8 @@
 package net.exent.flywithme;
 
-import net.exent.flywithme.dao.Flightlog;
+import java.util.ArrayList;
+import java.util.List;
+
 import net.exent.flywithme.data.Takeoff;
 import android.app.Activity;
 import android.content.Context;
@@ -23,36 +25,41 @@ public class TakeoffList extends Fragment {
         void showTakeoffDetails(Takeoff takeoff);
 
         Location getLocation();
+
+        List<Takeoff> getNearbyTakeoffs();
     }
 
+    private static final int MAX_TAKEOFFS = 100;
     private static int savedPosition;
     private static int savedListTop;
     private TakeoffListListener callback;
+    private List<Takeoff> takeoffs = new ArrayList<Takeoff>();
 
     @Override
     public void onAttach(Activity activity) {
-        Log.d("TakeoffList", "onAttach(" + activity + ")");
+        Log.d(getClass().getSimpleName(), "onAttach(" + activity + ")");
         super.onAttach(activity);
         callback = (TakeoffListListener) activity;
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Log.d("TakeoffList", "onCreateView(" + inflater + ", " + container + ", " + savedInstanceState + ")");
+        Log.d(getClass().getSimpleName(), "onCreateView(" + inflater + ", " + container + ", " + savedInstanceState + ")");
         return inflater.inflate(R.layout.takeoff_list, container, false);
     }
 
     @Override
     public void onStart() {
-        Log.d("TakeoffList", "onStart()");
+        Log.d(getClass().getSimpleName(), "onStart()");
         super.onStart();
 
+        takeoffs = callback.getNearbyTakeoffs().subList(0, MAX_TAKEOFFS);
         TakeoffArrayAdapter adapter = new TakeoffArrayAdapter(getActivity());
         ListView listView = (ListView) getActivity().findViewById(R.id.takeoffListView);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                callback.showTakeoffDetails(Flightlog.getTakeoffs().get(position));
+                callback.showTakeoffDetails(takeoffs.get(position));
             }
         });
         /* position list */
@@ -61,7 +68,7 @@ public class TakeoffList extends Fragment {
 
     @Override
     public void onStop() {
-        Log.d("TakeoffList", "onStop()");
+        Log.d(getClass().getSimpleName(), "onStop()");
         super.onStop();
         /* remember position in list */
         ListView listView = (ListView) getActivity().findViewById(R.id.takeoffListView);
@@ -77,9 +84,9 @@ public class TakeoffList extends Fragment {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            Log.d("TakeoffArrayAdapter", "getView(" + position + ", " + convertView + ", " + parent + ")");
+            Log.d(getClass().getSimpleName(), "getView(" + position + ", " + convertView + ", " + parent + ")");
             Location location = callback.getLocation();
-            Takeoff takeoff = Flightlog.getTakeoffs().get(position);
+            Takeoff takeoff = takeoffs.get(position);
 
             LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             View rowView = inflater.inflate(R.layout.takeoff_list_entry, parent, false);
@@ -109,8 +116,8 @@ public class TakeoffList extends Fragment {
 
         @Override
         public int getCount() {
-            Log.d("TakeoffArrayAdapter", "getCount()");
-            return Flightlog.getTakeoffs().size();
+            Log.d(getClass().getSimpleName(), "getCount()");
+            return takeoffs.size();
         }
     }
 }
