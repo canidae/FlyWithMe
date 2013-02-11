@@ -2,6 +2,7 @@ package net.exent.flywithme;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,9 +42,10 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener {
     }
 
     private static final int MAX_TAKEOFFS = 100;
+    private static Map<String, List<PolygonOptions>> polygonMap;
     private static View view;
+    private static Map<String, Takeoff> takeoffMarkers = new HashMap<String, Takeoff>();
     private TakeoffMapListener callback;
-    private Map<String, Takeoff> takeoffMarkers = new HashMap<String, Takeoff>();
 
     public void drawMap() {
         Log.d(getClass().getSimpleName(), "drawMap()");
@@ -57,8 +59,8 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener {
         map.setOnInfoWindowClickListener(this);
         /* draw map */
         map.clear();
-        drawTakeoffMarkers(map);
-        drawAirspaceMap(map);
+        drawTakeoffMarkers(map); // TODO: async?
+        drawAirspaceMap(map); // TODO: async!
     }
 
     public void onInfoWindowClick(Marker marker) {
@@ -92,6 +94,8 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener {
             Location loc = callback.getLocation();
             map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(loc.getLatitude(), loc.getLongitude()), (float) 10.0));
         }
+        if (polygonMap == null)
+            readAirspaceMap();
         return view;
     }
 
@@ -115,25 +119,41 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener {
 
     private void drawAirspaceMap(GoogleMap map) {
         Log.d(getClass().getSimpleName(), "drawAirspaceMap(" + map + ")");
+        Location myLocation = callback.getLocation();
+        Location tmpLocation = new Location(myLocation);
+        for (Map.Entry<String, List<PolygonOptions>> entry : polygonMap.entrySet()) {
+            // TODO: if folder not enabled, skip
+            for (PolygonOptions polygon : entry.getValue()) {
+                // TODO: always draw everything or just stuff nearby?
+                if (showPolygon(polygon, myLocation, tmpLocation))
+                    map.addPolygon(polygon);
+            }
+        }
+    }
+
+    private void readAirspaceMap() {
+        Log.d(getClass().getSimpleName(), "readAirspaceMap()");
+        polygonMap = new HashMap<String, List<PolygonOptions>>();
         InputStream inputStream = getActivity().getResources().openRawResource(R.raw.airspace_map);
         try {
             Log.d(getClass().getSimpleName(), "inputStream.available(): " + inputStream.available());
             XmlPullParser parser = XmlPullParserFactory.newInstance().newPullParser();
             parser.setInput(inputStream, null);
             Map<String, PolygonOptions> polygonStyles = new HashMap<String, PolygonOptions>();
-            int polygons = 1000;
+            String folder = "";
             while (parser.next() != XmlPullParser.END_DOCUMENT) {
                 switch (parser.getEventType()) {
                 case XmlPullParser.START_TAG:
                     if ("Style".equals(parser.getName())) {
                         polygonStyles.put(parser.getAttributeValue(null, "id"), fetchPolygonStyle(parser));
+                    } else if ("Folder".equals(parser.getName()) && parser.next() == XmlPullParser.START_TAG && "name".equals(parser.getName())) {
+                        folder = parser.nextText().trim();
                     } else if ("Placemark".equals(parser.getName())) {
-                        if (polygons >= 0) {
-                            PolygonOptions polygon = fetchPolygon(polygonStyles, parser);
-                            if (polygon != null) {
-                                map.addPolygon(polygon);
-                                polygons--;
-                            }
+                        PolygonOptions polygon = fetchPolygon(polygonStyles, parser);
+                        if (polygon != null) {
+                            if (!polygonMap.containsKey(folder))
+                                polygonMap.put(folder, new ArrayList<PolygonOptions>());
+                            polygonMap.get(folder).add(polygon);
                         }
                     }
                     break;
@@ -204,18 +224,53 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener {
         }
         return null;
     }
-    
+
     /**
      * Convert ABGR to ARGB. KML-file use ABGR, but we need ARGB when drawing.
-     * @param color 8 character string representing an ABGR color.
+     * 
+     * @param color
+     *            8 character string representing an ABGR color.
      * @return int value for ARGB color.
      */
     private int convertColor(String color) {
         long abgr = Long.parseLong(color, 16);
-        long alpha = (abgr >> 24) & 0xFF;
-        long red = (abgr >> 16) & 0xFF;
-        long green = (abgr >> 8) & 0xFF;
-        long blue = (abgr >> 0) & 0xFF;
+        long alpha = (abgr >> 24) & 0xff;
+        long red = (abgr >> 16) & 0xff;
+        long green = (abgr >> 8) & 0xff;
+        long blue = (abgr >> 0) & 0xff;
         return (int) ((alpha << 24) | (blue << 16) | (green << 8) | (red << 0));
+    }
+
+    /**
+     * Figure out whether to draw polygon or not. The parameters "myLocation" and "tmpLocation" are only used to prevent excessive allocations.
+     * 
+     * @param polygon
+     *            The polygon we want to figure out whether to draw or not.
+     * @param myLocation
+     *            Users current location.
+     * @param tmpLocation
+     *            Location object only used for determining distance from polygon points to user location.
+     * @return
+     */
+    private boolean showPolygon(PolygonOptions polygon, Location myLocation, Location tmpLocation) {
+        boolean userSouthOfNorthernmostPoint = false;
+        boolean userNorthOfSouthernmostPoint = false;
+        boolean userWestOfEasternmostPoint = false;
+        boolean userEastOfWesternmostPoint = false;
+        for (LatLng loc : polygon.getPoints()) {
+            tmpLocation.setLatitude(loc.latitude);
+            tmpLocation.setLongitude(loc.longitude);
+            if (myLocation.distanceTo(tmpLocation) < 200000)
+                return true;
+            if (myLocation.getLatitude() < loc.latitude)
+                userSouthOfNorthernmostPoint = true;
+            else
+                userNorthOfSouthernmostPoint = true;
+            if (myLocation.getLongitude() < loc.longitude)
+                userWestOfEasternmostPoint = true;
+            else
+                userEastOfWesternmostPoint = true;
+        }
+        return userEastOfWesternmostPoint && userNorthOfSouthernmostPoint && userSouthOfNorthernmostPoint && userWestOfEasternmostPoint;
     }
 }
