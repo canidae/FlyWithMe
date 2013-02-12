@@ -28,6 +28,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -92,13 +93,18 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener {
             if (parent != null)
                 parent.removeView(view);
         }
-        if (getFragmentManager().findFragmentById(R.id.takeoffMapFragment) == null) {
+        try {
+            boolean zoom = getFragmentManager().findFragmentById(R.id.takeoffMapFragment) == null;
             view = inflater.inflate(R.layout.takeoff_map, container, false);
             GoogleMap map = ((SupportMapFragment) getFragmentManager().findFragmentById(R.id.takeoffMapFragment)).getMap();
             map.setMyLocationEnabled(true);
             map.getUiSettings().setZoomControlsEnabled(false);
-            Location loc = callback.getLocation();
-            map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(loc.getLatitude(), loc.getLongitude()), (float) 10.0));
+            if (zoom) {
+                Location loc = callback.getLocation();
+                map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(loc.getLatitude(), loc.getLongitude()), (float) 10.0));
+            }
+        } catch (InflateException e) {
+            /* map is already there, just return view as it is */
         }
         if (polygonMap == null)
             readAirspaceMap();
