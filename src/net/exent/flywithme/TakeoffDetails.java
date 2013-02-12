@@ -34,7 +34,8 @@ public class TakeoffDetails extends Fragment {
 
         final Location myLocation = callback.getLocation();
 
-        ImageButton navigationButton = (ImageButton) getActivity().findViewById(R.id.takeoffDetailsNavigationButton);
+        ImageButton navigationButton = (ImageButton) getActivity().findViewById(R.id.fragmentButton1);
+        navigationButton.setImageResource(R.drawable.navigation);
         navigationButton.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 Location loc = takeoff.getLocation();

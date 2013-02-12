@@ -31,6 +31,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 
 public class TakeoffMap extends Fragment implements OnInfoWindowClickListener {
     public interface TakeoffMapListener {
@@ -57,6 +58,11 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener {
             return;
         /* need to do this here or it'll end up with a reference to an old instance of "this", somehow */
         map.setOnInfoWindowClickListener(this);
+        /* add icons */
+        ImageButton markerButton = (ImageButton) getActivity().findViewById(R.id.fragmentButton1);
+        markerButton.setImageResource(R.drawable.marker_enabled);
+        ImageButton polygonButton = (ImageButton) getActivity().findViewById(R.id.fragmentButton2);
+        polygonButton.setImageResource(R.drawable.polygons_enabled);
         /* draw map */
         map.clear();
         drawTakeoffMarkers(map); // TODO: async?
@@ -250,7 +256,7 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener {
      *            Users current location.
      * @param tmpLocation
      *            Location object only used for determining distance from polygon points to user location.
-     * @return
+     * @return Whether polygon should be drawn.
      */
     private boolean showPolygon(PolygonOptions polygon, Location myLocation, Location tmpLocation) {
         boolean userSouthOfNorthernmostPoint = false;

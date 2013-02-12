@@ -87,6 +87,7 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
      */
     public void showTakeoffDetails(Takeoff takeoff) {
         Log.d(getClass().getSimpleName(), "showTakeoffDetails(" + takeoff + ")");
+        hideFragmentButtons();
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragmentContainer);
         if (fragment != null && fragment instanceof TakeoffDetails) {
             ((TakeoffDetails) fragment).showTakeoffDetails(takeoff);
@@ -109,6 +110,7 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
      */
     public void showTakeoffList() {
         Log.d(getClass().getSimpleName(), "showTakeoffList()");
+        hideFragmentButtons();
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragmentContainer);
         if (fragment != null && fragment instanceof TakeoffList)
             return;
@@ -124,6 +126,7 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
      */
     public void showMap() {
         Log.d(getClass().getSimpleName(), "showMap()");
+        hideFragmentButtons();
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragmentContainer);
         if (fragment != null && fragment instanceof TakeoffMap)
             return;
@@ -171,6 +174,14 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
         if (savedInstanceState != null || findViewById(R.id.fragmentContainer) == null)
             return;
 
+        /* takeoff list is default view */
+        TakeoffList takeoffList = new TakeoffList();
+        getSupportFragmentManager().beginTransaction().add(R.id.fragmentContainer, takeoffList).commit();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
         /* starting app, setup buttons */
         ImageButton fwmButton = (ImageButton) findViewById(R.id.fwmButton);
         fwmButton.setOnClickListener(new OnClickListener() {
@@ -184,10 +195,6 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
                 showMap();
             }
         });
-
-        /* takeoff list is default view */
-        TakeoffList takeoffList = new TakeoffList();
-        getSupportFragmentManager().beginTransaction().add(R.id.fragmentContainer, takeoffList).commit();
     }
 
     /**
@@ -203,13 +210,21 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
             super.onBackPressed();
         } else if (fragment != null && fragment instanceof TakeoffMap) {
             showTakeoffList();
-        } else if (previousFragment != null && previousFragment instanceof TakeoffList) {
-            showTakeoffList();
         } else if (previousFragment != null && previousFragment instanceof TakeoffMap) {
             showMap();
         } else {
-            Log.d(getClass().getSimpleName(), "Dunno what to do in onBackPressed(), fragment = " + fragment + ", previousFragment = " + previousFragment);
+            showTakeoffList();
         }
+    }
+
+    /**
+     * Hide buttons unique for a fragment.
+     */
+    private void hideFragmentButtons() {
+        ImageButton fragmentButton1 = (ImageButton) findViewById(R.id.fragmentButton1);
+        fragmentButton1.setImageDrawable(null);
+        ImageButton fragmentButton2 = (ImageButton) findViewById(R.id.fragmentButton2);
+        fragmentButton2.setImageDrawable(null);
     }
 
     /**

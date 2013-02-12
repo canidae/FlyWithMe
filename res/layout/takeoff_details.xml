@@ -34,25 +34,16 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
-        android:layout_below="@+id/takeoffDetailsNavigationButton"
+        android:layout_below="@+id/takeoffDetailsWindroseNorth"
         android:scrollbars="vertical"
         android:text="@string/app_name" />
-
-    <ImageButton
-        android:id="@+id/takeoffDetailsNavigationButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:background="@null"
-        android:src="@drawable/navigation" />
 
     <ImageView
         android:id="@+id/takeoffDetailsWindroseNorth"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
-        android:layout_toLeftOf="@+id/takeoffDetailsNavigationButton"
         android:src="@drawable/windrose_north" />
 
     <ImageView
@@ -60,7 +51,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_toLeftOf="@+id/takeoffDetailsNavigationButton"
+        android:layout_toRightOf="@+id/takeoffDetailsName"
         android:src="@drawable/windrose_northwest" />
 
     <ImageView
@@ -68,7 +59,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_toLeftOf="@+id/takeoffDetailsNavigationButton"
+        android:layout_toRightOf="@+id/takeoffDetailsName"
         android:src="@drawable/windrose_west" />
 
     <ImageView
@@ -76,7 +67,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_toLeftOf="@+id/takeoffDetailsNavigationButton"
+        android:layout_toRightOf="@+id/takeoffDetailsName"
         android:src="@drawable/windrose_southwest" />
 
     <ImageView
@@ -84,7 +75,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_toLeftOf="@+id/takeoffDetailsNavigationButton"
+        android:layout_toRightOf="@+id/takeoffDetailsName"
         android:src="@drawable/windrose_south" />
 
     <ImageView
@@ -92,7 +83,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_toLeftOf="@+id/takeoffDetailsNavigationButton"
+        android:layout_toRightOf="@+id/takeoffDetailsName"
         android:src="@drawable/windrose_southeast" />
 
     <ImageView
@@ -100,7 +91,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_toLeftOf="@+id/takeoffDetailsNavigationButton"
+        android:layout_toRightOf="@+id/takeoffDetailsName"
         android:src="@drawable/windrose_east" />
 
     <ImageView
@@ -108,7 +99,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_toLeftOf="@+id/takeoffDetailsNavigationButton"
+        android:layout_toRightOf="@+id/takeoffDetailsName"
         android:src="@drawable/windrose_northeast" />
 
     <ImageView
@@ -116,7 +107,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_toLeftOf="@+id/takeoffDetailsNavigationButton"
+        android:layout_toRightOf="@+id/takeoffDetailsName"
         android:src="@drawable/windrose_circle" />
 
 </RelativeLayout>
