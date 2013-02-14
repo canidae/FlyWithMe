@@ -32,7 +32,7 @@
             android:value="AIzaSyDxop_2QoIHu-zgof2EhWMC6f5gxAZQOpI" />
 
         <activity
-            android:name=".FlyWithMe"
+            android:name="FlyWithMe"
             android:label="@string/app_name"
             android:theme="@android:style/Theme.NoTitleBar" >
             <intent-filter>
@@ -41,6 +41,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        
+        <activity android:name="Preferences" />
     </application>
 
 </manifest>

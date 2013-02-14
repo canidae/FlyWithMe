@@ -13,6 +13,7 @@ import net.exent.flywithme.TakeoffList.TakeoffListListener;
 import net.exent.flywithme.TakeoffMap.TakeoffMapListener;
 import net.exent.flywithme.data.Takeoff;
 import android.content.Context;
+import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -136,6 +137,14 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
         /* replace fragment container & add transaction to the back stack */
         getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, takeoffMap).commit();
     }
+    
+    /**
+     * Show settings.
+     * TODO: There's no "SupportPreferenceFragment" (yet), thus this has to an own activity for the time being
+     */
+    public void showSettings() {
+        startActivity(new Intent(this, Preferences.class));
+    }
 
     /**
      * {@inheritDoc}
@@ -193,6 +202,12 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
         mapButton.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 showMap();
+            }
+        });
+        ImageButton settingsButton = (ImageButton) findViewById(R.id.settingsButton);
+        settingsButton.setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
+                showSettings();
             }
         });
     }

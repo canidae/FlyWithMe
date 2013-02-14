@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <ListPreference
+        android:defaultValue="@string/show_takeoffs_default_value"
+        android:dialogTitle="@string/show_takeoffs"
+        android:enabled="true"
+        android:entries="@array/show_takeoffs_keys"
+        android:entryValues="@array/show_takeoffs_values"
+        android:key="pref_show_takeoffs"
+        android:selectable="true"
+        android:title="@string/show_takeoffs" />
+
+</PreferenceScreen>
