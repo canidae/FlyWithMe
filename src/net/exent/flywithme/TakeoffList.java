@@ -3,7 +3,7 @@ package net.exent.flywithme;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.exent.flywithme.data.Takeoff;
+import net.exent.flywithme.bean.Takeoff;
 import android.app.Activity;
 import android.content.Context;
 import android.location.Location;

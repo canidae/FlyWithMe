@@ -6,10 +6,15 @@
     <string name="height">Height</string>
 
     <!-- Preferences -->
-    <string name="show_takeoffs">Show takeoffs</string>
-    <string name="show_takeoffs_default_value">200</string>
+    <string name="preferences">Preferences</string>
 
-    <string-array name="show_takeoffs_keys">
+    <string-array name="empty_list"></string-array>
+
+    <!-- How many takeoffs to show -->
+    <string name="show_takeoffs">Show takeoffs</string>
+    <string name="takeoffs_max_distance_values_default_value">200</string>
+
+    <string-array name="takeoffs_max_distance_keys">
         <item>Nearest 50 (fast)</item>
         <item>Nearest 100</item>
         <item>Nearest 200</item>
@@ -22,8 +27,7 @@
         <item>Within 1500km (slow)</item>
         <item>All (very slow)</item>
     </string-array>
-
-    <string-array name="show_takeoffs_values">
+    <string-array name="takeoffs_max_distance_values">
         <item>50</item>
         <item>100</item>
         <item>200</item>
@@ -36,5 +40,29 @@
         <item>-1500</item>
         <item>0</item>
     </string-array>
+
+    <!-- How far away we should draw airspace -->
+    <string name="show_airspace">Show airspace</string>
+    <string name="airspace_max_distance_values_default_value">-100</string>
+
+    <string-array name="airspace_max_distance_keys">
+        <item>Within 50km (fast)</item>
+        <item>Within 100km</item>
+        <item>Within 200km</item>
+        <item>Within 500km</item>
+        <item>Within 1500km (slow)</item>
+        <item>All (very slow)</item>
+    </string-array>
+    <string-array name="airspace_max_distance_values">
+        <item>-50</item>
+        <item>-100</item>
+        <item>-200</item>
+        <item>-500</item>
+        <item>-1500</item>
+        <item>0</item>
+    </string-array>
+
+    <!-- What airspace to draw (this is mostly set programatically) -->
+    <string name="show_airspace_types">Show airspace types</string>
 
 </resources>

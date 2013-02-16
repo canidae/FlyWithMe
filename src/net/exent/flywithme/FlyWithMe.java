@@ -1,8 +1,5 @@
 package net.exent.flywithme;
 
-import java.io.DataInputStream;
-import java.io.EOFException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -11,7 +8,9 @@ import java.util.List;
 import net.exent.flywithme.TakeoffDetails.TakeoffDetailsListener;
 import net.exent.flywithme.TakeoffList.TakeoffListListener;
 import net.exent.flywithme.TakeoffMap.TakeoffMapListener;
-import net.exent.flywithme.data.Takeoff;
+import net.exent.flywithme.bean.Takeoff;
+import net.exent.flywithme.data.Airspace;
+import net.exent.flywithme.data.Flightlog;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
@@ -29,9 +28,9 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
     private static final int LOCATION_UPDATE_TIME = 300000; // update location every LOCATION_UPDATE_TIME millisecond
     private static final int LOCATION_UPDATE_DISTANCE = 100; // or when we've moved more than LOCATION_UPDATE_DISTANCE meters
     private static final int TAKEOFFS_SORT_DISTANCE = 1000; // only sort takeoff list when we've moved more than TAKEOFFS_SORT_DISTANCE meters
-    private static List<Takeoff> takeoffs = new ArrayList<Takeoff>();
-    private static Location lastReadTakeoffsFileLocation;
+    private static Location lastSortedTakeoffsLocation;
     private Location location = new Location(LocationManager.PASSIVE_PROVIDER);
+    private List<Takeoff> sortedTakeoffs;
     private Fragment previousFragment;
 
     /**
@@ -51,11 +50,11 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
      */
     public List<Takeoff> getNearbyTakeoffs() {
         Log.d(getClass().getSimpleName(), "getNearbyTakeoffs()");
-        if (lastReadTakeoffsFileLocation != null && location.distanceTo(lastReadTakeoffsFileLocation) < TAKEOFFS_SORT_DISTANCE)
-            return takeoffs;
-        lastReadTakeoffsFileLocation = location;
-        takeoffs = getTakeoffsAt(location);
-        return takeoffs;
+        if (lastSortedTakeoffsLocation != null && location.distanceTo(lastSortedTakeoffsLocation) < TAKEOFFS_SORT_DISTANCE)
+            return sortedTakeoffs;
+        lastSortedTakeoffsLocation = location;
+        sortedTakeoffs = getTakeoffsAt(location);
+        return sortedTakeoffs;
     }
 
     /**
@@ -67,7 +66,7 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
      */
     public List<Takeoff> getTakeoffsAt(final Location location) {
         Log.d(getClass().getSimpleName(), "getTakeoffsAt(" + location + ")");
-        List<Takeoff> takeoffs = new ArrayList<Takeoff>(FlyWithMe.takeoffs);
+        List<Takeoff> takeoffs = new ArrayList<Takeoff>(Flightlog.getTakeoffs());
         /* sort list by distance */
         Log.d(getClass().getSimpleName(), "Sorting...");
         Collections.sort(takeoffs, new Comparator<Takeoff>() {
@@ -143,7 +142,10 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
      * TODO: There's no "SupportPreferenceFragment" (yet), thus this has to an own activity for the time being
      */
     public void showSettings() {
-        startActivity(new Intent(this, Preferences.class));
+        Log.d(getClass().getSimpleName(), "showSettings()");
+        Intent preferenceIntent = new Intent(this, Preferences.class);
+        preferenceIntent.putStringArrayListExtra("airspaceList", new ArrayList<String>(Airspace.getAirspaceMap().keySet()));
+        startActivity(preferenceIntent);
     }
 
     /**
@@ -177,8 +179,10 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
         location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
         if (location == null)
             location = new Location(LocationManager.PASSIVE_PROVIDER); // no location set, let's pretend we're skinny dipping in the gulf of guinea
-        if (takeoffs.isEmpty())
-            readTakeoffsFile();
+
+        /* init data */
+        Flightlog.init(this);
+        Airspace.init(this);
 
         if (savedInstanceState != null || findViewById(R.id.fragmentContainer) == null)
             return;
@@ -240,36 +244,5 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
         fragmentButton1.setImageDrawable(null);
         ImageButton fragmentButton2 = (ImageButton) findViewById(R.id.fragmentButton2);
         fragmentButton2.setImageDrawable(null);
-    }
-
-    /**
-     * Read file with takeoff details.
-     */
-    private void readTakeoffsFile() {
-        Log.d(getClass().getSimpleName(), "readTakeoffsFile()");
-        takeoffs = new ArrayList<Takeoff>();
-        try {
-            Log.i(getClass().getSimpleName(), "Reading file with takeoffs");
-            DataInputStream inputStream = new DataInputStream(getResources().openRawResource(R.raw.flywithme));
-            while (true) {
-                /* loop breaks once we get an EOFException */
-                int takeoff = inputStream.readShort();
-                String name = inputStream.readUTF();
-                String description = inputStream.readUTF();
-                int asl = inputStream.readShort();
-                int height = inputStream.readShort();
-                Location takeoffLocation = new Location(LocationManager.PASSIVE_PROVIDER);
-                takeoffLocation.setLatitude(inputStream.readFloat());
-                takeoffLocation.setLongitude(inputStream.readFloat());
-                String windpai = inputStream.readUTF();
-
-                takeoffs.add(new Takeoff(takeoff, name, description, asl, height, takeoffLocation.getLatitude(), takeoffLocation.getLongitude(), windpai));
-            }
-        } catch (EOFException e) {
-            /* expected, do nothing */
-            Log.i(getClass().getSimpleName(), "Done reading file with takeoffs");
-        } catch (IOException e) {
-            Log.e(getClass().getSimpleName(), "Error when reading file with takeoffs", e);
-        }
     }
 }

@@ -1,4 +1,4 @@
-package net.exent.flywithme.data;
+package net.exent.flywithme.bean;
 
 import android.location.Location;
 import android.location.LocationManager;

@@ -1,6 +1,6 @@
 package net.exent.flywithme;
 
-import net.exent.flywithme.data.Takeoff;
+import net.exent.flywithme.bean.Takeoff;
 import android.app.Activity;
 import android.content.Intent;
 import android.location.Location;

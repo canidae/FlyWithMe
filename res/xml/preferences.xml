@@ -1,16 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:title="@string/preferences" >
 
     <ListPreference
-        android:defaultValue="@string/show_takeoffs_default_value"
+        android:defaultValue="@string/takeoffs_max_distance_values_default_value"
         android:dialogTitle="@string/show_takeoffs"
         android:enabled="true"
-        android:entries="@array/show_takeoffs_keys"
-        android:entryValues="@array/show_takeoffs_values"
+        android:entries="@array/takeoffs_max_distance_keys"
+        android:entryValues="@array/takeoffs_max_distance_values"
         android:key="pref_show_takeoffs"
         android:selectable="true"
         android:title="@string/show_takeoffs" />
+    <ListPreference
+        android:defaultValue="@string/airspace_max_distance_values_default_value"
+        android:dialogTitle="@string/show_airspace"
+        android:enabled="true"
+        android:entries="@array/airspace_max_distance_keys"
+        android:entryValues="@array/airspace_max_distance_values"
+        android:key="pref_show_airspace"
+        android:selectable="true"
+        android:title="@string/show_airspace" />
+
+    <PreferenceCategory
+        android:enabled="true"
+        android:key="pref_show_airspace_types"
+        android:title="@string/show_airspace_types" >
+    </PreferenceCategory>
 
 </PreferenceScreen>
