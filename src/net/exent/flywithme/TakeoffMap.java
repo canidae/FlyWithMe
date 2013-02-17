@@ -57,29 +57,29 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener {
         map.setOnInfoWindowClickListener(this);
         /* add icons */
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        boolean markersEnabled = prefs.getBoolean("pref_map_show_markers", true);
+        boolean showTakeoffs = prefs.getBoolean("pref_map_show_takeoffs", true);
         final ImageButton markerButton = (ImageButton) getActivity().findViewById(R.id.fragmentButton1);
-        markerButton.setImageResource(markersEnabled ? R.drawable.marker_enabled : R.drawable.marker_disabled);
+        markerButton.setImageResource(showTakeoffs ? R.drawable.takeoffs_enabled : R.drawable.takeoffs_disabled);
         markerButton.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
-                boolean markersEnabled = !prefs.getBoolean("pref_map_show_markers", true);
+                boolean markersEnabled = !prefs.getBoolean("pref_map_show_takeoffs", true);
                 SharedPreferences.Editor editor = prefs.edit();
-                editor.putBoolean("pref_map_show_markers", markersEnabled);
+                editor.putBoolean("pref_map_show_takeoffs", markersEnabled);
                 editor.commit();
-                markerButton.setImageResource(markersEnabled ? R.drawable.marker_enabled : R.drawable.marker_disabled);
+                markerButton.setImageResource(markersEnabled ? R.drawable.takeoffs_enabled : R.drawable.takeoffs_disabled);
                 redrawMap(map);
             }
         });
-        boolean polygonsEnabled = prefs.getBoolean("pref_map_show_polygons", true);
+        boolean showAirspace = prefs.getBoolean("pref_map_show_airspaces", true);
         final ImageButton polygonButton = (ImageButton) getActivity().findViewById(R.id.fragmentButton2);
-        polygonButton.setImageResource(polygonsEnabled ? R.drawable.polygons_enabled : R.drawable.polygons_disabled);
+        polygonButton.setImageResource(showAirspace ? R.drawable.airspace_enabled : R.drawable.airspace_disabled);
         polygonButton.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
-                boolean polygonsEnabled = !prefs.getBoolean("pref_map_show_polygons", true);
+                boolean polygonsEnabled = !prefs.getBoolean("pref_map_show_airspace", true);
                 SharedPreferences.Editor editor = prefs.edit();
-                editor.putBoolean("pref_map_show_polygons", polygonsEnabled);
+                editor.putBoolean("pref_map_show_airspace", polygonsEnabled);
                 editor.commit();
-                polygonButton.setImageResource(polygonsEnabled ? R.drawable.polygons_enabled : R.drawable.polygons_disabled);
+                polygonButton.setImageResource(polygonsEnabled ? R.drawable.airspace_enabled : R.drawable.airspace_disabled);
                 redrawMap(map);
             }
         });
@@ -136,9 +136,9 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener {
     private void redrawMap(GoogleMap map) {
         map.clear();
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        if (prefs.getBoolean("pref_map_show_markers", true))
+        if (prefs.getBoolean("pref_map_show_takeoffs", true))
             drawTakeoffMarkers(map); // TODO: async?
-        if (prefs.getBoolean("pref_map_show_polygons", true))
+        if (prefs.getBoolean("pref_map_show_airspace", true))
             drawAirspaceMap(map); // TODO: async!
     }
 
