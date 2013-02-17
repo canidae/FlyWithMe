@@ -18,14 +18,17 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolygonOptions;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.View.OnClickListener;
 import android.widget.ImageButton;
 
 public class TakeoffMap extends Fragment implements OnInfoWindowClickListener {
@@ -37,7 +40,7 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener {
         List<Takeoff> getNearbyTakeoffs();
     }
 
-    private static final int MAX_TAKEOFFS = 100;
+    private static final int DEFAULT_MAX_AIRSPACE_DISTANCE = 100;
     private static View view;
     private static Map<String, Takeoff> takeoffMarkers = new HashMap<String, Takeoff>();
     private TakeoffMapListener callback;
@@ -47,20 +50,41 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener {
         SupportMapFragment fragment = (SupportMapFragment) getFragmentManager().findFragmentById(R.id.takeoffMapFragment);
         if (fragment == null)
             return;
-        GoogleMap map = fragment.getMap();
+        final GoogleMap map = fragment.getMap();
         if (map == null)
             return;
         /* need to do this here or it'll end up with a reference to an old instance of "this", somehow */
         map.setOnInfoWindowClickListener(this);
         /* add icons */
-        ImageButton markerButton = (ImageButton) getActivity().findViewById(R.id.fragmentButton1);
-        markerButton.setImageResource(R.drawable.marker_enabled);
-        ImageButton polygonButton = (ImageButton) getActivity().findViewById(R.id.fragmentButton2);
-        polygonButton.setImageResource(R.drawable.polygons_enabled);
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        boolean markersEnabled = prefs.getBoolean("pref_map_show_markers", true);
+        final ImageButton markerButton = (ImageButton) getActivity().findViewById(R.id.fragmentButton1);
+        markerButton.setImageResource(markersEnabled ? R.drawable.marker_enabled : R.drawable.marker_disabled);
+        markerButton.setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
+                boolean markersEnabled = !prefs.getBoolean("pref_map_show_markers", true);
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.putBoolean("pref_map_show_markers", markersEnabled);
+                editor.commit();
+                markerButton.setImageResource(markersEnabled ? R.drawable.marker_enabled : R.drawable.marker_disabled);
+                redrawMap(map);
+            }
+        });
+        boolean polygonsEnabled = prefs.getBoolean("pref_map_show_polygons", true);
+        final ImageButton polygonButton = (ImageButton) getActivity().findViewById(R.id.fragmentButton2);
+        polygonButton.setImageResource(polygonsEnabled ? R.drawable.polygons_enabled : R.drawable.polygons_disabled);
+        polygonButton.setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
+                boolean polygonsEnabled = !prefs.getBoolean("pref_map_show_polygons", true);
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.putBoolean("pref_map_show_polygons", polygonsEnabled);
+                editor.commit();
+                polygonButton.setImageResource(polygonsEnabled ? R.drawable.polygons_enabled : R.drawable.polygons_disabled);
+                redrawMap(map);
+            }
+        });
         /* draw map */
-        map.clear();
-        drawTakeoffMarkers(map); // TODO: async?
-        drawAirspaceMap(map); // TODO: async!
+        redrawMap(map);
     }
 
     public void onInfoWindowClick(Marker marker) {
@@ -108,13 +132,21 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener {
         super.onStart();
         drawMap();
     }
+    
+    private void redrawMap(GoogleMap map) {
+        map.clear();
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        if (prefs.getBoolean("pref_map_show_markers", true))
+            drawTakeoffMarkers(map); // TODO: async?
+        if (prefs.getBoolean("pref_map_show_polygons", true))
+            drawAirspaceMap(map); // TODO: async!
+    }
 
     private void drawTakeoffMarkers(GoogleMap map) {
         Log.d(getClass().getSimpleName(), "drawTakeoffMarkers(" + map + ")");
         takeoffMarkers.clear();
         List<Takeoff> takeoffs = callback.getNearbyTakeoffs();
-        for (int i = 0; i < takeoffs.size() && i < MAX_TAKEOFFS; i++) {
-            Takeoff takeoff = takeoffs.get(i);
+        for (Takeoff takeoff : takeoffs) {
             Marker marker = map.addMarker(new MarkerOptions().position(new LatLng(takeoff.getLocation().getLatitude(), takeoff.getLocation().getLongitude())).title(takeoff.getName()).snippet("Height: " + takeoff.getHeight() + ", Start: " + takeoff.getStartDirections()).icon(BitmapDescriptorFactory.defaultMarker((float) 42)));
             takeoffMarkers.put(marker.getId(), takeoff);
         }
@@ -124,11 +156,20 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener {
         Log.d(getClass().getSimpleName(), "drawAirspaceMap(" + map + ")");
         Location myLocation = callback.getLocation();
         Location tmpLocation = new Location(myLocation);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        int maxAirspaceDistance = DEFAULT_MAX_AIRSPACE_DISTANCE;
+        try {
+            maxAirspaceDistance = Integer.parseInt(prefs.getString("pref_max_airspace_distance", "" + DEFAULT_MAX_AIRSPACE_DISTANCE));
+        } catch (NumberFormatException e) {
+            Log.w(getClass().getSimpleName(), "Unable to parse max airspace distance setting as integer", e);
+        }
+        maxAirspaceDistance *= 1000;
+
         for (Map.Entry<String, List<PolygonOptions>> entry : Airspace.getAirspaceMap().entrySet()) {
-            // TODO: if folder not enabled, skip
+            if (entry.getKey() == null || prefs.getBoolean("pref_airspace_enabled_" + entry.getKey().trim(), true) == false)
+                continue;
             for (PolygonOptions polygon : entry.getValue()) {
-                // TODO: always draw everything or just stuff nearby?
-                if (showPolygon(polygon, myLocation, tmpLocation))
+                if (showPolygon(polygon, myLocation, tmpLocation, maxAirspaceDistance))
                     map.addPolygon(polygon);
             }
         }
@@ -143,9 +184,11 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener {
      *            Users current location.
      * @param tmpLocation
      *            Location object only used for determining distance from polygon points to user location.
+     * @param maxAirspaceDistance
+     *            User must be within a polygon or within this distance to one of the polygon points in order to be drawn.
      * @return Whether polygon should be drawn.
      */
-    private boolean showPolygon(PolygonOptions polygon, Location myLocation, Location tmpLocation) {
+    private boolean showPolygon(PolygonOptions polygon, Location myLocation, Location tmpLocation, int maxAirspaceDistance) {
         boolean userSouthOfNorthernmostPoint = false;
         boolean userNorthOfSouthernmostPoint = false;
         boolean userWestOfEasternmostPoint = false;
@@ -153,7 +196,7 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener {
         for (LatLng loc : polygon.getPoints()) {
             tmpLocation.setLatitude(loc.latitude);
             tmpLocation.setLongitude(loc.longitude);
-            if (myLocation.distanceTo(tmpLocation) < 200000)
+            if (myLocation.distanceTo(tmpLocation) < maxAirspaceDistance)
                 return true;
             if (myLocation.getLatitude() < loc.latitude)
                 userSouthOfNorthernmostPoint = true;

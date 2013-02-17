@@ -43,7 +43,7 @@
 
     <!-- How far away we should draw airspace -->
     <string name="show_airspace">Show airspace</string>
-    <string name="airspace_max_distance_values_default_value">-100</string>
+    <string name="airspace_max_distance_values_default_value">100</string>
 
     <string-array name="airspace_max_distance_keys">
         <item>Within 50km (fast)</item>
@@ -54,11 +54,11 @@
         <item>All (very slow)</item>
     </string-array>
     <string-array name="airspace_max_distance_values">
-        <item>-50</item>
-        <item>-100</item>
-        <item>-200</item>
-        <item>-500</item>
-        <item>-1500</item>
+        <item>50</item>
+        <item>100</item>
+        <item>200</item>
+        <item>500</item>
+        <item>1500</item>
         <item>0</item>
     </string-array>
 

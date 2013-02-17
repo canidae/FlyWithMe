@@ -29,7 +29,6 @@ public class TakeoffList extends Fragment {
         List<Takeoff> getNearbyTakeoffs();
     }
 
-    private static final int MAX_TAKEOFFS = 100;
     private static int savedPosition;
     private static int savedListTop;
     private TakeoffListListener callback;
@@ -53,7 +52,7 @@ public class TakeoffList extends Fragment {
         Log.d(getClass().getSimpleName(), "onStart()");
         super.onStart();
 
-        takeoffs = callback.getNearbyTakeoffs().subList(0, MAX_TAKEOFFS);
+        takeoffs = callback.getNearbyTakeoffs();
         TakeoffArrayAdapter adapter = new TakeoffArrayAdapter(getActivity());
         ListView listView = (ListView) getActivity().findViewById(R.id.takeoffListView);
         listView.setAdapter(adapter);

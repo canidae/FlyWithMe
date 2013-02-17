@@ -13,10 +13,12 @@ import net.exent.flywithme.data.Airspace;
 import net.exent.flywithme.data.Flightlog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -28,10 +30,11 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
     private static final int LOCATION_UPDATE_TIME = 300000; // update location every LOCATION_UPDATE_TIME millisecond
     private static final int LOCATION_UPDATE_DISTANCE = 100; // or when we've moved more than LOCATION_UPDATE_DISTANCE meters
     private static final int TAKEOFFS_SORT_DISTANCE = 1000; // only sort takeoff list when we've moved more than TAKEOFFS_SORT_DISTANCE meters
+    private static final int DEFAULT_MAX_TAKEOFFS = 200;
     private static Location lastSortedTakeoffsLocation;
-    private Location location = new Location(LocationManager.PASSIVE_PROVIDER);
-    private List<Takeoff> sortedTakeoffs;
-    private Fragment previousFragment;
+    private static Location location = new Location(LocationManager.PASSIVE_PROVIDER);
+    private static List<Takeoff> sortedTakeoffs;
+    private static Fragment previousFragment;
 
     /**
      * Get approximate location of user.
@@ -50,15 +53,32 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
      */
     public List<Takeoff> getNearbyTakeoffs() {
         Log.d(getClass().getSimpleName(), "getNearbyTakeoffs()");
-        if (lastSortedTakeoffsLocation != null && location.distanceTo(lastSortedTakeoffsLocation) < TAKEOFFS_SORT_DISTANCE)
-            return sortedTakeoffs;
-        lastSortedTakeoffsLocation = location;
-        sortedTakeoffs = getTakeoffsAt(location);
+        if (lastSortedTakeoffsLocation == null || location.distanceTo(lastSortedTakeoffsLocation) >= TAKEOFFS_SORT_DISTANCE) {
+            /* moved too much, need to sort takeoff list again */
+            lastSortedTakeoffsLocation = location;
+            sortedTakeoffs = getTakeoffsAt(location);
+        }
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        int maxTakeoffs = DEFAULT_MAX_TAKEOFFS;
+        try {
+            maxTakeoffs = Integer.parseInt(prefs.getString("pref_max_takeoffs", "" + DEFAULT_MAX_TAKEOFFS));
+        } catch (NumberFormatException e) {
+            Log.w(getClass().getSimpleName(), "Unable to parse max takeoffs setting as integer", e);
+        }
+        if (maxTakeoffs > 0) {
+            return sortedTakeoffs.subList(0, maxTakeoffs);
+        } else if (maxTakeoffs < 0) {
+            /* negative maxTakeoffs means takeoffs within certain distance */
+            int pos;
+            for (pos = 0; pos < sortedTakeoffs.size() && location.distanceTo(sortedTakeoffs.get(pos).getLocation()) <= maxTakeoffs * -1000; ++pos)
+                continue; // loop breaks when we've found the locations within set max distance
+            return sortedTakeoffs.subList(0, pos);
+        }
         return sortedTakeoffs;
     }
 
     /**
-     * Fetch takeoffs near the given location. This requires takeoffs to be sorted by distance, which may cost some CPU.
+     * Fetch takeoffs near the given location. This requires takeoffs to be sorted by distance, which will cost some CPU.
      * 
      * @param location
      *            Where to look for nearby takeoffs.

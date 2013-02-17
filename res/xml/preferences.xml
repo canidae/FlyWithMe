@@ -10,7 +10,7 @@
         android:enabled="true"
         android:entries="@array/takeoffs_max_distance_keys"
         android:entryValues="@array/takeoffs_max_distance_values"
-        android:key="pref_show_takeoffs"
+        android:key="pref_max_takeoffs"
         android:selectable="true"
         android:title="@string/show_takeoffs" />
     <ListPreference
@@ -19,7 +19,7 @@
         android:enabled="true"
         android:entries="@array/airspace_max_distance_keys"
         android:entryValues="@array/airspace_max_distance_values"
-        android:key="pref_show_airspace"
+        android:key="pref_max_airspace_distance"
         android:selectable="true"
         android:title="@string/show_airspace" />
 

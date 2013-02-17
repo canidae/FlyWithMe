@@ -19,7 +19,7 @@ public class Preferences extends PreferenceActivity {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences);
         final String showTakeoffs = getString(R.string.show_takeoffs);
-        final ListPreference takeoffMaxDistanceList = (ListPreference) findPreference("pref_show_takeoffs");
+        final ListPreference takeoffMaxDistanceList = (ListPreference) findPreference("pref_max_takeoffs");
         takeoffMaxDistanceList.setTitle(showTakeoffs + ": " + takeoffMaxDistanceList.getEntry());
         takeoffMaxDistanceList.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
             public boolean onPreferenceChange(Preference preference, Object newValue) {
@@ -31,7 +31,7 @@ public class Preferences extends PreferenceActivity {
         });
 
         final String showAirspace = getString(R.string.show_airspace);
-        final ListPreference airspaceMaxDistanceList = (ListPreference) findPreference("pref_show_airspace");
+        final ListPreference airspaceMaxDistanceList = (ListPreference) findPreference("pref_max_airspace_distance");
         airspaceMaxDistanceList.setTitle(showAirspace + ": " + airspaceMaxDistanceList.getEntry());
         airspaceMaxDistanceList.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
             public boolean onPreferenceChange(Preference preference, Object newValue) {
@@ -41,8 +41,8 @@ public class Preferences extends PreferenceActivity {
                 return true;
             }
         });
-        
-        PreferenceCategory showAirspaceTypes = (PreferenceCategory)findPreference("pref_show_airspace_types");
+
+        PreferenceCategory showAirspaceTypes = (PreferenceCategory) findPreference("pref_show_airspace_types");
         Log.d(getClass().getSimpleName(), "getExtras(): " + getIntent().getExtras());
         ArrayList<String> airspaceList = getIntent().getExtras().getStringArrayList("airspaceList");
         Collections.sort(airspaceList);
@@ -50,7 +50,7 @@ public class Preferences extends PreferenceActivity {
             if (key == null || "".equals(key.trim()))
                 continue;
             CheckBoxPreference checkBoxPreference = new CheckBoxPreference(this);
-            checkBoxPreference.setKey(key);
+            checkBoxPreference.setKey("pref_airspace_enabled_" + key);
             checkBoxPreference.setTitle(key);
             checkBoxPreference.setChecked(true);
             showAirspaceTypes.addPreference(checkBoxPreference);
