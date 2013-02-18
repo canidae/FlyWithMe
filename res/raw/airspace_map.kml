@@ -14,111 +14,7 @@ Sla f.eks. av CTA for a kunne klikke fram info om soner under denne.
 Hans Cato Grytnes
 </description>
 
-<Style id="OrangePoly">
-<LineStyle>
-<width>4</width>
-<color>C81478ff</color>
-</LineStyle>
-<PolyStyle>
-<color>C81478ff</color>
-</PolyStyle>
-</Style>
-
-<Style id="LillaPoly">
-<LineStyle>
-<width>4</width>
-<color>C87850B4</color>
-</LineStyle>
-<PolyStyle>
-<color>C87850B4</color>
-</PolyStyle>
-</Style>
-
-<Style id="RosaPoly">
-<LineStyle>
-<width>4</width>
-<color>C87828F0</color>
-</LineStyle>
-<PolyStyle>
-<color>C87828F0</color>
-</PolyStyle>
-</Style>
-
-<Style id="DarkGreenPoly">
-<LineStyle>
-<width>4</width>
-<color>C878A03C</color>
-</LineStyle>
-<PolyStyle>
-<color>C878A03C</color>
-</PolyStyle>
-</Style>
-
-<Style id="BluePoly">
-<LineStyle>
-<width>2</width>
-<color>ffff0000</color>
-</LineStyle>
-<PolyStyle>
-<color>11ff0000</color>
-<fill>1</fill>
-<outline>1</outline>
-</PolyStyle>
-<IconStyle>
-<color>ffffffff</color>
-<Icon>
-<href>http://maps.google.com/mapfiles/kml/shapes/info-i.png</href>
-</Icon>
-</IconStyle>
-</Style>
-
-<Style id="YellowPoly">
-<LineStyle>
-<width>4</width>
-<color>7d00ffff</color>
-</LineStyle>
-<PolyStyle>
-<color>7d00ffff</color>
-</PolyStyle>
-</Style>
-
-<Style id="GreenPoly">
-<LineStyle>
-<width>0.5</width>
-<color>ff00ff00</color>
-</LineStyle>
-<PolyStyle>
-<color>1100ff00</color>
-<fill>1</fill>
-<outline>1</outline>
-</PolyStyle>
-<IconStyle>
-<color>ffffffff</color>
-<Icon>
-<href>http://home.no/grytnes/luftrom/fly.png</href>
-</Icon>
-</IconStyle>
-</Style>
-
-<Style id="pgYellowPoly">
-<LineStyle>
-<width>4</width>
-<color>ff00ffff</color>
-</LineStyle>
-<PolyStyle>
-<color>1100ffff</color>
-<fill>1</fill>
-<outline>1</outline>
-</PolyStyle>
-<IconStyle>
-<color>ffffffff</color>
-<Icon>
-<href>http://home.no/grytnes/luftrom/pg2.png</href>
-</Icon>
-</IconStyle>
-</Style>
-
-<Style id="YellowPoly-vikeplikt">
+<Style id="vikeplikt">
 <LineStyle>
 <width>3</width>
 <color>ff00ffff</color>
@@ -136,25 +32,7 @@ Hans Cato Grytnes
 </IconStyle>
 </Style>
 
-<Style id="pgGreenPoly">
-<LineStyle>
-<width>3</width>
-<color>ff00ff00</color>
-</LineStyle>
-<PolyStyle>
-<color>1100ff00</color>
-<fill>1</fill>
-<outline>1</outline>
-</PolyStyle>
-<IconStyle>
-<color>ffffffff</color>
-<Icon>
-<href>http://home.no/grytnes/luftrom/pg2.png</href>
-</Icon>
-</IconStyle>
-</Style>
-
-<Style id="pg1BluePoly">
+<Style id="pg1">
 <LineStyle>
 <width>2</width>
 <color>ffff0000</color>
@@ -172,7 +50,7 @@ Hans Cato Grytnes
 </IconStyle>
 </Style>
 
-<Style id="motorflyBluePoly">
+<Style id="motorfly">
 <LineStyle>
 <width>2</width>
 <color>ffff0000</color>
@@ -190,7 +68,7 @@ Hans Cato Grytnes
 </IconStyle>
 </Style>
 
-<Style id="seilflyBluePoly">
+<Style id="seilfly">
 <LineStyle>
 <width>2</width>
 <color>ffff0000</color>
@@ -226,35 +104,7 @@ Hans Cato Grytnes
 </IconStyle>
 </Style>
 
-<Style id="LightRedPoly">
-<LineStyle>
-<width>2</width>
-<color>ff000099</color>
-</LineStyle>
-<PolyStyle>
-<color>ff000099</color>
-</PolyStyle>
-</Style>
-
-<Style id="blaa">
-<LineStyle>
-<width>2</width>
-<color>ffff0000</color>
-</LineStyle>
-<PolyStyle>
-<color>11ff0000</color>
-<fill>1</fill>
-<outline>1</outline>
-</PolyStyle>
-<IconStyle>
-<color>ffffffff</color>
-<Icon>
-<href>http://maps.google.com/mapfiles/kml/shapes/info-i.png</href>
-</Icon>
-</IconStyle>
-</Style>
-
-<Style id="orange-cta">
+<Style id="cta">
 <LineStyle>
 <width>2.5</width>
 <color>ff1478ff</color>
@@ -272,7 +122,7 @@ Hans Cato Grytnes
 </IconStyle>
 </Style>
 
-<Style id="orange-cta1981">
+<Style id="cta1981">
 <LineStyle>
 <width>2.5</width>
 <color>ff1478ff</color>
@@ -290,7 +140,7 @@ Hans Cato Grytnes
 </IconStyle>
 </Style>
 
-<Style id="orange-cta2286">
+<Style id="cta2286">
 <LineStyle>
 <width>2.5</width>
 <color>ff1478ff</color>
@@ -308,7 +158,7 @@ Hans Cato Grytnes
 </IconStyle>
 </Style>
 
-<Style id="orange-cta2895">
+<Style id="cta2895">
 <LineStyle>
 <width>2.5</width>
 <color>ff1478ff</color>
@@ -326,7 +176,7 @@ Hans Cato Grytnes
 </IconStyle>
 </Style>
 
-<Style id="orange-cta3200">
+<Style id="cta3200">
 <LineStyle>
 <width>2.5</width>
 <color>ff1478ff</color>
@@ -344,7 +194,7 @@ Hans Cato Grytnes
 </IconStyle>
 </Style>
 
-<Style id="orange-cta3505">
+<Style id="cta3505">
 <LineStyle>
 <width>2.5</width>
 <color>ff1478ff</color>
@@ -362,7 +212,7 @@ Hans Cato Grytnes
 </IconStyle>
 </Style>
 
-<Style id="orange-cta3810">
+<Style id="cta3810">
 <LineStyle>
 <width>2.5</width>
 <color>ff1478ff</color>
@@ -380,7 +230,7 @@ Hans Cato Grytnes
 </IconStyle>
 </Style>
 
-<Style id="orange-cta4114">
+<Style id="cta4114">
 <LineStyle>
 <width>2.5</width>
 <color>ff1478ff</color>
@@ -398,7 +248,7 @@ Hans Cato Grytnes
 </IconStyle>
 </Style>
 
-<Style id="brun-tma">
+<Style id="tma">
 <LineStyle>
 <width>2.1</width>
 <color>ff143C8C</color>
@@ -416,7 +266,7 @@ Hans Cato Grytnes
 </IconStyle>
 </Style>
 
-<Style id="brun-tma213">
+<Style id="tma213">
 <LineStyle>
 <width>2.1</width>
 <color>ff143C8C</color>
@@ -434,7 +284,7 @@ Hans Cato Grytnes
 </IconStyle>
 </Style>
 
-<Style id="brun-tma305">
+<Style id="tma305">
 <LineStyle>
 <width>2.1</width>
 <color>ff143C8C</color>
@@ -452,7 +302,7 @@ Hans Cato Grytnes
 </IconStyle>
 </Style>
 
-<Style id="brun-tma365">
+<Style id="tma365">
 <LineStyle>
 <width>2.1</width>
 <color>ff143C8C</color>
@@ -470,7 +320,7 @@ Hans Cato Grytnes
 </IconStyle>
 </Style>
 
-<Style id="brun-tma457">
+<Style id="tma457">
 <LineStyle>
 <width>2.1</width>
 <color>ff143C8C</color>
@@ -488,7 +338,7 @@ Hans Cato Grytnes
 </IconStyle>
 </Style>
 
-<Style id="brun-tma518">
+<Style id="tma518">
 <LineStyle>
 <width>2.1</width>
 <color>ff143C8C</color>
@@ -506,7 +356,7 @@ Hans Cato Grytnes
 </IconStyle>
 </Style>
 
-<Style id="brun-tma610">
+<Style id="tma610">
 <LineStyle>
 <width>2.1</width>
 <color>ff143C8C</color>
@@ -524,7 +374,7 @@ Hans Cato Grytnes
 </IconStyle>
 </Style>
 
-<Style id="brun-tma610">
+<Style id="tma610">
 <LineStyle>
 <width>2.1</width>
 <color>ff143C8C</color>
@@ -542,7 +392,7 @@ Hans Cato Grytnes
 </IconStyle>
 </Style>
 
-<Style id="brun-tma701">
+<Style id="tma701">
 <LineStyle>
 <width>2.1</width>
 <color>ff143C8C</color>
@@ -560,7 +410,7 @@ Hans Cato Grytnes
 </IconStyle>
 </Style>
 
-<Style id="brun-tma732">
+<Style id="tma732">
 <LineStyle>
 <width>2.1</width>
 <color>ff143C8C</color>
@@ -578,7 +428,7 @@ Hans Cato Grytnes
 </IconStyle>
 </Style>
 
-<Style id="brun-tma762">
+<Style id="tma762">
 <LineStyle>
 <width>2.1</width>
 <color>ff143C8C</color>
@@ -596,7 +446,7 @@ Hans Cato Grytnes
 </IconStyle>
 </Style>
 
-<Style id="brun-tma792">
+<Style id="tma792">
 <LineStyle>
 <width>2.1</width>
 <color>ff143C8C</color>
@@ -614,7 +464,7 @@ Hans Cato Grytnes
 </IconStyle>
 </Style>
 
-<Style id="brun-tma914">
+<Style id="tma914">
 <LineStyle>
 <width>2.1</width>
 <color>ff143C8C</color>
@@ -632,7 +482,7 @@ Hans Cato Grytnes
 </IconStyle>
 </Style>
 
-<Style id="brun-tma945">
+<Style id="tma945">
 <LineStyle>
 <width>2.1</width>
 <color>ff143C8C</color>
@@ -650,7 +500,7 @@ Hans Cato Grytnes
 </IconStyle>
 </Style>
 
-<Style id="brun-tma1006">
+<Style id="tma1006">
 <LineStyle>
 <width>2.1</width>
 <color>ff143C8C</color>
@@ -668,7 +518,7 @@ Hans Cato Grytnes
 </IconStyle>
 </Style>
 
-<Style id="brun-tma1067">
+<Style id="tma1067">
 <LineStyle>
 <width>2.1</width>
 <color>ff143C8C</color>
@@ -686,7 +536,7 @@ Hans Cato Grytnes
 </IconStyle>
 </Style>
 
-<Style id="brun-tma1219">
+<Style id="tma1219">
 <LineStyle>
 <width>2.1</width>
 <color>ff143C8C</color>
@@ -704,7 +554,7 @@ Hans Cato Grytnes
 </IconStyle>
 </Style>
 
-<Style id="brun-tma1372">
+<Style id="tma1372">
 <LineStyle>
 <width>2.1</width>
 <color>ff143C8C</color>
@@ -722,7 +572,7 @@ Hans Cato Grytnes
 </IconStyle>
 </Style>
 
-<Style id="brun-tma1372">
+<Style id="tma1372">
 <LineStyle>
 <width>2.1</width>
 <color>ff143C8C</color>
@@ -740,7 +590,7 @@ Hans Cato Grytnes
 </IconStyle>
 </Style>
 
-<Style id="brun-tma1524">
+<Style id="tma1524">
 <LineStyle>
 <width>2.1</width>
 <color>ff143C8C</color>
@@ -758,7 +608,7 @@ Hans Cato Grytnes
 </IconStyle>
 </Style>
 
-<Style id="brun-tma1524">
+<Style id="tma1524">
 <LineStyle>
 <width>2.1</width>
 <color>ff143C8C</color>
@@ -776,7 +626,7 @@ Hans Cato Grytnes
 </IconStyle>
 </Style>
 
-<Style id="brun-tma1676">
+<Style id="tma1676">
 <LineStyle>
 <width>2.1</width>
 <color>ff143C8C</color>
@@ -794,7 +644,7 @@ Hans Cato Grytnes
 </IconStyle>
 </Style>
 
-<Style id="brun-tma1981">
+<Style id="tma1981">
 <LineStyle>
 <width>2.1</width>
 <color>ff143C8C</color>
@@ -812,7 +662,7 @@ Hans Cato Grytnes
 </IconStyle>
 </Style>
 
-<Style id="brun-tma2286">
+<Style id="tma2286">
 <LineStyle>
 <width>2.1</width>
 <color>ff143C8C</color>
@@ -830,13 +680,13 @@ Hans Cato Grytnes
 </IconStyle>
 </Style>
 
-<Style id="blaa-ctr">
+<Style id="ctr">
 <LineStyle>
 <width>2</width>
-<color>ffff0000</color>
+<color>ff0033ff</color>
 </LineStyle>
 <PolyStyle>
-<color>24ff0000</color>
+<color>240033ff</color>
 <fill>1</fill>
 <outline>1</outline>
 </PolyStyle>
@@ -848,13 +698,13 @@ Hans Cato Grytnes
 </IconStyle>
 </Style>
 
-<Style id="blaa-tiz">
+<Style id="tiz">
 <LineStyle>
 <width>2</width>
-<color>ffff0000</color>
+<color>ffff0077</color>
 </LineStyle>
 <PolyStyle>
-<color>19ff0000</color>
+<color>19ff0077</color>
 <fill>1</fill>
 <outline>1</outline>
 </PolyStyle>
@@ -866,7 +716,7 @@ Hans Cato Grytnes
 </IconStyle>
 </Style>
 
-<Style id="blaa-sverige">
+<Style id="sverige">
 <LineStyle>
 <width>2</width>
 <color>ffff0000</color>
@@ -884,7 +734,7 @@ Hans Cato Grytnes
 </IconStyle>
 </Style>
 
-<Style id="rosa-tia">
+<Style id="tia">
 <LineStyle>
 <width>2</width>
 <color>ff7828F0</color>
@@ -902,7 +752,7 @@ Hans Cato Grytnes
 </IconStyle>
 </Style>
 
-<Style id="rosa-tia305">
+<Style id="tia305">
 <LineStyle>
 <width>2</width>
 <color>ff7828F0</color>
@@ -920,7 +770,7 @@ Hans Cato Grytnes
 </IconStyle>
 </Style>
 
-<Style id="rosa-tia610">
+<Style id="tia610">
 <LineStyle>
 <width>2</width>
 <color>ff7828F0</color>
@@ -938,7 +788,7 @@ Hans Cato Grytnes
 </IconStyle>
 </Style>
 
-<Style id="rosa-tia762">
+<Style id="tia762">
 <LineStyle>
 <width>2</width>
 <color>ff7828F0</color>
@@ -956,7 +806,7 @@ Hans Cato Grytnes
 </IconStyle>
 </Style>
 
-<Style id="rosa-tia792">
+<Style id="tia792">
 <LineStyle>
 <width>2</width>
 <color>ff7828F0</color>
@@ -974,7 +824,7 @@ Hans Cato Grytnes
 </IconStyle>
 </Style>
 
-<Style id="rosa-tia945">
+<Style id="tia945">
 <LineStyle>
 <width>2</width>
 <color>ff7828F0</color>
@@ -992,7 +842,7 @@ Hans Cato Grytnes
 </IconStyle>
 </Style>
 
-<Style id="rosa-tia1067">
+<Style id="tia1067">
 <LineStyle>
 <width>2</width>
 <color>ff7828F0</color>
@@ -1010,7 +860,7 @@ Hans Cato Grytnes
 </IconStyle>
 </Style>
 
-<Style id="rosa-tia1372">
+<Style id="tia1372">
 <LineStyle>
 <width>2</width>
 <color>ff7828F0</color>
@@ -1028,7 +878,7 @@ Hans Cato Grytnes
 </IconStyle>
 </Style>
 
-<Style id="rosa-tia1676">
+<Style id="tia1676">
 <LineStyle>
 <width>2</width>
 <color>ff7828F0</color>
@@ -1046,7 +896,7 @@ Hans Cato Grytnes
 </IconStyle>
 </Style>
 
-<Style id="rosa-tia1981">
+<Style id="tia1981">
 <LineStyle>
 <width>2</width>
 <color>ff7828F0</color>
@@ -1064,7 +914,7 @@ Hans Cato Grytnes
 </IconStyle>
 </Style>
 
-<Style id="RedPoly">
+<Style id="fare">
 <LineStyle>
 <width>1</width>
 <color>ff0000ff</color>
@@ -1089,10 +939,10 @@ Hans Cato Grytnes
 <name>Luftroms-soner</name>
 
 <Folder>
-<name>CTA og Riksgrense</name>
+<name>CTA</name>
 
 <Placemark>
-<styleUrl>#orange-cta4114</styleUrl>
+<styleUrl>#cta4114</styleUrl>
 <name>Norway CTA 1</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -1128,7 +978,7 @@ Hoydebegr. PG/HG, meter: 4114<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#orange-cta4114</styleUrl>
+<styleUrl>#cta4114</styleUrl>
 <name>Norway CTA 1</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -1143,7 +993,7 @@ Hoydebegr. PG/HG, meter: 4114<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#orange-cta4114</styleUrl>
+<styleUrl>#cta4114</styleUrl>
 <name>Norway CTA 1</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -1158,7 +1008,7 @@ Hoydebegr. PG/HG, meter: 4114<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#orange-cta4114</styleUrl>
+<styleUrl>#cta4114</styleUrl>
 <name>Norway CTA 1</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -1173,7 +1023,7 @@ Hoydebegr. PG/HG, meter: 4114<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#orange-cta3505</styleUrl>
+<styleUrl>#cta3505</styleUrl>
 <name>Norway CTA 2</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -1209,7 +1059,7 @@ Hoydebegr. PG/HG, meter: 3505<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#orange-cta3505</styleUrl>
+<styleUrl>#cta3505</styleUrl>
 <name>Norway CTA 3</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -1287,7 +1137,7 @@ Hoydebegr. PG/HG, meter: 3505<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#orange-cta3505</styleUrl>
+<styleUrl>#cta3505</styleUrl>
 <name>Norway CTA 3</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -1301,7 +1151,7 @@ Hoydebegr. PG/HG, meter: 3505<br/>]]>
 </Placemark>
 
 <Placemark>
-<styleUrl>#orange-cta3505</styleUrl>
+<styleUrl>#cta3505</styleUrl>
 <name>Norway CTA 3</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -1315,7 +1165,7 @@ Hoydebegr. PG/HG, meter: 3505<br/>]]>
 </Placemark>
 
 <Placemark>
-<styleUrl>#orange-cta3505</styleUrl>
+<styleUrl>#cta3505</styleUrl>
 <name>Norway CTA 3</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -1329,7 +1179,7 @@ Hoydebegr. PG/HG, meter: 3505<br/>]]>
 </Placemark>
 
 <Placemark>
-<styleUrl>#orange-cta3505</styleUrl>
+<styleUrl>#cta3505</styleUrl>
 <name>Norway CTA 4</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -1363,7 +1213,7 @@ Hoydebegr. PG/HG, meter: 3505<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#orange-cta3505</styleUrl>
+<styleUrl>#cta3505</styleUrl>
 <name>Norway CTA 4</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -1378,7 +1228,7 @@ Hoydebegr. PG/HG, meter: 3505<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#orange-cta3505</styleUrl>
+<styleUrl>#cta3505</styleUrl>
 <name>Norway CTA 4</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -1393,7 +1243,7 @@ Hoydebegr. PG/HG, meter: 3505<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#orange-cta3505</styleUrl>
+<styleUrl>#cta3505</styleUrl>
 <name>Norway CTA 5</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -1424,7 +1274,7 @@ Hoydebegr. PG/HG, meter: 3505<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#orange-cta3505</styleUrl>
+<styleUrl>#cta3505</styleUrl>
 <name>Norway CTA 5</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -1439,7 +1289,7 @@ Hoydebegr. PG/HG, meter: 3505<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#orange-cta3200</styleUrl>
+<styleUrl>#cta3200</styleUrl>
 <name>Norway CTA 6</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -1707,7 +1557,7 @@ Hoydebegr. PG/HG, meter: 3200<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#orange-cta3200</styleUrl>
+<styleUrl>#cta3200</styleUrl>
 <name>Norway CTA 6</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -1721,7 +1571,7 @@ Hoydebegr. PG/HG, meter: 3200<br/>]]>
 </Placemark>
 
 <Placemark>
-<styleUrl>#orange-cta3200</styleUrl>
+<styleUrl>#cta3200</styleUrl>
 <name>Norway CTA 6</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -1735,7 +1585,7 @@ Hoydebegr. PG/HG, meter: 3200<br/>]]>
 </Placemark>
 
 <Placemark>
-<styleUrl>#orange-cta2895</styleUrl>
+<styleUrl>#cta2895</styleUrl>
 <name>Norway CTA 7</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -1897,7 +1747,7 @@ Hoydebegr. PG/HG, meter: 2895<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#orange-cta2895</styleUrl>
+<styleUrl>#cta2895</styleUrl>
 <name>Norway CTA 7</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -1911,7 +1761,7 @@ Hoydebegr. PG/HG, meter: 2895<br/>]]>
 </Placemark>
 
 <Placemark>
-<styleUrl>#orange-cta2895</styleUrl>
+<styleUrl>#cta2895</styleUrl>
 <name>Norway CTA 7</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -1925,7 +1775,7 @@ Hoydebegr. PG/HG, meter: 2895<br/>]]>
 </Placemark>
 
 <Placemark>
-<styleUrl>#orange-cta2895</styleUrl>
+<styleUrl>#cta2895</styleUrl>
 <name>Norway CTA 7</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -1939,7 +1789,7 @@ Hoydebegr. PG/HG, meter: 2895<br/>]]>
 </Placemark>
 
 <Placemark>
-<styleUrl>#orange-cta2895</styleUrl>
+<styleUrl>#cta2895</styleUrl>
 <name>Norway CTA 7</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -1953,7 +1803,7 @@ Hoydebegr. PG/HG, meter: 2895<br/>]]>
 </Placemark>
 
 <Placemark>
-<styleUrl>#orange-cta2895</styleUrl>
+<styleUrl>#cta2895</styleUrl>
 <name>Norway CTA 7</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -1967,7 +1817,7 @@ Hoydebegr. PG/HG, meter: 2895<br/>]]>
 </Placemark>
 
 <Placemark>
-<styleUrl>#orange-cta2895</styleUrl>
+<styleUrl>#cta2895</styleUrl>
 <name>Norway CTA 7</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -1981,7 +1831,7 @@ Hoydebegr. PG/HG, meter: 2895<br/>]]>
 </Placemark>
 
 <Placemark>
-<styleUrl>#orange-cta2895</styleUrl>
+<styleUrl>#cta2895</styleUrl>
 <name>Norway CTA 7</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -1995,7 +1845,7 @@ Hoydebegr. PG/HG, meter: 2895<br/>]]>
 </Placemark>
 
 <Placemark>
-<styleUrl>#orange-cta2895</styleUrl>
+<styleUrl>#cta2895</styleUrl>
 <name>Norway CTA 7</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -2009,7 +1859,7 @@ Hoydebegr. PG/HG, meter: 2895<br/>]]>
 </Placemark>
 
 <Placemark>
-<styleUrl>#orange-cta</styleUrl>
+<styleUrl>#cta</styleUrl>
 <name>Norway CTA 8</name>
 <description>
 <![CDATA[Luftromsklasse: E<br/>
@@ -2044,7 +1894,7 @@ OBS: Sjekk Notam, kontakt evt. kontrollen<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#orange-cta</styleUrl>
+<styleUrl>#cta</styleUrl>
 <name>Norway CTA 9</name>
 <description>
 <![CDATA[Luftromsklasse: E<br/>
@@ -2082,7 +1932,7 @@ OBS: Sjekk Notam, kontakt evt. kontrollen<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#orange-cta</styleUrl>
+<styleUrl>#cta</styleUrl>
 <name>Norway CTA 10</name>
 <description>
 <![CDATA[Luftromsklasse: E<br/>
@@ -2121,7 +1971,7 @@ OBS: Sjekk Notam, kontakt evt. kontrollen<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#orange-cta2286</styleUrl>
+<styleUrl>#cta2286</styleUrl>
 <name>Norway CTA 11</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -2158,7 +2008,7 @@ Hoydebegr. PG/HG, meter: 2286<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#orange-cta2286</styleUrl>
+<styleUrl>#cta2286</styleUrl>
 <name>Norway CTA 12</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -2189,7 +2039,7 @@ Hoydebegr. PG/HG, meter: 2286<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#orange-cta1981</styleUrl>
+<styleUrl>#cta1981</styleUrl>
 <name>Norway CTA 13</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -2221,7 +2071,7 @@ Hoydebegr. PG/HG, meter: 1981<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#orange-cta</styleUrl>
+<styleUrl>#cta</styleUrl>
 <name>Norway CTA 14</name>
 <description>
 <![CDATA[Luftromsklasse: E<br/>
@@ -2260,7 +2110,7 @@ OBS: Sjekk Notam, kontakt evt. kontrollen<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#orange-cta</styleUrl>
+<styleUrl>#cta</styleUrl>
 <name>Norway CTA 15</name>
 <description>
 <![CDATA[Luftromsklasse: E<br/>
@@ -2296,7 +2146,7 @@ OBS: Sjekk Notam, kontakt evt. kontrollen<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#orange-cta2286</styleUrl>
+<styleUrl>#cta2286</styleUrl>
 <name>Norway CTA 16</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -2327,7 +2177,7 @@ Hoydebegr. PG/HG, meter: 2286<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#orange-cta2895</styleUrl>
+<styleUrl>#cta2895</styleUrl>
 <name>Norway CTA 17</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -2363,7 +2213,7 @@ Hoydebegr. PG/HG, meter: 2895<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#orange-cta</styleUrl>
+<styleUrl>#cta</styleUrl>
 <name>Statfjord CTA 1</name>
 <description>
 <![CDATA[Luftromsklasse: E<br/>
@@ -2399,7 +2249,7 @@ Ovre grense: 2590<br/>
 <name>TMA</name>
 
 <Placemark>
-<styleUrl>#brun-tma1067</styleUrl>
+<styleUrl>#tma1067</styleUrl>
 <name>Alta TMA 1</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -2429,7 +2279,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma1372</styleUrl>
+<styleUrl>#tma1372</styleUrl>
 <name>Alta TMA 2</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -2459,7 +2309,7 @@ Hoydebegr. PG/HG, meter: 1372<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma1372</styleUrl>
+<styleUrl>#tma1372</styleUrl>
 <name>Andoya TMA 1</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -2488,7 +2338,7 @@ Hoydebegr. PG/HG, meter: 1372<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma762</styleUrl>
+<styleUrl>#tma762</styleUrl>
 <name>Andoya TMA 2</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -2519,7 +2369,7 @@ Hoydebegr. PG/HG, meter: 762<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma1067</styleUrl>
+<styleUrl>#tma1067</styleUrl>
 <name>Andoya TMA 3</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -2547,7 +2397,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma1067</styleUrl>
+<styleUrl>#tma1067</styleUrl>
 <name>Banak TMA 1</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -2580,7 +2430,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma1676</styleUrl>
+<styleUrl>#tma1676</styleUrl>
 <name>Bardufoss TMA 1</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -2610,7 +2460,7 @@ Hoydebegr. PG/HG, meter: 1676<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma1372</styleUrl>
+<styleUrl>#tma1372</styleUrl>
 <name>Bardufoss TMA 2</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -2646,7 +2496,7 @@ Hoydebegr. PG/HG, meter: 1372<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma457</styleUrl>
+<styleUrl>#tma457</styleUrl>
 <name>Bodo TMA 1</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -2680,7 +2530,7 @@ Hoydebegr. PG/HG, meter: 457<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma1067</styleUrl>
+<styleUrl>#tma1067</styleUrl>
 <name>Bodo TMA 2</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -2721,7 +2571,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma1372</styleUrl>
+<styleUrl>#tma1372</styleUrl>
 <name>Bodo TMA 3</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -2752,7 +2602,7 @@ Hoydebegr. PG/HG, meter: 1372<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma1981</styleUrl>
+<styleUrl>#tma1981</styleUrl>
 <name>Bodo TMA 4</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -2782,7 +2632,7 @@ Hoydebegr. PG/HG, meter: 1981<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma1372</styleUrl>
+<styleUrl>#tma1372</styleUrl>
 <name>Evenes TMA 1</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -2821,7 +2671,7 @@ Hoydebegr. PG/HG, meter: 1372<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma762</styleUrl>
+<styleUrl>#tma762</styleUrl>
 <name>Evenes TMA 2</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -2855,7 +2705,7 @@ Hoydebegr. PG/HG, meter: 762<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma1676</styleUrl>
+<styleUrl>#tma1676</styleUrl>
 <name>Evenes TMA 3</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -2886,7 +2736,7 @@ Hoydebegr. PG/HG, meter: 1676<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma762</styleUrl>
+<styleUrl>#tma762</styleUrl>
 <name>Farris TMA 1</name>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
@@ -2922,7 +2772,7 @@ Hoydebegr. PG/HG, meter: 762<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma762</styleUrl>
+<styleUrl>#tma762</styleUrl>
 <name>Farris TMA 1</name>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
@@ -2937,7 +2787,7 @@ Hoydebegr. PG/HG, meter: 762<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma762</styleUrl>
+<styleUrl>#tma762</styleUrl>
 <name>Farris TMA 2</name>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
@@ -2969,7 +2819,7 @@ Hoydebegr. PG/HG, meter: 762<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma1067</styleUrl>
+<styleUrl>#tma1067</styleUrl>
 <name>Farris TMA 3</name>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
@@ -3009,7 +2859,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma1372</styleUrl>
+<styleUrl>#tma1372</styleUrl>
 <name>Farris TMA 4</name>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
@@ -3044,7 +2894,7 @@ Hoydebegr. PG/HG, meter: 1372<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma1372</styleUrl>
+<styleUrl>#tma1372</styleUrl>
 <name>Farris TMA 5</name>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
@@ -3082,7 +2932,7 @@ Hoydebegr. PG/HG, meter: 1372<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma1372</styleUrl>
+<styleUrl>#tma1372</styleUrl>
 <name>Farris TMA 5</name>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
@@ -3097,7 +2947,7 @@ Hoydebegr. PG/HG, meter: 1372<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma1067</styleUrl>
+<styleUrl>#tma1067</styleUrl>
 <name>Farris TMA 6</name>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
@@ -3132,7 +2982,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma1067</styleUrl>
+<styleUrl>#tma1067</styleUrl>
 <name>Farris TMA 6</name>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
@@ -3147,7 +2997,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma1067</styleUrl>
+<styleUrl>#tma1067</styleUrl>
 <name>Farris TMA 6</name>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
@@ -3162,7 +3012,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma1067</styleUrl>
+<styleUrl>#tma1067</styleUrl>
 <name>Farris TMA 6</name>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
@@ -3177,7 +3027,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma762</styleUrl>
+<styleUrl>#tma762</styleUrl>
 <name>Farris TMA 7</name>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
@@ -3206,7 +3056,7 @@ Hoydebegr. PG/HG, meter: 762<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma762</styleUrl>
+<styleUrl>#tma762</styleUrl>
 <name>Farris TMA 7</name>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
@@ -3221,7 +3071,7 @@ Hoydebegr. PG/HG, meter: 762<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma762</styleUrl>
+<styleUrl>#tma762</styleUrl>
 <name>Farris TMA 8</name>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
@@ -3261,7 +3111,7 @@ Hoydebegr. PG/HG, meter: 762<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma762</styleUrl>
+<styleUrl>#tma762</styleUrl>
 <name>Farris TMA 8</name>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
@@ -3276,7 +3126,7 @@ Hoydebegr. PG/HG, meter: 762<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma762</styleUrl>
+<styleUrl>#tma762</styleUrl>
 <name>Farris TMA 8</name>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
@@ -3291,7 +3141,7 @@ Hoydebegr. PG/HG, meter: 762<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma1067</styleUrl>
+<styleUrl>#tma1067</styleUrl>
 <name>Farris TMA 9</name>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
@@ -3340,7 +3190,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma1067</styleUrl>
+<styleUrl>#tma1067</styleUrl>
 <name>Farris TMA 9</name>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
@@ -3355,7 +3205,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma1372</styleUrl>
+<styleUrl>#tma1372</styleUrl>
 <name>Farris TMA 10</name>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
@@ -3402,7 +3252,7 @@ Hoydebegr. PG/HG, meter: 1372<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma762</styleUrl>
+<styleUrl>#tma762</styleUrl>
 <name>Farris TMA 11</name>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
@@ -3432,7 +3282,7 @@ Hoydebegr. PG/HG, meter: 762<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma213</styleUrl>
+<styleUrl>#tma213</styleUrl>
 <name>Flesland TMA 1</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -3465,7 +3315,7 @@ Hoydebegr. PG/HG, meter: 213<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma610</styleUrl>
+<styleUrl>#tma610</styleUrl>
 <name>Flesland TMA 2</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -3497,7 +3347,7 @@ Hoydebegr. PG/HG, meter: 610<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma1067</styleUrl>
+<styleUrl>#tma1067</styleUrl>
 <name>Flesland TMA 3</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -3533,7 +3383,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma1676</styleUrl>
+<styleUrl>#tma1676</styleUrl>
 <name>Flesland TMA 4</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -3568,7 +3418,7 @@ Hoydebegr. PG/HG, meter: 1676<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma1676</styleUrl>
+<styleUrl>#tma1676</styleUrl>
 <name>Flesland TMA 4</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -3583,7 +3433,7 @@ Hoydebegr. PG/HG, meter: 1676<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma762</styleUrl>
+<styleUrl>#tma762</styleUrl>
 <name>Hammerfest TMA 1</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -3614,7 +3464,7 @@ Hoydebegr. PG/HG, meter: 762<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma1067</styleUrl>
+<styleUrl>#tma1067</styleUrl>
 <name>Hammerfest TMA 2</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -3650,7 +3500,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma762</styleUrl>
+<styleUrl>#tma762</styleUrl>
 <name>Helgeland TMA 1</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -3682,7 +3532,7 @@ Hoydebegr. PG/HG, meter: 762<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma762</styleUrl>
+<styleUrl>#tma762</styleUrl>
 <name>Helgeland TMA 1</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -3697,7 +3547,7 @@ Hoydebegr. PG/HG, meter: 762<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma1372</styleUrl>
+<styleUrl>#tma1372</styleUrl>
 <name>Helgeland TMA 2</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -3730,7 +3580,7 @@ Hoydebegr. PG/HG, meter: 1372<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma1372</styleUrl>
+<styleUrl>#tma1372</styleUrl>
 <name>Helgeland TMA 2</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -3745,7 +3595,7 @@ Hoydebegr. PG/HG, meter: 1372<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma1981</styleUrl>
+<styleUrl>#tma1981</styleUrl>
 <name>Helgeland TMA 3</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -3775,7 +3625,7 @@ Hoydebegr. PG/HG, meter: 1981<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma762</styleUrl>
+<styleUrl>#tma762</styleUrl>
 <name>Kirkenes TMA 1</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -3848,7 +3698,7 @@ Hoydebegr. PG/HG, meter: 762<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma1524</styleUrl>
+<styleUrl>#tma1524</styleUrl>
 <name>Kjevik TMA 1</name>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
@@ -3878,7 +3728,7 @@ Hoydebegr. PG/HG, meter: 1524<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma1067</styleUrl>
+<styleUrl>#tma1067</styleUrl>
 <name>Kjevik TMA 2</name>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
@@ -3907,7 +3757,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma762</styleUrl>
+<styleUrl>#tma762</styleUrl>
 <name>Kjevik TMA 3</name>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
@@ -3941,7 +3791,7 @@ Hoydebegr. PG/HG, meter: 762<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma1067</styleUrl>
+<styleUrl>#tma1067</styleUrl>
 <name>Kjevik TMA 4</name>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
@@ -3970,7 +3820,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma213</styleUrl>
+<styleUrl>#tma213</styleUrl>
 <name>Kvernberget TMA 1</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -4003,7 +3853,7 @@ Hoydebegr. PG/HG, meter: 213<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma762</styleUrl>
+<styleUrl>#tma762</styleUrl>
 <name>Kvernberget TMA 2</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -4036,7 +3886,7 @@ Hoydebegr. PG/HG, meter: 762<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma1067</styleUrl>
+<styleUrl>#tma1067</styleUrl>
 <name>Kvernberget TMA 3</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -4067,7 +3917,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma1372</styleUrl>
+<styleUrl>#tma1372</styleUrl>
 <name>Kvernberget TMA 4</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -4096,7 +3946,7 @@ Hoydebegr. PG/HG, meter: 1372<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma1067</styleUrl>
+<styleUrl>#tma1067</styleUrl>
 <name>Lofoten TMA</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -4133,7 +3983,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma762</styleUrl>
+<styleUrl>#tma762</styleUrl>
 <name>Oslo TMA 1</name>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
@@ -4173,7 +4023,7 @@ Hoydebegr. PG/HG, meter: 762<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma914</styleUrl>
+<styleUrl>#tma914</styleUrl>
 <name>Oslo TMA 2</name>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
@@ -4210,7 +4060,7 @@ Hoydebegr. PG/HG, meter: 914<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma1067</styleUrl>
+<styleUrl>#tma1067</styleUrl>
 <name>Oslo TMA 3</name>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
@@ -4249,7 +4099,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma1372</styleUrl>
+<styleUrl>#tma1372</styleUrl>
 <name>Oslo TMA 4</name>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
@@ -4293,7 +4143,7 @@ Hoydebegr. PG/HG, meter: 1372<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma1372</styleUrl>
+<styleUrl>#tma1372</styleUrl>
 <name>Oslo TMA 4</name>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
@@ -4308,7 +4158,7 @@ Hoydebegr. PG/HG, meter: 1372<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma1372</styleUrl>
+<styleUrl>#tma1372</styleUrl>
 <name>Oslo TMA 4</name>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
@@ -4323,7 +4173,7 @@ Hoydebegr. PG/HG, meter: 1372<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma1676</styleUrl>
+<styleUrl>#tma1676</styleUrl>
 <name>Oslo TMA 5</name>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
@@ -4356,7 +4206,7 @@ Hoydebegr. PG/HG, meter: 1676<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma1372</styleUrl>
+<styleUrl>#tma1372</styleUrl>
 <name>Oslo TMA 6</name>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
@@ -4403,7 +4253,7 @@ Hoydebegr. PG/HG, meter: 1372<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma1067</styleUrl>
+<styleUrl>#tma1067</styleUrl>
 <name>Oslo TMA 7</name>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
@@ -4459,7 +4309,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma1372</styleUrl>
+<styleUrl>#tma1372</styleUrl>
 <name>Roros TMA 1</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -4495,7 +4345,7 @@ ta evt. kontakt med tarnet pa tlf.72411452<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma1981</styleUrl>
+<styleUrl>#tma1981</styleUrl>
 <name>Roros TMA 2</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -4526,7 +4376,7 @@ ta evt. kontakt med tarnet pa tlf.72411452<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma213</styleUrl>
+<styleUrl>#tma213</styleUrl>
 <name>Sola TMA 1</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -4563,7 +4413,7 @@ Hoydebegr. PG/HG, meter: 213<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma457</styleUrl>
+<styleUrl>#tma457</styleUrl>
 <name>Sola TMA 2</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -4602,7 +4452,7 @@ Hoydebegr. PG/HG, meter: 457<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma762</styleUrl>
+<styleUrl>#tma762</styleUrl>
 <name>Sola TMA 3</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -4635,7 +4485,7 @@ Hoydebegr. PG/HG, meter: 762<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma1067</styleUrl>
+<styleUrl>#tma1067</styleUrl>
 <name>Sola TMA 4</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -4669,7 +4519,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma1067</styleUrl>
+<styleUrl>#tma1067</styleUrl>
 <name>Sola TMA 4</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -4684,7 +4534,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma1372</styleUrl>
+<styleUrl>#tma1372</styleUrl>
 <name>Tromso TMA 1</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -4716,7 +4566,7 @@ Hoydebegr. PG/HG, meter: 1372<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma762</styleUrl>
+<styleUrl>#tma762</styleUrl>
 <name>Vigra TMA 1</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -4749,7 +4599,7 @@ Hoydebegr. PG/HG, meter: 762<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma1067</styleUrl>
+<styleUrl>#tma1067</styleUrl>
 <name>Vigra TMA 2</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -4787,7 +4637,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma1372</styleUrl>
+<styleUrl>#tma1372</styleUrl>
 <name>Vigra TMA 3</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -4816,7 +4666,7 @@ Hoydebegr. PG/HG, meter: 1372<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma1676</styleUrl>
+<styleUrl>#tma1676</styleUrl>
 <name>Vigra TMA 4</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -4846,7 +4696,7 @@ Hoydebegr. PG/HG, meter: 1676<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma762</styleUrl>
+<styleUrl>#tma762</styleUrl>
 <name>Varnes TMA 1</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -4876,7 +4726,7 @@ Hoydebegr. PG/HG, meter: 762<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma762</styleUrl>
+<styleUrl>#tma762</styleUrl>
 <name>Varnes TMA 1</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -4891,7 +4741,7 @@ Hoydebegr. PG/HG, meter: 762<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma1067</styleUrl>
+<styleUrl>#tma1067</styleUrl>
 <name>Varnes TMA 2</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -4927,7 +4777,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma1372</styleUrl>
+<styleUrl>#tma1372</styleUrl>
 <name>Varnes TMA 3</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -4956,7 +4806,7 @@ Hoydebegr. PG/HG, meter: 1372<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma1676</styleUrl>
+<styleUrl>#tma1676</styleUrl>
 <name>Varnes TMA 4</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -4986,7 +4836,7 @@ Hoydebegr. PG/HG, meter: 1676<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma762</styleUrl>
+<styleUrl>#tma762</styleUrl>
 <name>Orland TMA 1</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -5017,7 +4867,7 @@ Hoydebegr. PG/HG, meter: 762<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma1067</styleUrl>
+<styleUrl>#tma1067</styleUrl>
 <name>Orland TMA 2</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -5046,7 +4896,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma1067</styleUrl>
+<styleUrl>#tma1067</styleUrl>
 <name>Orland TMA 3</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -5080,7 +4930,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 <name>CTR</name>
 
 <Placemark>
-<styleUrl>#blaa-ctr</styleUrl>
+<styleUrl>#ctr</styleUrl>
 <name>Alta CTR</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -5114,7 +4964,7 @@ PG/HG-flyging er normalt forbudt her.<br/>]]>
 </Placemark>
 
 <Placemark>
-<styleUrl>#blaa-ctr</styleUrl>
+<styleUrl>#ctr</styleUrl>
 <name>Andoya CTR</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -5145,7 +4995,7 @@ PG/HG-flyging er normalt forbudt her.<br/>]]>
 </Placemark>
 
 <Placemark>
-<styleUrl>#blaa-ctr</styleUrl>
+<styleUrl>#ctr</styleUrl>
 <name>Bardufoss CTR</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -5175,7 +5025,7 @@ PG/HG-flyging er normalt forbudt her.<br/>]]>
 </Placemark>
 
 <Placemark>
-<styleUrl>#blaa-ctr</styleUrl>
+<styleUrl>#ctr</styleUrl>
 <name>Flesland CTR</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -5208,7 +5058,7 @@ PG/HG-flyging er normalt forbudt her.<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#blaa-ctr</styleUrl>
+<styleUrl>#ctr</styleUrl>
 <name>Bodo CTR</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -5240,7 +5090,7 @@ PG/HG-flyging er normalt forbudt her.<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#blaa-ctr</styleUrl>
+<styleUrl>#ctr</styleUrl>
 <name>Evenes CTR</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -5270,7 +5120,7 @@ PG/HG-flyging er normalt forbudt her.<br/>]]>
 </Placemark>
 
 <Placemark>
-<styleUrl>#blaa-ctr</styleUrl>
+<styleUrl>#ctr</styleUrl>
 <name>Karmoy CTR</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -5304,7 +5154,7 @@ PG/HG-flyging er normalt forbudt her.<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#blaa-ctr</styleUrl>
+<styleUrl>#ctr</styleUrl>
 <name>Kirkenes CTR 1</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -5333,7 +5183,7 @@ PG/HG-flyging er normalt forbudt her.<br/>]]>
 </Placemark>
 
 <Placemark>
-<styleUrl>#blaa-ctr</styleUrl>
+<styleUrl>#ctr</styleUrl>
 <name>Kjevik CTR</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -5367,7 +5217,7 @@ PG/HG-flyging er normalt forbudt her.<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#blaa-ctr</styleUrl>
+<styleUrl>#ctr</styleUrl>
 <name>Kvernberget CTR</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -5398,7 +5248,7 @@ PG/HG-flyging er normalt forbudt her.<br/>]]>
 </MultiGeometry>
 </Placemark>
 <Placemark>
-<styleUrl>#blaa-ctr</styleUrl>
+<styleUrl>#ctr</styleUrl>
 <name>Banak CTR</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -5428,7 +5278,7 @@ PG/HG-flyging er normalt forbudt her.<br/>]]>
 </Placemark>
 
 <Placemark>
-<styleUrl>#blaa-ctr</styleUrl>
+<styleUrl>#ctr</styleUrl>
 <name>Rygge CTR</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -5462,7 +5312,7 @@ PG/HG-flyging er normalt forbudt her.<br/>]]>
 </Placemark>
 
 <Placemark>
-<styleUrl>#blaa-ctr</styleUrl>
+<styleUrl>#ctr</styleUrl>
 <name>Gardermoen CTR</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -5498,7 +5348,7 @@ PG/HG-flyging er normalt forbudt her.<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#blaa-ctr</styleUrl>
+<styleUrl>#ctr</styleUrl>
 <name>Roros CTR</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -5529,7 +5379,7 @@ ta evt. kontakt med tarnet pa tlf.72411452<br/>]]>
 </Placemark>
 
 <Placemark>
-<styleUrl>#blaa-ctr</styleUrl>
+<styleUrl>#ctr</styleUrl>
 <name>Torp CTR</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -5564,7 +5414,7 @@ Tlf.nr til tarnet: 33426150 <br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#blaa-ctr</styleUrl>
+<styleUrl>#ctr</styleUrl>
 <name>Sola CTR</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -5597,7 +5447,7 @@ PG/HG-flyging er normalt forbudt her.<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#blaa-ctr</styleUrl>
+<styleUrl>#ctr</styleUrl>
 <name>Tromso CTR</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -5627,7 +5477,7 @@ PG/HG-flyging er normalt forbudt her.<br/>]]>
 </Placemark>
 
 <Placemark>
-<styleUrl>#blaa-ctr</styleUrl>
+<styleUrl>#ctr</styleUrl>
 <name>Varnes CTR</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -5658,7 +5508,7 @@ PG/HG-flyging er normalt forbudt her.<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#blaa-ctr</styleUrl>
+<styleUrl>#ctr</styleUrl>
 <name>Orland CTR</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -5689,7 +5539,7 @@ Ovre grense: 762<br/>]]>
 </Placemark>
 
 <Placemark>
-<styleUrl>#blaa-ctr</styleUrl>
+<styleUrl>#ctr</styleUrl>
 <name>Vigra CTR</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -5724,7 +5574,7 @@ Ovre grense: 762<br/>]]>
 <name>TIZ</name>
 
 <Placemark>
-<styleUrl>#blaa-tiz</styleUrl>
+<styleUrl>#tiz</styleUrl>
 <name>Berlevag TIZ</name>
 <description>
 <![CDATA[Luftromsklasse: G<br/>
@@ -5756,7 +5606,7 @@ Kontakt evt. taarnet.<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#blaa-tiz</styleUrl>
+<styleUrl>#tiz</styleUrl>
 <name>Bronnoy TIZ</name>
 <description>
 <![CDATA[Luftromsklasse: G<br/>
@@ -5790,7 +5640,7 @@ Kontakt evt. taarnet.<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#blaa-tiz</styleUrl>
+<styleUrl>#tiz</styleUrl>
 <name>Batsfjord TIZ</name>
 <description>
 <![CDATA[Luftromsklasse: G<br/>
@@ -5822,7 +5672,7 @@ Kontakt evt. taarnet.<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#blaa-tiz</styleUrl>
+<styleUrl>#tiz</styleUrl>
 <name>Fagernes TIZ</name>
 <description>
 <![CDATA[Luftromsklasse: G<br/>
@@ -5858,7 +5708,7 @@ Kontakt evt. taarnet tlf.67030200.<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#blaa-tiz</styleUrl>
+<styleUrl>#tiz</styleUrl>
 <name>Floro TIZ</name>
 <description>
 <![CDATA[Luftromsklasse: G<br/>
@@ -5892,7 +5742,7 @@ Kontakt evt. taarnet.<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#blaa-tiz</styleUrl>
+<styleUrl>#tiz</styleUrl>
 <name>Bringeland TIZ</name>
 <description>
 <![CDATA[Luftromsklasse: G<br/>
@@ -5924,7 +5774,7 @@ Kontakt evt. taarnet.<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#blaa-tiz</styleUrl>
+<styleUrl>#tiz</styleUrl>
 <name>Hammerfest TIZ</name>
 <description>
 <![CDATA[Luftromsklasse: G<br/>
@@ -5957,7 +5807,7 @@ Kontakt evt. taarnet.<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#blaa-tiz</styleUrl>
+<styleUrl>#tiz</styleUrl>
 <name>Hasvik TIZ</name>
 <description>
 <![CDATA[Luftromsklasse: G<br/>
@@ -5991,7 +5841,7 @@ Kontakt evt. taarnet.<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#blaa-tiz</styleUrl>
+<styleUrl>#tiz</styleUrl>
 <name>Valan TIZ</name>
 <description>
 <![CDATA[Luftromsklasse: G<br/>
@@ -6023,7 +5873,7 @@ Kontakt evt. taarnet.<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#blaa-tiz</styleUrl>
+<styleUrl>#tiz</styleUrl>
 <name>Leknes TIZ</name>
 <description>
 <![CDATA[Luftromsklasse: G<br/>
@@ -6053,7 +5903,7 @@ Ovre grense (fly over denne eller kontakt taarnet): 1067<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#blaa-tiz</styleUrl>
+<styleUrl>#tiz</styleUrl>
 <name>Mehamn TIZ</name>
 <description>
 <![CDATA[Luftromsklasse: G<br/>
@@ -6085,7 +5935,7 @@ Kontakt evt. taarnet.<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#blaa-tiz</styleUrl>
+<styleUrl>#tiz</styleUrl>
 <name>Rossvoll TIZ</name>
 <description>
 <![CDATA[Luftromsklasse: G<br/>
@@ -6117,7 +5967,7 @@ Kontakt evt. taarnet.<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#blaa-tiz</styleUrl>
+<styleUrl>#tiz</styleUrl>
 <name>Molde TIZ</name>
 <description>
 <![CDATA[Luftromsklasse: G<br/>
@@ -6152,7 +6002,7 @@ Kontakt evt. taarnet.<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#blaa-tiz</styleUrl>
+<styleUrl>#tiz</styleUrl>
 <name>Mosjoen TIZ</name>
 <description>
 <![CDATA[Luftromsklasse: G<br/>
@@ -6185,7 +6035,7 @@ Kontakt evt. taarnet.<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#blaa-tiz</styleUrl>
+<styleUrl>#tiz</styleUrl>
 <name>Namsos TIZ</name>
 <description>
 <![CDATA[Luftromsklasse: G<br/>
@@ -6217,7 +6067,7 @@ Kontakt evt. taarnet.<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#blaa-tiz</styleUrl>
+<styleUrl>#tiz</styleUrl>
 <name>Framnes TIZ</name>
 <description>
 <![CDATA[Luftromsklasse: G<br/>
@@ -6248,7 +6098,7 @@ Ovre grense (fly over denne eller kontakt taarnet): 762<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#blaa-tiz</styleUrl>
+<styleUrl>#tiz</styleUrl>
 <name>Notodden TIZ</name>
 <description>
 <![CDATA[Luftromsklasse: G<br/>
@@ -6281,7 +6131,7 @@ Ovre grense (fly over denne eller kontakt taarnet, tlf.35011666): 1372<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#blaa-tiz</styleUrl>
+<styleUrl>#tiz</styleUrl>
 <name>Notodden TIZ</name>
 <description>
 <![CDATA[Luftromsklasse: G<br/>
@@ -6297,7 +6147,7 @@ Ovre grense (fly over denne eller kontakt taarnet, tlf.35011666): 1372<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#blaa-tiz</styleUrl>
+<styleUrl>#tiz</styleUrl>
 <name>Notodden TIZ</name>
 <description>
 <![CDATA[Luftromsklasse: G<br/>
@@ -6313,7 +6163,7 @@ Ovre grense (fly over denne eller kontakt taarnet, tlf.35011666): 1372<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#blaa-tiz</styleUrl>
+<styleUrl>#tiz</styleUrl>
 <name>Rorvik TIZ</name>
 <description>
 <![CDATA[Luftromsklasse: G<br/>
@@ -6345,7 +6195,7 @@ Kontakt evt. taarnet.<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#blaa-tiz</styleUrl>
+<styleUrl>#tiz</styleUrl>
 <name>Rost TIZ</name>
 <description>
 <![CDATA[Luftromsklasse: G<br/>
@@ -6376,7 +6226,7 @@ Ovre grense (fly over denne eller kontakt taarnet): 1067<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#blaa-tiz</styleUrl>
+<styleUrl>#tiz</styleUrl>
 <name>Anda TIZ</name>
 <description>
 <![CDATA[Luftromsklasse: G<br/>
@@ -6410,7 +6260,7 @@ Kontakt evt. taarnet.<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#blaa-tiz</styleUrl>
+<styleUrl>#tiz</styleUrl>
 <name>Stokka TIZ</name>
 <description>
 <![CDATA[Luftromsklasse: G<br/>
@@ -6444,7 +6294,7 @@ Kontakt evt. taarnet.<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#blaa-tiz</styleUrl>
+<styleUrl>#tiz</styleUrl>
 <name>Geiteryggen TIZ</name>
 <description>
 <![CDATA[Luftromsklasse: G<br/>
@@ -6477,7 +6327,7 @@ Kontakt evt. taarnet.<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#blaa-tiz</styleUrl>
+<styleUrl>#tiz</styleUrl>
 <name>SOGNDAL TIZ</name>
 <description>
 <![CDATA[Luftromsklasse: G<br/>
@@ -6509,7 +6359,7 @@ Kontakt evt. taarnet.<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#blaa-tiz</styleUrl>
+<styleUrl>#tiz</styleUrl>
 <name>Skagen TIZ</name>
 <description>
 <![CDATA[Luftromsklasse: G<br/>
@@ -6541,7 +6391,7 @@ Ovre grense (fly over denne eller kontakt taarnet): 1067<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#blaa-tiz</styleUrl>
+<styleUrl>#tiz</styleUrl>
 <name>Sorstokken TIZ</name>
 <description>
 <![CDATA[Luftromsklasse: G<br/>
@@ -6574,7 +6424,7 @@ Ovre grense (fly over denne eller kontakt taarnet): 1067<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#blaa-tiz</styleUrl>
+<styleUrl>#tiz</styleUrl>
 <name>Helle TIZ</name>
 <description>
 <![CDATA[Luftromsklasse: G<br/>
@@ -6605,7 +6455,7 @@ Ovre grense (fly over denne eller kontakt taarnet): 1067<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#blaa-tiz</styleUrl>
+<styleUrl>#tiz</styleUrl>
 <name>Sorkjosen E TIZ</name>
 <description>
 <![CDATA[Luftromsklasse: G<br/>
@@ -6637,7 +6487,7 @@ Ovre grense (fly over denne eller kontakt taarnet): 1372<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#blaa-tiz</styleUrl>
+<styleUrl>#tiz</styleUrl>
 <name>Sorkjosen W TIZ</name>
 <description>
 <![CDATA[Luftromsklasse: G<br/>
@@ -6668,7 +6518,7 @@ Ovre grense (fly over denne eller kontakt taarnet): 1982<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#blaa-tiz</styleUrl>
+<styleUrl>#tiz</styleUrl>
 <name>Vadso TIZ</name>
 <description>
 <![CDATA[Luftromsklasse: G<br/>
@@ -6700,7 +6550,7 @@ Kontakt evt. taarnet.<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#blaa-tiz</styleUrl>
+<styleUrl>#tiz</styleUrl>
 <name>Vardo TIZ</name>
 <description>
 <![CDATA[Luftromsklasse: G<br/>
@@ -6732,7 +6582,7 @@ Kontakt evt. taarnet.<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#blaa-tiz</styleUrl>
+<styleUrl>#tiz</styleUrl>
 <name>Hovden TIZ</name>
 <description>
 <![CDATA[Luftromsklasse: G<br/>
@@ -6769,7 +6619,7 @@ Kontakt evt. taarnet.<br/>
 <name>TIA</name>
 
 <Placemark>
-<styleUrl>#rosa-tia1981</styleUrl>
+<styleUrl>#tia1981</styleUrl>
 <name>FAGERNES E TIA</name>
 <description>
 <![CDATA[Luftromsklasse: G<br/>
@@ -6799,7 +6649,7 @@ Flykontollen Royken styrer denne. tlf.66792530<br/>]]>
 </Placemark>
 
 <Placemark>
-<styleUrl>#rosa-tia1981</styleUrl>
+<styleUrl>#tia1981</styleUrl>
 <name>FAGERNES W TIA</name>
 <description>
 <![CDATA[Luftromsklasse: G<br/>
@@ -6829,7 +6679,7 @@ Flykontollen Royken styrer denne. tlf.66792530<br/>]]>
 </Placemark>
 
 <Placemark>
-<styleUrl>#rosa-tia1067</styleUrl>
+<styleUrl>#tia1067</styleUrl>
 <name>FINNMARK N TIA 1</name>
 <description>
 <![CDATA[Luftromsklasse: G<br/>
@@ -6870,7 +6720,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>]]>
 </Placemark>
 
 <Placemark>
-<styleUrl>#rosa-tia1981</styleUrl>
+<styleUrl>#tia1981</styleUrl>
 <name>FINNMARK S TIA 1</name>
 <description>
 <![CDATA[Luftromsklasse: G<br/>
@@ -6900,7 +6750,7 @@ Hoydebegr. PG/HG, meter: 1981<br/>]]>
 </Placemark>
 
 <Placemark>
-<styleUrl>#rosa-tia1067</styleUrl>
+<styleUrl>#tia1067</styleUrl>
 <name>NAMSOS TIA 1</name>
 <description>
 <![CDATA[Luftromsklasse: G<br/>
@@ -6931,7 +6781,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>]]>
 </Placemark>
 
 <Placemark>
-<styleUrl>#rosa-tia1067</styleUrl>
+<styleUrl>#tia1067</styleUrl>
 <name>SOGN N TIA 1</name>
 <description>
 <![CDATA[Luftromsklasse: G<br/>
@@ -6958,7 +6808,7 @@ Hoydebegr. PG/HG, meter: 1372<br/>]]>
 </Placemark>
 
 <Placemark>
-<styleUrl>#rosa-tia1372</styleUrl>
+<styleUrl>#tia1372</styleUrl>
 <name>SOGN NE TIA 1</name>
 <description>
 <![CDATA[Luftromsklasse: G<br/>
@@ -6986,7 +6836,7 @@ Hoydebegr. PG/HG, meter: 1372<br/>]]>
 </Placemark>
 
 <Placemark>
-<styleUrl>#rosa-tia1372</styleUrl>
+<styleUrl>#tia1372</styleUrl>
 <name>SOGN NW TIA 1</name>
 <description>
 <![CDATA[Luftromsklasse: G<br/>
@@ -7017,7 +6867,7 @@ Hoydebegr. PG/HG, meter: 1372<br/>]]>
 </Placemark>
 
 <Placemark>
-<styleUrl>#rosa-tia1676</styleUrl>
+<styleUrl>#tia1676</styleUrl>
 <name>SOGN S TIA 1</name>
 <description>
 <![CDATA[Luftromsklasse: G<br/>
@@ -7049,7 +6899,7 @@ Hoydebegr. PG/HG, meter: 1676<br/>]]>
 </Placemark>
 
 <Placemark>
-<styleUrl>#rosa-tia1676</styleUrl>
+<styleUrl>#tia1676</styleUrl>
 <name>SOGN SE TIA 1</name>
 <description>
 <![CDATA[Luftromsklasse: G<br/>
@@ -7079,7 +6929,7 @@ Hoydebegr. PG/HG, meter: 1676<br/>]]>
 </Placemark>
 
 <Placemark>
-<styleUrl>#rosa-tia1676</styleUrl>
+<styleUrl>#tia1676</styleUrl>
 <name>SOGN SW TIA 1</name>
 <description>
 <![CDATA[Luftromsklasse: G<br/>
@@ -7116,7 +6966,7 @@ Hoydebegr. PG/HG, meter: 1676<br/>]]>
 <name>Luftsportsomrader</name>
 
 <Placemark>
-<styleUrl>#seilflyBluePoly</styleUrl>
+<styleUrl>#seilfly</styleUrl>
 <name>Starmoen A</name>
 <description>
 <![CDATA[Luftsportsomrade Starmoen A<br/>
@@ -7146,7 +6996,7 @@ Tlf.bakkestasjon: 95905887<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#seilflyBluePoly</styleUrl>
+<styleUrl>#seilfly</styleUrl>
 <name>Starmoen B</name>
 <description>
 <![CDATA[Luftsportsomrade Starmoen B<br/>
@@ -7181,7 +7031,7 @@ Tlf.bakkestasjon: 95905887<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#seilflyBluePoly</styleUrl>
+<styleUrl>#seilfly</styleUrl>
 <name>Starmoen C</name>
 <description>
 <![CDATA[Luftsportsomrade Starmoen C<br/>
@@ -7216,7 +7066,7 @@ Tlf.bakkestasjon: 95905887<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#seilflyBluePoly</styleUrl>
+<styleUrl>#seilfly</styleUrl>
 <name>Starmoen D</name>
 <description>
 <![CDATA[Luftsportsomrade Starmoen D<br/>
@@ -7254,7 +7104,7 @@ Tlf.bakkestasjon: 95905887<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#seilflyBluePoly</styleUrl>
+<styleUrl>#seilfly</styleUrl>
 <name>Starmoen F</name>
 <description>
 <![CDATA[Luftsportsomrade Starmoen F<br/>
@@ -7288,7 +7138,7 @@ Tlf.bakkestasjon, Hamar: 91187921<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#seilflyBluePoly</styleUrl>
+<styleUrl>#seilfly</styleUrl>
 <name>Starmoen G</name>
 <description>
 <![CDATA[Luftsportsomrade Starmoen F<br/>
@@ -7319,7 +7169,7 @@ Tlf.bakkestasjon, Hamar: 91187921<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#seilflyBluePoly</styleUrl>
+<styleUrl>#seilfly</styleUrl>
 <name>Starmoen H</name>
 <description>
 <![CDATA[Luftsportsomrade Starmoen F<br/>
@@ -7351,7 +7201,7 @@ Tlf.bakkestasjon, Hamar: 91187921<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#seilflyBluePoly</styleUrl>
+<styleUrl>#seilfly</styleUrl>
 <name>Eggemoen A</name>
 <description>
 <![CDATA[Luftsportsomrade Eggemoen A<br/>
@@ -7383,7 +7233,7 @@ Tlf.bakkestasjon: 95529944<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#seilflyBluePoly</styleUrl>
+<styleUrl>#seilfly</styleUrl>
 <name>Eggemoen B</name>
 <description>
 <![CDATA[Luftsportsomrade Eggemoen B<br/>
@@ -7416,7 +7266,7 @@ Tlf.bakkestasjon: 95529944<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#seilflyBluePoly</styleUrl>
+<styleUrl>#seilfly</styleUrl>
 <name>Eina</name>
 <description>
 <![CDATA[Luftsportsomrade Eina<br/>
@@ -7446,7 +7296,7 @@ Tlf.bakkestasjon, Reinsvoll: 91107060<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#seilflyBluePoly</styleUrl>
+<styleUrl>#seilfly</styleUrl>
 <name>Hokksund A</name>
 <description>
 <![CDATA[Luftsportsomrade Hokksund A<br/>
@@ -7480,7 +7330,7 @@ Tlf.bakkestasjon: 48175195<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#seilflyBluePoly</styleUrl>
+<styleUrl>#seilfly</styleUrl>
 <name>Hokksund B</name>
 <description>
 <![CDATA[Luftsportsomrade Hokksund B<br/>
@@ -7514,7 +7364,7 @@ Tlf.bakkestasjon: 48175195<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#motorflyBluePoly</styleUrl>
+<styleUrl>#motorfly</styleUrl>
 <name>Airwork A</name>
 <description>
 <![CDATA[Luftsportsomrade motorfly<br/>
@@ -7551,7 +7401,7 @@ Hoydebegr. hvis aktivert: 1829m om ikke annet avtalt.<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#motorflyBluePoly</styleUrl>
+<styleUrl>#motorfly</styleUrl>
 <name>Airwork B</name>
 <description>
 <![CDATA[Luftsportsomrade motorfly<br/>
@@ -7593,7 +7443,7 @@ Hoydebegr. hvis aktivert: 1829m om ikke annet avtalt.<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#motorflyBluePoly</styleUrl>
+<styleUrl>#motorfly</styleUrl>
 <name>Airwork C2</name>
 <description>
 <![CDATA[Luftsportsomrade motorfly<br/>
@@ -7624,7 +7474,7 @@ Hoydebegr. hvis aktivert: 1219m om ikke annet avtalt.<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#motorflyBluePoly</styleUrl>
+<styleUrl>#motorfly</styleUrl>
 <name>Airwork D2</name>
 <description>
 <![CDATA[Luftsportsomrade motorfly<br/>
@@ -7654,7 +7504,7 @@ Hoydebegr. hvis aktivert: 1219m om ikke annet avtalt.<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#motorflyBluePoly</styleUrl>
+<styleUrl>#motorfly</styleUrl>
 <name>Airwork E</name>
 <description>
 <![CDATA[Luftsportsomrade motorfly<br/>
@@ -7687,7 +7537,7 @@ Hoydebegr. hvis aktivert: 1829m om ikke annet avtalt.<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#pg1BluePoly</styleUrl>
+<styleUrl>#pg1</styleUrl>
 <name>Hvittingfoss A</name>
 <description>
 <![CDATA[Luftsportsomrade Hvittingfoss A<br/>
@@ -7717,7 +7567,7 @@ Hoydebegr. hvis aktivert: 1219m om ikke annet avtalt.<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#pg1BluePoly</styleUrl>
+<styleUrl>#pg1</styleUrl>
 <name>Hvittingfoss B</name>
 <description>
 <![CDATA[Luftsportsomrade Hvittingfoss B<br/>
@@ -7748,7 +7598,7 @@ Hoydebegr. hvis aktivert: 2134m om ikke annet avtalt.<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#pg1BluePoly</styleUrl>
+<styleUrl>#pg1</styleUrl>
 <name>Sundvollen</name>
 <description>
 <![CDATA[Luftsportsomrade Sundvollen<br/>
@@ -7778,7 +7628,7 @@ Hoydebegr. hvis aktivert: 1524m om ikke annet avtalt.<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#pg1BluePoly</styleUrl>
+<styleUrl>#pg1</styleUrl>
 <name>Hemsedal East</name>
 <description>
 <![CDATA[Luftsportsomrade Hemsedal E<br/>
@@ -7808,7 +7658,7 @@ Hoydebegr. hvis aktivert: 2895m <br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#pg1BluePoly</styleUrl>
+<styleUrl>#pg1</styleUrl>
 <name>Hemsedal West</name>
 <description>
 <![CDATA[Luftsportsomrade Hemsedal W<br/>
@@ -7839,7 +7689,7 @@ Hoydebegr. hvis aktivert: 3505m <br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#pg1BluePoly</styleUrl>
+<styleUrl>#pg1</styleUrl>
 <name>Etne</name>
 <description>
 <![CDATA[Luftsportsomrade Etne<br/>
@@ -7869,7 +7719,7 @@ Hoydebegr. hvis aktivert: 2895m <br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#pg1BluePoly</styleUrl>
+<styleUrl>#pg1</styleUrl>
 <name>Kopparen omr.1</name>
 <description>
 <![CDATA[Luftsportsomrade Kopparen-1<br/>
@@ -7898,7 +7748,7 @@ Hoydebegr. hvis aktivert: 1676m om ikke annet avtalt.<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#pg1BluePoly</styleUrl>
+<styleUrl>#pg1</styleUrl>
 <name>Kopparen omr.2</name>
 <description>
 <![CDATA[Luftsportsomrade Kopparen-2<br/>
@@ -7928,7 +7778,7 @@ Hoydebegr. hvis aktivert: 1676m om ikke annet avtalt.<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#pg1BluePoly</styleUrl>
+<styleUrl>#pg1</styleUrl>
 <name>Bodo North</name>
 <description>
 <![CDATA[Luftsportsomrade Bodo North<br/>
@@ -7959,7 +7809,7 @@ Hoydebegr. hvis aktivert: 1067m om ikke annet avtalt.<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#seilflyBluePoly</styleUrl>
+<styleUrl>#seilfly</styleUrl>
 <name>Gvarv</name>
 <description>
 <![CDATA[Luftsportsomrade Gvarv<br/>
@@ -7990,7 +7840,7 @@ Tlf.bakkestasjon, Lunde: 47619757<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#seilflyBluePoly</styleUrl>
+<styleUrl>#seilfly</styleUrl>
 <name>Lunde</name>
 <description>
 <![CDATA[Luftsportsomrade Lunde<br/>
@@ -8023,7 +7873,7 @@ Tlf.bakkestasjon, Lunde: 47619757<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#seilflyBluePoly</styleUrl>
+<styleUrl>#seilfly</styleUrl>
 <name>Drangedal</name>
 <description>
 <![CDATA[Luftsportsomrade Drangedal<br/>
@@ -8054,7 +7904,7 @@ Tlf.bakkestasjon, Lunde: 47619757<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#seilflyBluePoly</styleUrl>
+<styleUrl>#seilfly</styleUrl>
 <name>Gauldal</name>
 <description>
 <![CDATA[Luftsportsomrade Gauldal<br/>
@@ -8086,7 +7936,7 @@ Hoydebegr. hvis aktivert: 1067m om ikke annet avtalt.<br/>
 
 
 <Placemark>
-<styleUrl>#pg1BluePoly</styleUrl>
+<styleUrl>#pg1</styleUrl>
 <name>AREA BONDALEN M</name>
 <description>
 <![CDATA[PG,HG-omrade.:Aktivt hvis notam<br/>
@@ -8118,7 +7968,7 @@ Hoydebegr.: 1676m<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#pg1BluePoly</styleUrl>
+<styleUrl>#pg1</styleUrl>
 <name>AREA BONDALEN N</name>
 <description>
 <![CDATA[PG,HG-omrade.:Aktivt hvis notam<br/>
@@ -8150,7 +8000,7 @@ Hoydebegr.: 1676m<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#pg1BluePoly</styleUrl>
+<styleUrl>#pg1</styleUrl>
 <name>AREA BONDALEN S</name>
 <description>
 <![CDATA[PG,HG-omrade.:Aktivt hvis notam<br/>
@@ -8183,7 +8033,7 @@ Hoydebegr.: 1676m<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#pg1BluePoly</styleUrl>
+<styleUrl>#pg1</styleUrl>
 <name>Forbordsfjellet area1</name>
 <description>
 <![CDATA[Luftsportsomrade Forbodsfjellet area1<br/>
@@ -8214,7 +8064,7 @@ Hoydebegr. hvis aktivert: 914m om ikke annet avtalt.<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#pg1BluePoly</styleUrl>
+<styleUrl>#pg1</styleUrl>
 <name>Forbordsfjellet area2</name>
 <description>
 <![CDATA[Luftsportsomrade Forbodsfjellet area2<br/>
@@ -8249,7 +8099,7 @@ Hoydebegr. hvis aktivert: 1524m om ikke annet avtalt.<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#pg1BluePoly</styleUrl>
+<styleUrl>#pg1</styleUrl>
 <name>Meraker North</name>
 <description>
 <![CDATA[Luftsportsomrade Meraker North<br/>
@@ -8279,7 +8129,7 @@ Hoydebegr. hvis aktivert: 1829m om ikke annet avtalt.<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#pg1BluePoly</styleUrl>
+<styleUrl>#pg1</styleUrl>
 <name>Meraker South</name>
 <description>
 <![CDATA[Luftsportsomrade Meraker South<br/>
@@ -8309,7 +8159,7 @@ Hoydebegr. hvis aktivert: 1219m om ikke annet avtalt.<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#pg1BluePoly</styleUrl>
+<styleUrl>#pg1</styleUrl>
 <name>Nidaros</name>
 <description>
 <![CDATA[Luftsportsomrade Nidaros<br/>
@@ -8818,7 +8668,7 @@ Hoydebegr. hvis aktivert: 1067m om ikke annet avtalt.<br/>
 <name>Permanente restriksjonsomrader</name>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>EN R101, Grenland</name>
 <description>
 <![CDATA[Permanent restriksjons-omrade<br/>
@@ -8848,7 +8698,7 @@ Ovre grense: 914<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>EN R102, Oslo sentrum</name>
 <description>
 <![CDATA[Permanent restriksjons-omrade<br/>
@@ -8886,7 +8736,7 @@ Ovre grense: 914<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>EN R202, Kollsnes</name>
 <description>
 <![CDATA[Permanent restriksjons-omrade<br/>
@@ -8924,7 +8774,7 @@ Ovre grense: 457<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>EN R203,Mongstad</name>
 <description>
 <![CDATA[Permanent restriksjons-omrade<br/>
@@ -8962,7 +8812,7 @@ Ovre grense: 610<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>EN R204,Karsto</name>
 <description>
 <![CDATA[Permanent restriksjons-omrade<br/>
@@ -8992,7 +8842,7 @@ Ovre grense: 457<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>EN R301,Nyhamna,Aukra</name>
 <description>
 <![CDATA[Permanent restriksjons-omrade<br/>
@@ -9030,7 +8880,7 @@ Ovre grense: 610<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>EN R402,Finnmark</name>
 <description>
 <![CDATA[Permanent restriksjons-omrade<br/>
@@ -9079,7 +8929,7 @@ Ovre grense: 99999<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>EN R403,Melkoya</name>
 <description>
 <![CDATA[Permanent restriksjons-omrade<br/>
@@ -9122,7 +8972,7 @@ Ovre grense: 762<br/>
 <name>Fareomrader som ma ansees som aktive</name>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>EN D102,Ostre Ara</name>
 <description>
 <![CDATA[Fareomr.:Ansees som aktivt<br/>
@@ -9172,7 +9022,7 @@ Ovre grense: 914<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>EN D103,Haslemoen</name>
 <description>
 <![CDATA[Fareomr.:Ansees som aktivt<br/>
@@ -9223,7 +9073,7 @@ Ovre grense: 914<br/>
 
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>EN D104,Bradalsmyra</name>
 <description>
 <![CDATA[Fareomr.:Ansees som aktivt<br/>
@@ -9261,7 +9111,7 @@ Ovre grense: 1219<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>EN D105,Rena</name>
 <description>
 <![CDATA[Fareomr.:Ansees som aktivt<br/>
@@ -9311,7 +9161,7 @@ Ovre grense: 3962<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>EN D106,Terningmoen</name>
 <description>
 <![CDATA[Fareomr.:Ansees som aktivt<br/>
@@ -9349,7 +9199,7 @@ Ovre grense: 2134<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>EN D110,Reg.felt.Ost1</name>
 <description>
 <![CDATA[Fareomr.:Ansees som aktivt<br/>
@@ -9385,7 +9235,7 @@ Ovre grense: 6401<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>EN D201,Ulven</name>
 <description>
 <![CDATA[Fareomr.:Ansees som aktivt<br/>
@@ -9423,7 +9273,7 @@ Ovre grense: 610<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>EN D205,Marstein Nord</name>
 <description>
 <![CDATA[Fareomr.:Ansees som aktivt<br/>
@@ -9453,7 +9303,7 @@ Ovre grense: 18593<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>EN D206,Stolmen</name>
 <description>
 <![CDATA[Fareomr.:Ansees som aktivt<br/>
@@ -9483,7 +9333,7 @@ Ovre grense: 18593<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>EN D207,Marstein Sor</name>
 <description>
 <![CDATA[Fareomr.:Ansees som aktivt<br/>
@@ -9513,7 +9363,7 @@ Ovre grense: 18593<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>EN D208,Slatteroy</name>
 <description>
 <![CDATA[Fareomr.:Ansees som aktivt<br/>
@@ -9543,7 +9393,7 @@ Ovre grense: 18593<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>EN D209,Risavika</name>
 <description>
 <![CDATA[Fareomr.:Ansees som aktivt<br/>
@@ -9579,7 +9429,7 @@ Ovre grense: 213<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>EN D304,Hjerkinn</name>
 <description>
 <![CDATA[Fareomr.:Ansees som aktivt<br/>
@@ -9614,7 +9464,7 @@ Ovre grense: 7620<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>EN D304,Hjerkinn skytefelt</name>
 <description>
 <![CDATA[EN D304, tilleggsinfo:<br/>
@@ -9628,7 +9478,7 @@ Her kan du bare fly igjennom med tillatelse fra Forsvaret<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>EN D305,Akselberg</name>
 <description>
 <![CDATA[Fareomr.:Ansees som aktivt<br/>
@@ -9666,7 +9516,7 @@ Ovre grense: 610<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>EN D404,Setermoen</name>
 <description>
 <![CDATA[Fareomr.:Ansees som aktivt<br/>
@@ -9697,7 +9547,7 @@ Ovre grense: 7620<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>EN D406,Blatind</name>
 <description>
 <![CDATA[Fareomr.:Ansees som aktivt<br/>
@@ -9730,7 +9580,7 @@ Ovre grense: 10973<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>EN D407,Mauken</name>
 <description>
 <![CDATA[Fareomr.:Ansees som aktivt<br/>
@@ -9762,7 +9612,7 @@ Ovre grense: 9144<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>EN D408,Porsangermoen</name>
 <description>
 <![CDATA[Fareomr.:Ansees som aktivt<br/>
@@ -9793,7 +9643,7 @@ Ovre grense: 8230<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>EN D409,Sveinsgrunnen</name>
 <description>
 <![CDATA[Fareomr.:Ansees som aktivt<br/>
@@ -9823,7 +9673,7 @@ Ovre grense: 14021<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>EN D410,Andfjorden,Skrolsvik</name>
 <description>
 <![CDATA[Fareomr.:Ansees som aktivt<br/>
@@ -9859,7 +9709,7 @@ Ovre grense: 14021<br/>
 <name>Fareomrader,aktive kun hvis angitt i NOTAM</name>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>EN D153,Skagerrak</name>
 <description>
 <![CDATA[Fareomr.:Aktivt hvis NOTAM<br/>
@@ -9891,7 +9741,7 @@ Ovre grense: 14021<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>EN D154,Borja</name>
 <description>
 <![CDATA[Fareomr.:Aktivt hvis NOTAM<br/>
@@ -9924,7 +9774,7 @@ Ovre grense: 6097<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>EN D156,Hengsvatn</name>
 <description>
 <![CDATA[Fareomr.:Aktivt hvis NOTAM<br/>
@@ -9956,7 +9806,7 @@ Ovre grense: 4877<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>EN D157,Reg.felt.Ost2</name>
 <description>
 <![CDATA[Fareomr.:Aktivt hvis NOTAM<br/>
@@ -9994,7 +9844,7 @@ Ovre grense: 8839<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>EN D158,Reg.felt.Ost3</name>
 <description>
 <![CDATA[Fareomr.:Aktivt hvis NOTAM<br/>
@@ -10032,7 +9882,7 @@ Ovre grense: 10973<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>EN D155,Rakke</name>
 <description>
 <![CDATA[Fareomr.:Aktivt hvis NOTAM<br/>
@@ -10068,7 +9918,7 @@ Ovre grense: 10973<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>EN D251,Rott</name>
 <description>
 <![CDATA[Fareomr.:Aktivt hvis NOTAM<br/>
@@ -10115,7 +9965,7 @@ Ovre grense: 5486<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>EN D253,Utsira</name>
 <description>
 <![CDATA[Fareomr.:Aktivt hvis NOTAM<br/>
@@ -10147,7 +9997,7 @@ Ovre grense: 14021<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>EN D255,Mjolfjell</name>
 <description>
 <![CDATA[Fareomr.:Aktivt hvis NOTAM<br/>
@@ -10179,7 +10029,7 @@ Ovre grense: 7620<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>EN D256,Vigdel I</name>
 <description>
 <![CDATA[Fareomr.:Aktivt hvis NOTAM<br/>
@@ -10211,7 +10061,7 @@ Ovre grense: 8230<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>EN D257,Vigdel II</name>
 <description>
 <![CDATA[Fareomr.:Aktivt hvis NOTAM<br/>
@@ -10243,7 +10093,7 @@ Ovre grense: 2134<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>EN D258,Vigdel III</name>
 <description>
 <![CDATA[Fareomr.:Aktivt hvis NOTAM<br/>
@@ -10276,7 +10126,7 @@ Ovre grense: 2134<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>EN D261,Lista I</name>
 <description>
 <![CDATA[Fareomr.:Aktivt hvis NOTAM<br/>
@@ -10309,7 +10159,7 @@ Ovre grense: 18593<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>EN D262,Lista II</name>
 <description>
 <![CDATA[Fareomr.:Aktivt hvis NOTAM<br/>
@@ -10341,7 +10191,7 @@ Ovre grense: 18593<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>EN D352,Halten</name>
 <description>
 <![CDATA[Fareomr.:Aktivt hvis NOTAM<br/>
@@ -10373,7 +10223,7 @@ Ovre grense: 14021<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>EN D353,Halten</name>
 <description>
 <![CDATA[Fareomr.:Aktivt hvis NOTAM<br/>
@@ -10422,7 +10272,7 @@ Ovre grense: 2438<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>EN D353,Halten</name>
 <description>
 <![CDATA[Fareomr.:Aktivt hvis NOTAM<br/>
@@ -10455,7 +10305,7 @@ Ovre grense: 1219<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>EN D355,Vagan</name>
 <description>
 <![CDATA[Fareomr.:Aktivt hvis NOTAM<br/>
@@ -10491,7 +10341,7 @@ Ovre grense: 10973<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>EN D356,Tarva</name>
 <description>
 <![CDATA[Fareomr.:Aktivt hvis NOTAM<br/>
@@ -10539,7 +10389,7 @@ Ovre grense: 10973<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>EN D451,Andfjorden</name>
 <description>
 <![CDATA[Fareomr.:Aktivt hvis NOTAM<br/>
@@ -10578,7 +10428,7 @@ Ovre grense: 99999<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>EN D452,Lyngvar(1)</name>
 <description>
 <![CDATA[Fareomr.:Aktivt hvis NOTAM<br/>
@@ -10618,7 +10468,7 @@ Ovre grense: 9144<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>EN D452,Lyngvar(2)</name>
 <description>
 <![CDATA[Fareomr.:Aktivt hvis NOTAM<br/>
@@ -10650,7 +10500,7 @@ Ovre grense: 9144<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>EN D456,Skomvar</name>
 <description>
 <![CDATA[Fareomr.:Aktivt hvis NOTAM<br/>
@@ -10682,7 +10532,7 @@ Ovre grense: 14021<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>EN D458 Andenes</name>
 <description>
 <![CDATA[Fareomr.:Aktivt hvis NOTAM<br/>
@@ -10718,7 +10568,7 @@ Ovre grense: 3048<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>EN D459 Andenes</name>
 <description>
 <![CDATA[Fareomr.:Aktivt hvis NOTAM<br/>
@@ -10753,7 +10603,7 @@ Ovre grense: 10973<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>EN D460,Andfjorden,Grotavar</name>
 <description>
 <![CDATA[Fareomr.:Aktivt hvis NOTAM<br/>
@@ -10786,7 +10636,7 @@ Ovre grense: 14021<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>EN D462,Vagsfjorden</name>
 <description>
 <![CDATA[Fareomr.:Aktivt hvis NOTAM<br/>
@@ -10819,7 +10669,7 @@ Ovre grense: 6401<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>EN D463,Elvegardsmoen</name>
 <description>
 <![CDATA[Fareomr.:Aktivt hvis NOTAM<br/>
@@ -10852,7 +10702,7 @@ Ovre grense: 7620<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>EN D464 Mjelde</name>
 <description>
 <![CDATA[Fareomr.:Aktivt hvis NOTAM<br/>
@@ -10886,7 +10736,7 @@ Ovre grense: 10973<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>EN D465,Indre Vestfjorden</name>
 <description>
 <![CDATA[Fareomr.:Aktivt hvis NOTAM<br/>
@@ -10918,7 +10768,7 @@ Ovre grense: 8839<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>EN D466,Malangen</name>
 <description>
 <![CDATA[Fareomr.:Aktivt hvis NOTAM<br/>
@@ -10950,7 +10800,7 @@ Ovre grense: 14021<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>EN D467,Ytre Malangen</name>
 <description>
 <![CDATA[Fareomr.:Aktivt hvis NOTAM<br/>
@@ -10982,7 +10832,7 @@ Ovre grense: 14021<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>EN D468,Senja I</name>
 <description>
 <![CDATA[Fareomr.:Aktivt hvis NOTAM<br/>
@@ -11014,7 +10864,7 @@ Ovre grense: 14021<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>EN D469,Senja II</name>
 <description>
 <![CDATA[Fareomr.:Aktivt hvis NOTAM<br/>
@@ -11046,7 +10896,7 @@ Ovre grense: 14021<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>EN D470,Ramnes</name>
 <description>
 <![CDATA[Fareomr.:Aktivt hvis NOTAM<br/>
@@ -11082,7 +10932,7 @@ Ovre grense: 1524<br/>
 <name>Andre fallskjerm drop-soner</name>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>Bjorli Flyplass</name>
 <description>
 <![CDATA[Fallskjerm drop-sone<br/>]]>
@@ -11095,7 +10945,7 @@ Ovre grense: 1524<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>Bomoen Flyplass</name>
 <description>
 <![CDATA[Fallskjerm drop-sone<br/>]]>
@@ -11108,7 +10958,7 @@ Ovre grense: 1524<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>Eggemoen</name>
 <description>
 <![CDATA[Fallskjerm drop-sone<br/>]]>
@@ -11121,7 +10971,7 @@ Ovre grense: 1524<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>Elverum - Starmoen</name>
 <description>
 <![CDATA[Fallskjerm drop-sone<br/>]]>
@@ -11134,7 +10984,7 @@ Ovre grense: 1524<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>Fagerhaug</name>
 <description>
 <![CDATA[Fallskjerm drop-sone<br/>]]>
@@ -11147,7 +10997,7 @@ Ovre grense: 1524<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>Fagernes Lufthavn Leirin</name>
 <description>
 <![CDATA[Fallskjerm drop-sone<br/>]]>
@@ -11160,7 +11010,7 @@ Ovre grense: 1524<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>Farsund Flyplass Lista</name>
 <description>
 <![CDATA[Fallskjerm drop-sone<br/>]]>
@@ -11173,7 +11023,7 @@ Ovre grense: 1524<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>Folldal</name>
 <description>
 <![CDATA[Fallskjerm drop-sone<br/>]]>
@@ -11186,7 +11036,7 @@ Ovre grense: 1524<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>Frya</name>
 <description>
 <![CDATA[Fallskjerm drop-sone<br/>]]>
@@ -11199,7 +11049,7 @@ Ovre grense: 1524<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>Fyresdal, Gudbrandsdalen Flyklubb</name>
 <description>
 <![CDATA[Fallskjerm drop-sone<br/>]]>
@@ -11212,7 +11062,7 @@ Ovre grense: 1524<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>Geilo Lufthavn Dagali</name>
 <description>
 <![CDATA[Fallskjerm drop-sone<br/>]]>
@@ -11225,7 +11075,7 @@ Ovre grense: 1524<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>Hamar Flyplass</name>
 <description>
 <![CDATA[Fallskjerm drop-sone<br/>]]>
@@ -11238,7 +11088,7 @@ Ovre grense: 1524<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>Jarlsberg Flyplass</name>
 <description>
 <![CDATA[Fallskjerm drop-sone<br/>]]>
@@ -11251,7 +11101,7 @@ Ovre grense: 1524<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>Rakkestad</name>
 <description>
 <![CDATA[Fallskjerm drop-sone<br/>]]>
@@ -11264,7 +11114,7 @@ Ovre grense: 1524<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>Reinsvoll</name>
 <description>
 <![CDATA[Fallskjerm drop-sone<br/>]]>
@@ -11277,7 +11127,7 @@ Ovre grense: 1524<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>Rognan Flyplass</name>
 <description>
 <![CDATA[Fallskjerm drop-sone<br/>]]>
@@ -11290,7 +11140,7 @@ Ovre grense: 1524<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>Ski Flyplass</name>
 <description>
 <![CDATA[Fallskjerm drop-sone<br/>]]>
@@ -11313,10 +11163,10 @@ Ovre grense: 1524<br/>
 <name>Luftroms-soner</name>
 
 <Folder>
-<name>Riksgrensen og CTA</name>
+<name>CTA</name>
 
 <Placemark>
-<styleUrl>#orange-cta2895</styleUrl>
+<styleUrl>#cta2895</styleUrl>
 <name>Sverige nord</name>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
@@ -11588,7 +11438,7 @@ Hoydebegr. PG/HG, meter: 2895<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#orange-cta1981</styleUrl>
+<styleUrl>#cta1981</styleUrl>
 <name>Sverige FIR, Orje 1</name>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
@@ -11645,7 +11495,7 @@ Hoydebegr. PG/HG, meter: 1981<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#orange-cta1981</styleUrl>
+<styleUrl>#cta1981</styleUrl>
 <name>Sverige FIR, Orje 1</name>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
@@ -11661,7 +11511,7 @@ Hoydebegr. PG/HG, meter: 1981<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#orange-cta3810</styleUrl>
+<styleUrl>#cta3810</styleUrl>
 <name>Sverige nordvest</name>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
@@ -11710,7 +11560,7 @@ Hoydebegr. PG/HG, meter: 3810<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#orange-cta2895</styleUrl>
+<styleUrl>#cta2895</styleUrl>
 <name>Sverige nord</name>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
@@ -11725,7 +11575,7 @@ Hoydebegr. PG/HG, meter: 2895<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#orange-cta2895</styleUrl>
+<styleUrl>#cta2895</styleUrl>
 <name>Sverige nord</name>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
@@ -11740,7 +11590,7 @@ Hoydebegr. PG/HG, meter: 2895<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#orange-cta2895</styleUrl>
+<styleUrl>#cta2895</styleUrl>
 <name>Sverige nord</name>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
@@ -11755,7 +11605,7 @@ Hoydebegr. PG/HG, meter: 2895<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#blaa-sverige</styleUrl>
+<styleUrl>#sverige</styleUrl>
 <name>Sverige nord</name>
 <description>
 <![CDATA[FL95 som vanligste limit.<br/>
@@ -11772,7 +11622,7 @@ Hoydebegr. PG/HG, meter: 2895<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#blaa-sverige</styleUrl>
+<styleUrl>#sverige</styleUrl>
 <name>Sverige nord</name>
 <description>
 <![CDATA[FL95 som vanligste limit.<br/>
@@ -11791,7 +11641,7 @@ Hoydebegr. PG/HG, meter: 2895<br/>
 
 
 <Placemark>
-<styleUrl>#blaa-sverige</styleUrl>
+<styleUrl>#sverige</styleUrl>
 <name>Sverige sor</name>
 <description>
 <![CDATA[Komplekst omrade.<br/>
@@ -11836,7 +11686,7 @@ Hoydebegr. PG/HG, meter: 2895<br/>
 <name>CTR</name>
 
 <Placemark>
-<styleUrl>#blaa-ctr</styleUrl>
+<styleUrl>#ctr</styleUrl>
 <name>Arvidsjaur CTR</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -11872,7 +11722,7 @@ PG/HG-flyging er normalt forbudt her.<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#blaa-ctr</styleUrl>
+<styleUrl>#ctr</styleUrl>
 <name>Borlange CTR</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -11905,7 +11755,7 @@ PG/HG-flyging er normalt forbudt her.<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#blaa-ctr</styleUrl>
+<styleUrl>#ctr</styleUrl>
 <name>Kiruna CTR</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -11938,7 +11788,7 @@ PG/HG-flyging er normalt forbudt her.<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#blaa-ctr</styleUrl>
+<styleUrl>#ctr</styleUrl>
 <name>Kallax CTR</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -11971,7 +11821,7 @@ PG/HG-flyging er normalt forbudt her.<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#blaa-ctr</styleUrl>
+<styleUrl>#ctr</styleUrl>
 <name>Pajala CTR</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -12004,7 +11854,7 @@ PG/HG-flyging er normalt forbudt her.<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#blaa-ctr</styleUrl>
+<styleUrl>#ctr</styleUrl>
 <name>Skellefta CTR</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -12037,7 +11887,7 @@ PG/HG-flyging er normalt forbudt her.<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#blaa-ctr</styleUrl>
+<styleUrl>#ctr</styleUrl>
 <name>Sundsvall CTR</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -12070,7 +11920,7 @@ PG/HG-flyging er normalt forbudt her.<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#blaa-ctr</styleUrl>
+<styleUrl>#ctr</styleUrl>
 <name>Umea CTR</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -12104,7 +11954,7 @@ PG/HG-flyging er normalt forbudt her.<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#blaa-ctr</styleUrl>
+<styleUrl>#ctr</styleUrl>
 <name>Vidsel CTR</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -12137,7 +11987,7 @@ PG/HG-flyging er normalt forbudt her.<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#blaa-ctr</styleUrl>
+<styleUrl>#ctr</styleUrl>
 <name>Ornskoldsvik CTR</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -12170,7 +12020,7 @@ PG/HG-flyging er normalt forbudt her.<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#blaa-ctr</styleUrl>
+<styleUrl>#ctr</styleUrl>
 <name>Ostersund CTR</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
@@ -12209,7 +12059,7 @@ PG/HG-flyging er normalt forbudt her.<br/>
 <name>TMA</name>
 
 <Placemark>
-<styleUrl>#brun-tma945</styleUrl>
+<styleUrl>#tma945</styleUrl>
 <name>Arvidsjaur a</name>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
@@ -12238,7 +12088,7 @@ Hoydebegr. PG/HG, meter: 945<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma792</styleUrl>
+<styleUrl>#tma792</styleUrl>
 <name>Arvidsjaur b</name>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
@@ -12267,7 +12117,7 @@ Hoydebegr. PG/HG, meter: 792<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma762</styleUrl>
+<styleUrl>#tma762</styleUrl>
 <name>Borlange a</name>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
@@ -12297,7 +12147,7 @@ Hoydebegr. PG/HG, meter: 762<br/><a href="http://www.lfv.se/AIP/ENR/ENR%202/ES_E
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma1372</styleUrl>
+<styleUrl>#tma1372</styleUrl>
 <name>Borlange b</name>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
@@ -12328,7 +12178,7 @@ Hoydebegr. PG/HG, meter: 1372<br/><a href="http://www.lfv.se/AIP/ENR/ENR%202/ES_
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma945</styleUrl>
+<styleUrl>#tma945</styleUrl>
 <name>Kiruna a</name>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
@@ -12360,7 +12210,7 @@ Hoydebegr. PG/HG, meter: 945<br/><a href="http://www.lfv.se/AIP/ENR/ENR%202/ES_E
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma1372</styleUrl>
+<styleUrl>#tma1372</styleUrl>
 <name>Kiruna b</name>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
@@ -12389,7 +12239,7 @@ Hoydebegr. PG/HG, meter: 1372<br/><a href="http://www.lfv.se/AIP/ENR/ENR%202/ES_
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma365</styleUrl>
+<styleUrl>#tma365</styleUrl>
 <name>Lulea a</name>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
@@ -12421,7 +12271,7 @@ Hoydebegr. PG/HG, meter: 365<br/><a href="http://www.lfv.se/AIP/ENR/ENR%202/ES_E
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma610</styleUrl>
+<styleUrl>#tma610</styleUrl>
 <name>Lulea b</name>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
@@ -12453,7 +12303,7 @@ Hoydebegr. PG/HG, meter: 610<br/><a href="http://www.lfv.se/AIP/ENR/ENR%202/ES_E
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma610</styleUrl>
+<styleUrl>#tma610</styleUrl>
 <name>Lulea c</name>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
@@ -12482,7 +12332,7 @@ Hoydebegr. PG/HG, meter: 610<br/><a href="http://www.lfv.se/AIP/ENR/ENR%202/ES_E
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma457</styleUrl>
+<styleUrl>#tma457</styleUrl>
 <name>Lulea d</name>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
@@ -12510,7 +12360,7 @@ Hoydebegr. PG/HG, meter: 457<br/><a href="http://www.lfv.se/AIP/ENR/ENR%202/ES_E
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma457</styleUrl>
+<styleUrl>#tma457</styleUrl>
 <name>Lulea e</name>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
@@ -12537,7 +12387,7 @@ Hoydebegr. PG/HG, meter: 450<br/><a href="http://www.lfv.se/AIP/ENR/ENR%202/ES_E
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma610</styleUrl>
+<styleUrl>#tma610</styleUrl>
 <name>Pajala a</name>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
@@ -12567,7 +12417,7 @@ Hoydebegr. PG/HG, meter: 610<br/><a href="http://www.lfv.se/AIP/ENR/ENR%202/ES_E
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma1372</styleUrl>
+<styleUrl>#tma1372</styleUrl>
 <name>Pajala b</name>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
@@ -12595,7 +12445,7 @@ Hoydebegr. PG/HG, meter: 1372<br/><a href="http://www.lfv.se/AIP/ENR/ENR%202/ES_
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma610</styleUrl>
+<styleUrl>#tma610</styleUrl>
 <name>Skellefta a</name>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
@@ -12625,7 +12475,7 @@ Hoydebegr. PG/HG, meter: 610<br/><a href="http://www.lfv.se/AIP/ENR/ENR%202/ES_E
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma1372</styleUrl>
+<styleUrl>#tma1372</styleUrl>
 <name>Skellefta b</name>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
@@ -12653,7 +12503,7 @@ Hoydebegr. PG/HG, meter: 1372<br/><a href="http://www.lfv.se/AIP/ENR/ENR%202/ES_
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma762</styleUrl>
+<styleUrl>#tma762</styleUrl>
 <name>Sundsvall a</name>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
@@ -12681,7 +12531,7 @@ Hoydebegr. PG/HG, meter: 762<br/><a href="http://www.lfv.se/AIP/ENR/ENR%202/ES_E
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma610</styleUrl>
+<styleUrl>#tma610</styleUrl>
 <name>Sundsvall b</name>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
@@ -12710,7 +12560,7 @@ Hoydebegr. PG/HG, meter: 610<br/><a href="http://www.lfv.se/AIP/ENR/ENR%202/ES_E
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma1372</styleUrl>
+<styleUrl>#tma1372</styleUrl>
 <name>Sundsvall c</name>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
@@ -12738,7 +12588,7 @@ Hoydebegr. PG/HG, meter: 1372<br/><a href="http://www.lfv.se/AIP/ENR/ENR%202/ES_
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma1372</styleUrl>
+<styleUrl>#tma1372</styleUrl>
 <name>Sundsvall d</name>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
@@ -12766,7 +12616,7 @@ Hoydebegr. PG/HG, meter: 1372<br/><a href="http://www.lfv.se/AIP/ENR/ENR%202/ES_
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma610</styleUrl>
+<styleUrl>#tma610</styleUrl>
 <name>Umea a</name>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
@@ -12795,7 +12645,7 @@ Hoydebegr. PG/HG, meter: 610<br/><a href="http://www.lfv.se/AIP/ENR/ENR%202/ES_E
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma1372</styleUrl>
+<styleUrl>#tma1372</styleUrl>
 <name>Umea b</name>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
@@ -12824,7 +12674,7 @@ Hoydebegr. PG/HG, meter: 1372<br/><a href="http://www.lfv.se/AIP/ENR/ENR%202/ES_
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma1372</styleUrl>
+<styleUrl>#tma1372</styleUrl>
 <name>Umea c</name>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
@@ -12853,7 +12703,7 @@ Hoydebegr. PG/HG, meter: 1372<br/><a href="http://www.lfv.se/AIP/ENR/ENR%202/ES_
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma305</styleUrl>
+<styleUrl>#tma305</styleUrl>
 <name>Vidsel</name>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
@@ -12881,7 +12731,7 @@ Hoydebegr. PG/HG, meter: 305<br/><a href="http://www.lfv.se/AIP/ENR/ENR%202/ES_E
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma732</styleUrl>
+<styleUrl>#tma732</styleUrl>
 <name>Ornskoldsvik a</name>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
@@ -12909,7 +12759,7 @@ Hoydebegr. PG/HG, meter: 732<br/><a href="http://www.lfv.se/AIP/ENR/ENR%202/ES_E
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma518</styleUrl>
+<styleUrl>#tma518</styleUrl>
 <name>Ornskoldsvik b</name>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
@@ -12937,7 +12787,7 @@ Hoydebegr. PG/HG, meter: 518<br/><a href="http://www.lfv.se/AIP/ENR/ENR%202/ES_E
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma1372</styleUrl>
+<styleUrl>#tma1372</styleUrl>
 <name>Ornskoldsvik c</name>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
@@ -12965,7 +12815,7 @@ Hoydebegr. PG/HG, meter: 1372<br/><a href="http://www.lfv.se/AIP/ENR/ENR%202/ES_
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma1372</styleUrl>
+<styleUrl>#tma1372</styleUrl>
 <name>Ornskoldsvik d</name>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
@@ -12994,7 +12844,7 @@ Hoydebegr. PG/HG, meter: 1372<br/><a href="http://www.lfv.se/AIP/ENR/ENR%202/ES_
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma701</styleUrl>
+<styleUrl>#tma701</styleUrl>
 <name>Ostersund a</name>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
@@ -13026,7 +12876,7 @@ Hoydebegr. PG/HG, meter: 701<br/><a href="http://www.lfv.se/AIP/ENR/ENR%202/ES_E
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma1006</styleUrl>
+<styleUrl>#tma1006</styleUrl>
 <name>Ostersund b</name>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
@@ -13059,7 +12909,7 @@ Hoydebegr. PG/HG, meter: 1006<br/><a href="http://www.lfv.se/AIP/ENR/ENR%202/ES_
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma1006</styleUrl>
+<styleUrl>#tma1006</styleUrl>
 <name>Ostersund c</name>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
@@ -13088,7 +12938,7 @@ Hoydebegr. PG/HG, meter: 1006<br/><a href="http://www.lfv.se/AIP/ENR/ENR%202/ES_
 </Placemark>
 
 <Placemark>
-<styleUrl>#brun-tma1524</styleUrl>
+<styleUrl>#tma1524</styleUrl>
 <name>Ostersund d</name>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
@@ -13128,7 +12978,7 @@ Hoydebegr. PG/HG, meter: 1524<br/><a href="http://www.lfv.se/AIP/ENR/ENR%202/ES_
 <name>TIZ</name>
 
 <Placemark>
-<styleUrl>#blaa-tiz</styleUrl>
+<styleUrl>#tiz</styleUrl>
 <name>Arvidsjaur TIZ</name>
 <description>
 <![CDATA[Luftromsklasse: G<br/>
@@ -13165,7 +13015,7 @@ Kontakt evt. taarnet.<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#blaa-tiz</styleUrl>
+<styleUrl>#tiz</styleUrl>
 <name>Gallivare TIZ</name>
 <description>
 <![CDATA[Luftromsklasse: G<br/>
@@ -13197,7 +13047,7 @@ Kontakt evt. taarnet.<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#blaa-tiz</styleUrl>
+<styleUrl>#tiz</styleUrl>
 <name>Hagfors TIZ</name>
 <description>
 <![CDATA[Luftromsklasse: G<br/>
@@ -13231,7 +13081,7 @@ Kontakt evt. taarnet tlf +46 56360368_<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#blaa-tiz</styleUrl>
+<styleUrl>#tiz</styleUrl>
 <name>Kramfors TIZ</name>
 <description>
 <![CDATA[Luftromsklasse: G<br/>
@@ -13263,7 +13113,7 @@ Kontakt evt. taarnet.<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#blaa-tiz</styleUrl>
+<styleUrl>#tiz</styleUrl>
 <name>Lycksele TIZ</name>
 <description>
 <![CDATA[Luftromsklasse: G<br/>
@@ -13295,7 +13145,7 @@ Kontakt evt. taarnet.<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#blaa-tiz</styleUrl>
+<styleUrl>#tiz</styleUrl>
 <name>Mora TIZ</name>
 <description>
 <![CDATA[Luftromsklasse: G<br/>
@@ -13327,7 +13177,7 @@ Kontakt evt. taarnet.<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#blaa-tiz</styleUrl>
+<styleUrl>#tiz</styleUrl>
 <name>Pajala TIZ</name>
 <description>
 <![CDATA[Luftromsklasse: G<br/>
@@ -13361,7 +13211,7 @@ Kontakt evt. taarnet.<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#blaa-tiz</styleUrl>
+<styleUrl>#tiz</styleUrl>
 <name>Sveg TIZ</name>
 <description>
 <![CDATA[Luftromsklasse: G<br/>
@@ -13395,7 +13245,7 @@ Kontakt evt. taarnet tlf +46 680711350_<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#blaa-tiz</styleUrl>
+<styleUrl>#tiz</styleUrl>
 <name>Torsby TIZ</name>
 <description>
 <![CDATA[Luftromsklasse: G<br/>
@@ -13429,7 +13279,7 @@ Kontakt evt. taarnet tlf +46 56071724_<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#blaa-tiz</styleUrl>
+<styleUrl>#tiz</styleUrl>
 <name>Vilhelmina TIZ</name>
 <description>
 <![CDATA[Luftromsklasse: G<br/>
@@ -13468,7 +13318,7 @@ Kontakt evt. taarnet.<br/>
 <name>TIA</name>
 
 <Placemark>
-<styleUrl>#rosa-tia945</styleUrl>
+<styleUrl>#tia945</styleUrl>
 <name>Arvidsjaur TIA a</name>
 <description>
 <![CDATA[Luftromsklasse: G<br/>
@@ -13497,7 +13347,7 @@ Hoydebegr. PG/HG, meter: 945 eller fly over 1524 <br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#rosa-tia792</styleUrl>
+<styleUrl>#tia792</styleUrl>
 <name>Arvidsjaur TIA b</name>
 <description>
 <![CDATA[Luftromsklasse: G<br/>
@@ -13526,7 +13376,7 @@ Hoydebegr. PG/HG, meter: 792 eller fly over 1524 <br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#rosa-tia305</styleUrl>
+<styleUrl>#tia305</styleUrl>
 <name>Gallivare TIA</name>
 <description>
 <![CDATA[Luftromsklasse: G<br/>
@@ -13555,7 +13405,7 @@ Hoydebegr. PG/HG, meter: 305 eller fly over 1524 <br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#rosa-tia305</styleUrl>
+<styleUrl>#tia305</styleUrl>
 <name>Hagfors TIA</name>
 <description>
 <![CDATA[Luftromsklasse: G<br/>
@@ -13586,7 +13436,7 @@ Tlf. nr. til tarnet: +46 56360368_ <br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#rosa-tia305</styleUrl>
+<styleUrl>#tia305</styleUrl>
 <name>Kramfors TIA</name>
 <description>
 <![CDATA[Luftromsklasse: G<br/>
@@ -13615,7 +13465,7 @@ Hoydebegr. PG/HG, meter: 305 eller fly over 1524 <br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#rosa-tia305</styleUrl>
+<styleUrl>#tia305</styleUrl>
 <name>Lycksele TIA</name>
 <description>
 <![CDATA[Luftromsklasse: G<br/>
@@ -13644,7 +13494,7 @@ Hoydebegr. PG/HG, meter: 305 eller fly over 1524 <br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#rosa-tia305</styleUrl>
+<styleUrl>#tia305</styleUrl>
 <name>Mora TIA</name>
 <description>
 <![CDATA[Luftromsklasse: G<br/>
@@ -13673,7 +13523,7 @@ Hoydebegr. PG/HG, meter: 305 eller fly over 1524 <br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#rosa-tia610</styleUrl>
+<styleUrl>#tia610</styleUrl>
 <name>Pajala TIA</name>
 <description>
 <![CDATA[Luftromsklasse: G<br/>
@@ -13704,7 +13554,7 @@ Hoydebegr. PG/HG, meter: 610 eller fly over 1524 <br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#rosa-tia610</styleUrl>
+<styleUrl>#tia610</styleUrl>
 <name>Sveg TIA</name>
 <description>
 <![CDATA[Luftromsklasse: G<br/>
@@ -13734,7 +13584,7 @@ Tlf. nr. til tarnet: +46 680711350_ <br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#rosa-tia610</styleUrl>
+<styleUrl>#tia610</styleUrl>
 <name>Torsby TIA</name>
 <description>
 <![CDATA[Luftromsklasse: G<br/>
@@ -13764,7 +13614,7 @@ Tlf. nr. til tarnet: +46 56071724_ <br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#rosa-tia305</styleUrl>
+<styleUrl>#tia305</styleUrl>
 <name>Vilhelmina TIA</name>
 <description>
 <![CDATA[Luftromsklasse: G<br/>
@@ -13804,7 +13654,7 @@ Hoydebegr. PG/HG, meter: 305 eller fly over 1524 <br/>
 <name>Permanente restriksjonsomrader</name>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>Forbudssektor segel Hemavan</name>
 <description>
 <![CDATA[Permanent restriksjons-omrade<br/>
@@ -13842,7 +13692,7 @@ Ovre grense: 2560<br/>
 
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>Forbudssektor R01 Esrange</name>
 <description>
 <![CDATA[Permanent restriksjons-omrade<br/>
@@ -13903,7 +13753,7 @@ Ovre grense: 99999<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>Forbudssektor R02 Vidsel</name>
 <description>
 <![CDATA[Permanent restriksjons-omrade<br/>
@@ -13937,7 +13787,7 @@ Ovre grense: 99999<br/>
 
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>Forbudssektor R05A Boden</name>
 <description>
 <![CDATA[Permanent restriksjons-omrade<br/>
@@ -13972,7 +13822,7 @@ Ovre grense: 9610<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>Forbudssektor R05B Boden</name>
 <description>
 <![CDATA[Permanent restriksjons-omrade<br/>
@@ -14002,7 +13852,7 @@ Ovre grense: 9610<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>Forbudssektor R05C Boden</name>
 <description>
 <![CDATA[Permanent restriksjons-omrade<br/>
@@ -14031,7 +13881,7 @@ Ovre grense: 9610<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>Forbudssektor R07 Umea</name>
 <description>
 <![CDATA[Permanent restriksjons-omrade<br/>
@@ -14064,7 +13914,7 @@ Ovre grense: 3350<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>Forbudssektor R08A Ostersund</name>
 <description>
 <![CDATA[Permanent restriksjons-omrade<br/>
@@ -14095,7 +13945,7 @@ Ovre grense: 8550<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>Forbudssektor R08B Ostersund</name>
 <description>
 <![CDATA[Permanent restriksjons-omrade<br/>
@@ -14125,7 +13975,7 @@ Ovre grense: 8550<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>Forbudssektor R08C Ostersund</name>
 <description>
 <![CDATA[Permanent restriksjons-omrade<br/>
@@ -14156,7 +14006,7 @@ Ovre grense: 8550<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>Forbudssektor R09 Salubole</name>
 <description>
 <![CDATA[Permanent restriksjons-omrade<br/>
@@ -14191,7 +14041,7 @@ Ovre grense: 3200<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>Forbudssektor R10 Tjarnmyren</name>
 <description>
 <![CDATA[Permanent restriksjons-omrade<br/>
@@ -14222,7 +14072,7 @@ Ovre grense: 3500<br/>
 
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>Forbudssektor R13 Alvdalen</name>
 <description>
 <![CDATA[Permanent restriksjons-omrade<br/>
@@ -14258,7 +14108,7 @@ Kontakt Arlanda ATC +46 859492250<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>Forbudssektor R46 Lulea</name>
 <description>
 <![CDATA[Permanent restriksjons-omrade<br/>
@@ -14289,7 +14139,7 @@ Ovre grense: 1850<br/>
 
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>Forbudssektor R51A Kalixfors</name>
 <description>
 <![CDATA[Permanent restriksjons-omrade<br/>
@@ -14321,7 +14171,7 @@ Ovre grense: 4250<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>Forbudssektor R51B Kalixfors</name>
 <description>
 <![CDATA[Permanent restriksjons-omrade<br/>
@@ -14354,7 +14204,7 @@ Ovre grense: 4250<br/>
 
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>Forbudssektor R58A Tame</name>
 <description>
 <![CDATA[Permanent restriksjons-omrade<br/>
@@ -14385,7 +14235,7 @@ Ovre grense: 12350<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>Forbudssektor R58B Tame</name>
 <description>
 <![CDATA[Permanent restriksjons-omrade<br/>
@@ -14417,7 +14267,7 @@ Ovre grense: 1050<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>Forbudssektor R59 Boden-Kustrask</name>
 <description>
 <![CDATA[Permanent restriksjons-omrade<br/>
@@ -14449,7 +14299,7 @@ Ovre grense: 4701<br/>
 
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>Forbudssektor R70A Haron</name>
 <description>
 <![CDATA[Permanent restriksjons-omrade<br/>
@@ -14481,7 +14331,7 @@ Ovre grense: 8400<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>Forbudssektor R70B Prasthus</name>
 <description>
 <![CDATA[Permanent restriksjons-omrade<br/>
@@ -14512,7 +14362,7 @@ Ovre grense: 1372<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>Forbudssektor R70C Vangsta</name>
 <description>
 <![CDATA[Permanent restriksjons-omrade<br/>
@@ -14542,7 +14392,7 @@ Ovre grense: 5050<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>Forbudssektor R70D Skarsviken</name>
 <description>
 <![CDATA[Permanent restriksjons-omrade<br/>
@@ -14573,7 +14423,7 @@ Ovre grense: 1372<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>Forbudssektor R74 Arvidsjaur</name>
 <description>
 <![CDATA[Permanent restriksjons-omrade<br/>
@@ -14606,7 +14456,7 @@ Ovre grense: 4701<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>Forbudssektor R76 Lomben</name>
 <description>
 <![CDATA[Permanent restriksjons-omrade<br/>
@@ -14637,7 +14487,7 @@ Ovre grense: 4400<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>Forbudssektor R100 Saltvik</name>
 <description>
 <![CDATA[Permanent restriksjons-omrade<br/>
@@ -14688,7 +14538,7 @@ Ovre grense: 610<br/>
 <name>Fareomrader,ma ansees som aktive</name>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>Fareomrade ES D179</name>
 <description>
 <![CDATA[Fareomr.:Ansees som aktivt<br/>
@@ -14734,7 +14584,7 @@ Info: ring LKAB, +46 98071001
 
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>Forbudssektor R03 Kalix</name>
 <description>
 <![CDATA[Fareomr.:Aktivt hvis NOTAM<br/>
@@ -14767,7 +14617,7 @@ Ovre grense: 99999<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>Forbudssektor R04 Boden</name>
 <description>
 <![CDATA[Fareomr.:Aktivt hvis NOTAM<br/>
@@ -14802,7 +14652,7 @@ Ovre grense: 99999<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>Forbudssektor R11 Angermanelven</name>
 <description>
 <![CDATA[Fareomr.:Aktivt hvis NOTAM<br/>
@@ -14834,7 +14684,7 @@ Ovre grense: 99999<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#RedPoly</styleUrl>
+<styleUrl>#fare</styleUrl>
 <name>Forbudssektor R85 Holmogadd</name>
 <description>
 <![CDATA[Fareomr.:Aktivt hvis NOTAM<br/>
@@ -14874,7 +14724,7 @@ Ovre grense: 99999<br/>
 <name>Nasjonalparker</name>
 
 <Placemark>
-<styleUrl>#YellowPoly-vikeplikt</styleUrl>
+<styleUrl>#vikeplikt</styleUrl>
 <name>Forbudssektor R47 Sarek</name>
 <description>
 <![CDATA[Nasjonal park<br/>
@@ -14915,7 +14765,7 @@ Ovre grense: 2450<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#YellowPoly-vikeplikt</styleUrl>
+<styleUrl>#vikeplikt</styleUrl>
 <name>Forbudssektor R53 Stora Sjofallet</name>
 <description>
 <![CDATA[Nasjonal park<br/>
@@ -14956,7 +14806,7 @@ Ovre grense: 2305<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#YellowPoly-vikeplikt</styleUrl>
+<styleUrl>#vikeplikt</styleUrl>
 <name>Forbudssektor R57 Padjelanta</name>
 <description>
 <![CDATA[Nasjonal park<br/>
@@ -15000,7 +14850,7 @@ Ovre grense: 2150<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#YellowPoly-vikeplikt</styleUrl>
+<styleUrl>#vikeplikt</styleUrl>
 <name>Forbudssektor R61 Sanfjallet</name>
 <description>
 <![CDATA[Nasjonal park<br/>
