@@ -33,6 +33,20 @@ public class TakeoffList extends Fragment {
     private static int savedListTop;
     private TakeoffListListener callback;
     private List<Takeoff> takeoffs = new ArrayList<Takeoff>();
+    
+    public void updateList() {
+        takeoffs = callback.getNearbyTakeoffs();
+        TakeoffArrayAdapter adapter = new TakeoffArrayAdapter(getActivity());
+        ListView listView = (ListView) getActivity().findViewById(R.id.takeoffListView);
+        listView.setAdapter(adapter);
+        listView.setOnItemClickListener(new OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                callback.showTakeoffDetails(takeoffs.get(position));
+            }
+        });
+        /* position list */
+        listView.setSelectionFromTop(savedPosition, savedListTop);
+    }
 
     @Override
     public void onAttach(Activity activity) {
@@ -51,18 +65,8 @@ public class TakeoffList extends Fragment {
     public void onStart() {
         Log.d(getClass().getSimpleName(), "onStart()");
         super.onStart();
-
-        takeoffs = callback.getNearbyTakeoffs();
-        TakeoffArrayAdapter adapter = new TakeoffArrayAdapter(getActivity());
-        ListView listView = (ListView) getActivity().findViewById(R.id.takeoffListView);
-        listView.setAdapter(adapter);
-        listView.setOnItemClickListener(new OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                callback.showTakeoffDetails(takeoffs.get(position));
-            }
-        });
-        /* position list */
-        listView.setSelectionFromTop(savedPosition, savedListTop);
+        
+        updateList();
     }
 
     @Override

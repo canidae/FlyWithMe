@@ -693,7 +693,7 @@ Hans Cato Grytnes
 <IconStyle>
 <color>ffffffff</color>
 <Icon>
-<href>http://home.no/grytnes/luftrom/fly-ctr1.png</href>
+<href>http://home.no/grytnes/luftrom/fly-ctr.png</href>
 </Icon>
 </IconStyle>
 </Style>
@@ -8480,13 +8480,37 @@ Hoydebegr. hvis aktivert: 1067m om ikke annet avtalt.<br/>
 
 <Placemark>
 <styleUrl>#pgstart</styleUrl>
+<name>Vaga, Blahoe</name>
+<description>
+<![CDATA[1450 m.o.h <br/>
+<a href="http://no.flightlog.org/fl.html?l=2&a=22&country_id=160&start_id=44"> Loggboka  </a>]]>
+</description>
+<Point>
+<coordinates>9.245277,61.900278</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<styleUrl>#pgstart</styleUrl>
 <name>Vaga, Vole</name>
 <description>
 <![CDATA[1070 m.o.h <br/>
 <a href="http://no.flightlog.org/fl.html?l=2&a=22&country_id=160&start_id=27"> Loggboka  </a>]]>
 </description>
 <Point>
-<coordinates>12.193333,61.309444</coordinates>
+<coordinates>9.142222,61.892222</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<styleUrl>#pgstart</styleUrl>
+<name>HQ-Rikssenteret, landing</name>
+<description>
+<![CDATA[360 m.o.h <br/>
+<a href="http://www.nlf.no/hangglidingparagliding/rikssenter-hang-og-paragliding-i-v-g-0"> Info  </a>]]>
+</description>
+<Point>
+<coordinates>9.15472,61.87463</coordinates>
 </Point>
 </Placemark>
 

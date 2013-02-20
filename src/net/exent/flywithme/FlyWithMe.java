@@ -17,6 +17,7 @@ import android.content.SharedPreferences;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
@@ -33,8 +34,11 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
     private static final int DEFAULT_MAX_TAKEOFFS = 200;
     private static Location lastSortedTakeoffsLocation;
     private static Location location = new Location(LocationManager.PASSIVE_PROVIDER);
-    private static List<Takeoff> sortedTakeoffs;
+    private static List<Takeoff> sortedTakeoffs = new ArrayList<Takeoff>();
     private static Fragment previousFragment;
+    private static TakeoffDetails takeoffDetails;
+    private static TakeoffList takeoffList;
+    private static TakeoffMap takeoffMap;
 
     /**
      * Get approximate location of user.
@@ -53,11 +57,7 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
      */
     public List<Takeoff> getNearbyTakeoffs() {
         Log.d(getClass().getSimpleName(), "getNearbyTakeoffs()");
-        if (lastSortedTakeoffsLocation == null || location.distanceTo(lastSortedTakeoffsLocation) >= TAKEOFFS_SORT_DISTANCE) {
-            /* moved too much, need to sort takeoff list again */
-            lastSortedTakeoffsLocation = location;
-            sortedTakeoffs = getTakeoffsAt(location);
-        }
+        updateTakeoffList();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         int maxTakeoffs = DEFAULT_MAX_TAKEOFFS;
         try {
@@ -66,7 +66,7 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
             Log.w(getClass().getSimpleName(), "Unable to parse max takeoffs setting as integer", e);
         }
         if (maxTakeoffs > 0) {
-            return sortedTakeoffs.subList(0, maxTakeoffs);
+            return sortedTakeoffs.subList(0, maxTakeoffs > sortedTakeoffs.size() ? sortedTakeoffs.size() : maxTakeoffs);
         } else if (maxTakeoffs < 0) {
             /* negative maxTakeoffs means takeoffs within certain distance */
             int pos;
@@ -115,8 +115,9 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
         }
         previousFragment = fragment;
 
-        /* fragment not visible, need to create it */
-        TakeoffDetails takeoffDetails = new TakeoffDetails();
+        /* fragment not visible, do we need to create it= */
+        if (takeoffDetails == null)
+            takeoffDetails = new TakeoffDetails();
         /* pass arguments */
         Bundle args = new Bundle();
         args.putParcelable(TakeoffDetails.ARG_TAKEOFF, takeoff);
@@ -135,8 +136,9 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
         if (fragment != null && fragment instanceof TakeoffList)
             return;
 
-        /* fragment not visible, need to create it */
-        TakeoffList takeoffList = new TakeoffList();
+        /* fragment not visible, do we need to create it= */
+        if (takeoffList == null)
+            takeoffList = new TakeoffList();
         /* replace fragment container & add transaction to the back stack */
         getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, takeoffList).commit();
     }
@@ -151,15 +153,15 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
         if (fragment != null && fragment instanceof TakeoffMap)
             return;
 
-        /* fragment not visible, need to create it */
-        TakeoffMap takeoffMap = new TakeoffMap();
+        /* fragment not visible, do we need to create it= */
+        if (takeoffMap == null)
+            takeoffMap = new TakeoffMap();
         /* replace fragment container & add transaction to the back stack */
         getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, takeoffMap).commit();
     }
-    
+
     /**
-     * Show settings.
-     * TODO: There's no "SupportPreferenceFragment" (yet), thus this has to an own activity for the time being
+     * Show settings. TODO: There's no "SupportPreferenceFragment" (yet), thus this has to an own activity for the time being
      */
     public void showSettings() {
         Log.d(getClass().getSimpleName(), "showSettings()");
@@ -192,6 +194,7 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
                 if (newLocation == null)
                     return;
                 location = newLocation;
+                updateTakeoffList();
             }
         };
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -200,16 +203,13 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
         if (location == null)
             location = new Location(LocationManager.PASSIVE_PROVIDER); // no location set, let's pretend we're skinny dipping in the gulf of guinea
 
-        /* init data */
-        Flightlog.init(this);
-        Airspace.init(this);
-
         if (savedInstanceState != null || findViewById(R.id.fragmentContainer) == null)
             return;
 
         /* takeoff list is default view */
-        TakeoffList takeoffList = new TakeoffList();
+        takeoffList = new TakeoffList();
         getSupportFragmentManager().beginTransaction().add(R.id.fragmentContainer, takeoffList).commit();
+        new InitDataTask().execute(this);
     }
 
     @Override
@@ -264,5 +264,73 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
         fragmentButton1.setImageDrawable(null);
         ImageButton fragmentButton2 = (ImageButton) findViewById(R.id.fragmentButton2);
         fragmentButton2.setImageDrawable(null);
+    }
+
+    private synchronized boolean updateTakeoffList() {
+        if (lastSortedTakeoffsLocation == null || location.distanceTo(lastSortedTakeoffsLocation) >= TAKEOFFS_SORT_DISTANCE) {
+            /* moved too much, need to sort takeoff list again */
+            lastSortedTakeoffsLocation = location;
+            new UpdateTakeoffListTask().execute();
+            return true;
+        }
+        return false;
+    }
+
+    private class UpdateTakeoffListTask extends AsyncTask<Void, Void, List<Takeoff>> {
+        @Override
+        protected List<Takeoff> doInBackground(Void... params) {
+            return getTakeoffsAt(location);
+        }
+
+        @Override
+        protected void onPostExecute(List<Takeoff> takeoffs) {
+            sortedTakeoffs = takeoffs;
+            Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragmentContainer);
+            if (fragment != null && fragment instanceof TakeoffMap) {
+                takeoffMap.drawMap();
+            } else if (fragment != null && fragment instanceof TakeoffList) {
+                takeoffList.updateList();
+            }
+        }
+    }
+
+    private class InitDataTask extends AsyncTask<Context, Integer, Void> {
+        @Override
+        protected Void doInBackground(Context... contexts) {
+            publishProgress(0);
+            Flightlog.init(contexts[0]);
+            publishProgress(1);
+            Airspace.init(contexts[0]);
+            publishProgress(2);
+            updateTakeoffList();
+            return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... progress) {
+            String message;
+            switch (progress[0]) {
+            case 0:
+                message = "Loading takeoffs...";
+                break;
+
+            case 1:
+                message = "Loading airspace map...";
+                break;
+
+            case 2:
+                message = "Sorting takeoffs...";
+                break;
+
+            default:
+                /* not expected to happen */
+                message = "Calling dubious people...";
+                break;
+            }
+            sortedTakeoffs.add(new Takeoff(0, message, "", 0, 0, location.getLatitude(), location.getLongitude(), ""));
+            Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragmentContainer);
+            if (fragment != null && fragment instanceof TakeoffList)
+                takeoffList.updateList();
+        }
     }
 }
