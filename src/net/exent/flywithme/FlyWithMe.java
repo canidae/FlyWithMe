@@ -39,6 +39,7 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
     private static TakeoffDetails takeoffDetails;
     private static TakeoffList takeoffList;
     private static TakeoffMap takeoffMap;
+    private static volatile boolean initializing;
 
     /**
      * Get approximate location of user.
@@ -284,25 +285,31 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
 
         @Override
         protected void onPostExecute(List<Takeoff> takeoffs) {
+            Log.d("UpdateTakeoffListTask", "Setting sortedTakeoffs");
+            if (initializing) {
+                Log.i(getClass().getSimpleName(), "Still initializing, skipping updating sorted takeoff list");
+                return;
+            }
             sortedTakeoffs = takeoffs;
             Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragmentContainer);
-            if (fragment != null && fragment instanceof TakeoffMap) {
+            if (fragment != null && fragment instanceof TakeoffMap)
                 takeoffMap.drawMap();
-            } else if (fragment != null && fragment instanceof TakeoffList) {
+            else if (fragment != null && fragment instanceof TakeoffList)
                 takeoffList.updateList();
-            }
         }
     }
 
     private class InitDataTask extends AsyncTask<Context, Integer, Void> {
         @Override
         protected Void doInBackground(Context... contexts) {
+            initializing = true;
             publishProgress(0);
             Flightlog.init(contexts[0]);
             publishProgress(1);
             Airspace.init(contexts[0]);
             publishProgress(2);
-            updateTakeoffList();
+            initializing = false;
+            new UpdateTakeoffListTask().execute();
             return null;
         }
 
@@ -311,22 +318,23 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
             String message;
             switch (progress[0]) {
             case 0:
-                message = "Loading takeoffs...";
+                message = getString(R.string.loading_takeoffs);
                 break;
 
             case 1:
-                message = "Loading airspace map...";
+                message = getString(R.string.loading_airspace);
                 break;
 
             case 2:
-                message = "Sorting takeoffs...";
+                message = getString(R.string.sorting_takeoffs);
                 break;
 
             default:
                 /* not expected to happen */
-                message = "Calling dubious people...";
+                message = "Unexpected, bug developer";
                 break;
             }
+            Log.d(getClass().getSimpleName(), "InitDataTask: " + message);
             sortedTakeoffs.add(new Takeoff(0, message, "", 0, 0, location.getLatitude(), location.getLongitude(), ""));
             Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragmentContainer);
             if (fragment != null && fragment instanceof TakeoffList)

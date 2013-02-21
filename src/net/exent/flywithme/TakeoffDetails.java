@@ -28,6 +28,10 @@ public class TakeoffDetails extends Fragment {
 
     public void showTakeoffDetails(final Takeoff takeoff) {
         Log.d(getClass().getSimpleName(), "showTakeoffDetails(" + takeoff + ")");
+        if (callback == null) {
+            Log.w(getClass().getSimpleName(), "callback is null, returning");
+            return;
+        }
         this.takeoff = takeoff;
         if (takeoff == null)
             return;

@@ -35,6 +35,11 @@ public class TakeoffList extends Fragment {
     private List<Takeoff> takeoffs = new ArrayList<Takeoff>();
     
     public void updateList() {
+        Log.d(getClass().getSimpleName(), "updateList()");
+        if (callback == null) {
+            Log.w(getClass().getSimpleName(), "callback is null, returning");
+            return;
+        }
         takeoffs = callback.getNearbyTakeoffs();
         TakeoffArrayAdapter adapter = new TakeoffArrayAdapter(getActivity());
         ListView listView = (ListView) getActivity().findViewById(R.id.takeoffListView);

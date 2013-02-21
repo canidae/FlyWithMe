@@ -47,6 +47,10 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener {
 
     public void drawMap() {
         Log.d(getClass().getSimpleName(), "drawMap()");
+        if (callback == null) {
+            Log.w(getClass().getSimpleName(), "callback is null, returning");
+            return;
+        }
         SupportMapFragment fragment = (SupportMapFragment) getFragmentManager().findFragmentById(R.id.takeoffMapFragment);
         if (fragment == null)
             return;
@@ -89,6 +93,10 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener {
 
     public void onInfoWindowClick(Marker marker) {
         Log.d(getClass().getSimpleName(), "onInfoWindowClick(" + marker + ")");
+        if (callback == null) {
+            Log.w(getClass().getSimpleName(), "callback is null, returning");
+            return;
+        }
         Takeoff takeoff = takeoffMarkers.get(marker.getId());
 
         /* tell main activity to show takeoff details */
@@ -137,9 +145,9 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener {
         map.clear();
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         if (prefs.getBoolean("pref_map_show_takeoffs", true))
-            drawTakeoffMarkers(map); // TODO: async?
+            drawTakeoffMarkers(map);
         if (prefs.getBoolean("pref_map_show_airspace", true))
-            drawAirspaceMap(map); // TODO: async!
+            drawAirspaceMap(map);
     }
 
     private void drawTakeoffMarkers(GoogleMap map) {
@@ -196,7 +204,7 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener {
         for (LatLng loc : polygon.getPoints()) {
             tmpLocation.setLatitude(loc.latitude);
             tmpLocation.setLongitude(loc.longitude);
-            if (myLocation.distanceTo(tmpLocation) < maxAirspaceDistance)
+            if (maxAirspaceDistance == 0 || myLocation.distanceTo(tmpLocation) < maxAirspaceDistance)
                 return true;
             if (myLocation.getLatitude() < loc.latitude)
                 userSouthOfNorthernmostPoint = true;

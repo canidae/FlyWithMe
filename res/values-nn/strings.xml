@@ -1,0 +1,73 @@
+<resources>
+    <!-- General -->
+    <string name="app_name">Fly With Me!</string>
+    <string name="geodesic_distance">Luftavstand</string>
+    <string name="asl">moh.</string>
+    <string name="height">Høgde</string>
+    
+    <!-- Startup messages -->
+    <string name="loading_takeoffs">Lastar startstader…</string>
+    <string name="loading_airspace">Lastar luftromskart…</string>
+    <string name="sorting_takeoffs">Sorterer startstader…</string>
+    
+    <!-- Preferences -->
+    <string name="preferences">Innstillingar</string>
+
+    <string-array name="empty_list"></string-array>
+
+    <!-- How many takeoffs to show -->
+    <string name="show_takeoffs">Vis startstad</string>
+    <string name="takeoffs_max_distance_values_default_value">50</string>
+
+    <string-array name="takeoffs_max_distance_keys">
+        <item>Næraste 50 (rask)</item>
+        <item>Næraste 100</item>
+        <item>Næraste 200</item>
+        <item>Næraste 500</item>
+        <item>Næraste 1500 (langsam)</item>
+        <item>Innanfor 50km (rask)</item>
+        <item>Innanfor 100km</item>
+        <item>Innanfor 200km</item>
+        <item>Innanfor 500km</item>
+        <item>Innanfor 1500km (langsam)</item>
+        <item>Alle (svært langsam)</item>
+    </string-array>
+    <string-array name="takeoffs_max_distance_values">
+        <item>50</item>
+        <item>100</item>
+        <item>200</item>
+        <item>500</item>
+        <item>1500</item>
+        <item>-50</item>
+        <item>-100</item>
+        <item>-200</item>
+        <item>-500</item>
+        <item>-1500</item>
+        <item>0</item>
+    </string-array>
+
+    <!-- How far away we should draw airspace -->
+    <string name="show_airspace">Vis luftrom</string>
+    <string name="airspace_max_distance_values_default_value">100</string>
+
+    <string-array name="airspace_max_distance_keys">
+        <item>Innanfor 50km (rask)</item>
+        <item>Innanfor 100km</item>
+        <item>Innanfor 200km</item>
+        <item>Innanfor 500km</item>
+        <item>Innanfor 1500km (langsam)</item>
+        <item>Alle (svært langsam)</item>
+    </string-array>
+    <string-array name="airspace_max_distance_values">
+        <item>50</item>
+        <item>100</item>
+        <item>200</item>
+        <item>500</item>
+        <item>1500</item>
+        <item>0</item>
+    </string-array>
+
+    <!-- What airspace to draw (this is mostly set programatically) -->
+    <string name="show_airspace_types">Vis luftromstypar</string>
+
+</resources>
