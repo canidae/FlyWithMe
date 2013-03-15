@@ -3,7 +3,7 @@
 <Document>
 <description>
 Luftromsinfo for HG/PG.
-Sist oppdatert 01.01.2013
+Sist oppdatert 13.03.2013
 Det gis ingen garanti for feil og mangler.
 Sjekk www.ippc.no  for oppdatert info.
 Husk at du alltid har en eller flere soner over deg,
@@ -122,6 +122,24 @@ Hans Cato Grytnes
 </IconStyle>
 </Style>
 
+<Style id="cta1676">
+<LineStyle>
+<width>2.5</width>
+<color>ff1478ff</color>
+</LineStyle>
+<PolyStyle>
+<color>001478ff</color>
+<fill>1</fill>
+<outline>1</outline>
+</PolyStyle>
+<IconStyle>
+<color>ffffffff</color>
+<Icon>
+<href>http://home.no/grytnes/luftrom/cta1676.png</href>
+</Icon>
+</IconStyle>
+</Style>
+
 <Style id="cta1981">
 <LineStyle>
 <width>2.5</width>
@@ -154,6 +172,24 @@ Hans Cato Grytnes
 <color>ffffffff</color>
 <Icon>
 <href>http://home.no/grytnes/luftrom/cta2286.png</href>
+</Icon>
+</IconStyle>
+</Style>
+
+<Style id="cta2590">
+<LineStyle>
+<width>2.5</width>
+<color>ff1478ff</color>
+</LineStyle>
+<PolyStyle>
+<color>001478ff</color>
+<fill>1</fill>
+<outline>1</outline>
+</PolyStyle>
+<IconStyle>
+<color>ffffffff</color>
+<Icon>
+<href>http://home.no/grytnes/luftrom/cta2590.png</href>
 </Icon>
 </IconStyle>
 </Style>
@@ -945,7 +981,7 @@ Hans Cato Grytnes
 <styleUrl>#cta4114</styleUrl>
 <name>Norway CTA 1</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 4114<br/>
 <a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
@@ -981,7 +1017,7 @@ Hoydebegr. PG/HG, meter: 4114<br/>
 <styleUrl>#cta4114</styleUrl>
 <name>Norway CTA 1</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 4114<br/>
 <a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
@@ -996,7 +1032,7 @@ Hoydebegr. PG/HG, meter: 4114<br/>
 <styleUrl>#cta4114</styleUrl>
 <name>Norway CTA 1</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 4114<br/>
 <a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
@@ -1011,7 +1047,7 @@ Hoydebegr. PG/HG, meter: 4114<br/>
 <styleUrl>#cta4114</styleUrl>
 <name>Norway CTA 1</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 4114<br/>
 <a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
@@ -1026,7 +1062,7 @@ Hoydebegr. PG/HG, meter: 4114<br/>
 <styleUrl>#cta3505</styleUrl>
 <name>Norway CTA 2</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 3505<br/>
 <a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
@@ -1062,7 +1098,7 @@ Hoydebegr. PG/HG, meter: 3505<br/>
 <styleUrl>#cta3505</styleUrl>
 <name>Norway CTA 3</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 3505<br/>
 <a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
@@ -1140,7 +1176,7 @@ Hoydebegr. PG/HG, meter: 3505<br/>
 <styleUrl>#cta3505</styleUrl>
 <name>Norway CTA 3</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 3505<br/>]]>
 </description>
 <Point>
@@ -1154,7 +1190,21 @@ Hoydebegr. PG/HG, meter: 3505<br/>]]>
 <styleUrl>#cta3505</styleUrl>
 <name>Norway CTA 3</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
+Hoydebegr. PG/HG, meter: 3505<br/>]]>
+</description>
+<Point>
+<coordinates>
+9.25,63.256
+</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<styleUrl>#cta3505</styleUrl>
+<name>Norway CTA 3</name>
+<description>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 3505<br/>]]>
 </description>
 <Point>
@@ -1168,7 +1218,7 @@ Hoydebegr. PG/HG, meter: 3505<br/>]]>
 <styleUrl>#cta3505</styleUrl>
 <name>Norway CTA 3</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 3505<br/>]]>
 </description>
 <Point>
@@ -1182,7 +1232,7 @@ Hoydebegr. PG/HG, meter: 3505<br/>]]>
 <styleUrl>#cta3505</styleUrl>
 <name>Norway CTA 4</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 3505<br/>
 <a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
@@ -1216,7 +1266,7 @@ Hoydebegr. PG/HG, meter: 3505<br/>
 <styleUrl>#cta3505</styleUrl>
 <name>Norway CTA 4</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 3505<br/>
 <a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
@@ -1231,7 +1281,7 @@ Hoydebegr. PG/HG, meter: 3505<br/>
 <styleUrl>#cta3505</styleUrl>
 <name>Norway CTA 4</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 3505<br/>
 <a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
@@ -1246,7 +1296,7 @@ Hoydebegr. PG/HG, meter: 3505<br/>
 <styleUrl>#cta3505</styleUrl>
 <name>Norway CTA 5</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 3505<br/>
 <a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
@@ -1277,7 +1327,7 @@ Hoydebegr. PG/HG, meter: 3505<br/>
 <styleUrl>#cta3505</styleUrl>
 <name>Norway CTA 5</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 3505<br/>
 <a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
@@ -1292,7 +1342,7 @@ Hoydebegr. PG/HG, meter: 3505<br/>
 <styleUrl>#cta3200</styleUrl>
 <name>Norway CTA 6</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 3200<br/>
 <a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
@@ -1560,7 +1610,7 @@ Hoydebegr. PG/HG, meter: 3200<br/>
 <styleUrl>#cta3200</styleUrl>
 <name>Norway CTA 6</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 3200<br/>]]>
 </description>
 <Point>
@@ -1574,7 +1624,7 @@ Hoydebegr. PG/HG, meter: 3200<br/>]]>
 <styleUrl>#cta3200</styleUrl>
 <name>Norway CTA 6</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 3200<br/>]]>
 </description>
 <Point>
@@ -1588,7 +1638,7 @@ Hoydebegr. PG/HG, meter: 3200<br/>]]>
 <styleUrl>#cta2895</styleUrl>
 <name>Norway CTA 7</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 2895<br/>
 <a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
@@ -1750,7 +1800,7 @@ Hoydebegr. PG/HG, meter: 2895<br/>
 <styleUrl>#cta2895</styleUrl>
 <name>Norway CTA 7</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 2895<br/>]]>
 </description>
 <Point>
@@ -1764,7 +1814,7 @@ Hoydebegr. PG/HG, meter: 2895<br/>]]>
 <styleUrl>#cta2895</styleUrl>
 <name>Norway CTA 7</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 2895<br/>]]>
 </description>
 <Point>
@@ -1778,7 +1828,7 @@ Hoydebegr. PG/HG, meter: 2895<br/>]]>
 <styleUrl>#cta2895</styleUrl>
 <name>Norway CTA 7</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 2895<br/>]]>
 </description>
 <Point>
@@ -1792,7 +1842,7 @@ Hoydebegr. PG/HG, meter: 2895<br/>]]>
 <styleUrl>#cta2895</styleUrl>
 <name>Norway CTA 7</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 2895<br/>]]>
 </description>
 <Point>
@@ -1806,7 +1856,7 @@ Hoydebegr. PG/HG, meter: 2895<br/>]]>
 <styleUrl>#cta2895</styleUrl>
 <name>Norway CTA 7</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 2895<br/>]]>
 </description>
 <Point>
@@ -1820,7 +1870,7 @@ Hoydebegr. PG/HG, meter: 2895<br/>]]>
 <styleUrl>#cta2895</styleUrl>
 <name>Norway CTA 7</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 2895<br/>]]>
 </description>
 <Point>
@@ -1834,7 +1884,7 @@ Hoydebegr. PG/HG, meter: 2895<br/>]]>
 <styleUrl>#cta2895</styleUrl>
 <name>Norway CTA 7</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 2895<br/>]]>
 </description>
 <Point>
@@ -1848,7 +1898,7 @@ Hoydebegr. PG/HG, meter: 2895<br/>]]>
 <styleUrl>#cta2895</styleUrl>
 <name>Norway CTA 7</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 2895<br/>]]>
 </description>
 <Point>
@@ -1859,18 +1909,11 @@ Hoydebegr. PG/HG, meter: 2895<br/>]]>
 </Placemark>
 
 <Placemark>
-<styleUrl>#cta</styleUrl>
+<styleUrl>#cta3200</styleUrl>
 <name>Norway CTA 8</name>
 <description>
-<![CDATA[Luftromsklasse: E<br/>
-Nedre grense: 3200<br/>
-Ovre grense: 4114<br/>
-Ligger under CTA 1(D)<br/>
-dvs. PG/HG hoydebegr. 4114<br/>
-OBS: Sjekk Notam, kontakt evt. kontrollen<br/>
-<a href="http://www.ippc.no/"> NOTAM (klikk pa kartet) </a>
-<a href="http://www.lfv.se/AISInfo.asp?TextFile=odinenos.txt&SubTitle=&T=Norway%20S&Frequency=250"> -  NOTAM via Sverige  -</a>
-<a href="http://www.dyvik.net/SikreSider/DiverseArt/Luftrom.htm">info om luftromsklasser</a>
+<![CDATA[Luftromsklasse: C<br/>
+Hoydebegr. PG/HG, meter: 3200<br/>
 <a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
@@ -1894,18 +1937,11 @@ OBS: Sjekk Notam, kontakt evt. kontrollen<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#cta</styleUrl>
+<styleUrl>#cta2895</styleUrl>
 <name>Norway CTA 9</name>
 <description>
-<![CDATA[Luftromsklasse: E<br/>
-Nedre grense: 2895<br/>
-Ovre grense: 4114<br/>
-Ligger under CTA 1(D)<br/>
-dvs. PG/HG hoydebegr. 4114<br/>
-OBS: Sjekk Notam, kontakt evt. kontrollen<br/>
-<a href="http://www.ippc.no/"> NOTAM (klikk pa kartet) </a>
-<a href="http://www.lfv.se/AISInfo.asp?TextFile=odinenos.txt&SubTitle=&T=Norway%20S&Frequency=250"> -  NOTAM via Sverige  -</a>
-<a href="http://www.dyvik.net/SikreSider/DiverseArt/Luftrom.htm">info om luftromsklasser</a>
+<![CDATA[Luftromsklasse: C<br/>
+Hoydebegr. PG/HG, meter: 2895<br/>
 <a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
@@ -1932,24 +1968,17 @@ OBS: Sjekk Notam, kontakt evt. kontrollen<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#cta</styleUrl>
+<styleUrl>#cta2590</styleUrl>
 <name>Norway CTA 10</name>
 <description>
-<![CDATA[Luftromsklasse: E<br/>
-Nedre grense: 2590<br/>
-Ovre grense: 4114<br/>
-Ligger under CTA 1(D)<br/>
-dvs. PG/HG hoydebegr. 4114<br/>
-OBS: Sjekk Notam, kontakt evt. kontrollen<br/>
-<a href="http://www.ippc.no/"> NOTAM (klikk pa kartet) </a>
-<a href="http://www.lfv.se/AISInfo.asp?TextFile=odinenos.txt&SubTitle=&T=Norway%20S&Frequency=250"> -  NOTAM via Sverige  -</a>
-<a href="http://www.dyvik.net/SikreSider/DiverseArt/Luftrom.htm">info om luftromsklasser</a>
+<![CDATA[Luftromsklasse: C<br/>
+Hoydebegr. PG/HG, meter: 2590<br/>
 <a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
 <coordinates>
-7.4822,62.2413
+8.047,62.56
 </coordinates>
 </Point>
 <Polygon>
@@ -1971,10 +2000,38 @@ OBS: Sjekk Notam, kontakt evt. kontrollen<br/>
 </Placemark>
 
 <Placemark>
+<styleUrl>#cta2590</styleUrl>
+<name>Norway CTA 10</name>
+<description>
+<![CDATA[Luftromsklasse: C<br/>
+Hoydebegr. PG/HG, meter: 2590<br/>]]>
+</description>
+<Point>
+<coordinates>
+8.146,62.421
+</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<styleUrl>#cta2590</styleUrl>
+<name>Norway CTA 10</name>
+<description>
+<![CDATA[Luftromsklasse: C<br/>
+Hoydebegr. PG/HG, meter: 2590<br/>]]>
+</description>
+<Point>
+<coordinates>
+6.801,62.009
+</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
 <styleUrl>#cta2286</styleUrl>
 <name>Norway CTA 11</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 2286<br/>
 <a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
@@ -2011,7 +2068,7 @@ Hoydebegr. PG/HG, meter: 2286<br/>
 <styleUrl>#cta2286</styleUrl>
 <name>Norway CTA 12</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 2286<br/>
 <a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
@@ -2042,7 +2099,7 @@ Hoydebegr. PG/HG, meter: 2286<br/>
 <styleUrl>#cta1981</styleUrl>
 <name>Norway CTA 13</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1981<br/>
 <a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
@@ -2071,18 +2128,11 @@ Hoydebegr. PG/HG, meter: 1981<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#cta</styleUrl>
+<styleUrl>#cta1981</styleUrl>
 <name>Norway CTA 14</name>
 <description>
-<![CDATA[Luftromsklasse: E<br/>
-Nedre grense: 1981<br/>
-Ovre grense: 3505<br/>
-Ligger under CTA 3(D)<br/>
-dvs. PG/HG hoydebegr. 3505<br/>
-OBS: Sjekk Notam, kontakt evt. kontrollen<br/>
-<a href="http://www.ippc.no/"> NOTAM (klikk pa kartet) </a>
-<a href="http://www.lfv.se/AISInfo.asp?TextFile=odinenos.txt&SubTitle=&T=Norway%20S&Frequency=250"> -  NOTAM via Sverige  -</a>
-<a href="http://www.dyvik.net/SikreSider/DiverseArt/Luftrom.htm">info om luftromsklasser</a>
+<![CDATA[Luftromsklasse: C<br/>
+Hoydebegr. PG/HG, meter: 1981<br/>
 <a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
@@ -2110,18 +2160,11 @@ OBS: Sjekk Notam, kontakt evt. kontrollen<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#cta</styleUrl>
+<styleUrl>#cta1676</styleUrl>
 <name>Norway CTA 15</name>
 <description>
-<![CDATA[Luftromsklasse: E<br/>
-Nedre grense: 1676<br/>
-Ovre grense: 3505<br/>
-Ligger under CTA 3(D)<br/>
-dvs. PG/HG hoydebegr. 3505<br/>
-OBS: Sjekk Notam, kontakt evt. kontrollen<br/>
-<a href="http://www.ippc.no/"> NOTAM (klikk pa kartet) </a>
-<a href="http://www.lfv.se/AISInfo.asp?TextFile=odinenos.txt&SubTitle=&T=Norway%20S&Frequency=250"> -  NOTAM via Sverige  -</a>
-<a href="http://www.dyvik.net/SikreSider/DiverseArt/Luftrom.htm">info om luftromsklasser</a>
+<![CDATA[Luftromsklasse: C<br/>
+Hoydebegr. PG/HG, meter: 1676<br/>
 <a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
@@ -2149,7 +2192,7 @@ OBS: Sjekk Notam, kontakt evt. kontrollen<br/>
 <styleUrl>#cta2286</styleUrl>
 <name>Norway CTA 16</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 2286<br/>
 <a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
@@ -2180,7 +2223,7 @@ Hoydebegr. PG/HG, meter: 2286<br/>
 <styleUrl>#cta2895</styleUrl>
 <name>Norway CTA 17</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 2895<br/>
 <a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
@@ -2216,7 +2259,7 @@ Hoydebegr. PG/HG, meter: 2895<br/>
 <styleUrl>#cta</styleUrl>
 <name>Statfjord CTA 1</name>
 <description>
-<![CDATA[Luftromsklasse: E<br/>
+<![CDATA[Luftromsklasse: D<br/>
 Nedre grense: 457<br/>
 Ovre grense: 2590<br/>
 <a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
@@ -2252,7 +2295,7 @@ Ovre grense: 2590<br/>
 <styleUrl>#tma1067</styleUrl>
 <name>Alta TMA 1</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1067<br/>
 <a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
@@ -2282,7 +2325,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 <styleUrl>#tma1372</styleUrl>
 <name>Alta TMA 2</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1372<br/>
 <a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
@@ -2312,7 +2355,7 @@ Hoydebegr. PG/HG, meter: 1372<br/>
 <styleUrl>#tma1372</styleUrl>
 <name>Andoya TMA 1</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1372<br/>
 <a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
@@ -2341,7 +2384,7 @@ Hoydebegr. PG/HG, meter: 1372<br/>
 <styleUrl>#tma762</styleUrl>
 <name>Andoya TMA 2</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 762<br/>
 <a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
@@ -2372,7 +2415,7 @@ Hoydebegr. PG/HG, meter: 762<br/>
 <styleUrl>#tma1067</styleUrl>
 <name>Andoya TMA 3</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1067<br/>
 <a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
@@ -2400,7 +2443,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 <styleUrl>#tma1067</styleUrl>
 <name>Banak TMA 1</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1067<br/>
 <a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
@@ -2433,7 +2476,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 <styleUrl>#tma1676</styleUrl>
 <name>Bardufoss TMA 1</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1676<br/>
 <a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
@@ -2463,7 +2506,7 @@ Hoydebegr. PG/HG, meter: 1676<br/>
 <styleUrl>#tma1372</styleUrl>
 <name>Bardufoss TMA 2</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1372<br/>
 <a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
@@ -2499,7 +2542,7 @@ Hoydebegr. PG/HG, meter: 1372<br/>
 <styleUrl>#tma457</styleUrl>
 <name>Bodo TMA 1</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 457<br/>
 <a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
@@ -2533,7 +2576,7 @@ Hoydebegr. PG/HG, meter: 457<br/>
 <styleUrl>#tma1067</styleUrl>
 <name>Bodo TMA 2</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1067<br/>
 <a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
@@ -2574,7 +2617,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 <styleUrl>#tma1372</styleUrl>
 <name>Bodo TMA 3</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1372<br/>
 <a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
@@ -2605,7 +2648,7 @@ Hoydebegr. PG/HG, meter: 1372<br/>
 <styleUrl>#tma1981</styleUrl>
 <name>Bodo TMA 4</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1981<br/>
 <a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
@@ -2635,7 +2678,7 @@ Hoydebegr. PG/HG, meter: 1981<br/>
 <styleUrl>#tma1372</styleUrl>
 <name>Evenes TMA 1</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1372<br/>
 <a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
@@ -2674,7 +2717,7 @@ Hoydebegr. PG/HG, meter: 1372<br/>
 <styleUrl>#tma762</styleUrl>
 <name>Evenes TMA 2</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 762<br/>
 <a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
@@ -2708,7 +2751,7 @@ Hoydebegr. PG/HG, meter: 762<br/>
 <styleUrl>#tma1676</styleUrl>
 <name>Evenes TMA 3</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1676<br/>
 <a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
@@ -2957,7 +3000,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 <MultiGeometry>
 <Point>
 <coordinates>
-9.2,59.3
+9.312,59.294
 </coordinates>
 </Point>
 <Polygon>
@@ -3282,10 +3325,73 @@ Hoydebegr. PG/HG, meter: 762<br/>
 </Placemark>
 
 <Placemark>
+<styleUrl>#tma1676</styleUrl>
+<name>Farris TMA 12</name>
+<description>
+<![CDATA[Luftromsklasse: C<br/>
+Hoydebegr. PG/HG, meter: 1676<br/>
+<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+</description>
+<MultiGeometry>
+<Point>
+<coordinates>
+8.867,59.091
+</coordinates>
+</Point>
+<Polygon>
+<outerBoundaryIs>
+<LinearRing>
+<coordinates>
+8.733333,59.25
+9,59.25
+9,59
+9.056389,58.965278
+8.781111,58.959722
+8.733333,59
+</coordinates>
+</LinearRing>
+</outerBoundaryIs>
+</Polygon>
+</MultiGeometry>
+</Placemark>
+
+<Placemark>
+<styleUrl>#tma1676</styleUrl>
+<name>Farris TMA 13</name>
+<description>
+<![CDATA[Luftromsklasse: C<br/>
+Hoydebegr. PG/HG, meter: 1676<br/>
+<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+</description>
+<MultiGeometry>
+<Point>
+<coordinates>
+8.964,59.371
+</coordinates>
+</Point>
+<Polygon>
+<outerBoundaryIs>
+<LinearRing>
+<coordinates>
+9.006389,59.52
+9.239444,59.466667
+9.193056,59.434722
+9,59.301667
+9,59.25
+8.733333,59.25
+8.733333,59.301667
+</coordinates>
+</LinearRing>
+</outerBoundaryIs>
+</Polygon>
+</MultiGeometry>
+</Placemark>
+
+<Placemark>
 <styleUrl>#tma213</styleUrl>
 <name>Flesland TMA 1</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 213<br/>
 <a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
@@ -3318,7 +3424,7 @@ Hoydebegr. PG/HG, meter: 213<br/>
 <styleUrl>#tma610</styleUrl>
 <name>Flesland TMA 2</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 610<br/>
 <a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
@@ -3350,7 +3456,7 @@ Hoydebegr. PG/HG, meter: 610<br/>
 <styleUrl>#tma1067</styleUrl>
 <name>Flesland TMA 3</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1067<br/>
 <a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
@@ -3386,7 +3492,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 <styleUrl>#tma1676</styleUrl>
 <name>Flesland TMA 4</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1676<br/>
 <a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
@@ -3421,7 +3527,7 @@ Hoydebegr. PG/HG, meter: 1676<br/>
 <styleUrl>#tma1676</styleUrl>
 <name>Flesland TMA 4</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1676<br/>
 <a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
@@ -3436,7 +3542,7 @@ Hoydebegr. PG/HG, meter: 1676<br/>
 <styleUrl>#tma762</styleUrl>
 <name>Hammerfest TMA 1</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 762<br/>
 <a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
@@ -3467,7 +3573,7 @@ Hoydebegr. PG/HG, meter: 762<br/>
 <styleUrl>#tma1067</styleUrl>
 <name>Hammerfest TMA 2</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1067<br/>
 <a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
@@ -3503,7 +3609,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 <styleUrl>#tma762</styleUrl>
 <name>Helgeland TMA 1</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 762<br/>
 <a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
@@ -3535,7 +3641,7 @@ Hoydebegr. PG/HG, meter: 762<br/>
 <styleUrl>#tma762</styleUrl>
 <name>Helgeland TMA 1</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 762<br/>
 <a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
@@ -3550,7 +3656,7 @@ Hoydebegr. PG/HG, meter: 762<br/>
 <styleUrl>#tma1372</styleUrl>
 <name>Helgeland TMA 2</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1372<br/>
 <a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
@@ -3583,7 +3689,7 @@ Hoydebegr. PG/HG, meter: 1372<br/>
 <styleUrl>#tma1372</styleUrl>
 <name>Helgeland TMA 2</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1372<br/>
 <a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
@@ -3598,7 +3704,7 @@ Hoydebegr. PG/HG, meter: 1372<br/>
 <styleUrl>#tma1981</styleUrl>
 <name>Helgeland TMA 3</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1981<br/>
 <a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
@@ -3628,7 +3734,7 @@ Hoydebegr. PG/HG, meter: 1981<br/>
 <styleUrl>#tma762</styleUrl>
 <name>Kirkenes TMA 1</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 762<br/>
 <a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
@@ -3823,7 +3929,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 <styleUrl>#tma213</styleUrl>
 <name>Kvernberget TMA 1</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 213<br/>
 <a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
@@ -3856,7 +3962,7 @@ Hoydebegr. PG/HG, meter: 213<br/>
 <styleUrl>#tma762</styleUrl>
 <name>Kvernberget TMA 2</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 762<br/>
 <a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
@@ -3889,7 +3995,7 @@ Hoydebegr. PG/HG, meter: 762<br/>
 <styleUrl>#tma1067</styleUrl>
 <name>Kvernberget TMA 3</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1067<br/>
 <a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
@@ -3920,7 +4026,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 <styleUrl>#tma1372</styleUrl>
 <name>Kvernberget TMA 4</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1372<br/>
 <a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
@@ -3949,7 +4055,7 @@ Hoydebegr. PG/HG, meter: 1372<br/>
 <styleUrl>#tma1067</styleUrl>
 <name>Lofoten TMA</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1067<br/>
 <a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
@@ -4312,7 +4418,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 <styleUrl>#tma1372</styleUrl>
 <name>Roros TMA 1</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1372<br/>
 Hvis ekstra hoyde onskes: <br/>
 ta evt. kontakt med tarnet pa tlf.72411452<br/>
@@ -4348,7 +4454,7 @@ ta evt. kontakt med tarnet pa tlf.72411452<br/>
 <styleUrl>#tma1981</styleUrl>
 <name>Roros TMA 2</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1981<br/>
 Hvis ekstra hoyde onskes: <br/>
 ta evt. kontakt med tarnet pa tlf.72411452<br/>
@@ -4379,7 +4485,7 @@ ta evt. kontakt med tarnet pa tlf.72411452<br/>
 <styleUrl>#tma213</styleUrl>
 <name>Sola TMA 1</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 213<br/>
 <a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
@@ -4416,7 +4522,7 @@ Hoydebegr. PG/HG, meter: 213<br/>
 <styleUrl>#tma457</styleUrl>
 <name>Sola TMA 2</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 457<br/>
 <a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
@@ -4455,7 +4561,7 @@ Hoydebegr. PG/HG, meter: 457<br/>
 <styleUrl>#tma762</styleUrl>
 <name>Sola TMA 3</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 762<br/>
 <a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
@@ -4488,7 +4594,7 @@ Hoydebegr. PG/HG, meter: 762<br/>
 <styleUrl>#tma1067</styleUrl>
 <name>Sola TMA 4</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1067<br/>
 <a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
@@ -4522,7 +4628,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 <styleUrl>#tma1067</styleUrl>
 <name>Sola TMA 4</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1067<br/>
 <a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
@@ -4537,7 +4643,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 <styleUrl>#tma1372</styleUrl>
 <name>Tromso TMA 1</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1372<br/>
 <a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
@@ -4569,7 +4675,7 @@ Hoydebegr. PG/HG, meter: 1372<br/>
 <styleUrl>#tma762</styleUrl>
 <name>Vigra TMA 1</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 762<br/>
 <a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
@@ -4602,7 +4708,7 @@ Hoydebegr. PG/HG, meter: 762<br/>
 <styleUrl>#tma1067</styleUrl>
 <name>Vigra TMA 2</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1067<br/>
 <a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
@@ -4640,7 +4746,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 <styleUrl>#tma1372</styleUrl>
 <name>Vigra TMA 3</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1372<br/>
 <a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
@@ -4669,7 +4775,7 @@ Hoydebegr. PG/HG, meter: 1372<br/>
 <styleUrl>#tma1676</styleUrl>
 <name>Vigra TMA 4</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1676<br/>
 <a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
@@ -4699,7 +4805,7 @@ Hoydebegr. PG/HG, meter: 1676<br/>
 <styleUrl>#tma762</styleUrl>
 <name>Varnes TMA 1</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 762<br/>
 <a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
@@ -4729,7 +4835,7 @@ Hoydebegr. PG/HG, meter: 762<br/>
 <styleUrl>#tma762</styleUrl>
 <name>Varnes TMA 1</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 762<br/>
 <a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
@@ -4744,7 +4850,7 @@ Hoydebegr. PG/HG, meter: 762<br/>
 <styleUrl>#tma1067</styleUrl>
 <name>Varnes TMA 2</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1067<br/>
 <a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
@@ -4780,7 +4886,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 <styleUrl>#tma1372</styleUrl>
 <name>Varnes TMA 3</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1372<br/>
 <a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
@@ -4809,7 +4915,7 @@ Hoydebegr. PG/HG, meter: 1372<br/>
 <styleUrl>#tma1676</styleUrl>
 <name>Varnes TMA 4</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1676<br/>
 <a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
@@ -4839,7 +4945,7 @@ Hoydebegr. PG/HG, meter: 1676<br/>
 <styleUrl>#tma762</styleUrl>
 <name>Orland TMA 1</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 762<br/>
 <a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
@@ -4870,7 +4976,7 @@ Hoydebegr. PG/HG, meter: 762<br/>
 <styleUrl>#tma1067</styleUrl>
 <name>Orland TMA 2</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1067<br/>
 <a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
@@ -4899,7 +5005,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 <styleUrl>#tma1067</styleUrl>
 <name>Orland TMA 3</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1067<br/>
 <a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
@@ -6636,11 +6742,11 @@ Flykontollen Royken styrer denne. tlf.66792530<br/>]]>
 <outerBoundaryIs>
 <LinearRing>
 <coordinates>
-9.370833,61.055
+9.36,61.060556
 9.891667,60.7875
 9.735833,60.712778
 9.421389,60.651944
-8.920833,60.737778
+8.913333,60.739167
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -6667,8 +6773,8 @@ Flykontollen Royken styrer denne. tlf.66792530<br/>]]>
 <LinearRing>
 <coordinates>
 9.083333,61.2
-9.370833,61.055
-8.920833,60.737778
+9.36,61.060556
+8.913333,60.739167
 8.418333,60.821667
 8.3525,60.923056
 </coordinates>
@@ -6680,7 +6786,7 @@ Flykontollen Royken styrer denne. tlf.66792530<br/>]]>
 
 <Placemark>
 <styleUrl>#tia1067</styleUrl>
-<name>FINNMARK N TIA 1</name>
+<name>FINNMARK N TIA</name>
 <description>
 <![CDATA[Luftromsklasse: G<br/>
 Hoydebegr. PG/HG, meter: 1067<br/>]]>
@@ -6705,9 +6811,10 @@ Hoydebegr. PG/HG, meter: 1067<br/>]]>
 30.866667,70.175
 29.333333,70.25
 28.633333,70.333333
-28.833333,70.8
-28.1,70.9
-27.666667,70.908333
+28.833333,70.800000
+27.854444,70.752500
+27.729444,70.754444
+27.267778,70.778333
 26,70.891667
 25.316667,70.683333
 24.8,70.733333
@@ -6721,7 +6828,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>]]>
 
 <Placemark>
 <styleUrl>#tia1981</styleUrl>
-<name>FINNMARK S TIA 1</name>
+<name>FINNMARK S TIA</name>
 <description>
 <![CDATA[Luftromsklasse: G<br/>
 Hoydebegr. PG/HG, meter: 1981<br/>]]>
@@ -6736,12 +6843,13 @@ Hoydebegr. PG/HG, meter: 1981<br/>]]>
 <outerBoundaryIs>
 <LinearRing>
 <coordinates>
-25.316667,70.683333
-26.0,70.891667
-27.666667,70.908333
-28.1,70.9
+26,70.891667
+27.267778,70.778333
+27.729444,70.754444
+27.854444,70.7525
 28.833333,70.8
 28.633333,70.333333
+25.316667,70.683333
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -7646,10 +7754,10 @@ Hoydebegr. hvis aktivert: 2895m <br/>
 <outerBoundaryIs>
 <LinearRing>
 <coordinates>
-9.028611,60.814444
+9.021095,60.817004
 9.469444,60.661389
 9.421389,60.651944
-8.920833,60.737778
+8.913333,60.739167
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -7677,8 +7785,8 @@ Hoydebegr. hvis aktivert: 3505m <br/>
 <LinearRing>
 <coordinates>
 8.52,60.987222
-9.028611,60.814444
-8.920833,60.737778
+9.021095,60.817004
+8.913333,60.739167
 8.418333,60.821667
 8.3525,60.923056
 </coordinates>
@@ -10974,11 +11082,25 @@ Ovre grense: 1524<br/>
 <description>
 <![CDATA[Fallskjerm drop-sone<br/>]]>
 </description>
+<MultiGeometry>
 <Point>
 <coordinates>
 6.498333,60.632778
 </coordinates>
 </Point>
+<Polygon>
+<outerBoundaryIs>
+<LinearRing>
+<coordinates>
+6.46,60.6367
+6.52833,60.63
+6.53167,60.66
+6.45833,60.6433
+</coordinates>
+</LinearRing>
+</outerBoundaryIs>
+</Polygon>
+</MultiGeometry>
 </Placemark>
 
 <Placemark>
