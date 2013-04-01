@@ -11,6 +11,7 @@ import net.exent.flywithme.TakeoffMap.TakeoffMapListener;
 import net.exent.flywithme.bean.Takeoff;
 import net.exent.flywithme.data.Airspace;
 import net.exent.flywithme.data.Flightlog;
+import net.exent.flywithme.data.Weather;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -66,16 +67,20 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
         } catch (NumberFormatException e) {
             Log.w(getClass().getSimpleName(), "Unable to parse max takeoffs setting as integer", e);
         }
+        List<Takeoff> nearbyTakeoffs;
         if (maxTakeoffs > 0) {
-            return sortedTakeoffs.subList(0, maxTakeoffs > sortedTakeoffs.size() ? sortedTakeoffs.size() : maxTakeoffs);
+            nearbyTakeoffs = sortedTakeoffs.subList(0, maxTakeoffs > sortedTakeoffs.size() ? sortedTakeoffs.size() : maxTakeoffs);
         } else if (maxTakeoffs < 0) {
             /* negative maxTakeoffs means takeoffs within certain distance */
             int pos;
             for (pos = 0; pos < sortedTakeoffs.size() && location.distanceTo(sortedTakeoffs.get(pos).getLocation()) <= maxTakeoffs * -1000; ++pos)
                 continue; // loop breaks when we've found the locations within set max distance
-            return sortedTakeoffs.subList(0, pos);
+            nearbyTakeoffs = sortedTakeoffs.subList(0, pos);
+        } else {
+            nearbyTakeoffs = sortedTakeoffs;
         }
-        return sortedTakeoffs;
+        new UpdateWeatherTask().execute(new ArrayList<Takeoff>(nearbyTakeoffs));
+        return nearbyTakeoffs;
     }
 
     /**
@@ -83,7 +88,7 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
      * 
      * @param location
      *            Where to look for nearby takeoffs.
-     * @return Takeoffs near the given location.
+     * @return Takeoffs sorted by distance to the given location.
      */
     public List<Takeoff> getTakeoffsAt(final Location location) {
         Log.d(getClass().getSimpleName(), "getTakeoffsAt(" + location + ")");
@@ -275,6 +280,29 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
             return true;
         }
         return false;
+    }
+    
+    private class UpdateWeatherTask extends AsyncTask<List<Takeoff>, Void, Boolean> {
+        @Override
+        protected Boolean doInBackground(List<Takeoff>... takeoffLists) {
+            Log.d("UpdateWeatherTask", "Fetching weather forecast task started (takeoffs: " + takeoffLists[0].size() + ")");
+            if (initializing) {
+                Log.i(getClass().getSimpleName(), "Still initializing, skipping fetching weather forecast");
+                return false;
+            }
+            return Weather.updateForecast(takeoffLists[0]) > 0;
+        }
+        
+        @Override
+        protected void onPostExecute(Boolean update) {
+            if (!update)
+                return;
+            Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragmentContainer);
+            if (fragment != null && fragment instanceof TakeoffMap)
+                takeoffMap.drawMap();
+            else if (fragment != null && fragment instanceof TakeoffList)
+                takeoffList.updateList();
+        }
     }
 
     private class UpdateTakeoffListTask extends AsyncTask<Void, Void, List<Takeoff>> {

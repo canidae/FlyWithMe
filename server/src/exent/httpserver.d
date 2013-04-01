@@ -130,7 +130,7 @@ private:
 }
 
 void addDynamicHandler(DynamicHttpHandler httpHandler) {
-	writeln("adding handler: ", httpHandler);
+	writefln("adding handler: %s", httpHandler);
 	dynamicHttpHandlers ~= cast(shared) httpHandler;
 }
 
@@ -163,235 +163,237 @@ private:
 	typeof(match(string.init, Regex!char.init)) _matcher;
 }
 
-abstract class Protocol {
-	Connection connection;
+class Connection {
+	abstract class Protocol {
+		Connection connection;
 
-	this(Connection connection) {
-		this.connection = connection;
+		this(Connection connection) {
+			this.connection = connection;
+		}
+
+		abstract bool parseData(ubyte[] data, Address remoteAddress);
 	}
 
-	abstract bool parseData(ubyte[] data, Address remoteAddress);
-}
+	class HttpProtocol : Protocol {
+		immutable webSocketMagic = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
+		static httpRequestStartLineRegexp = ctRegex!r"^([^ ]+) ([^ \?]+)\??([^ ]*) HTTP.*$";
+		ubyte[] buffer;
+		bool headersParsed;
+		long contentStart;
+		long contentLength;
+		HttpRequest request;
 
-class HttpProtocol : Protocol {
-	immutable webSocketMagic = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
-	static httpRequestStartLineRegexp = ctRegex!r"^([^ ]+) ([^ \?]+)\??([^ ]*) HTTP.*$";
-	ubyte[] buffer;
-	bool headersParsed;
-	long contentStart;
-	long contentLength;
-	HttpRequest request;
+		this(Connection connection) {
+			super(connection);
+		}
 
-	this(Connection connection) {
-		super(connection);
-	}
-
-	override bool parseData(ubyte[] data, Address remoteAddress) {
-		buffer ~= data;
-		if (!headersParsed) {
-			long pos = indexOf(cast(string) buffer, cast(string) [13, 10]);
-			if (pos == -1) {
-				writeln("<CR><LF> not found in first packet, presumably broken HTTP request");
-				return false;
-			}
-			auto matcher = match(cast(string) buffer[0 .. pos], httpRequestStartLineRegexp);
-			if (!matcher) {
-				writeln("Start line does not match regexp, broken HTTP request");
-				return false;
-			}
-			string startLine = cast(string) buffer[0 .. pos];
-			request._method = to!string(matcher.captures[1]);
-			request._path = to!string(matcher.captures[2])[1 .. $]; // chop first /
-			request._query = to!string(matcher.captures[3]);
-			long headerStart = pos + 2;
-			pos = indexOf(cast(string) buffer[headerStart .. $], cast(string) [13, 10, 13, 10]);
-			if (pos == -1) {
-				if (buffer.length >= serverSettings.maxHttpHeaderSize) {
-					writeln("<CR><LF><CR><LF> not found within reasonably many bytes, presumably broken HTTP request");
+		override bool parseData(ubyte[] data, Address remoteAddress) {
+			buffer ~= data;
+			if (!headersParsed) {
+				long pos = indexOf(cast(string) buffer, cast(string) [13, 10]);
+				if (pos == -1) {
+					writeln("<CR><LF> not found in first packet, presumably broken HTTP request");
 					return false;
 				}
-				writeln("<CR><LF><CR><LF> not found, presumably incomplete/broken HTTP request");
-				return true;
-			}
-			pos += headerStart; // we only searched a slice of buffer, need to add what we skipped
-			string headerText = cast(string) buffer[headerStart .. pos];
-			bool hasHost;
-			bool hasConnection;
-			bool hasOrigin;
-			bool hasUpgrade;
-			string webSocketKey;
-			bool hasWebSocketVersion;
-			foreach (string header; splitLines(headerText)) {
-				long colon = indexOf(header, ':');
-				if (colon > 0 && colon < header.length - 1) {
-					string key = toLower(strip(header[0 .. colon]));
-					string value = strip(header[colon + 1 .. $]);
-					request._headers[key] = value;
-					switch (key) {
-					case "host":
-						hasHost = true;
-						break;
+				auto matcher = match(cast(string) buffer[0 .. pos], httpRequestStartLineRegexp);
+				if (!matcher) {
+					writeln("Start line does not match regexp, broken HTTP request");
+					return false;
+				}
+				string startLine = cast(string) buffer[0 .. pos];
+				request._method = to!string(matcher.captures[1]);
+				request._path = to!string(matcher.captures[2])[1 .. $]; // chop first /
+				request._query = to!string(matcher.captures[3]);
+				long headerStart = pos + 2;
+				pos = indexOf(cast(string) buffer[headerStart .. $], cast(string) [13, 10, 13, 10]);
+				if (pos == -1) {
+					if (buffer.length >= serverSettings.maxHttpHeaderSize) {
+						writeln("<CR><LF><CR><LF> not found within reasonably many bytes, presumably broken HTTP request");
+						return false;
+					}
+					writeln("<CR><LF><CR><LF> not found, presumably incomplete/broken HTTP request");
+					return true;
+				}
+				pos += headerStart; // we only searched a slice of buffer, need to add what we skipped
+				string headerText = cast(string) buffer[headerStart .. pos];
+				bool hasHost;
+				bool hasConnection;
+				bool hasOrigin;
+				bool hasUpgrade;
+				string webSocketKey;
+				bool hasWebSocketVersion;
+				foreach (string header; splitLines(headerText)) {
+					long colon = indexOf(header, ':');
+					if (colon > 0 && colon < header.length - 1) {
+						string key = toLower(strip(header[0 .. colon]));
+						string value = strip(header[colon + 1 .. $]);
+						request._headers[key] = value;
+						switch (key) {
+						case "host":
+							hasHost = true;
+							break;
 
-					case "connection":
-						hasConnection = indexOf(toLower(value), "upgrade") >= 0;
-						break;
+						case "connection":
+							hasConnection = indexOf(toLower(value), "upgrade") >= 0;
+							break;
 
-					case "origin":
-						hasOrigin = true;
-						break;
+						case "origin":
+							hasOrigin = true;
+							break;
 
-					case "upgrade":
-						hasUpgrade = indexOf(toLower(value), "websocket") >= 0;
-						break;
+						case "upgrade":
+							hasUpgrade = indexOf(toLower(value), "websocket") >= 0;
+							break;
 
-					case "sec-websocket-key":
-						webSocketKey = value;
-						break;
+						case "sec-websocket-key":
+							webSocketKey = value;
+							break;
 
-					case "sec-websocket-version":
-						hasWebSocketVersion = value == "13";
-						break;
+						case "sec-websocket-version":
+							hasWebSocketVersion = value == "13";
+							break;
 
-					case "content-length":
-						contentLength = to!long(value);
-						if (contentLength > serverSettings.maxRequestSize)
-							return false;
-						break;
+						case "content-length":
+							contentLength = to!long(value);
+							if (contentLength > serverSettings.maxRequestSize)
+								return false;
+							break;
 
-					default:
-						/* nothing */
-						break;
+						default:
+							/* nothing */
+							break;
+						}
 					}
 				}
-			}
-			if (!hasHost) {
-				writeln("No 'Host' specified in HTTP headers, not valid HTTP/1.1 request");
-				return false;
-			}
-			headersParsed = true;
-			contentStart = pos + 4;
+				if (!hasHost) {
+					writeln("No 'Host' specified in HTTP headers, not valid HTTP/1.1 request");
+					return false;
+				}
+				headersParsed = true;
+				contentStart = pos + 4;
 
-			/* websocket? */
-			if (hasConnection && hasOrigin && hasUpgrade && webSocketKey.length > 0 && hasWebSocketVersion) {
-				writeln("Upgrading connection to WebSocket");
-				auto shaHash = sha1Of(webSocketKey ~ webSocketMagic);
-				string webSocketAccept = to!string(Base64.encode(shaHash));
-				HttpResponse response;
-				response.status = 101;
-				response.setHeader("Upgrade", "websocket");
-				response.setHeader("Connection", "Upgrade");
-				response.setHeader("Sec-WebSocket-Accept", webSocketAccept);
-				connection.send(response.toBytes());
-				connection.changeProtocol(new WebSocketProtocol(connection));
-				return true; // no longer a HTTP protocol
-			}
-		}
-		if (contentLength >= buffer.length - contentStart) {
-			request._content = buffer[contentStart .. contentStart + contentLength];
-			buffer = buffer[contentStart + contentLength .. $];
-			writeln("looking for handler matching path: ", request._path);
-			ubyte[] response;
-			foreach (shandler; staticHttpHandlers) {
-				writeln("trying static handler");
-				StaticHttpHandler handler = cast(StaticHttpHandler) shandler;
-				handler._matcher = match(request._path, handler._regexp);
-				if (handler._matcher) {
-					response = handler._response;
-					break;
+				/* websocket? */
+				if (hasConnection && hasOrigin && hasUpgrade && webSocketKey.length > 0 && hasWebSocketVersion) {
+					writeln("Upgrading connection to WebSocket");
+					auto shaHash = sha1Of(webSocketKey ~ webSocketMagic);
+					string webSocketAccept = to!string(Base64.encode(shaHash));
+					HttpResponse response;
+					response.status = 101;
+					response.setHeader("Upgrade", "websocket");
+					response.setHeader("Connection", "Upgrade");
+					response.setHeader("Sec-WebSocket-Accept", webSocketAccept);
+					connection.send(response.toBytes());
+					connection.changeProtocol(new WebSocketProtocol(connection));
+					return true; // no longer a HTTP protocol
 				}
 			}
-			if (response.length == 0) {
-				foreach (shandler; dynamicHttpHandlers) {
-					writeln("trying dynamic handler");
-					DynamicHttpHandler handler = cast(DynamicHttpHandler) shandler;
+			if (contentLength >= buffer.length - contentStart) {
+				request._content = buffer[contentStart .. contentStart + contentLength];
+				buffer = buffer[contentStart + contentLength .. $];
+				writeln("looking for handler matching path: ", request._path);
+				ubyte[] response;
+				foreach (shandler; staticHttpHandlers) {
+					writeln("trying static handlers");
+					StaticHttpHandler handler = cast(StaticHttpHandler) shandler;
 					handler._matcher = match(request._path, handler._regexp);
 					if (handler._matcher) {
-						response = handler.handle(request, remoteAddress).toBytes();
+						writeln("found matching static handler");
+						response = handler._response;
 						break;
 					}
 				}
-			}
-			if (response.length == 0) {
-				HttpResponse httpResponse;
-				httpResponse.status = 404;
-				httpResponse.content = cast(ubyte[]) "Four, oh four! Nothing found :(";
-				response = httpResponse.toBytes();
-			}
-			connection.send(response);
-			request = HttpRequest();
-		}
-		return true;
-	}
-}
-
-class WebSocketProtocol : Protocol {
-	enum PacketType {
-		CONTINUATION = 0,
-		TEXT = 1,
-		BINARY = 2,
-		CLOSE = 8,
-		PING = 9,
-		PONG = 10
-	}
-
-	PacketType packetType;
-	ubyte[] buffer;
-	bool newFrame;
-	long length;
-	ubyte[] mask;
-
-	this(Connection connection) {
-		super(connection);
-		newFrame = true;
-	}
-
-	override bool parseData(ubyte[] data, Address remoteAddress) {
-		buffer ~= data;
-		while (buffer.length > 0) {
-			/* TODO: what if we get slightly more than one frame, but not enough to parse the entire header? */
-			if (newFrame) {
-				/* new frame */
-				int pos = 0;
-				//bool finalFrame = (buffer[pos] & 0b10000000) != 0; // first bit denotes whether it's the final frame or more follows, ignored for now
-				if ((buffer[pos] & 0b01110000) != 0) {
-					return false; // next 3 bits don't match expected binary values [000]
+				if (response.length == 0) {
+					foreach (shandler; dynamicHttpHandlers) {
+						writeln("trying dynamic handlers");
+						DynamicHttpHandler handler = cast(DynamicHttpHandler) shandler;
+						handler._matcher = match(request._path, handler._regexp);
+						if (handler._matcher) {
+							writeln("found matching dynamic handler");
+							response = handler.handle(request, remoteAddress).toBytes();
+							break;
+						}
+					}
 				}
-				packetType = cast(PacketType) (buffer[pos] & 0b00001111); // next 4 bits denotes packet type
-				++pos;
-				if ((buffer[pos] & 0b10000000) == 0)
-					return false; // next bit denotes masking, client must always set this bit
-				length = (buffer[pos] & 0b01111111); // next 7 bits denotes payload size
-				++pos;
-				if (length == 126) {
-					/* unless the 7 bits makes up the value 126, then the following 16 bits denotes length */
-					length = (buffer[pos++] << 8) + buffer[pos++];
-				} else if (length == 127) {
-					/* or the 7 bits makes up the value 127, then the following 64 bits denotes length */
-					length = (buffer[pos++] << 24) + (buffer[pos++] << 16) + (buffer[pos++] << 8) + buffer[pos++];
+				if (response.length == 0) {
+					HttpResponse httpResponse;
+					httpResponse.status = 404;
+					httpResponse.content = cast(ubyte[]) "Four, oh four! Nothing found :(";
+					response = httpResponse.toBytes();
 				}
-				if (length > serverSettings.maxRequestSize)
-					return false;
-				mask.length = 4;
-				for (int a = 0; a < 4; ++a)
-					mask[a] = cast(ubyte) buffer[pos++];
-				buffer = buffer[pos .. $]; // discard header from buffer
-				newFrame = false;
+				connection.send(response);
+				request = HttpRequest();
 			}
-			if (buffer.length >= length) {
-				/* received all data, do something! anything! */
-				// TODO
-				foreach (index, ref b; buffer[0 .. length])
-					b ^= mask[index % 4];
-				writefln("websocket message [buffer: %s/%s]: %s", length, buffer.length, cast(string) buffer[0 .. length]);
-				newFrame = true;
-				buffer = buffer[length .. $];
-			}
+			return true;
 		}
-		return true;
 	}
-}
 
-class Connection {
+	class WebSocketProtocol : Protocol {
+		enum PacketType {
+			CONTINUATION = 0,
+			TEXT = 1,
+			BINARY = 2,
+			CLOSE = 8,
+			PING = 9,
+			PONG = 10
+		}
+
+		PacketType packetType;
+		ubyte[] buffer;
+		bool newFrame;
+		long length;
+		ubyte[] mask;
+
+		this(Connection connection) {
+			super(connection);
+			newFrame = true;
+		}
+
+		override bool parseData(ubyte[] data, Address remoteAddress) {
+			buffer ~= data;
+			while (buffer.length > 0) {
+				/* TODO: what if we get slightly more than one frame, but not enough to parse the entire header? */
+				if (newFrame) {
+					/* new frame */
+					int pos = 0;
+					//bool finalFrame = (buffer[pos] & 0b10000000) != 0; // first bit denotes whether it's the final frame or more follows, ignored for now
+					if ((buffer[pos] & 0b01110000) != 0) {
+						return false; // next 3 bits don't match expected binary values [000]
+					}
+					packetType = cast(PacketType) (buffer[pos] & 0b00001111); // next 4 bits denotes packet type
+					++pos;
+					if ((buffer[pos] & 0b10000000) == 0)
+						return false; // next bit denotes masking, client must always set this bit
+					length = (buffer[pos] & 0b01111111); // next 7 bits denotes payload size
+					++pos;
+					if (length == 126) {
+						/* unless the 7 bits makes up the value 126, then the following 16 bits denotes length */
+						length = (buffer[pos++] << 8) + buffer[pos++];
+					} else if (length == 127) {
+						/* or the 7 bits makes up the value 127, then the following 64 bits denotes length */
+						length = (buffer[pos++] << 24) + (buffer[pos++] << 16) + (buffer[pos++] << 8) + buffer[pos++];
+					}
+					if (length > serverSettings.maxRequestSize)
+						return false;
+					mask.length = 4;
+					for (int a = 0; a < 4; ++a)
+						mask[a] = cast(ubyte) buffer[pos++];
+					buffer = buffer[pos .. $]; // discard header from buffer
+					newFrame = false;
+				}
+				if (buffer.length >= length) {
+					/* received all data, do something! anything! */
+					// TODO
+					foreach (index, ref b; buffer[0 .. length])
+						b ^= mask[index % 4];
+					writefln("websocket message [buffer: %s/%s]: %s", length, buffer.length, cast(string) buffer[0 .. length]);
+					newFrame = true;
+					buffer = buffer[length .. $];
+				}
+			}
+			return true;
+		}
+	}
+
 	Socket socket;
 	Address remoteAddress;
 	Protocol protocol;
@@ -427,7 +429,12 @@ class Connection {
 		}
 		if (read > 0) {
 			//writeln("Read: ", cast(string) buffer[0 .. read]);
-			return protocol.parseData(buffer[0 .. read], remoteAddress);
+			try {
+				return protocol.parseData(buffer[0 .. read], remoteAddress);
+			} catch (Throwable t) {
+				writefln("Exception parsing data: %s", t);
+				return false;
+			}
 		} else if (read == 0) {
 			// connection closed
 			return false;

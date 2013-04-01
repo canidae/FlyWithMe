@@ -1,5 +1,7 @@
 package net.exent.flywithme.bean;
 
+import java.util.List;
+
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Parcel;
@@ -30,6 +32,8 @@ public class Takeoff implements Parcelable {
     private boolean southeastExit;
     private boolean eastExit;
     private boolean northeastExit;
+    private List<Forecast> forecast;
+    private long forecastUpdated;
 
     public Takeoff(int id, String name, String description, int asl, int height, double latitude, double longitude, String startDirections) {
         this.id = id;
@@ -77,6 +81,10 @@ public class Takeoff implements Parcelable {
     public int getAsl() {
         return asl;
     }
+    
+    public void setAsl(int asl) {
+        this.asl = asl;
+    }
 
     public int getHeight() {
         return height;
@@ -120,6 +128,19 @@ public class Takeoff implements Parcelable {
 
     public boolean hasNortheastExit() {
         return northeastExit;
+    }
+
+    public List<Forecast> getForecast() {
+        return forecast;
+    }
+
+    public void setForecast(List<Forecast> forecast) {
+        this.forecast = forecast;
+        forecastUpdated = System.currentTimeMillis();
+    }
+
+    public long getForecastUpdated() {
+        return forecastUpdated;
     }
 
     public int describeContents() {

@@ -30,10 +30,10 @@ public class Airspace {
     public static void init(Context context) {
         Log.d("Airspace", "init(" + context + ")");
         if (polygonMap.isEmpty())
-            readAirspaceMap(context);
+            readAirspaceMapFile(context);
     }
 
-    private static void readAirspaceMap(Context context) {
+    private static void readAirspaceMapFile(Context context) {
         polygonMap = new HashMap<String, List<PolygonOptions>>();
         InputStream inputStream = context.getResources().openRawResource(R.raw.airspace_map);
         try {
