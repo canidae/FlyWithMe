@@ -61,6 +61,7 @@ public class Weather {
                     List<Forecast> forecasts = new ArrayList<Forecast>();
                     Log.d("Weather", "Location: " + updateTakeoffs.get(a));
                     for (int b = 0; b < forecastCount; ++b) {
+                        // TODO: handle values denoting "unknown" (short.min)
                         Forecast forecast = new Forecast(input.readInt(), input.readShort() / 10.0, input.readShort() / 10.0, input.readShort() / 10.0, input.readShort() / 10.0, input.readShort() / 10.0);
                         Log.d("Weather", "  " + forecast);
                         forecasts.add(forecast);

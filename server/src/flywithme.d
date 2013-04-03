@@ -33,19 +33,19 @@ class WeatherHttpHandler : DynamicHttpHandler {
 		for (int a = 0; a < locationAmount; ++a)
 			locations ~= Location(input.read!float(), input.read!float());
 
-		/* x-fwm-forecast-response protocol (note that forecasts are returned in the same order as they were requested, the location itself is not returned. TODO: we must return location, in the form of takeoff id, in case a takeoff "disappears" from server, but still exist on mobile devices):
+		/* x-fwm-forecast-response protocol (note that forecasts are returned in the same order as they were requested, the location itself is not returned. TODO: we must return location, in the form of takeoff id, in case a takeoff "disappears" from server, but still exist on mobile devices, or we can just return no forecasts for takeoff):
 		   1 byte: version of protocol (ubyte)
 		   1 byte: amount of locations (ubyte)
 		   <location loop>
-		      2 bytes: forecast altitude (short)
+		      2 bytes: forecast altitude (short, short.min if not known)
 		      1 byte: amount of forecasts for location (ubyte)
 		      <forecast loop>
 		         4 bytes: forecast timestamp, seconds since UTC epoch (int)
-		         2 bytes: temperature (short, real value is multiplied with 10, -666 if not known)
-		         2 bytes: wind direction (short, real value is multiplied with 10, -1 if not known)
-		         2 bytes: wind speed (short, real value is multiplied with 10, -1 if not known)
-		         2 bytes: humidity (short, real value is multiplied with 10, -1 if not known)
-		         2 bytes: pressure (short, real value is multiplied with 10, -1 if not known)
+		         2 bytes: temperature (short, real value is multiplied with 10, short.min if not known)
+		         2 bytes: wind direction (short, real value is multiplied with 10, short.min if not known)
+		         2 bytes: wind speed (short, real value is multiplied with 10, short.min if not known)
+		         2 bytes: humidity (short, real value is multiplied with 10, short.min if not known)
+		         2 bytes: pressure (short, real value is multiplied with 10, short.min if not known)
 		      <end forecast loop>
 		   <end location loop>
 		 */
@@ -60,11 +60,11 @@ class WeatherHttpHandler : DynamicHttpHandler {
 			buffer.append!ubyte(to!ubyte(forecasts.length));
 			foreach (forecast; forecasts) {
 				buffer.append!int(to!int(stdTimeToUnixTime(forecast.timestamp.stdTime)));
-				buffer.append!short(to!short(isNaN(forecast.temperature) ? -666 : forecast.temperature * 10));
-				buffer.append!short(to!short(isNaN(forecast.windDirection) ? -1 : forecast.windDirection * 10));
-				buffer.append!short(to!short(isNaN(forecast.windSpeed) ? -1 : forecast.windSpeed * 10));
-				buffer.append!short(to!short(isNaN(forecast.humidity) ? -1 : forecast.humidity * 10));
-				buffer.append!short(to!short(isNaN(forecast.pressure) ? -1 : forecast.pressure * 10));
+				buffer.append!short(to!short(isNaN(forecast.temperature) ? short.min : forecast.temperature * 10));
+				buffer.append!short(to!short(isNaN(forecast.windDirection) ? short.min : forecast.windDirection * 10));
+				buffer.append!short(to!short(isNaN(forecast.windSpeed) ? short.min : forecast.windSpeed * 10));
+				buffer.append!short(to!short(isNaN(forecast.humidity) ? short.min : forecast.humidity * 10));
+				buffer.append!short(to!short(isNaN(forecast.pressure) ? short.min : forecast.pressure * 10));
 			}
 		}
 		response.content = buffer.data;
