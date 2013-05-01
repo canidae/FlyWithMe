@@ -32,7 +32,7 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
     private static final int LOCATION_UPDATE_TIME = 300000; // update location every LOCATION_UPDATE_TIME millisecond
     private static final int LOCATION_UPDATE_DISTANCE = 100; // or when we've moved more than LOCATION_UPDATE_DISTANCE meters
     private static final int TAKEOFFS_SORT_DISTANCE = 1000; // only sort takeoff list when we've moved more than TAKEOFFS_SORT_DISTANCE meters
-    private static final int DEFAULT_MAX_TAKEOFFS = 200;
+    private static final int DEFAULT_MAX_TAKEOFFS = 50;
     private static Location lastSortedTakeoffsLocation;
     private static Location location = new Location(LocationManager.PASSIVE_PROVIDER);
     private static List<Takeoff> sortedTakeoffs = new ArrayList<Takeoff>();
@@ -64,21 +64,16 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
         int maxTakeoffs = DEFAULT_MAX_TAKEOFFS;
         try {
             maxTakeoffs = Integer.parseInt(prefs.getString("pref_max_takeoffs", "" + DEFAULT_MAX_TAKEOFFS));
+            if (maxTakeoffs < 0)
+                maxTakeoffs = DEFAULT_MAX_TAKEOFFS;
         } catch (NumberFormatException e) {
             Log.w(getClass().getSimpleName(), "Unable to parse max takeoffs setting as integer", e);
         }
         List<Takeoff> nearbyTakeoffs;
-        if (maxTakeoffs > 0) {
+        if (maxTakeoffs > 0)
             nearbyTakeoffs = sortedTakeoffs.subList(0, maxTakeoffs > sortedTakeoffs.size() ? sortedTakeoffs.size() : maxTakeoffs);
-        } else if (maxTakeoffs < 0) {
-            /* negative maxTakeoffs means takeoffs within certain distance */
-            int pos;
-            for (pos = 0; pos < sortedTakeoffs.size() && location.distanceTo(sortedTakeoffs.get(pos).getLocation()) <= maxTakeoffs * -1000; ++pos)
-                continue; // loop breaks when we've found the locations within set max distance
-            nearbyTakeoffs = sortedTakeoffs.subList(0, pos);
-        } else {
+        else
             nearbyTakeoffs = sortedTakeoffs;
-        }
         new UpdateWeatherTask().execute(new ArrayList<Takeoff>(nearbyTakeoffs));
         return nearbyTakeoffs;
     }

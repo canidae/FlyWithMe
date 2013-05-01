@@ -25,11 +25,6 @@
         <item>Næraste 200</item>
         <item>Næraste 500</item>
         <item>Næraste 1500 (langsam)</item>
-        <item>Innanfor 50km (rask)</item>
-        <item>Innanfor 100km</item>
-        <item>Innanfor 200km</item>
-        <item>Innanfor 500km</item>
-        <item>Innanfor 1500km (langsam)</item>
         <item>Alle (svært langsam)</item>
     </string-array>
     <string-array name="takeoffs_max_distance_values">
@@ -38,11 +33,6 @@
         <item>200</item>
         <item>500</item>
         <item>1500</item>
-        <item>-50</item>
-        <item>-100</item>
-        <item>-200</item>
-        <item>-500</item>
-        <item>-1500</item>
         <item>0</item>
     </string-array>
 

@@ -25,11 +25,6 @@
         <item>Nærmeste 200</item>
         <item>Nærmeste 500</item>
         <item>Nærmeste 1500 (treg)</item>
-        <item>Innenfor 50km (rask)</item>
-        <item>Innenfor 100km</item>
-        <item>Innenfor 200km</item>
-        <item>Innenfor 500km</item>
-        <item>Innenfor 1500km (treg)</item>
         <item>Alle (tregest)</item>
     </string-array>
     <string-array name="takeoffs_max_distance_values">
@@ -38,11 +33,6 @@
         <item>200</item>
         <item>500</item>
         <item>1500</item>
-        <item>-50</item>
-        <item>-100</item>
-        <item>-200</item>
-        <item>-500</item>
-        <item>-1500</item>
         <item>0</item>
     </string-array>
 

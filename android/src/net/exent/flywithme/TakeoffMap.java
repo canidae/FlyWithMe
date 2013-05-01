@@ -19,6 +19,10 @@ import com.google.android.gms.maps.model.PolygonOptions;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.location.Location;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -154,8 +158,38 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener {
         Log.d(getClass().getSimpleName(), "drawTakeoffMarkers(" + map + ")");
         takeoffMarkers.clear();
         List<Takeoff> takeoffs = callback.getNearbyTakeoffs();
+        Bitmap markerBitmap = BitmapFactory.decodeResource(getResources(), R.raw.mapmarker);
+        Bitmap markerNorthBitmap = BitmapFactory.decodeResource(getResources(), R.raw.mapmarker_octant_n);
+        Bitmap markerNortheastBitmap = BitmapFactory.decodeResource(getResources(), R.raw.mapmarker_octant_ne);
+        Bitmap markerEastBitmap = BitmapFactory.decodeResource(getResources(), R.raw.mapmarker_octant_e);
+        Bitmap markerSoutheastBitmap = BitmapFactory.decodeResource(getResources(), R.raw.mapmarker_octant_se);
+        Bitmap markerSouthBitmap = BitmapFactory.decodeResource(getResources(), R.raw.mapmarker_octant_s);
+        Bitmap markerSouthwestBitmap = BitmapFactory.decodeResource(getResources(), R.raw.mapmarker_octant_sw);
+        Bitmap markerWestBitmap = BitmapFactory.decodeResource(getResources(), R.raw.mapmarker_octant_w);
+        Bitmap markerNorthwestBitmap = BitmapFactory.decodeResource(getResources(), R.raw.mapmarker_octant_nw);
         for (Takeoff takeoff : takeoffs) {
-            Marker marker = map.addMarker(new MarkerOptions().position(new LatLng(takeoff.getLocation().getLatitude(), takeoff.getLocation().getLongitude())).title(takeoff.getName()).snippet("Height: " + takeoff.getHeight() + ", Start: " + takeoff.getStartDirections()).icon(BitmapDescriptorFactory.defaultMarker((float) 42)));
+            Bitmap bitmap = Bitmap.createBitmap(markerBitmap.getWidth(), markerBitmap.getHeight(), Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(bitmap);
+            Paint paint = new Paint();
+            canvas.drawBitmap(markerBitmap, 0, 0, null);
+            if (takeoff.hasNorthExit())
+                canvas.drawBitmap(markerNorthBitmap, 0, 0, null);
+            if (takeoff.hasNortheastExit())
+                canvas.drawBitmap(markerNortheastBitmap, 0, 0, null);
+            if (takeoff.hasEastExit())
+                canvas.drawBitmap(markerEastBitmap, 0, 0, null);
+            if (takeoff.hasSoutheastExit())
+                canvas.drawBitmap(markerSoutheastBitmap, 0, 0, null);
+            if (takeoff.hasSouthExit())
+                canvas.drawBitmap(markerSouthBitmap, 0, 0, null);
+            if (takeoff.hasSouthwestExit())
+                canvas.drawBitmap(markerSouthwestBitmap, 0, 0, null);
+            if (takeoff.hasWestExit())
+                canvas.drawBitmap(markerWestBitmap, 0, 0, null);
+            if (takeoff.hasNorthwestExit())
+                canvas.drawBitmap(markerNorthwestBitmap, 0, 0, null);
+            Marker marker = map.addMarker(new MarkerOptions().position(new LatLng(takeoff.getLocation().getLatitude(), takeoff.getLocation().getLongitude())).title(takeoff.getName()).snippet("Height: " + takeoff.getHeight()).icon(BitmapDescriptorFactory.fromBitmap(bitmap)).anchor(0.5f, 0.875f));
+            //Marker marker = map.addMarker(new MarkerOptions().position(new LatLng(takeoff.getLocation().getLatitude(), takeoff.getLocation().getLongitude())).title(takeoff.getName()).snippet("Height: " + takeoff.getHeight() + ", Start: " + takeoff.getStartDirections()).icon(BitmapDescriptorFactory.defaultMarker()));
             takeoffMarkers.put(marker.getId(), takeoff);
         }
     }

@@ -25,11 +25,6 @@
         <item>Nearest 200</item>
         <item>Nearest 500</item>
         <item>Nearest 1500 (slow)</item>
-        <item>Within 50km (fast)</item>
-        <item>Within 100km</item>
-        <item>Within 200km</item>
-        <item>Within 500km</item>
-        <item>Within 1500km (slow)</item>
         <item>All (very slow)</item>
     </string-array>
     <string-array name="takeoffs_max_distance_values">
@@ -38,11 +33,6 @@
         <item>200</item>
         <item>500</item>
         <item>1500</item>
-        <item>-50</item>
-        <item>-100</item>
-        <item>-200</item>
-        <item>-500</item>
-        <item>-1500</item>
         <item>0</item>
     </string-array>
 

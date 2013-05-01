@@ -10,7 +10,7 @@ import android.os.Parcelable;
 public class Takeoff implements Parcelable {
     public static final Parcelable.Creator<Takeoff> CREATOR = new Parcelable.Creator<Takeoff>() {
         public Takeoff createFromParcel(Parcel in) {
-            return new Takeoff(in.readInt(), in.readString(), in.readString(), in.readInt(), in.readInt(), in.readDouble(), in.readDouble(), in.readString());
+            return new Takeoff(in.readInt(), in.readString(), in.readString(), in.readInt(), in.readInt(), in.readDouble(), in.readDouble(), in.readInt());
         }
 
         public Takeoff[] newArray(int size) {
@@ -22,20 +22,12 @@ public class Takeoff implements Parcelable {
     private String description;
     private int asl;
     private int height;
-    private String startDirections;
     private Location location;
-    private boolean northExit;
-    private boolean northwestExit;
-    private boolean westExit;
-    private boolean southwestExit;
-    private boolean southExit;
-    private boolean southeastExit;
-    private boolean eastExit;
-    private boolean northeastExit;
+    private int exits;
     private List<Forecast> forecast;
     private long forecastUpdated;
 
-    public Takeoff(int id, String name, String description, int asl, int height, double latitude, double longitude, String startDirections) {
+    public Takeoff(int id, String name, String description, int asl, int height, double latitude, double longitude, String exitDirections) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -44,26 +36,36 @@ public class Takeoff implements Parcelable {
         this.location = new Location(LocationManager.PASSIVE_PROVIDER);
         location.setLatitude(latitude);
         location.setLongitude(longitude);
-        this.startDirections = startDirections;
-        String[] directions = startDirections.split(" ");
-        for (String direction : directions) {
+        for (String direction : exitDirections.split(" ")) {
             if ("N".equals(direction))
-                northExit = true;
-            if ("NW".equals(direction))
-                northwestExit = true;
-            if ("W".equals(direction))
-                westExit = true;
-            if ("SW".equals(direction))
-                southwestExit = true;
-            if ("S".equals(direction))
-                southExit = true;
-            if ("SE".equals(direction))
-                southeastExit = true;
-            if ("E".equals(direction))
-                eastExit = true;
+                exits |= 1 << 8;
             if ("NE".equals(direction))
-                northeastExit = true;
+                exits |= 1 << 7;
+            if ("E".equals(direction))
+                exits |= 1 << 6;
+            if ("SE".equals(direction))
+                exits |= 1 << 5;
+            if ("S".equals(direction))
+                exits |= 1 << 4;
+            if ("SW".equals(direction))
+                exits |= 1 << 3;
+            if ("W".equals(direction))
+                exits |= 1 << 2;
+            if ("NW".equals(direction))
+                exits |= 1 << 1;
         }
+    }
+
+    public Takeoff(int id, String name, String description, int asl, int height, double latitude, double longitude, int exits) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.asl = asl;
+        this.height = height;
+        this.location = new Location(LocationManager.PASSIVE_PROVIDER);
+        location.setLatitude(latitude);
+        location.setLongitude(longitude);
+        this.exits = exits;
     }
 
     public int getId() {
@@ -94,40 +96,40 @@ public class Takeoff implements Parcelable {
         return location;
     }
 
-    public String getStartDirections() {
-        return startDirections;
+    public int getExits() {
+        return exits;
     }
 
     public boolean hasNorthExit() {
-        return northExit;
-    }
-
-    public boolean hasNorthwestExit() {
-        return northwestExit;
-    }
-
-    public boolean hasWestExit() {
-        return westExit;
-    }
-
-    public boolean hasSouthwestExit() {
-        return southwestExit;
-    }
-
-    public boolean hasSouthExit() {
-        return southExit;
-    }
-
-    public boolean hasSoutheastExit() {
-        return southeastExit;
-    }
-
-    public boolean hasEastExit() {
-        return eastExit;
+        return (exits & (1 << 8)) != 0;
     }
 
     public boolean hasNortheastExit() {
-        return northeastExit;
+        return (exits & (1 << 7)) != 0;
+    }
+
+    public boolean hasEastExit() {
+        return (exits & (1 << 6)) != 0;
+    }
+
+    public boolean hasSoutheastExit() {
+        return (exits & (1 << 5)) != 0;
+    }
+
+    public boolean hasSouthExit() {
+        return (exits & (1 << 4)) != 0;
+    }
+
+    public boolean hasSouthwestExit() {
+        return (exits & (1 << 3)) != 0;
+    }
+
+    public boolean hasWestExit() {
+        return (exits & (1 << 2)) != 0;
+    }
+
+    public boolean hasNorthwestExit() {
+        return (exits & (1 << 1)) != 0;
     }
 
     public List<Forecast> getForecast() {
@@ -155,7 +157,7 @@ public class Takeoff implements Parcelable {
         dest.writeInt(height);
         dest.writeDouble(location.getLatitude());
         dest.writeDouble(location.getLongitude());
-        dest.writeString(startDirections);
+        dest.writeInt(exits);
     }
 
     @Override
