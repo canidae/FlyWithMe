@@ -200,27 +200,24 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
 
     private class InitDataTask extends AsyncTask<Context, String, Void> {
         private ProgressDialog progressDialog;
-        private int progress = 0;
         
         @Override
         protected Void doInBackground(Context... contexts) {
             Log.d(getClass().getSimpleName(), "doInBackground(" + contexts + ")");
             progressDialog = new ProgressDialog();
             progressDialog.show(getSupportFragmentManager(), "ProgressDialogFragment");
-            publishProgress(getString(R.string.loading_takeoffs));
+            publishProgress("33", getString(R.string.loading_takeoffs));
             Flightlog.init(contexts[0]);
-            publishProgress(getString(R.string.loading_airspace));
+            publishProgress("67", getString(R.string.loading_airspace));
             Airspace.init(contexts[0]);
-            publishProgress(getString(R.string.sorting_takeoffs));
+            publishProgress("100", getString(R.string.sorting_takeoffs));
             return null;
         }
 
         @Override
         protected void onProgressUpdate(String... messages) {
             Log.d(getClass().getSimpleName(), "onProgressUpdate(" + messages + ")");
-            String message = messages[0];
-            progressDialog.setProgress(progress, message);
-            progress += 33;
+            progressDialog.setProgress(Integer.parseInt(messages[0]), messages[1]);
         }
         
         @Override
