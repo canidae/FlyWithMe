@@ -4,6 +4,8 @@ import java.io.DataInputStream;
 import java.io.EOFException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import net.exent.flywithme.R;
@@ -14,12 +16,35 @@ import android.location.LocationManager;
 import android.util.Log;
 
 public class Flightlog {
+    private static final int DEFAULT_MAX_TAKEOFFS = 50;
     private static List<Takeoff> takeoffs = new ArrayList<Takeoff>();
-    
-    public static List<Takeoff> getTakeoffs() {
+
+    /**
+     * Fetch takeoffs near the given location. This requires takeoffs to be sorted by distance, which will cost some CPU.
+     * 
+     * @param location
+     *            Where to look for nearby takeoffs.
+     * @return Takeoffs sorted by distance to the given location.
+     */
+    public static List<Takeoff> getTakeoffs(final Location location) {
+        Log.d("Flightlog", "getTakeoffs(" + location + ")");
+        /* sort list by distance */
+        Log.d("Flightlog", "Sorting... (size: " + takeoffs.size() + ")");
+        Collections.sort(takeoffs, new Comparator<Takeoff>() {
+            public int compare(Takeoff lhs, Takeoff rhs) {
+                if (location.distanceTo(lhs.getLocation()) > location.distanceTo(rhs.getLocation()))
+                    return 1;
+                else if (location.distanceTo(lhs.getLocation()) < location.distanceTo(rhs.getLocation()))
+                    return -1;
+                return 0;
+            }
+        });
+        Log.d("Flightlog", "Done sorting");
+        if (takeoffs.size() > DEFAULT_MAX_TAKEOFFS)
+            return takeoffs.subList(0, DEFAULT_MAX_TAKEOFFS);
         return takeoffs;
     }
-    
+
     public static void init(Context context) {
         if (takeoffs.isEmpty())
             readTakeoffsFile(context);
@@ -30,7 +55,7 @@ public class Flightlog {
      */
     private static void readTakeoffsFile(Context context) {
         Log.d("Flightlog", "readTakeoffsFile()");
-        takeoffs = new ArrayList<Takeoff>();
+        List<Takeoff> tmpTakeoffs = new ArrayList<Takeoff>();
         try {
             Log.i("Flightlog", "Reading file with takeoffs");
             DataInputStream inputStream = new DataInputStream(context.getResources().openRawResource(R.raw.flywithme));
@@ -46,10 +71,11 @@ public class Flightlog {
                 takeoffLocation.setLongitude(inputStream.readFloat());
                 String windpai = inputStream.readUTF();
 
-                takeoffs.add(new Takeoff(takeoff, name, description, asl, height, takeoffLocation.getLatitude(), takeoffLocation.getLongitude(), windpai));
+                tmpTakeoffs.add(new Takeoff(takeoff, name, description, asl, height, takeoffLocation.getLatitude(), takeoffLocation.getLongitude(), windpai));
             }
         } catch (EOFException e) {
-            /* expected, do nothing */
+            /* expected to happen */
+            takeoffs = tmpTakeoffs;
             Log.i("Flightlog", "Done reading file with takeoffs");
         } catch (IOException e) {
             Log.e("Flightlog", "Error when reading file with takeoffs", e);

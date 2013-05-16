@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.exent.flywithme.bean.Takeoff;
+import net.exent.flywithme.data.Flightlog;
 import android.app.Activity;
 import android.content.Context;
 import android.location.Location;
@@ -25,8 +26,6 @@ public class TakeoffList extends Fragment {
         void showTakeoffDetails(Takeoff takeoff);
 
         Location getLocation();
-
-        List<Takeoff> getNearbyTakeoffs();
     }
 
     private static int savedPosition;
@@ -40,7 +39,7 @@ public class TakeoffList extends Fragment {
             Log.w(getClass().getSimpleName(), "callback is null, returning");
             return;
         }
-        takeoffs = callback.getNearbyTakeoffs();
+        takeoffs = Flightlog.getTakeoffs(callback.getLocation());
         TakeoffArrayAdapter adapter = new TakeoffArrayAdapter(getActivity());
         ListView listView = (ListView) getActivity().findViewById(R.id.takeoffListView);
         listView.setAdapter(adapter);

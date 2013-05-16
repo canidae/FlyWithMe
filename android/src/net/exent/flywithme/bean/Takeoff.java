@@ -1,7 +1,6 @@
 package net.exent.flywithme.bean;
 
-import java.util.List;
-
+import android.graphics.Bitmap;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Parcel;
@@ -24,8 +23,8 @@ public class Takeoff implements Parcelable {
     private int height;
     private Location location;
     private int exits;
-    private List<Forecast> forecast;
-    private long forecastUpdated;
+    private Bitmap noaaForecast;
+    private long noaaForecastUpdated;
 
     public Takeoff(int id, String name, String description, int asl, int height, double latitude, double longitude, String exitDirections) {
         this.id = id;
@@ -132,17 +131,17 @@ public class Takeoff implements Parcelable {
         return (exits & (1 << 1)) != 0;
     }
 
-    public List<Forecast> getForecast() {
-        return forecast;
+    public Bitmap getNoaaforecast() {
+        return noaaForecast;
     }
 
-    public void setForecast(List<Forecast> forecast) {
-        this.forecast = forecast;
-        forecastUpdated = System.currentTimeMillis();
+    public void setNoaaForecast(Bitmap noaaForecast) {
+        this.noaaForecast = noaaForecast;
+        noaaForecastUpdated = System.currentTimeMillis();
     }
 
-    public long getForecastUpdated() {
-        return forecastUpdated;
+    public long getNoaaForecastUpdated() {
+        return noaaForecastUpdated;
     }
 
     public int describeContents() {

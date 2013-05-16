@@ -6,6 +6,7 @@ import java.util.Map;
 
 import net.exent.flywithme.bean.Takeoff;
 import net.exent.flywithme.data.Airspace;
+import net.exent.flywithme.data.Flightlog;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -22,7 +23,6 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.location.Location;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -40,8 +40,6 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener {
         void showTakeoffDetails(Takeoff takeoff);
 
         Location getLocation();
-
-        List<Takeoff> getNearbyTakeoffs();
     }
 
     private static final int DEFAULT_MAX_AIRSPACE_DISTANCE = 100;
@@ -157,7 +155,7 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener {
     private void drawTakeoffMarkers(GoogleMap map) {
         Log.d(getClass().getSimpleName(), "drawTakeoffMarkers(" + map + ")");
         takeoffMarkers.clear();
-        List<Takeoff> takeoffs = callback.getNearbyTakeoffs();
+        List<Takeoff> takeoffs = Flightlog.getTakeoffs(callback.getLocation());
         Bitmap markerBitmap = BitmapFactory.decodeResource(getResources(), R.raw.mapmarker);
         Bitmap markerNorthBitmap = BitmapFactory.decodeResource(getResources(), R.raw.mapmarker_octant_n);
         Bitmap markerNortheastBitmap = BitmapFactory.decodeResource(getResources(), R.raw.mapmarker_octant_ne);
@@ -170,7 +168,6 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener {
         for (Takeoff takeoff : takeoffs) {
             Bitmap bitmap = Bitmap.createBitmap(markerBitmap.getWidth(), markerBitmap.getHeight(), Bitmap.Config.ARGB_8888);
             Canvas canvas = new Canvas(bitmap);
-            Paint paint = new Paint();
             canvas.drawBitmap(markerBitmap, 0, 0, null);
             if (takeoff.hasNorthExit())
                 canvas.drawBitmap(markerNorthBitmap, 0, 0, null);
