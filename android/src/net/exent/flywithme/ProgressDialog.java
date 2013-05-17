@@ -80,6 +80,7 @@ public class ProgressDialog extends DialogFragment {
         final EditText progressInput = (EditText) view.findViewById(R.id.progressInput);
         progressInput.setInputType(0x00001001); // set input to upper case
         progressInput.setVisibility(View.VISIBLE);
+        progressInput.getEditableText().clear();
         progressInput.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 runnable.run();

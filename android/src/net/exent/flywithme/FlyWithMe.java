@@ -42,6 +42,7 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
 
     /**
      * Show takeoff details in TakeoffDetails fragment.
+     * @param takeoff The takeoff to display details for.
      */
     public void showTakeoffDetails(Takeoff takeoff) {
         Log.d(getClass().getSimpleName(), "showTakeoffDetails(" + takeoff + ")");
@@ -59,6 +60,26 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
         takeoffDetails.setArguments(args);
         /* show fragment */
         showFragment(takeoffDetails, "takeoffDetails");
+    }
+    
+    /**
+     * Show NOAA forecast in NoaaForecast fragment.
+     * @param noaaForecastBitmap The bitmap containing the forecast.
+     */
+    public void showNoaaForecast(Takeoff takeoff) {
+        Log.d(getClass().getSimpleName(), "showNoaaForecast()");
+        hideFragmentButtons();
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragmentContainer);
+        if (fragment != null && fragment instanceof NoaaForecast)
+            return;
+
+        NoaaForecast noaaForecast = new NoaaForecast();
+        /* pass arguments */
+        Bundle args = new Bundle();
+        args.putParcelable(NoaaForecast.ARG_TAKEOFF, takeoff);
+        noaaForecast.setArguments(args);
+        /* show fragment */
+        showFragment(noaaForecast, "noaaForecast");
     }
 
     /**
@@ -206,11 +227,11 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
             Log.d(getClass().getSimpleName(), "doInBackground(" + contexts + ")");
             progressDialog = new ProgressDialog();
             progressDialog.show(getSupportFragmentManager(), "ProgressDialogFragment");
-            publishProgress("33", getString(R.string.loading_takeoffs));
+            publishProgress("" + (int) (Math.random() * 33), getString(R.string.loading_takeoffs));
             Flightlog.init(contexts[0]);
-            publishProgress("67", getString(R.string.loading_airspace));
+            publishProgress("" + (int) (Math.random() * 34 + 33), getString(R.string.loading_airspace));
             Airspace.init(contexts[0]);
-            publishProgress("100", getString(R.string.sorting_takeoffs));
+            publishProgress("" + (int) (Math.random() * 33 + 67), getString(R.string.sorting_takeoffs));
             return null;
         }
 

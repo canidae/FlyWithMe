@@ -10,7 +10,10 @@
     <string name="loading_takeoffs">Loading takeoffs…</string>
     <string name="loading_airspace">Loading airspace map…</string>
     <string name="sorting_takeoffs">Sorting takeoffs…</string>
-    <string name="fetching_noaa_forecast">Fetching NOAA forecast…</string>
+    <string name="initiating_noaa_forecast">Initiating NOAA forecast…</string>
+    <string name="fetching_noaa_captcha">Fetching NOAA CAPTCHA…</string>
+    <string name="write_noaa_captcha">Write CAPTCHA…</string>
+    <string name="retrieving_noaa_forecast">Retrieving NOAA forecast…</string>
 
     <!-- Preferences -->
     <string name="preferences">Preferences</string>

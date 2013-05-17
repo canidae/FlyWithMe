@@ -2,11 +2,9 @@ package net.exent.flywithme;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLEncoder;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
@@ -42,6 +40,8 @@ import android.widget.TextView;
 public class TakeoffDetails extends Fragment {
     public interface TakeoffDetailsListener {
         Location getLocation();
+
+        void showNoaaForecast(Takeoff takeoff);
     }
 
     public static final String ARG_TAKEOFF = "takeoff";
@@ -117,7 +117,7 @@ public class TakeoffDetails extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.d(getClass().getSimpleName(), "onCreateView(" + inflater + ", " + container + ", " + savedInstanceState + ")");
         if (savedInstanceState != null)
-            takeoff = savedInstanceState.getParcelable("takeoff");
+            takeoff = savedInstanceState.getParcelable(ARG_TAKEOFF);
         return inflater.inflate(R.layout.takeoff_details, container, false);
     }
 
@@ -127,8 +127,7 @@ public class TakeoffDetails extends Fragment {
         super.onStart();
         Bundle args = getArguments();
         if (args != null)
-            takeoff = args.getParcelable(ARG_TAKEOFF);
-        showTakeoffDetails(takeoff);
+            showTakeoffDetails((Takeoff) args.getParcelable(ARG_TAKEOFF));
     }
 
     @Override
@@ -143,16 +142,20 @@ public class TakeoffDetails extends Fragment {
      * can't be inside NoaaForecastTask class because that class can't be static and non-static inner classes can't have static members...
      */
     private static final String NOAA_URL = "http://www.ready.noaa.gov";
-    private static final String NOAA_METGRAM_CONF = "&metdata=GFS&mdatacfg=GFS&metfil=hysplit.t12z.gfsf&metext=gfsf&nhrs=72&type=user&wndtxt=2&Field1=FLAG&Level1=0&Field2=FLAG&Level2=5&Field3=FLAG&Level3=7&Field4=TCLD&Level4=0&Field5=MSLP&Level5=0&Field6=T02M&Level6=0&Field7=TPP6&Level7=0&Field8=%20&Level8=0&Field9=%20&Level9=0&Field10=%20&Level10=0&textonly=No&gsize=96&pdf=No";
+    private static final String NOAA_METGRAM_CONF = "&metdata=GFS&mdatacfg=GFS&metext=gfsf&nhrs=72&type=user&wndtxt=2&Field1=FLAG&Level1=0&Field2=FLAG&Level2=5&Field3=FLAG&Level3=7&Field4=FLAG&Level4=9&Field5=TCLD&Level5=0&Field6=MSLP&Level6=0&Field7=T02M&Level7=0&Field8=TPP6&Level8=0&Field9=%20&Level9=0&Field10=%20&Level10=0&textonly=No&gsize=96&pdf=No";
+    private static final Pattern NOAA_METCYC_PATTERN = Pattern.compile(".*</div><option value=\"(\\d+ \\d+)\">.*");
     private static final Pattern NOAA_USERID_PATTERN = Pattern.compile(".*userid=(\\d+).*");
-    private static final Pattern NOAA_FORECAST_CYCLE_PATTERN = Pattern.compile(".*</div><option value=\"(\\d+ \\d+)\">.*");
+    private static final Pattern NOAA_METDIR_PATTERN = Pattern.compile(".*<input type=\"HIDDEN\" name=\"metdir\" value=\"([^\"]+)\">.*");
+    private static final Pattern NOAA_METFIL_PATTERN = Pattern.compile(".*<input type=\"HIDDEN\" name=\"metfil\" value=\"([^\"]+)\">.*");
+    private static final Pattern NOAA_METDATE_PATTERN = Pattern.compile(".*<option>(.*\\(\\+ 00 Hrs\\)).*");
     private static final Pattern NOAA_PROC_PATTERN = Pattern.compile(".*<input type=\"HIDDEN\" name=\"proc\" value=\"(\\d+)\">.*");
     private static final Pattern NOAA_CAPTCHA_URL_PATTERN = Pattern.compile(".*<img src=\"([^\"]+)\" ALT=\"Security Code\".*");
     private static final Pattern NOAA_METEOGRAM_PATTERN = Pattern.compile(".*<img src=\"([^\"]+)\" ALT=\"meteorogram\">.*");
-    private static final SimpleDateFormat NOAA_FORECAST_CYCLE_FORMATTER = new SimpleDateFormat("HH'+'yyyyMMdd", Locale.US);
-    private static final SimpleDateFormat NOAA_LONG_DATE_FORMATTER = new SimpleDateFormat("MMM dd, yyyy 'at' HH 'UTC (+ 00 Hrs)'", Locale.US);
     private static String noaaUserId;
-    private static String noaaForecastCycle;
+    private static String noaaMetcyc;
+    private static String noaaMetdir;
+    private static String noaaMetfil;
+    private static String noaaMetdate;
     private static String noaaProc;
     private static String noaaCaptcha;
 
@@ -160,7 +163,6 @@ public class TakeoffDetails extends Fragment {
         private final Lock lock = new ReentrantLock();
         private final Condition condition = lock.newCondition();
         private ProgressDialog progressDialog;
-        private int progress = 0;
         private Bitmap captchaBitmap;
         private HttpClient httpClient = new DefaultHttpClient();
         
@@ -174,8 +176,6 @@ public class TakeoffDetails extends Fragment {
                     return true; // and it's still cached, return it
             }
             Location loc = takeoff.getLocation();
-            progressDialog = new ProgressDialog();
-            progressDialog.setTask(this);
             if (noaaCaptcha != null) {
                 /* try fetching using old captcha, proc, etc */
                 Bitmap bitmap = fetchMeteogram(loc);
@@ -185,21 +185,40 @@ public class TakeoffDetails extends Fragment {
                 }
             }
             // didn't work, we'll have to go through the steps again
+            progressDialog = new ProgressDialog();
+            progressDialog.setTask(this);
             noaaCaptcha = null;
             progressDialog.show(getActivity().getSupportFragmentManager(), "ProgressDialogFragment");
-            publishProgress(getString(R.string.fetching_noaa_forecast)); // TODO: proper message
+            publishProgress("8", getString(R.string.initiating_noaa_forecast));
             noaaUserId = getOne(fetchPageContent(NOAA_URL + "/ready2-bin/main.pl?Lat=" + loc.getLatitude() + "&Lon=" + loc.getLongitude()), NOAA_USERID_PATTERN);
-            publishProgress(getString(R.string.fetching_noaa_forecast)); // TODO: proper message 
-            noaaForecastCycle = getOne(fetchPageContent(NOAA_URL + "/ready2-bin/metcycle.pl?product=metgram1&userid=" + noaaUserId + "&metdata=GFS&mdatacfg=GFS&Lat=" + loc.getLatitude() + "&Lon=" + loc.getLongitude()), NOAA_FORECAST_CYCLE_PATTERN);
-            noaaForecastCycle = noaaForecastCycle.replace(' ', '+');
-            publishProgress(getString(R.string.fetching_noaa_forecast)); // TODO: proper message
-            String content = fetchPageContent(NOAA_URL + "/ready2-bin/metgram1.pl?userid=" + noaaUserId + "&metdata=GFS&mdatacfg=GFS&Lat=" + loc.getLatitude() + "&Lon=" + loc.getLongitude() + "&metext=gfsf&metcyc=" + noaaForecastCycle);
+            publishProgress("23", getString(R.string.initiating_noaa_forecast)); 
+            String content = fetchPageContent(NOAA_URL + "/ready2-bin/metcycle.pl?product=metgram1&userid=" + noaaUserId + "&metdata=GFS&mdatacfg=GFS&Lat=" + loc.getLatitude() + "&Lon=" + loc.getLongitude()); 
+            noaaMetcyc = getOne(content, NOAA_METCYC_PATTERN);
+            noaaMetcyc = noaaMetcyc.replace(' ', '+');
+            publishProgress("42", getString(R.string.fetching_noaa_captcha));
+            content = fetchPageContent(NOAA_URL + "/ready2-bin/metgram1.pl?userid=" + noaaUserId + "&metdata=GFS&mdatacfg=GFS&Lat=" + loc.getLatitude() + "&Lon=" + loc.getLongitude() + "&metext=gfsf&metcyc=" + noaaMetcyc);
+            noaaMetdir = getOne(content, NOAA_METDIR_PATTERN);
+            noaaMetfil = getOne(content, NOAA_METFIL_PATTERN);
+            try {
+                noaaMetdate = URLEncoder.encode(getOne(content, NOAA_METDATE_PATTERN), "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                Log.w(getClass().getName(), "Unable to URLEncode metdate", e);
+            }
             noaaProc = getOne(content, NOAA_PROC_PATTERN);
             noaaCaptcha = fetchCaptcha(getOne(content, NOAA_CAPTCHA_URL_PATTERN));
-            publishProgress(getString(R.string.fetching_noaa_forecast)); // TODO: proper message
+            publishProgress("85", getString(R.string.retrieving_noaa_forecast));
             Bitmap bitmap = fetchMeteogram(loc);
-            if (bitmap == null)
-                return false;
+            if (bitmap == null) {
+                /* hmm, wrong captcha? give user another try */
+                publishProgress("42", getString(R.string.fetching_noaa_captcha));
+                content = fetchPageContent(NOAA_URL + "/ready2-bin/metgram1.pl?userid=" + noaaUserId + "&metdata=GFS&mdatacfg=GFS&Lat=" + loc.getLatitude() + "&Lon=" + loc.getLongitude() + "&metext=gfsf&metcyc=" + noaaMetcyc);
+                noaaProc = getOne(content, NOAA_PROC_PATTERN);
+                noaaCaptcha = fetchCaptcha(getOne(content, NOAA_CAPTCHA_URL_PATTERN));
+                publishProgress("85", getString(R.string.retrieving_noaa_forecast));
+                bitmap = fetchMeteogram(loc);
+                if (bitmap == null)
+                    return false;
+            }
             takeoff.setNoaaForecast(bitmap);
             return true;
         }
@@ -207,8 +226,9 @@ public class TakeoffDetails extends Fragment {
         @Override
         protected void onProgressUpdate(String... messages) {
             Log.d(getClass().getSimpleName(), "onProgressUpdate(" + messages + ")");
-            String message = messages[0];
-            if ("show_captcha".equals(message)) {
+            int progress = Integer.parseInt(messages[0]);
+            String message = messages[1];
+            if (getString(R.string.write_noaa_captcha).equals(message)) {
                 progressDialog.setImage(captchaBitmap);
                 progressDialog.showInput(new Runnable() {
                     public void run() {
@@ -220,20 +240,20 @@ public class TakeoffDetails extends Fragment {
                         }
                     }
                 });
-            } else {
-                progressDialog.setProgress(progress, message);
-                progress += 20;
             }
+            progressDialog.setProgress(progress, message);
         }
         
         @Override
         protected void onPostExecute(Boolean update) {
             Log.d(getClass().getSimpleName(), "onPostExecute()");
-            progressDialog.dismiss();
-            progressDialog = null;
+            if (progressDialog != null) {
+                progressDialog.dismiss();
+                progressDialog = null;
+            }
             if (!update)
                 return;
-            //Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragmentContainer);
+            callback.showNoaaForecast(takeoff);
         }
         
         private String fetchCaptcha(String captchaUrl) {
@@ -242,8 +262,7 @@ public class TakeoffDetails extends Fragment {
                 HttpResponse response = fetchPage("http://www.ready.noaa.gov" + captchaUrl);
                 captchaBitmap = BitmapFactory.decodeStream(response.getEntity().getContent());
                 response.getEntity().consumeContent();
-                publishProgress("show_captcha");
-                publishProgress("Waiting for CAPTCHA…"); // TODO: strings.xml
+                publishProgress("65", getString(R.string.write_noaa_captcha));
                 lock.lock();
                 try {
                     condition.await(120000, TimeUnit.MILLISECONDS);
@@ -262,10 +281,7 @@ public class TakeoffDetails extends Fragment {
         private Bitmap fetchMeteogram(Location loc) {
             Log.d(getClass().getSimpleName(), "fetchMeteogram(" + loc + ")");
             try {
-                Date date = NOAA_FORECAST_CYCLE_FORMATTER.parse(noaaForecastCycle);
-                String longDate = URLEncoder.encode(NOAA_LONG_DATE_FORMATTER.format(date), "UTF-8");
-                String forecastCycleShort = noaaForecastCycle.substring(noaaForecastCycle.indexOf('+') + 1);
-                String meteogramUrl = getOne(fetchPageContent(NOAA_URL + "/ready2-bin/metgram2.pl?userid=" + noaaUserId + "&Lat=" + loc.getLatitude() + "&Lon=" + loc.getLongitude() + "&metdir=/pub/forecast/" + forecastCycleShort + "/&metcyc=" + noaaForecastCycle + "&metdate=" + longDate + "&password1=" + noaaCaptcha + "&proc=" + noaaProc + NOAA_METGRAM_CONF), NOAA_METEOGRAM_PATTERN);
+                String meteogramUrl = getOne(fetchPageContent(NOAA_URL + "/ready2-bin/metgram2.pl?userid=" + noaaUserId + "&Lat=" + loc.getLatitude() + "&Lon=" + loc.getLongitude() + "&metdir=" + noaaMetdir + "&metcyc=" + noaaMetcyc + "&metdate=" + noaaMetdate + "&metfil=" + noaaMetfil + "&password1=" + noaaCaptcha + "&proc=" + noaaProc + NOAA_METGRAM_CONF), NOAA_METEOGRAM_PATTERN);
                 HttpResponse response = fetchPage(NOAA_URL + meteogramUrl);
                 Bitmap bitmap = BitmapFactory.decodeStream(response.getEntity().getContent());
                 response.getEntity().consumeContent();

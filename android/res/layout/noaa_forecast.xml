@@ -6,6 +6,15 @@
     android:layout_alignParentLeft="true"
     android:layout_alignParentTop="true" >
 
+    <TextView
+        android:id="@+id/noaaForecastText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
     <ImageView
         android:id="@+id/noaaForecastImage"
         android:layout_width="wrap_content"
@@ -13,6 +22,6 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true" />
+        android:layout_below="@+id/noaaForecastText" />
 
 </RelativeLayout>
