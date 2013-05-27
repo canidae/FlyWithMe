@@ -35,6 +35,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.util.Pair;
 import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -51,7 +52,9 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
 
     private static final int DEFAULT_MAX_AIRSPACE_DISTANCE = 100;
     private static View view;
-    private static Map<Marker, Takeoff> markers = new HashMap<Marker, Takeoff>();
+    /* we can't use Map<Marker, Takeoff> below, because the Marker may be recreated, invalidating the reference we got to the previous instantiation.
+     * instead we'll have to keep the id (String) as a reference to the marker */
+    private static Map<String, Pair<Marker, Takeoff>> markers = new HashMap<String, Pair<Marker, Takeoff>>();
     private static Map<Polygon, PolygonOptions> polygons = new HashMap<Polygon, PolygonOptions>();
     private static Bitmap markerBitmap;
     private static Bitmap markerNorthBitmap;
@@ -91,7 +94,6 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
                 editor.putBoolean("pref_map_show_takeoffs", markersEnabled);
                 editor.commit();
                 markerButton.setImageResource(markersEnabled ? R.drawable.takeoffs_enabled : R.drawable.takeoffs_disabled);
-                map.clear();
                 redrawMap(map);
             }
         });
@@ -105,7 +107,6 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
                 editor.putBoolean("pref_map_show_airspace", polygonsEnabled);
                 editor.commit();
                 polygonButton.setImageResource(polygonsEnabled ? R.drawable.airspace_enabled : R.drawable.airspace_disabled);
-                map.clear();
                 redrawMap(map);
             }
         });
@@ -119,7 +120,7 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
             Log.w(getClass().getSimpleName(), "callback is null, returning");
             return;
         }
-        Takeoff takeoff = markers.get(marker.getId());
+        Takeoff takeoff = markers.get(marker.getId()).second;
 
         /* tell main activity to show takeoff details */
         callback.showTakeoffDetails(takeoff);
@@ -187,53 +188,56 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
     }
 
     private void redrawMap(GoogleMap map) {
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         Location location = callback.getLocation();
         LatLng latLng = map.getCameraPosition().target;
         if (latLng.latitude != 0.0 && latLng.longitude != 0.0) {
             location.setLatitude(latLng.latitude);
             location.setLongitude(latLng.longitude);
         }
-        if (prefs.getBoolean("pref_map_show_takeoffs", true))
-            new DrawMarkersTask().execute(location);
-        if (prefs.getBoolean("pref_map_show_airspace", true))
-            new DrawPolygonsTask().execute(location);
+        new DrawMarkersTask().execute(location);
+        new DrawPolygonsTask().execute(location);
     }
 
     private class DrawMarkersTask extends AsyncTask<Location, Void, Runnable> {
         @Override
         protected Runnable doInBackground(Location... locations) {
             Log.d(getClass().getSimpleName(), "doInBackground(" + locations + ")");
-            final Map<Takeoff, Bitmap> newMarkers = new HashMap<Takeoff, Bitmap>();
-
-            List<Takeoff> takeoffs;
-            takeoffs = Flightlog.getTakeoffs(locations[0]);
-            for (Takeoff takeoff : takeoffs) {
-                Bitmap bitmap = Bitmap.createBitmap(markerBitmap.getWidth(), markerBitmap.getHeight(), Bitmap.Config.ARGB_8888);
-                Canvas canvas = new Canvas(bitmap);
-                canvas.drawBitmap(markerBitmap, 0, 0, null);
-                if (takeoff.hasNorthExit())
-                    canvas.drawBitmap(markerNorthBitmap, 0, 0, null);
-                if (takeoff.hasNortheastExit())
-                    canvas.drawBitmap(markerNortheastBitmap, 0, 0, null);
-                if (takeoff.hasEastExit())
-                    canvas.drawBitmap(markerEastBitmap, 0, 0, null);
-                if (takeoff.hasSoutheastExit())
-                    canvas.drawBitmap(markerSoutheastBitmap, 0, 0, null);
-                if (takeoff.hasSouthExit())
-                    canvas.drawBitmap(markerSouthBitmap, 0, 0, null);
-                if (takeoff.hasSouthwestExit())
-                    canvas.drawBitmap(markerSouthwestBitmap, 0, 0, null);
-                if (takeoff.hasWestExit())
-                    canvas.drawBitmap(markerWestBitmap, 0, 0, null);
-                if (takeoff.hasNorthwestExit())
-                    canvas.drawBitmap(markerNorthwestBitmap, 0, 0, null);
-                newMarkers.put(takeoff, bitmap);
+            final Map<Takeoff, Bitmap> showMarkers = new HashMap<Takeoff, Bitmap>();
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            if (prefs.getBoolean("pref_map_show_takeoffs", true)) {
+                List<Takeoff> takeoffs;
+                takeoffs = Flightlog.getTakeoffs(locations[0]);
+                for (Takeoff takeoff : takeoffs) {
+                    Bitmap bitmap = Bitmap.createBitmap(markerBitmap.getWidth(), markerBitmap.getHeight(), Bitmap.Config.ARGB_8888);
+                    Canvas canvas = new Canvas(bitmap);
+                    canvas.drawBitmap(markerBitmap, 0, 0, null);
+                    if (takeoff.hasNorthExit())
+                        canvas.drawBitmap(markerNorthBitmap, 0, 0, null);
+                    if (takeoff.hasNortheastExit())
+                        canvas.drawBitmap(markerNortheastBitmap, 0, 0, null);
+                    if (takeoff.hasEastExit())
+                        canvas.drawBitmap(markerEastBitmap, 0, 0, null);
+                    if (takeoff.hasSoutheastExit())
+                        canvas.drawBitmap(markerSoutheastBitmap, 0, 0, null);
+                    if (takeoff.hasSouthExit())
+                        canvas.drawBitmap(markerSouthBitmap, 0, 0, null);
+                    if (takeoff.hasSouthwestExit())
+                        canvas.drawBitmap(markerSouthwestBitmap, 0, 0, null);
+                    if (takeoff.hasWestExit())
+                        canvas.drawBitmap(markerWestBitmap, 0, 0, null);
+                    if (takeoff.hasNorthwestExit())
+                        canvas.drawBitmap(markerNorthwestBitmap, 0, 0, null);
+                    showMarkers.put(takeoff, bitmap);
+                }
             }
 
+            /* in case user disabled while we were figuring out which markers to show.
+             * it's not thread safe, so it's technically possibly to make it show markers even though it was disabled, but it's unlikely to happen */
+            if (!prefs.getBoolean("pref_map_show_takeoffs", true))
+                showMarkers.clear();
             return new Runnable() {
                 public void run() {
-                    drawTakeoffMarkers(newMarkers);
+                    drawTakeoffMarkers(showMarkers);
                 }
             };
         }
@@ -244,29 +248,33 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
             runnable.run();
         }
 
-        private void drawTakeoffMarkers(Map<Takeoff, Bitmap> newMarkers) {
+        private void drawTakeoffMarkers(Map<Takeoff, Bitmap> showMarkers) {
+            Log.d(getClass().getSimpleName(), "drawTakeoffMarkers(" + showMarkers + ")");
             SupportMapFragment fragment = (SupportMapFragment) getFragmentManager().findFragmentById(R.id.takeoffMapFragment);
             if (fragment == null)
                 return;
-            final GoogleMap map = fragment.getMap();
+            GoogleMap map = fragment.getMap();
             if (map == null)
                 return;
             /* remove markers that should not be visible */
-            for (Iterator<Map.Entry<Marker, Takeoff>> it = markers.entrySet().iterator(); it.hasNext();) {
-                Map.Entry<Marker, Takeoff> entry = it.next();
-                if (newMarkers.containsKey(entry.getValue()))
+            for (Iterator<Map.Entry<String, Pair<Marker, Takeoff>>> it = markers.entrySet().iterator(); it.hasNext();) {
+                Map.Entry<String, Pair<Marker, Takeoff>> entry = it.next();
+                Marker marker = entry.getValue().first;
+                if (showMarkers.containsKey(marker)) {
+                    showMarkers.remove(marker); // marker already on map, no need to draw it again 
                     continue;
-                entry.getKey().remove();
+                }
+                // marker is not to be shown, remove it
+                marker.remove();
                 it.remove();
             }
             /* draw markers that should be visible */
-            for (Map.Entry<Takeoff, Bitmap> entry : newMarkers.entrySet()) {
-                if (markers.containsValue(entry.getKey()))
-                    continue;
+            for (Map.Entry<Takeoff, Bitmap> entry : showMarkers.entrySet()) {
                 Takeoff takeoff = entry.getKey();
                 Bitmap bitmap = entry.getValue();
                 Marker marker = map.addMarker(new MarkerOptions().position(new LatLng(takeoff.getLocation().getLatitude(), takeoff.getLocation().getLongitude())).title(takeoff.getName()).snippet("Height: " + takeoff.getHeight()).icon(BitmapDescriptorFactory.fromBitmap(bitmap)).anchor(0.5f, 0.875f));
-                markers.put(marker, takeoff);
+                Pair<Marker, Takeoff> pair = new Pair<Marker, Takeoff>(marker, takeoff);
+                markers.put(marker.getId(), pair);
             }
         }
     }
@@ -275,48 +283,43 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
         @Override
         protected Runnable doInBackground(Location... locations) {
             Log.d(getClass().getSimpleName(), "doInBackground(" + locations + ")");
-            Location location = locations[0];
-            Location tmpLocation = new Location(location);
+            final Set<PolygonOptions> showPolygons = new HashSet<PolygonOptions>();
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-            int maxAirspaceDistance = DEFAULT_MAX_AIRSPACE_DISTANCE; // TODO: just set to fixed 100km?
-            try {
-                maxAirspaceDistance = Integer.parseInt(prefs.getString("pref_max_airspace_distance", "" + DEFAULT_MAX_AIRSPACE_DISTANCE));
-            } catch (NumberFormatException e) {
-                Log.w(getClass().getSimpleName(), "Unable to parse max airspace distance setting as integer", e);
-            }
-            maxAirspaceDistance *= 1000;
-
-            final Map<PolygonOptions, Polygon> removePolygons = new HashMap<PolygonOptions, Polygon>();
-            for (Map.Entry<Polygon, PolygonOptions> entry : polygons.entrySet())
-                removePolygons.put(entry.getValue(), entry.getKey());
-            polygons.clear();
-            final Set<PolygonOptions> newPolygons = new HashSet<PolygonOptions>();
-
-            for (Map.Entry<String, List<PolygonOptions>> entry : Airspace.getAirspaceMap().entrySet()) {
-                if (entry.getKey() == null || prefs.getBoolean("pref_airspace_enabled_" + entry.getKey().trim(), true) == false)
-                    continue;
-                for (PolygonOptions polygon : entry.getValue()) {
-                    if (showPolygon(polygon, location, tmpLocation, maxAirspaceDistance)) {
-                        if (removePolygons.containsKey(polygon)) {
-                            polygons.put(removePolygons.get(polygon), polygon);
-                            removePolygons.remove(polygon);
-                            continue;
-                        }
-                        newPolygons.add(polygon);
+            if (prefs.getBoolean("pref_map_show_airspace", true)) {
+                Location location = locations[0];
+                Location tmpLocation = new Location(location);
+                int maxAirspaceDistance = DEFAULT_MAX_AIRSPACE_DISTANCE;
+                try {
+                    maxAirspaceDistance = Integer.parseInt(prefs.getString("pref_max_airspace_distance", "" + DEFAULT_MAX_AIRSPACE_DISTANCE));
+                } catch (NumberFormatException e) {
+                    Log.w(getClass().getSimpleName(), "Unable to parse max airspace distance setting as integer", e);
+                }
+                maxAirspaceDistance *= 1000;
+    
+                for (Map.Entry<String, List<PolygonOptions>> entry : Airspace.getAirspaceMap().entrySet()) {
+                    if (entry.getKey() == null || prefs.getBoolean("pref_airspace_enabled_" + entry.getKey().trim(), true) == false)
+                        continue;
+                    for (PolygonOptions polygon : entry.getValue()) {
+                        if (showPolygon(polygon, location, tmpLocation, maxAirspaceDistance))
+                            showPolygons.add(polygon);
                     }
                 }
             }
 
+            /* in case user disabled while we were figuring out which polygons to show.
+             * it's not thread safe, so it's technically possibly to make it show polygons even though it was disabled, but it's unlikely to happen */
+            if (!prefs.getBoolean("pref_map_show_airspace", true))
+                showPolygons.clear();
             return new Runnable() {
                 public void run() {
-                    drawAirspaceMap(newPolygons);
+                    drawAirspaceMap(showPolygons);
                 }
             };
         }
 
         @Override
         protected void onPostExecute(Runnable runnable) {
-            Log.d(getClass().getSimpleName(), "onPostExecute()");
+            Log.d(getClass().getSimpleName(), "onPostExecute(" + runnable + ")");
             runnable.run();
         }
 
@@ -334,6 +337,7 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
          * @return Whether polygon should be drawn.
          */
         private boolean showPolygon(PolygonOptions polygon, Location myLocation, Location tmpLocation, int maxAirspaceDistance) {
+            Log.d(getClass().getSimpleName(), "showPolygon(" + polygon + ", " + myLocation + ", " + tmpLocation + ", " + maxAirspaceDistance + ")");
             boolean userSouthOfNorthernmostPoint = false;
             boolean userNorthOfSouthernmostPoint = false;
             boolean userWestOfEasternmostPoint = false;
@@ -354,25 +358,29 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
             }
             return userEastOfWesternmostPoint && userNorthOfSouthernmostPoint && userSouthOfNorthernmostPoint && userWestOfEasternmostPoint;
         }
-    }
 
-    private void drawAirspaceMap(Set<PolygonOptions> newPolygons) {
-        SupportMapFragment fragment = (SupportMapFragment) getFragmentManager().findFragmentById(R.id.takeoffMapFragment);
-        if (fragment == null)
-            return;
-        final GoogleMap map = fragment.getMap();
-        if (map == null)
-            return;
-        /* remove polygons that should not be visible */
-        for (Iterator<Map.Entry<Polygon, PolygonOptions>> it = polygons.entrySet().iterator(); it.hasNext();) {
-            Map.Entry<Polygon, PolygonOptions> entry = it.next();
-            if (newPolygons.contains(entry.getValue()))
-                continue;
-            entry.getKey().remove();
-            it.remove();
+        private void drawAirspaceMap(Set<PolygonOptions> showPolygons) {
+            Log.d(getClass().getSimpleName(), "drawAirspaceMap(" + showPolygons + ")");
+            SupportMapFragment fragment = (SupportMapFragment) getFragmentManager().findFragmentById(R.id.takeoffMapFragment);
+            if (fragment == null)
+                return;
+            final GoogleMap map = fragment.getMap();
+            if (map == null)
+                return;
+            /* remove polygons that should not be visible */
+            for (Iterator<Map.Entry<Polygon, PolygonOptions>> it = polygons.entrySet().iterator(); it.hasNext();) {
+                Map.Entry<Polygon, PolygonOptions> entry = it.next();
+                if (showPolygons.contains(entry.getValue())) {
+                    showPolygons.remove(entry.getValue()); // polygon already on map, no need to draw it again
+                    continue;
+                }
+                // polygon is not to be shown, remove it
+                entry.getKey().remove();
+                it.remove();
+            }
+            /* draw polygons that should be visible */
+            for (PolygonOptions polygon : showPolygons)
+                polygons.put(map.addPolygon(polygon), polygon);
         }
-        /* draw polygons that should be visible */
-        for (PolygonOptions polygon : newPolygons)
-            polygons.put(map.addPolygon(polygon), polygon);
     }
 }
