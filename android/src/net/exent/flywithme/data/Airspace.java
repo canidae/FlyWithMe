@@ -23,12 +23,10 @@ public class Airspace {
     private static Map<String, List<PolygonOptions>> polygonMap = new HashMap<String, List<PolygonOptions>>();
 
     public static Map<String, List<PolygonOptions>> getAirspaceMap() {
-        Log.d("Airspace", "getAirspaceMap()");
         return polygonMap;
     }
 
     public static void init(Context context) {
-        Log.d("Airspace", "init(" + context + ")");
         if (polygonMap.isEmpty())
             readAirspaceMapFile(context);
     }
@@ -37,7 +35,6 @@ public class Airspace {
         polygonMap = new HashMap<String, List<PolygonOptions>>();
         InputStream inputStream = context.getResources().openRawResource(R.raw.airspace_map);
         try {
-            Log.d("Airspace", "inputStream.available(): " + inputStream.available());
             XmlPullParser parser = XmlPullParserFactory.newInstance().newPullParser();
             parser.setInput(inputStream, null);
             Map<String, PolygonOptions> polygonStyles = new HashMap<String, PolygonOptions>();

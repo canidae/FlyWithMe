@@ -8,7 +8,6 @@ import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,7 +23,6 @@ public class ProgressDialog extends DialogFragment {
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        Log.d(getClass().getName(), "onCreateDialog(" + savedInstanceState + ")");
         LayoutInflater inflater = getActivity().getLayoutInflater();
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         view = inflater.inflate(R.layout.progress_dialog, null);
@@ -32,34 +30,30 @@ public class ProgressDialog extends DialogFragment {
         if (task != null) {
             builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
-                    Log.d(getClass().getName(), "NegativeButton.onClick(" + dialog + ", " + id + "): task: " + task);
                     if (task != null && !task.isCancelled())
                         task.cancel(true);
                 }
             }).setOnCancelListener(new DialogInterface.OnCancelListener() {
                 public void onCancel(DialogInterface dialog) {
-                    Log.d(getClass().getName(), "CancelListener.onCancel(" + dialog + "): task: " + task);
                     if (task != null && !task.isCancelled())
                         task.cancel(true);
                 }
             });
         }
+        setCancelable(false);
         return builder.create();
     }
     
     public String getInputText() {
-        Log.d(getClass().getName(), "getInputText()");
         EditText progressInput = (EditText) view.findViewById(R.id.progressInput);
         return progressInput.getText().toString();
     }
 
     public void setTask(AsyncTask<?, ?, ?> task) {
-        Log.d(getClass().getName(), "setTask(" + task + ")");
         this.task = task;
     }
 
     public void setProgress(int progress, String text) {
-        Log.d(getClass().getName(), "setProgress(" + progress + ", " + text + ")");
         ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
         if (progressBar != null)
             progressBar.setProgress(progress > progressBar.getMax() ? progressBar.getMax() : progress);
@@ -69,14 +63,12 @@ public class ProgressDialog extends DialogFragment {
     }
     
     public void setImage(Bitmap image) {
-        Log.d(getClass().getName(), "setImage(" + image + ")");
         ImageView progressImage = (ImageView) view.findViewById(R.id.progressImage);
         progressImage.setImageBitmap(image);
         progressImage.setVisibility(View.VISIBLE);
     }
     
     public void showInput(final Runnable runnable) {
-        Log.d(getClass().getName(), "showInput()");
         final EditText progressInput = (EditText) view.findViewById(R.id.progressInput);
         progressInput.setInputType(0x00001001); // set input to upper case
         progressInput.setVisibility(View.VISIBLE);

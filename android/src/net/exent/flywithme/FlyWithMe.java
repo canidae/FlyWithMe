@@ -1,6 +1,8 @@
 package net.exent.flywithme;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import net.exent.flywithme.TakeoffDetails.TakeoffDetailsListener;
 import net.exent.flywithme.TakeoffList.TakeoffListListener;
@@ -17,8 +19,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
-import android.util.Log;
+import android.util.Pair;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
@@ -27,6 +28,7 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
     private static final int LOCATION_UPDATE_TIME = 300000; // update location every LOCATION_UPDATE_TIME millisecond
     private static final int LOCATION_UPDATE_DISTANCE = 100; // or when we've moved more than LOCATION_UPDATE_DISTANCE meters
     private static final int TAKEOFFS_SORT_DISTANCE = 1000; // only sort takeoff list when we've moved more than TAKEOFFS_SORT_DISTANCE meters
+    private static List<Pair<String, Fragment>> backstack = new ArrayList<Pair<String, Fragment>>();
     private static Location lastSortedTakeoffsLocation;
     private static Location location = new Location(LocationManager.PASSIVE_PROVIDER);
 
@@ -36,8 +38,7 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
      * @return Approximate location of user.
      */
     public Location getLocation() {
-        Log.d(getClass().getSimpleName(), "getLocation()");
-        return location;
+        return new Location(location);
     }
 
     /**
@@ -45,8 +46,6 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
      * @param takeoff The takeoff to display details for.
      */
     public void showTakeoffDetails(Takeoff takeoff) {
-        Log.d(getClass().getSimpleName(), "showTakeoffDetails(" + takeoff + ")");
-        hideFragmentButtons();
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragmentContainer);
         if (fragment != null && fragment instanceof TakeoffDetails) {
             ((TakeoffDetails) fragment).showTakeoffDetails(takeoff);
@@ -67,8 +66,6 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
      * @param noaaForecastBitmap The bitmap containing the forecast.
      */
     public void showNoaaForecast(Takeoff takeoff) {
-        Log.d(getClass().getSimpleName(), "showNoaaForecast()");
-        hideFragmentButtons();
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragmentContainer);
         if (fragment != null && fragment instanceof NoaaForecast)
             return;
@@ -86,8 +83,6 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
      * Show TakeoffList fragment.
      */
     public void showTakeoffList() {
-        Log.d(getClass().getSimpleName(), "showTakeoffList()");
-        hideFragmentButtons();
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragmentContainer);
         if (fragment != null && fragment instanceof TakeoffList)
             return;
@@ -101,8 +96,6 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
      * Show TakeoffMap fragment.
      */
     public void showMap() {
-        Log.d(getClass().getSimpleName(), "showMap()");
-        hideFragmentButtons();
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragmentContainer);
         if (fragment != null && fragment instanceof TakeoffMap)
             return;
@@ -116,7 +109,6 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
      * Show settings. TODO: There's no "SupportPreferenceFragment" (yet), thus this has to be an own activity for the time being
      */
     public void showSettings() {
-        Log.d(getClass().getSimpleName(), "showSettings()");
         Intent preferenceIntent = new Intent(this, Preferences.class);
         preferenceIntent.putStringArrayListExtra("airspaceList", new ArrayList<String>(Airspace.getAirspaceMap().keySet()));
         startActivity(preferenceIntent);
@@ -127,7 +119,6 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
      */
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        Log.d(getClass().getSimpleName(), "onCreate(" + savedInstanceState + ")");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fly_with_me);
 
@@ -185,22 +176,38 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
         });
     }
     
-    private void showFragment(Fragment fragment, String name) {
-        Log.d(getClass().getName(), "showFragment(" + fragment + ", " + name + ")");
-        /* only add fragment to backstack when it's not already there */
-        FragmentManager manager = getSupportFragmentManager();
-        manager.popBackStack(name, 0); // bah, this will pop all up to <name>, but we only want to pop <name>
-        manager.beginTransaction().replace(R.id.fragmentContainer, fragment, name).addToBackStack(name).commit();
+    @Override
+    public void onBackPressed() {
+        /* using our own backstack, because the android one is utterly on crack */
+        Fragment lastVisibleFragment = null;
+        if (backstack.size() > 0) {
+            Pair<String, Fragment> entry = backstack.remove(backstack.size() - 1);
+            lastVisibleFragment = entry.second;
+            getSupportFragmentManager().beginTransaction().remove(entry.second).commit();
+        }
+        if (backstack.size() > 0) {
+            Pair<String, Fragment> entry = backstack.get(backstack.size() - 1);
+            showFragment(entry.second, entry.first);
+        } else {
+            /* nothing left in backstack, unless another fragment than the takeoff list is shown, then exit */
+            if (lastVisibleFragment == null || lastVisibleFragment instanceof TakeoffList)
+                super.onBackPressed();
+            else
+                showTakeoffList();
+        }
     }
-
-    /**
-     * Hide buttons unique for a fragment.
-     */
-    private void hideFragmentButtons() {
-        ImageButton fragmentButton1 = (ImageButton) findViewById(R.id.fragmentButton1);
-        fragmentButton1.setImageDrawable(null);
-        ImageButton fragmentButton2 = (ImageButton) findViewById(R.id.fragmentButton2);
-        fragmentButton2.setImageDrawable(null);
+    
+    private void showFragment(Fragment fragment, String name) {
+        /* only add fragment to backstack when it's not already there */
+        for (Iterator<Pair<String, Fragment>> it = backstack.iterator(); it.hasNext();) {
+            Pair<String, Fragment> entry = it.next();
+            if ((name == null && entry.first == null) || (name != null && name.equals(entry.first))) {
+                it.remove();
+                break;
+            }
+        }
+        backstack.add(new Pair<String, Fragment>(name, fragment));
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, fragment, name).commit();
     }
 
     private synchronized boolean updateTakeoffList() {
@@ -224,7 +231,6 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
         
         @Override
         protected Void doInBackground(Context... contexts) {
-            Log.d(getClass().getSimpleName(), "doInBackground(" + contexts + ")");
             progressDialog = new ProgressDialog();
             progressDialog.show(getSupportFragmentManager(), "ProgressDialogFragment");
             publishProgress("" + (int) (Math.random() * 33), getString(R.string.loading_takeoffs));
@@ -237,13 +243,11 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
 
         @Override
         protected void onProgressUpdate(String... messages) {
-            Log.d(getClass().getSimpleName(), "onProgressUpdate(" + messages + ")");
             progressDialog.setProgress(Integer.parseInt(messages[0]), messages[1]);
         }
         
         @Override
         protected void onPostExecute(Void nothing) {
-            Log.d(getClass().getSimpleName(), "onPostExecute()");
             showTakeoffList();
             progressDialog.dismiss();
             progressDialog = null;

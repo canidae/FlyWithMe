@@ -24,7 +24,7 @@ public class Takeoff implements Parcelable {
     private Location location;
     private int exits;
     private Bitmap noaaForecast;
-    private long noaaForecastUpdated;
+    private long noaaUpdated;
 
     public Takeoff(int id, String name, String description, int asl, int height, double latitude, double longitude, String exitDirections) {
         this.id = id;
@@ -137,11 +137,11 @@ public class Takeoff implements Parcelable {
 
     public void setNoaaForecast(Bitmap noaaForecast) {
         this.noaaForecast = noaaForecast;
-        noaaForecastUpdated = System.currentTimeMillis();
+        noaaUpdated = System.currentTimeMillis();
     }
 
-    public long getNoaaForecastUpdated() {
-        return noaaForecastUpdated;
+    public long getNoaaUpdated() {
+        return noaaUpdated;
     }
 
     public int describeContents() {

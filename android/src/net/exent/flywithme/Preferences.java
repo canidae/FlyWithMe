@@ -10,7 +10,6 @@ import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceCategory;
-import android.util.Log;
 
 // TODO: Replace with Fragment when less people are using android older than 3.0 (or when android-support-v4 got SupportPreferenceFragment)
 public class Preferences extends PreferenceActivity {
@@ -43,7 +42,6 @@ public class Preferences extends PreferenceActivity {
         });
 
         PreferenceCategory showAirspaceTypes = (PreferenceCategory) findPreference("pref_show_airspace_types");
-        Log.d(getClass().getSimpleName(), "getExtras(): " + getIntent().getExtras());
         ArrayList<String> airspaceList = getIntent().getExtras().getStringArrayList("airspaceList");
         Collections.sort(airspaceList);
         for (String key : airspaceList) {

@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -34,11 +35,13 @@ public class TakeoffList extends Fragment {
     private List<Takeoff> takeoffs = new ArrayList<Takeoff>();
     
     public void updateList() {
-        Log.d(getClass().getSimpleName(), "updateList()");
         if (callback == null) {
             Log.w(getClass().getSimpleName(), "callback is null, returning");
             return;
         }
+        ((ImageButton) getActivity().findViewById(R.id.fragmentButton1)).setImageDrawable(null);
+        ((ImageButton) getActivity().findViewById(R.id.fragmentButton2)).setImageDrawable(null);
+
         takeoffs = Flightlog.getTakeoffs(callback.getLocation());
         TakeoffArrayAdapter adapter = new TakeoffArrayAdapter(getActivity());
         ListView listView = (ListView) getActivity().findViewById(R.id.takeoffListView);
@@ -54,20 +57,17 @@ public class TakeoffList extends Fragment {
 
     @Override
     public void onAttach(Activity activity) {
-        Log.d(getClass().getSimpleName(), "onAttach(" + activity + ")");
         super.onAttach(activity);
         callback = (TakeoffListListener) activity;
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Log.d(getClass().getSimpleName(), "onCreateView(" + inflater + ", " + container + ", " + savedInstanceState + ")");
         return inflater.inflate(R.layout.takeoff_list, container, false);
     }
 
     @Override
     public void onStart() {
-        Log.d(getClass().getSimpleName(), "onStart()");
         super.onStart();
         
         updateList();
@@ -75,7 +75,6 @@ public class TakeoffList extends Fragment {
 
     @Override
     public void onStop() {
-        Log.d(getClass().getSimpleName(), "onStop()");
         super.onStop();
         /* remember position in list */
         ListView listView = (ListView) getActivity().findViewById(R.id.takeoffListView);
@@ -91,7 +90,6 @@ public class TakeoffList extends Fragment {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            Log.d(getClass().getSimpleName(), "getView(" + position + ", " + convertView + ", " + parent + ")");
             Location location = callback.getLocation();
             Takeoff takeoff = takeoffs.get(position);
 
@@ -123,7 +121,6 @@ public class TakeoffList extends Fragment {
 
         @Override
         public int getCount() {
-            Log.d(getClass().getSimpleName(), "getCount()");
             return takeoffs.size();
         }
     }
