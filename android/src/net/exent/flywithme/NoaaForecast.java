@@ -18,6 +18,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 import net.exent.flywithme.bean.Takeoff;
+import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Location;
@@ -33,7 +34,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 public class NoaaForecast extends Fragment {
+    public interface NoaaForecastListener {
+        void showProgress(int progress, String text, Bitmap image, Runnable showInput);
+    }
+
     public static final String ARG_TAKEOFF = "takeoff";
+    private NoaaForecastListener callback;
     private Takeoff takeoff;
 
     public void showNoaaForecast(Takeoff takeoff) {
@@ -55,6 +61,12 @@ public class NoaaForecast extends Fragment {
         } catch (Exception e) {
             Log.w(getClass().getName(), "showNoaaForecast() failed unexpectedly", e);
         }
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        callback = (NoaaForecastListener) activity;
     }
 
     @Override
@@ -172,8 +184,7 @@ public class NoaaForecast extends Fragment {
                 int progress = Integer.parseInt(messages[0]);
                 String message = messages[1];
                 if (getString(R.string.write_noaa_captcha).equals(message)) {
-                    progressDialog.setImage(captchaBitmap);
-                    progressDialog.showInput(new Runnable() {
+                    progressDialog.setProgress(progress, message, captchaBitmap, new Runnable() {
                         public void run() {
                             lock.lock();
                             try {
@@ -183,8 +194,9 @@ public class NoaaForecast extends Fragment {
                             }
                         }
                     });
+                } else {
+                    progressDialog.setProgress(progress, message, null, null);
                 }
-                progressDialog.setProgress(progress, message);
             } catch (Exception e) {
                 Log.w(getClass().getSimpleName(), "onProgressUpdate() failed unexpectedly", e);
             }

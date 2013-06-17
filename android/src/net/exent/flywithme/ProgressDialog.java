@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,14 +19,18 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 public class ProgressDialog extends DialogFragment {
+    private static ProgressDialog instance;
     private AsyncTask<?, ?, ?> task;
-    private View view;
+    private int progress;
+    private String text;
+    private Bitmap image;
+    private Runnable runnable;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         LayoutInflater inflater = getActivity().getLayoutInflater();
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        view = inflater.inflate(R.layout.progress_dialog, null);
+        View view = inflater.inflate(R.layout.progress_dialog, null);
         builder.setView(view);
         if (task != null) {
             builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -43,9 +48,31 @@ public class ProgressDialog extends DialogFragment {
         setCancelable(false);
         return builder.create();
     }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        showProgress();
+    }
+    
+    @Override
+    public void onResume() {
+        instance = this;
+        super.onResume();
+    }
+    
+    @Override
+    public void onDestroy() {
+        instance = null;
+        super.onDestroy();
+    }
+    
+    public static ProgressDialog getInstance() {
+        return instance;
+    }
     
     public String getInputText() {
-        EditText progressInput = (EditText) view.findViewById(R.id.progressInput);
+        EditText progressInput = (EditText) getView().findViewById(R.id.progressInput);
         return progressInput.getText().toString();
     }
 
@@ -53,36 +80,50 @@ public class ProgressDialog extends DialogFragment {
         this.task = task;
     }
 
-    public void setProgress(int progress, String text) {
-        ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
-        if (progressBar != null)
-            progressBar.setProgress(progress > progressBar.getMax() ? progressBar.getMax() : progress);
-        TextView progressText = (TextView) view.findViewById(R.id.progressText);
-        if (progressText != null)
-            progressText.setText(text);
+    public void setProgress(int progress, String text, Bitmap image, final Runnable runnable) {
+        this.progress = progress;
+        this.text = text;
+        this.image = image;
+        this.runnable = runnable;
+        showProgress();
     }
     
-    public void setImage(Bitmap image) {
-        ImageView progressImage = (ImageView) view.findViewById(R.id.progressImage);
-        progressImage.setImageBitmap(image);
-        progressImage.setVisibility(View.VISIBLE);
-    }
+    private void showProgress() {
+        try {
+            ProgressBar progressBar = (ProgressBar) getView().findViewById(R.id.progressBar);
+            if (progressBar != null)
+                progressBar.setProgress(progress > progressBar.getMax() ? progressBar.getMax() : progress);
     
-    public void showInput(final Runnable runnable) {
-        final EditText progressInput = (EditText) view.findViewById(R.id.progressInput);
-        progressInput.setInputType(0x00001001); // set input to upper case
-        progressInput.setVisibility(View.VISIBLE);
-        progressInput.getEditableText().clear();
-        progressInput.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                runnable.run();
-                progressInput.setVisibility(View.GONE);
-                ImageView progressImage = (ImageView) view.findViewById(R.id.progressImage);
-                progressImage.setVisibility(View.GONE);
-                return true;
+            TextView progressText = (TextView) getView().findViewById(R.id.progressText);
+            if (progressText != null)
+                progressText.setText(text);
+    
+            ImageView progressImage = (ImageView) getView().findViewById(R.id.progressImage);
+            if (progressImage != null) {
+                progressImage.setImageBitmap(image);
+                progressImage.setVisibility(image == null ? View.GONE : View.VISIBLE);
             }
-        });
-        progressInput.requestFocus();
-        ((InputMethodManager) getActivity().getSystemService(Service.INPUT_METHOD_SERVICE)).showSoftInput(progressInput, 0);
+    
+            final EditText progressInput = (EditText) getView().findViewById(R.id.progressInput);
+            if (progressInput != null) {
+                progressInput.setInputType(0x00001001); // set input to upper case
+                progressInput.setVisibility(runnable == null ? View.GONE : View.VISIBLE);
+                progressInput.getEditableText().clear();
+                progressInput.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                        runnable.run();
+                        progressInput.setVisibility(View.GONE);
+                        ImageView progressImage = (ImageView) getView().findViewById(R.id.progressImage);
+                        progressImage.setVisibility(View.GONE);
+                        return true;
+                    }
+                });
+                progressInput.requestFocus();
+                ((InputMethodManager) getActivity().getSystemService(Service.INPUT_METHOD_SERVICE)).showSoftInput(progressInput, 0);
+            }
+        } catch (Exception e) {
+            /* presumably the view is not visible yet */
+            Log.w(getClass().getName(), "Unable to show progress dialog", e);
+        }
     }
 }

@@ -18,9 +18,7 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
-        android:layout_below="@+id/fwmButton" >
-
-    </FrameLayout>
+        android:layout_below="@+id/fwmButton" />
 
     <ImageButton
         android:id="@+id/fragmentButton1"
