@@ -1,8 +1,5 @@
 package net.exent.flywithme;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import net.exent.flywithme.bean.Takeoff;
 import net.exent.flywithme.data.Flightlog;
 import android.app.Activity;
@@ -10,7 +7,6 @@ import android.content.Context;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,28 +28,6 @@ public class TakeoffList extends Fragment {
     private static int savedPosition;
     private static int savedListTop;
     private TakeoffListListener callback;
-    private List<Takeoff> takeoffs = new ArrayList<Takeoff>();
-    
-    public void updateList() {
-        if (callback == null) {
-            Log.w(getClass().getSimpleName(), "callback is null, returning");
-            return;
-        }
-        ((ImageButton) getActivity().findViewById(R.id.fragmentButton1)).setImageDrawable(null);
-        ((ImageButton) getActivity().findViewById(R.id.fragmentButton2)).setImageDrawable(null);
-
-        takeoffs = Flightlog.getTakeoffs(callback.getLocation());
-        TakeoffArrayAdapter adapter = new TakeoffArrayAdapter(getActivity());
-        ListView listView = (ListView) getActivity().findViewById(R.id.takeoffListView);
-        listView.setAdapter(adapter);
-        listView.setOnItemClickListener(new OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                callback.showTakeoffDetails(takeoffs.get(position));
-            }
-        });
-        /* position list */
-        listView.setSelectionFromTop(savedPosition, savedListTop);
-    }
 
     @Override
     public void onAttach(Activity activity) {
@@ -69,8 +43,20 @@ public class TakeoffList extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        
-        updateList();
+
+        ((ImageButton) getActivity().findViewById(R.id.fragmentButton1)).setImageDrawable(null);
+        ((ImageButton) getActivity().findViewById(R.id.fragmentButton2)).setImageDrawable(null);
+
+        TakeoffArrayAdapter adapter = new TakeoffArrayAdapter(getActivity());
+        ListView listView = (ListView) getActivity().findViewById(R.id.takeoffListView);
+        listView.setAdapter(adapter);
+        listView.setOnItemClickListener(new OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                callback.showTakeoffDetails(Flightlog.getAllTakeoffs().get(position));
+            }
+        });
+        /* position list */
+        listView.setSelectionFromTop(savedPosition, savedListTop);
     }
 
     @Override
@@ -91,7 +77,7 @@ public class TakeoffList extends Fragment {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             Location location = callback.getLocation();
-            Takeoff takeoff = takeoffs.get(position);
+            Takeoff takeoff = Flightlog.getAllTakeoffs().get(position);
 
             LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             View rowView = inflater.inflate(R.layout.takeoff_list_entry, parent, false);
@@ -121,7 +107,7 @@ public class TakeoffList extends Fragment {
 
         @Override
         public int getCount() {
-            return takeoffs.size();
+            return Flightlog.getAllTakeoffs().size();
         }
     }
 }

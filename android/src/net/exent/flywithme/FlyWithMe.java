@@ -1,8 +1,6 @@
 package net.exent.flywithme;
 
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 import net.exent.flywithme.NoaaForecast.NoaaForecastListener;
 import net.exent.flywithme.TakeoffDetails.TakeoffDetailsListener;
@@ -13,7 +11,6 @@ import net.exent.flywithme.data.Airspace;
 import net.exent.flywithme.data.Flightlog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.location.Location;
 import android.location.LocationListener;
@@ -22,9 +19,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
 import android.util.Log;
-import android.util.Pair;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
@@ -33,9 +28,10 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
     private static final int LOCATION_UPDATE_TIME = 300000; // update location every LOCATION_UPDATE_TIME millisecond
     private static final int LOCATION_UPDATE_DISTANCE = 100; // or when we've moved more than LOCATION_UPDATE_DISTANCE meters
     private static final int TAKEOFFS_SORT_DISTANCE = 1000; // only sort takeoff list when we've moved more than TAKEOFFS_SORT_DISTANCE meters
-    private static volatile FragmentManager fragmentManager;
     private static Location lastSortedTakeoffsLocation;
     private static Location location = new Location(LocationManager.PASSIVE_PROVIDER);
+    private Takeoff activeTakeoff;
+    private boolean mapLastViewed = false; // false == we entered TakeoffDetails from TakeoffList, true == we entered TakeoffDetails from TakeoffMap
 
     /**
      * Get approximate location of user.
@@ -58,6 +54,7 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
         args.putParcelable(TakeoffDetails.ARG_TAKEOFF, takeoff);
         takeoffDetails.setArguments(args);
         /* show fragment */
+        activeTakeoff = takeoff;
         showFragment(takeoffDetails, "takeoffDetails");
     }
     
@@ -83,6 +80,7 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragmentContainer);
         TakeoffList takeoffList = (fragment != null && fragment instanceof TakeoffList) ? (TakeoffList) fragment : new TakeoffList();
         /* show fragment */
+        mapLastViewed = false;
         showFragment(takeoffList, "takeoffList");
     }
 
@@ -93,6 +91,7 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragmentContainer);
         TakeoffMap takeoffMap = (fragment != null && fragment instanceof TakeoffMap) ? (TakeoffMap) fragment : new TakeoffMap();
         /* show fragment */
+        mapLastViewed = true;
         showFragment(takeoffMap, "map");
     }
 
@@ -104,19 +103,16 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
      * @param showInput Hackish Runnable used to return the CAPTCHA typed in by the user, probably need a better solution.
      */
     public void showProgress(int progress, String text, Bitmap image, Runnable showInput) {
-        //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        Fragment fragment = getSupportFragmentManager().findFragmentByTag("progressDialog");
-        ProgressDialog progressDialog = (fragment != null && fragment instanceof ProgressDialog) ? (ProgressDialog) fragment : new ProgressDialog();
-        progressDialog = ProgressDialog.getInstance();
-        if (progressDialog == null)
-            progressDialog = new ProgressDialog();
+        ProgressDialog progressDialog = ProgressDialog.getInstance();
         if (progress >= 0) {
+            if (progressDialog == null) {
+                progressDialog = new ProgressDialog();
+                progressDialog.show(getSupportFragmentManager(), "progressDialog");
+            }
             /* pass arguments */
             progressDialog.setProgress(progress, text, image, showInput);
             /* show fragment */
-            progressDialog.show(fragmentManager, "progressDialog");
-        } else {
+        } else if (progressDialog != null) {
             /* hide fragment */
             progressDialog.dismiss();
         }
@@ -171,8 +167,6 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
 
     @Override
     public void onStart() {
-        fragmentManager = getSupportFragmentManager();
-        Log.i(getClass().getName(), "onStart(): " + fragmentManager.toString());
         super.onStart();
         /* starting app, setup buttons */
         ImageButton fwmButton = (ImageButton) findViewById(R.id.fwmButton);
@@ -197,26 +191,24 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
     
     @Override
     public void onBackPressed() {
-        /* using our own backstack, because the android one is utterly on crack */
-        /*
-        Fragment lastVisibleFragment = null;
-        if (backstack.size() > 0) {
-            Pair<String, Fragment> entry = backstack.remove(backstack.size() - 1);
-            lastVisibleFragment = entry.second;
-            fragmentManager.beginTransaction().remove(entry.second).commit();
-        }
-        if (backstack.size() > 0) {
-            Pair<String, Fragment> entry = backstack.get(backstack.size() - 1);
-            showFragment(entry.second, entry.first);
-        } else {
-            // nothing left in backstack, unless another fragment than the takeoff list is shown, then exit
-            if (lastVisibleFragment == null || lastVisibleFragment instanceof TakeoffList)
-                super.onBackPressed();
+        /* using our own "backstack", because the android one is utterly on crack */
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragmentContainer);
+        if (fragment instanceof NoaaForecast) {
+            /* when we're looking at a forecast, then the back button will always take us to TakeoffDetails */
+            showTakeoffDetails(activeTakeoff);
+        } else if (fragment instanceof TakeoffDetails) {
+            /* either TakeoffMap or TakeoffList */
+            if (mapLastViewed)
+                showMap();
             else
                 showTakeoffList();
+        } else if (fragment instanceof TakeoffMap) {
+            /* when we're looking at map, the back button takes us to the list */
+            showTakeoffList();
+        } else {
+            /* looking at list, call parent onBackPressed(), which probably exits the application */
+            super.onBackPressed();
         }
-        */
-        super.onBackPressed();
     }
     
     private void showFragment(Fragment fragment, String name) {
@@ -231,15 +223,16 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
         }
         backstack.add(new Pair<String, Fragment>(name, fragment));
         */
-        Log.i(getClass().getName(), fragmentManager.toString());
-        fragmentManager.beginTransaction().replace(R.id.fragmentContainer, fragment, name).commit();
+        Log.i(getClass().getName(), getSupportFragmentManager().toString());
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, fragment, name).commit();
     }
 
     private synchronized boolean updateTakeoffList() {
         if (lastSortedTakeoffsLocation == null || location.distanceTo(lastSortedTakeoffsLocation) >= TAKEOFFS_SORT_DISTANCE) {
             /* moved too much, need to sort takeoff list again */
+            Flightlog.sortTakeoffListToLocation(Flightlog.getAllTakeoffs(), location);
             lastSortedTakeoffsLocation = location;
-            Fragment fragment = fragmentManager.findFragmentById(R.id.fragmentContainer);
+            Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragmentContainer);
             if (fragment == null)
                 return true;
             else if (fragment instanceof TakeoffMap)
@@ -259,6 +252,7 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
             publishProgress("" + (int) (Math.random() * 34 + 33), getString(R.string.loading_airspace));
             Airspace.init(contexts[0]);
             publishProgress("" + (int) (Math.random() * 33 + 67), getString(R.string.sorting_takeoffs));
+            Flightlog.sortTakeoffListToLocation(Flightlog.getAllTakeoffs(), location);
             return null;
         }
 
@@ -279,7 +273,7 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
         @Override
         protected void onPostExecute(Void nothing) {
             showTakeoffList();
-            showProgress(-1, "", null, null);
+            showProgress(-1, "", null, null); // dismiss dialog
         }
     }
 }

@@ -122,6 +122,7 @@ public class NoaaForecast extends Fragment {
         private Bitmap captchaBitmap;
         private HttpClient httpClient = new DefaultHttpClient();
         
+        
         @Override
         protected Boolean doInBackground(Takeoff... takeoffs) {
             try {

@@ -20,17 +20,18 @@ import android.widget.TextView;
 
 public class ProgressDialog extends DialogFragment {
     private static ProgressDialog instance;
-    private AsyncTask<?, ?, ?> task;
-    private int progress;
-    private String text;
-    private Bitmap image;
-    private Runnable runnable;
+    private static AsyncTask<?, ?, ?> task;
+    private static int progress;
+    private static String text;
+    private static Bitmap image;
+    private static Runnable runnable;
+    private View view;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         LayoutInflater inflater = getActivity().getLayoutInflater();
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        View view = inflater.inflate(R.layout.progress_dialog, null);
+        view = inflater.inflate(R.layout.progress_dialog, null);
         builder.setView(view);
         if (task != null) {
             builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -46,6 +47,7 @@ public class ProgressDialog extends DialogFragment {
             });
         }
         setCancelable(false);
+        instance = this;
         return builder.create();
     }
 
@@ -53,12 +55,6 @@ public class ProgressDialog extends DialogFragment {
     public void onStart() {
         super.onStart();
         showProgress();
-    }
-    
-    @Override
-    public void onResume() {
-        instance = this;
-        super.onResume();
     }
     
     @Override
@@ -72,39 +68,39 @@ public class ProgressDialog extends DialogFragment {
     }
     
     public String getInputText() {
-        EditText progressInput = (EditText) getView().findViewById(R.id.progressInput);
+        EditText progressInput = (EditText) view.findViewById(R.id.progressInput);
         return progressInput.getText().toString();
     }
 
     public void setTask(AsyncTask<?, ?, ?> task) {
-        this.task = task;
+        ProgressDialog.task = task;
     }
 
     public void setProgress(int progress, String text, Bitmap image, final Runnable runnable) {
-        this.progress = progress;
-        this.text = text;
-        this.image = image;
-        this.runnable = runnable;
+        ProgressDialog.progress = progress;
+        ProgressDialog.text = text;
+        ProgressDialog.image = image;
+        ProgressDialog.runnable = runnable;
         showProgress();
     }
     
     private void showProgress() {
         try {
-            ProgressBar progressBar = (ProgressBar) getView().findViewById(R.id.progressBar);
+            ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
             if (progressBar != null)
                 progressBar.setProgress(progress > progressBar.getMax() ? progressBar.getMax() : progress);
     
-            TextView progressText = (TextView) getView().findViewById(R.id.progressText);
+            TextView progressText = (TextView) view.findViewById(R.id.progressText);
             if (progressText != null)
                 progressText.setText(text);
     
-            ImageView progressImage = (ImageView) getView().findViewById(R.id.progressImage);
+            ImageView progressImage = (ImageView) view.findViewById(R.id.progressImage);
             if (progressImage != null) {
                 progressImage.setImageBitmap(image);
                 progressImage.setVisibility(image == null ? View.GONE : View.VISIBLE);
             }
     
-            final EditText progressInput = (EditText) getView().findViewById(R.id.progressInput);
+            final EditText progressInput = (EditText) view.findViewById(R.id.progressInput);
             if (progressInput != null) {
                 progressInput.setInputType(0x00001001); // set input to upper case
                 progressInput.setVisibility(runnable == null ? View.GONE : View.VISIBLE);
@@ -113,7 +109,7 @@ public class ProgressDialog extends DialogFragment {
                     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                         runnable.run();
                         progressInput.setVisibility(View.GONE);
-                        ImageView progressImage = (ImageView) getView().findViewById(R.id.progressImage);
+                        ImageView progressImage = (ImageView) view.findViewById(R.id.progressImage);
                         progressImage.setVisibility(View.GONE);
                         return true;
                     }
