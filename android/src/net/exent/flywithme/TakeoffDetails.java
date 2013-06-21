@@ -1,6 +1,7 @@
 package net.exent.flywithme;
 
 import net.exent.flywithme.bean.Takeoff;
+import net.exent.flywithme.task.NoaaForecastTask;
 import android.app.Activity;
 import android.content.Intent;
 import android.location.Location;
@@ -53,7 +54,16 @@ public class TakeoffDetails extends Fragment {
         noaaButton.setImageResource(R.drawable.noaa);
         noaaButton.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
-                callback.showNoaaForecast(takeoff);
+                if (System.currentTimeMillis() - takeoff.getNoaaUpdated() < 1000 * 60 * 60 * 6) {
+                    /* we fetched a forecast less than 6 hours ago */
+                    if (takeoff.getNoaaforecast() != null) {
+                        /* and it's still cached, display it */
+                        callback.showNoaaForecast(takeoff);
+                        return;
+                    }
+                }
+                /* no cached forecast, need to fetch it */
+                new NoaaForecastTask().execute(takeoff);
             }
         });
 
@@ -95,6 +105,7 @@ public class TakeoffDetails extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         if (savedInstanceState != null)
             takeoff = savedInstanceState.getParcelable(ARG_TAKEOFF);
+        setRetainInstance(true);
         return inflater.inflate(R.layout.takeoff_details, container, false);
     }
 

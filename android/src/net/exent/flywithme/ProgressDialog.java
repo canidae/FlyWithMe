@@ -20,11 +20,11 @@ import android.widget.TextView;
 
 public class ProgressDialog extends DialogFragment {
     private static ProgressDialog instance;
-    private static AsyncTask<?, ?, ?> task;
-    private static int progress;
-    private static String text;
-    private static Bitmap image;
-    private static Runnable runnable;
+    private AsyncTask<?, ?, ?> task;
+    private int progress;
+    private String text;
+    private Bitmap image;
+    private Runnable runnable;
     private View view;
 
     @Override
@@ -46,7 +46,8 @@ public class ProgressDialog extends DialogFragment {
                 }
             });
         }
-        setCancelable(false);
+        setCancelable(task != null);
+        setRetainInstance(true);
         instance = this;
         return builder.create();
     }
@@ -58,9 +59,9 @@ public class ProgressDialog extends DialogFragment {
     }
     
     @Override
-    public void onDestroy() {
+    public void onDetach() {
         instance = null;
-        super.onDestroy();
+        super.onDetach();
     }
     
     public static ProgressDialog getInstance() {
@@ -71,21 +72,27 @@ public class ProgressDialog extends DialogFragment {
         EditText progressInput = (EditText) view.findViewById(R.id.progressInput);
         return progressInput.getText().toString();
     }
-
+    
     public void setTask(AsyncTask<?, ?, ?> task) {
-        ProgressDialog.task = task;
+        this.task = task;
     }
 
     public void setProgress(int progress, String text, Bitmap image, final Runnable runnable) {
-        ProgressDialog.progress = progress;
-        ProgressDialog.text = text;
-        ProgressDialog.image = image;
-        ProgressDialog.runnable = runnable;
+        this.progress = progress;
+        this.text = text;
+        this.image = image;
+        this.runnable = runnable;
         showProgress();
     }
     
     private void showProgress() {
         try {
+            Log.i(getClass().getName(), "showProgress(): " + isVisible() + " | " + progress + ", " + text + ", " + image + ", " + runnable);
+            /* apparently the method isVisible() does not tell whether the fragment actually is visible, but rather always return false even when the fragment is visible (at least in this case).
+             * i don't know, don't ask me, ask the android people, it's their crack
+            if (!isVisible())
+                return;
+                */
             ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
             if (progressBar != null)
                 progressBar.setProgress(progress > progressBar.getMax() ? progressBar.getMax() : progress);

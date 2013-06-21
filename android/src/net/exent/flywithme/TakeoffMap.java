@@ -180,6 +180,14 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
         drawMap();
     }
 
+    /*
+    @Override
+    public void onDetach() {
+        view = null;
+        super.onDetach();
+    }
+    */
+
     private void redrawMap(CameraPosition cameraPosition) {
         try {
             new DrawPolygonsTask().execute(cameraPosition);

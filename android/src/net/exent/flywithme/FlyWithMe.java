@@ -2,7 +2,6 @@ package net.exent.flywithme;
 
 import java.util.ArrayList;
 
-import net.exent.flywithme.NoaaForecast.NoaaForecastListener;
 import net.exent.flywithme.TakeoffDetails.TakeoffDetailsListener;
 import net.exent.flywithme.TakeoffList.TakeoffListListener;
 import net.exent.flywithme.TakeoffMap.TakeoffMapListener;
@@ -11,7 +10,6 @@ import net.exent.flywithme.data.Airspace;
 import net.exent.flywithme.data.Flightlog;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -24,14 +22,19 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
 
-public class FlyWithMe extends FragmentActivity implements TakeoffListListener, TakeoffMapListener, TakeoffDetailsListener, NoaaForecastListener {
+public class FlyWithMe extends FragmentActivity implements TakeoffListListener, TakeoffMapListener, TakeoffDetailsListener {
     private static final int LOCATION_UPDATE_TIME = 300000; // update location every LOCATION_UPDATE_TIME millisecond
     private static final int LOCATION_UPDATE_DISTANCE = 100; // or when we've moved more than LOCATION_UPDATE_DISTANCE meters
     private static final int TAKEOFFS_SORT_DISTANCE = 1000; // only sort takeoff list when we've moved more than TAKEOFFS_SORT_DISTANCE meters
     private static Location lastSortedTakeoffsLocation;
     private static Location location = new Location(LocationManager.PASSIVE_PROVIDER);
+    private static FlyWithMe instance;
     private Takeoff activeTakeoff;
     private boolean mapLastViewed = false; // false == we entered TakeoffDetails from TakeoffList, true == we entered TakeoffDetails from TakeoffMap
+    
+    public static FlyWithMe getInstance() {
+        return instance;
+    }
 
     /**
      * Get approximate location of user.
@@ -96,29 +99,6 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
     }
 
     /**
-     * Show ProgressDialog fragment.
-     * @param progress Progress slider, value from 0 to 100.
-     * @param text Progess text.
-     * @param image Progress image, used for displaying NOAA CAPTCHA.
-     * @param showInput Hackish Runnable used to return the CAPTCHA typed in by the user, probably need a better solution.
-     */
-    public void showProgress(int progress, String text, Bitmap image, Runnable showInput) {
-        ProgressDialog progressDialog = ProgressDialog.getInstance();
-        if (progress >= 0) {
-            if (progressDialog == null) {
-                progressDialog = new ProgressDialog();
-                progressDialog.show(getSupportFragmentManager(), "progressDialog");
-            }
-            /* pass arguments */
-            progressDialog.setProgress(progress, text, image, showInput);
-            /* show fragment */
-        } else if (progressDialog != null) {
-            /* hide fragment */
-            progressDialog.dismiss();
-        }
-    }
-
-    /**
      * Show settings. TODO: There's no "SupportPreferenceFragment" (yet), thus this has to be an own activity for the time being
      */
     public void showSettings() {
@@ -158,6 +138,8 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
         location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
         if (location == null)
             location = new Location(LocationManager.PASSIVE_PROVIDER); // no location set, let's pretend we're skinny dipping in the gulf of guinea
+        
+        instance = this;
 
         if (savedInstanceState != null || findViewById(R.id.fragmentContainer) == null)
             return;
@@ -267,13 +249,34 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
             } catch (Exception e) {
             }
             */
-            showProgress(Integer.parseInt(messages[0]), messages[1], null, null);
+            showProgress(Integer.parseInt(messages[0]), messages[1]);
         }
         
         @Override
         protected void onPostExecute(Void nothing) {
             showTakeoffList();
-            showProgress(-1, "", null, null); // dismiss dialog
+            showProgress(-1, null); // dismiss dialog
+        }
+
+        /**
+         * Show ProgressDialog fragment.
+         * @param progress Progress slider, value from 0 to 100.
+         * @param text Progess text.
+         */
+        private void showProgress(int progress, String text) {
+            ProgressDialog progressDialog = ProgressDialog.getInstance();
+            if (progress >= 0) {
+                if (progressDialog == null) {
+                    progressDialog = new ProgressDialog();
+                    progressDialog.show(getSupportFragmentManager(), "progressDialog");
+                }
+                /* pass arguments */
+                progressDialog.setProgress(progress, text, null, null);
+                /* show fragment */
+            } else if (progressDialog != null) {
+                /* hide fragment */
+                progressDialog.dismiss();
+            }
         }
     }
 }
