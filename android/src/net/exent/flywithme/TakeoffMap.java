@@ -78,6 +78,10 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
             /* need to do this here or it'll end up with a reference to an old instance of "this", somehow */
             map.setOnInfoWindowClickListener(this);
             map.setOnCameraChangeListener(this);
+            /* clear map */
+            map.clear();
+            markers.clear();
+            polygons.clear();
             /* add icons */
             final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
             boolean showTakeoffs = prefs.getBoolean("pref_map_show_takeoffs", true);
@@ -90,7 +94,7 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
                     editor.putBoolean("pref_map_show_takeoffs", markersEnabled);
                     editor.commit();
                     markerButton.setImageResource(markersEnabled ? R.drawable.takeoffs_enabled : R.drawable.takeoffs_disabled);
-                    redrawMap(map.getCameraPosition());
+                    drawOverlay(map.getCameraPosition());
                 }
             });
             boolean showAirspace = prefs.getBoolean("pref_map_show_airspaces", true);
@@ -103,11 +107,11 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
                     editor.putBoolean("pref_map_show_airspace", polygonsEnabled);
                     editor.commit();
                     polygonButton.setImageResource(polygonsEnabled ? R.drawable.airspace_enabled : R.drawable.airspace_disabled);
-                    redrawMap(map.getCameraPosition());
+                    drawOverlay(map.getCameraPosition());
                 }
             });
-            /* draw map */
-            redrawMap(map.getCameraPosition());
+            /* draw overlay */
+            drawOverlay(map.getCameraPosition());
         } catch (Exception e) {
             Log.w(getClass().getName(), "drawMap() task failed unexpectedly", e);
         }
@@ -127,7 +131,7 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
     }
 
     public void onCameraChange(CameraPosition cameraPosition) {
-        redrawMap(cameraPosition);
+        drawOverlay(cameraPosition);
     }
 
     @Override
@@ -145,7 +149,6 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
             markerWestBitmap = BitmapFactory.decodeResource(getResources(), R.raw.mapmarker_octant_w);
             markerNorthwestBitmap = BitmapFactory.decodeResource(getResources(), R.raw.mapmarker_octant_nw);
         }
-
     }
 
     @Override
@@ -180,15 +183,13 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
         drawMap();
     }
 
-    /*
     @Override
     public void onDetach() {
         view = null;
         super.onDetach();
     }
-    */
 
-    private void redrawMap(CameraPosition cameraPosition) {
+    private void drawOverlay(CameraPosition cameraPosition) {
         try {
             new DrawPolygonsTask().execute(cameraPosition);
             new DrawMarkersTask().execute(cameraPosition);
