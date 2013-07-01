@@ -29,8 +29,8 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
     private static Location lastSortedTakeoffsLocation;
     private static Location location = new Location(LocationManager.PASSIVE_PROVIDER);
     private static FlyWithMe instance;
+    private static boolean mapLastViewed = false; // false == we entered TakeoffDetails from TakeoffList, true == we entered TakeoffDetails from TakeoffMap
     private Takeoff activeTakeoff;
-    private boolean mapLastViewed = false; // false == we entered TakeoffDetails from TakeoffList, true == we entered TakeoffDetails from TakeoffMap
     
     public static FlyWithMe getInstance() {
         return instance;
