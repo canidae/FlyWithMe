@@ -194,17 +194,6 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
     }
     
     private void showFragment(Fragment fragment, String name) {
-        /* only add fragment to backstack when it's not already there */
-        /*
-        for (Iterator<Pair<String, Fragment>> it = backstack.iterator(); it.hasNext();) {
-            Pair<String, Fragment> entry = it.next();
-            if ((name == null && entry.first == null) || (name != null && name.equals(entry.first))) {
-                it.remove();
-                break;
-            }
-        }
-        backstack.add(new Pair<String, Fragment>(name, fragment));
-        */
         Log.i(getClass().getName(), getSupportFragmentManager().toString());
         getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, fragment, name).commit();
     }
@@ -229,46 +218,37 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
     private class InitDataTask extends AsyncTask<Context, String, Void> {
         @Override
         protected Void doInBackground(Context... contexts) {
-            publishProgress("" + (int) (Math.random() * 33), getString(R.string.loading_takeoffs));
+            publishProgress("0", getString(R.string.loading_takeoffs));
             Flightlog.init(contexts[0]);
-            publishProgress("" + (int) (Math.random() * 34 + 33), getString(R.string.loading_airspace));
+            publishProgress("33", getString(R.string.loading_airspace));
             Airspace.init(contexts[0]);
-            publishProgress("" + (int) (Math.random() * 33 + 67), getString(R.string.sorting_takeoffs));
+            publishProgress("67", getString(R.string.sorting_takeoffs));
             Flightlog.sortTakeoffListToLocation(Flightlog.getAllTakeoffs(), location);
             return null;
         }
 
         @Override
         protected void onProgressUpdate(String... messages) {
-            /*
-            try {
-                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-                Thread.sleep(2000);
-                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-                Thread.sleep(2000);
-            } catch (Exception e) {
-            }
-            */
             showProgress(Integer.parseInt(messages[0]), messages[1]);
         }
         
         @Override
         protected void onPostExecute(Void nothing) {
-            showTakeoffList();
+            getInstance().showTakeoffList();
             showProgress(-1, null); // dismiss dialog
         }
 
         /**
          * Show ProgressDialog fragment.
          * @param progress Progress slider, value from 0 to 100.
-         * @param text Progess text.
+         * @param text Progress text.
          */
         private void showProgress(int progress, String text) {
             ProgressDialog progressDialog = ProgressDialog.getInstance();
             if (progress >= 0) {
                 if (progressDialog == null) {
                     progressDialog = new ProgressDialog();
-                    progressDialog.show(getSupportFragmentManager(), "progressDialog");
+                    progressDialog.show(getInstance().getSupportFragmentManager(), "progressDialog");
                 }
                 /* pass arguments */
                 progressDialog.setProgress(progress, text, null, null);

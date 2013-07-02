@@ -20,15 +20,16 @@ import android.widget.TextView;
 
 public class ProgressDialog extends DialogFragment {
     private static ProgressDialog instance;
-    private AsyncTask<?, ?, ?> task;
-    private int progress;
-    private String text;
-    private Bitmap image;
-    private Runnable runnable;
+    private static AsyncTask<?, ?, ?> task;
+    private static int progress;
+    private static String text;
+    private static Bitmap image;
+    private static Runnable runnable;
     private View view;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+    	Log.i(getClass().getName(), "onCreateDialog(" + savedInstanceState + ")");
         LayoutInflater inflater = getActivity().getLayoutInflater();
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         view = inflater.inflate(R.layout.progress_dialog, null);
@@ -46,14 +47,15 @@ public class ProgressDialog extends DialogFragment {
                 }
             });
         }
-        setCancelable(task != null);
-        setRetainInstance(true);
+        setCancelable(false);
+        //setRetainInstance(true); // XXX: not retaining instance due to bug: http://code.google.com/p/android/issues/detail?id=17423
         instance = this;
         return builder.create();
     }
 
     @Override
     public void onStart() {
+    	Log.i(getClass().getName(), "onStart()");
         super.onStart();
         showProgress();
     }
@@ -74,14 +76,14 @@ public class ProgressDialog extends DialogFragment {
     }
     
     public void setTask(AsyncTask<?, ?, ?> task) {
-        this.task = task;
+    	ProgressDialog.task = task;
     }
 
     public void setProgress(int progress, String text, Bitmap image, final Runnable runnable) {
-        this.progress = progress;
-        this.text = text;
-        this.image = image;
-        this.runnable = runnable;
+    	ProgressDialog.progress = progress;
+    	ProgressDialog.text = text;
+    	ProgressDialog.image = image;
+    	ProgressDialog.runnable = runnable;
         showProgress();
     }
     
