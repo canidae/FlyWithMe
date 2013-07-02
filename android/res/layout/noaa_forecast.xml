@@ -15,7 +15,7 @@
         android:layout_alignParentTop="true"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
-    <ImageView
+    <net.exent.flywithme.view.GestureImageView
         android:id="@+id/noaaForecastImage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

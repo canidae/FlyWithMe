@@ -1,6 +1,7 @@
 package net.exent.flywithme;
 
 import net.exent.flywithme.bean.Takeoff;
+import net.exent.flywithme.view.GestureImageView;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -8,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 public class NoaaForecast extends Fragment {
@@ -20,8 +20,8 @@ public class NoaaForecast extends Fragment {
             this.takeoff = takeoff;
             TextView noaaForecastText = (TextView) getActivity().findViewById(R.id.noaaForecastText);
             noaaForecastText.setText(takeoff.getName());
-            ImageView noaaForecastImage = (ImageView) getActivity().findViewById(R.id.noaaForecastImage);
-            noaaForecastImage.setImageBitmap(takeoff.getNoaaforecast());
+            GestureImageView noaaForecastImage = (GestureImageView) getActivity().findViewById(R.id.noaaForecastImage);
+            noaaForecastImage.setBitmap(takeoff.getNoaaforecast());
         } catch (Exception e) {
             Log.w(getClass().getName(), "showNoaaForecast() failed unexpectedly", e);
         }
