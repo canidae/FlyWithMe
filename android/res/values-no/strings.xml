@@ -4,60 +4,22 @@
     <string name="geodesic_distance">Luftavstand</string>
     <string name="asl">moh.</string>
     <string name="height">Høyde</string>
+    <string name="cancel">Avbryt</string>
     
     <!-- Startup messages -->
     <string name="loading_takeoffs">Laster startsteder…</string>
     <string name="loading_airspace">Laster luftromskart…</string>
     <string name="sorting_takeoffs">Sorterer startsteder…</string>
+    <string name="attempting_forecast_shortcut">Prøver snarvei til meteogram…</string>
+    <string name="initiating_noaa_forecast">Forbereder meteogram…</string>
+    <string name="fetching_noaa_captcha">Henter CAPTCHA…</string>
+    <string name="type_noaa_captcha">Skriv inn CAPTCHA:</string>
+    <string name="retrieving_noaa_forecast">Laster ned meteogram…</string>
+    <string name="fetching_noaa_failed">Hente meteogram feilet</string>
     
     <!-- Preferences -->
     <string name="preferences">Innstillinger</string>
 
-    <string-array name="empty_list"></string-array>
-
-    <!-- How many takeoffs to show -->
-    <string name="show_takeoffs">Vis startsted</string>
-    <string name="takeoffs_max_distance_values_default_value">200</string>
-
-    <string-array name="takeoffs_max_distance_keys">
-        <item>Nærmeste 50 (rask)</item>
-        <item>Nærmeste 100</item>
-        <item>Nærmeste 200</item>
-        <item>Nærmeste 500</item>
-        <item>Nærmeste 1500 (treg)</item>
-        <item>Alle (tregest)</item>
-    </string-array>
-    <string-array name="takeoffs_max_distance_values">
-        <item>50</item>
-        <item>100</item>
-        <item>200</item>
-        <item>500</item>
-        <item>1500</item>
-        <item>0</item>
-    </string-array>
-
-    <!-- How far away we should draw airspace -->
-    <string name="show_airspace">Vis luftrom</string>
-    <string name="airspace_max_distance_values_default_value">100</string>
-
-    <string-array name="airspace_max_distance_keys">
-        <item>Innenfor 50km (rask)</item>
-        <item>Innenfor 100km</item>
-        <item>Innenfor 200km</item>
-        <item>Innenfor 500km</item>
-        <item>Innenfor 1500km (treg)</item>
-        <item>Alle (tregest)</item>
-    </string-array>
-    <string-array name="airspace_max_distance_values">
-        <item>50</item>
-        <item>100</item>
-        <item>200</item>
-        <item>500</item>
-        <item>1500</item>
-        <item>0</item>
-    </string-array>
-
     <!-- What airspace to draw (this is mostly set programatically) -->
     <string name="show_airspace_types">Vis luftromstyper</string>
-
 </resources>
