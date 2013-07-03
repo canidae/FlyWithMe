@@ -196,49 +196,52 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
         @Override
         protected Void doInBackground(CameraPosition... cameraPositions) {
             try {
-                Location location = callback.getLocation();
-                LatLng latLng = cameraPositions[0].target;
-                if (latLng.latitude != 0.0 && latLng.longitude != 0.0) {
-                    location.setLatitude(latLng.latitude);
-                    location.setLongitude(latLng.longitude);
-                }
-                
-                /* get the nearest takeoffs */ 
-                List<Takeoff> takeoffs = Flightlog.getTakeoffs(location, (int) (10240000000L / (256 * Math.pow(2, cameraPositions[0].zoom))));
-                
                 /* clone markers & save visible takeoffs, so we know which markers to remove later */
                 Map<Takeoff, String> visibleTakeoffs = new HashMap<Takeoff, String>();
                 for (Map.Entry<String, Pair<Marker, Takeoff>> entry : markers.entrySet())
                     visibleTakeoffs.put(entry.getValue().second, entry.getKey());
 
-                /* add markers by "zooming out" (so not truly sorted by distance, but hopefully good enough) */
-                for (int counter = 0; counter < 50 && counter < takeoffs.size(); ++counter) {
-                    Takeoff takeoff = takeoffs.get(counter);
-                    if (visibleTakeoffs.containsKey(takeoff)) {
-                        visibleTakeoffs.remove(takeoff);
-                        continue; // takeoff already shown
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                if (prefs.getBoolean("pref_map_show_takeoffs", true)) {
+                    Location location = callback.getLocation();
+                    LatLng latLng = cameraPositions[0].target;
+                    if (latLng.latitude != 0.0 && latLng.longitude != 0.0) {
+                        location.setLatitude(latLng.latitude);
+                        location.setLongitude(latLng.longitude);
                     }
-                    Bitmap bitmap = Bitmap.createBitmap(markerBitmap.getWidth(), markerBitmap.getHeight(), Bitmap.Config.ARGB_8888);
-                    Canvas canvas = new Canvas(bitmap);
-                    canvas.drawBitmap(markerBitmap, 0, 0, null);
-                    if (takeoff.hasNorthExit())
-                        canvas.drawBitmap(markerNorthBitmap, 0, 0, null);
-                    if (takeoff.hasNortheastExit())
-                        canvas.drawBitmap(markerNortheastBitmap, 0, 0, null);
-                    if (takeoff.hasEastExit())
-                        canvas.drawBitmap(markerEastBitmap, 0, 0, null);
-                    if (takeoff.hasSoutheastExit())
-                        canvas.drawBitmap(markerSoutheastBitmap, 0, 0, null);
-                    if (takeoff.hasSouthExit())
-                        canvas.drawBitmap(markerSouthBitmap, 0, 0, null);
-                    if (takeoff.hasSouthwestExit())
-                        canvas.drawBitmap(markerSouthwestBitmap, 0, 0, null);
-                    if (takeoff.hasWestExit())
-                        canvas.drawBitmap(markerWestBitmap, 0, 0, null);
-                    if (takeoff.hasNorthwestExit())
-                        canvas.drawBitmap(markerNorthwestBitmap, 0, 0, null);
-                    MarkerOptions markerOptions = new MarkerOptions().position(new LatLng(takeoff.getLocation().getLatitude(), takeoff.getLocation().getLongitude())).title(takeoff.getName()).snippet("Height: " + takeoff.getHeight()).icon(BitmapDescriptorFactory.fromBitmap(bitmap)).anchor(0.5f, 0.875f);
-                    publishProgress(takeoff, markerOptions);
+                    
+                    /* get the nearest takeoffs */ 
+                    List<Takeoff> takeoffs = Flightlog.getTakeoffs(location, (int) (10240000000L / (256 * Math.pow(2, cameraPositions[0].zoom))));
+
+                    /* add markers */
+                    for (int counter = 0; counter < 50 && counter < takeoffs.size(); ++counter) {
+                        Takeoff takeoff = takeoffs.get(counter);
+                        if (visibleTakeoffs.containsKey(takeoff)) {
+                            visibleTakeoffs.remove(takeoff);
+                            continue; // takeoff already shown
+                        }
+                        Bitmap bitmap = Bitmap.createBitmap(markerBitmap.getWidth(), markerBitmap.getHeight(), Bitmap.Config.ARGB_8888);
+                        Canvas canvas = new Canvas(bitmap);
+                        canvas.drawBitmap(markerBitmap, 0, 0, null);
+                        if (takeoff.hasNorthExit())
+                            canvas.drawBitmap(markerNorthBitmap, 0, 0, null);
+                        if (takeoff.hasNortheastExit())
+                            canvas.drawBitmap(markerNortheastBitmap, 0, 0, null);
+                        if (takeoff.hasEastExit())
+                            canvas.drawBitmap(markerEastBitmap, 0, 0, null);
+                        if (takeoff.hasSoutheastExit())
+                            canvas.drawBitmap(markerSoutheastBitmap, 0, 0, null);
+                        if (takeoff.hasSouthExit())
+                            canvas.drawBitmap(markerSouthBitmap, 0, 0, null);
+                        if (takeoff.hasSouthwestExit())
+                            canvas.drawBitmap(markerSouthwestBitmap, 0, 0, null);
+                        if (takeoff.hasWestExit())
+                            canvas.drawBitmap(markerWestBitmap, 0, 0, null);
+                        if (takeoff.hasNorthwestExit())
+                            canvas.drawBitmap(markerNorthwestBitmap, 0, 0, null);
+                        MarkerOptions markerOptions = new MarkerOptions().position(new LatLng(takeoff.getLocation().getLatitude(), takeoff.getLocation().getLongitude())).title(takeoff.getName()).snippet("Height: " + takeoff.getHeight()).icon(BitmapDescriptorFactory.fromBitmap(bitmap)).anchor(0.5f, 0.875f);
+                        publishProgress(takeoff, markerOptions);
+                    }
                 }
                 
                 /* remove markers that we didn't "add" */
@@ -276,15 +279,15 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
         @Override
         protected Runnable doInBackground(CameraPosition... cameraPositions) {
             try {
-                Location location = callback.getLocation();
-                LatLng latLng = cameraPositions[0].target;
-                if (latLng.latitude != 0.0 && latLng.longitude != 0.0) {
-                    location.setLatitude(latLng.latitude);
-                    location.setLongitude(latLng.longitude);
-                }
                 final Set<PolygonOptions> showPolygons = new HashSet<PolygonOptions>();
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
                 if (prefs.getBoolean("pref_map_show_airspace", true)) {
+                    Location location = callback.getLocation();
+                    LatLng latLng = cameraPositions[0].target;
+                    if (latLng.latitude != 0.0 && latLng.longitude != 0.0) {
+                        location.setLatitude(latLng.latitude);
+                        location.setLongitude(latLng.longitude);
+                    }
                     Location tmpLocation = new Location(location);
                     int maxAirspaceDistance = DEFAULT_MAX_AIRSPACE_DISTANCE;
                     try {
