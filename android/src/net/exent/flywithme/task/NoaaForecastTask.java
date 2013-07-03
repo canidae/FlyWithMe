@@ -47,12 +47,6 @@ public class NoaaForecastTask extends AsyncTask<Takeoff, String, Boolean> {
     private static String noaaProc;
     private static String noaaCaptcha;
     
-    /* TODO:
-     * - back when viewing forecast fails (shows "fly with me!" in all fields)
-     * - resize captcha-image to match width/height
-     * - change "Cancel" to "OK" (or something) when fetching forecast fails
-     */
-    
     private final Lock lock = new ReentrantLock();
     private final Condition condition = lock.newCondition();
     private Takeoff takeoff;
@@ -62,7 +56,6 @@ public class NoaaForecastTask extends AsyncTask<Takeoff, String, Boolean> {
     @Override
     protected Boolean doInBackground(Takeoff... takeoffs) {
         try {
-            Log.i(getClass().getName(), "doInBackground(" + takeoffs[0] + ") started");
             takeoff = takeoffs[0];
             Location loc = takeoff.getLocation();
             if (noaaCaptcha != null) {
@@ -78,13 +71,13 @@ public class NoaaForecastTask extends AsyncTask<Takeoff, String, Boolean> {
             noaaCaptcha = null;
             publishProgress("0", FlyWithMe.getInstance().getString(R.string.initiating_noaa_forecast));
             noaaUserId = getOne(fetchPageContent(NOAA_URL + "/ready2-bin/main.pl?Lat=" + loc.getLatitude() + "&Lon=" + loc.getLongitude()), NOAA_USERID_PATTERN);
-            if (noaaUserId == null)
+            if (isCancelled() || noaaUserId == null)
             	return false;
             publishProgress("20", FlyWithMe.getInstance().getString(R.string.initiating_noaa_forecast));
             String content = fetchPageContent(NOAA_URL + "/ready2-bin/metcycle.pl?product=metgram1&userid=" + noaaUserId + "&metdata=GFS&mdatacfg=GFS&Lat=" + loc.getLatitude() + "&Lon=" + loc.getLongitude());
             noaaMetcyc = getOne(content, NOAA_METCYC_PATTERN);
             noaaMetcyc = noaaMetcyc.replace(' ', '+');
-            if (noaaMetcyc == null)
+            if (isCancelled() || noaaMetcyc == null)
             	return false;
             publishProgress("40", FlyWithMe.getInstance().getString(R.string.fetching_noaa_captcha));
             content = fetchPageContent(NOAA_URL + "/ready2-bin/metgram1.pl?userid=" + noaaUserId + "&metdata=GFS&mdatacfg=GFS&Lat=" + loc.getLatitude() + "&Lon=" + loc.getLongitude() + "&metext=gfsf&metcyc=" + noaaMetcyc);
@@ -96,10 +89,10 @@ public class NoaaForecastTask extends AsyncTask<Takeoff, String, Boolean> {
                 Log.w(getClass().getName(), "Unable to URLEncode metdate", e);
             }
             noaaProc = getOne(content, NOAA_PROC_PATTERN);
-            if (noaaMetdir == null || noaaMetfil == null || noaaMetdate == null || noaaProc == null)
+            if (isCancelled() || noaaMetdir == null || noaaMetfil == null || noaaMetdate == null || noaaProc == null)
             	return false;
             noaaCaptcha = fetchCaptcha(getOne(content, NOAA_CAPTCHA_URL_PATTERN));
-            if (noaaCaptcha == null)
+            if (isCancelled() || noaaCaptcha == null)
             	return false;
             publishProgress("80", FlyWithMe.getInstance().getString(R.string.retrieving_noaa_forecast));
             Bitmap bitmap = fetchMeteogram(loc);
@@ -109,9 +102,11 @@ public class NoaaForecastTask extends AsyncTask<Takeoff, String, Boolean> {
                 content = fetchPageContent(NOAA_URL + "/ready2-bin/metgram1.pl?userid=" + noaaUserId + "&metdata=GFS&mdatacfg=GFS&Lat=" + loc.getLatitude() + "&Lon=" + loc.getLongitude() + "&metext=gfsf&metcyc=" + noaaMetcyc);
                 noaaProc = getOne(content, NOAA_PROC_PATTERN);
                 noaaCaptcha = fetchCaptcha(getOne(content, NOAA_CAPTCHA_URL_PATTERN));
+                if (isCancelled() || noaaProc == null || noaaCaptcha == null)
+                	return false;
                 publishProgress("80", FlyWithMe.getInstance().getString(R.string.retrieving_noaa_forecast));
                 bitmap = fetchMeteogram(loc);
-                if (bitmap == null)
+                if (isCancelled() || bitmap == null)
                     return false;
             }
             takeoff.setNoaaForecast(bitmap);
@@ -124,6 +119,8 @@ public class NoaaForecastTask extends AsyncTask<Takeoff, String, Boolean> {
     @Override
     protected void onProgressUpdate(String... messages) {
         try {
+        	if (isCancelled())
+        		return;
             int progress = Integer.parseInt(messages[0]);
             String message = messages[1];
             if (FlyWithMe.getInstance().getString(R.string.type_noaa_captcha).equals(message)) {
@@ -147,6 +144,8 @@ public class NoaaForecastTask extends AsyncTask<Takeoff, String, Boolean> {
 
     @Override
     protected void onPostExecute(Boolean update) {
+    	if (isCancelled())
+    		return;
         if (update) {
             showProgress(-1, null, null, null);
             FlyWithMe.getInstance().showNoaaForecast(takeoff);

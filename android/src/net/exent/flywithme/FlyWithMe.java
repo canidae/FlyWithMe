@@ -30,7 +30,6 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
     private static Location location = new Location(LocationManager.PASSIVE_PROVIDER);
     private static FlyWithMe instance;
     private static boolean mapLastViewed = false; // false == we entered TakeoffDetails from TakeoffList, true == we entered TakeoffDetails from TakeoffMap
-    private Takeoff activeTakeoff;
     
     public static FlyWithMe getInstance() {
         return instance;
@@ -57,7 +56,6 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
         args.putParcelable(TakeoffDetails.ARG_TAKEOFF, takeoff);
         takeoffDetails.setArguments(args);
         /* show fragment */
-        activeTakeoff = takeoff;
         showFragment(takeoffDetails, "takeoffDetails");
     }
     
@@ -177,7 +175,7 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragmentContainer);
         if (fragment instanceof NoaaForecast) {
             /* when we're looking at a forecast, then the back button will always take us to TakeoffDetails */
-            showTakeoffDetails(activeTakeoff);
+            showTakeoffDetails(((NoaaForecast) fragment).getTakeoff());
         } else if (fragment instanceof TakeoffDetails) {
             /* either TakeoffMap or TakeoffList */
             if (mapLastViewed)
@@ -194,7 +192,6 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
     }
     
     private void showFragment(Fragment fragment, String name) {
-        Log.i(getClass().getName(), getSupportFragmentManager().toString());
         getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, fragment, name).commit();
     }
 

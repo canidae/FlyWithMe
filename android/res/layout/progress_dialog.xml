@@ -32,6 +32,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
         android:layout_below="@+id/progressText"
+        android:minHeight="216px"
         android:visibility="gone" />
 
     <EditText

@@ -29,7 +29,6 @@ public class ProgressDialog extends DialogFragment {
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-    	Log.i(getClass().getName(), "onCreateDialog(" + savedInstanceState + ")");
         LayoutInflater inflater = getActivity().getLayoutInflater();
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         view = inflater.inflate(R.layout.progress_dialog, null);
@@ -55,7 +54,6 @@ public class ProgressDialog extends DialogFragment {
 
     @Override
     public void onStart() {
-    	Log.i(getClass().getName(), "onStart()");
         super.onStart();
         showProgress();
     }
@@ -89,7 +87,6 @@ public class ProgressDialog extends DialogFragment {
     
     private void showProgress() {
         try {
-            Log.i(getClass().getName(), "showProgress(): " + isVisible() + " | " + progress + ", " + text + ", " + image + ", " + runnable);
             /* apparently the method isVisible() does not tell whether the fragment actually is visible, but rather always return false even when the fragment is visible (at least in this case).
              * i don't know, don't ask me, ask the android people, it's their crack
             if (!isVisible())

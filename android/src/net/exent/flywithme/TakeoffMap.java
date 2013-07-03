@@ -153,7 +153,6 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-    	Log.i(getClass().getName(), "onCreateView()");
         if (view != null) {
             ViewGroup parent = (ViewGroup) view.getParent();
             if (parent != null)

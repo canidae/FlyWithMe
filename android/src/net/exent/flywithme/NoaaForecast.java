@@ -26,6 +26,10 @@ public class NoaaForecast extends Fragment {
             Log.w(getClass().getName(), "showNoaaForecast() failed unexpectedly", e);
         }
     }
+    
+    public Takeoff getTakeoff() {
+    	return takeoff;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
