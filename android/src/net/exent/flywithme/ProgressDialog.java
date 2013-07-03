@@ -26,6 +26,10 @@ public class ProgressDialog extends DialogFragment {
     private static Bitmap image;
     private static Runnable runnable;
     private View view;
+    
+    public ProgressDialog() {
+    	instance = this;
+    }
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -48,7 +52,6 @@ public class ProgressDialog extends DialogFragment {
         }
         setCancelable(false);
         //setRetainInstance(true); // XXX: not retaining instance due to bug: http://code.google.com/p/android/issues/detail?id=17423
-        instance = this;
         return builder.create();
     }
 
@@ -60,8 +63,8 @@ public class ProgressDialog extends DialogFragment {
     
     @Override
     public void onDetach() {
-        instance = null;
         super.onDetach();
+        instance = null;
     }
     
     public static ProgressDialog getInstance() {
