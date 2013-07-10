@@ -10,7 +10,7 @@
     <string name="loading_takeoffs">Lastar startstader…</string>
     <string name="loading_airspace">Lastar luftromskart…</string>
     <string name="sorting_takeoffs">Sorterer startstader…</string>
-    <string name="attempting_forecast_shortcut">Prøver snarveg til meteogram…</string>
+    <string name="attempting_forecast_shortcut">Prøver snarveg…</string>
     <string name="initiating_noaa_forecast">Klargjer meteogram…</string>
     <string name="fetching_noaa_captcha">Hentar CAPTCHA…</string>
     <string name="type_noaa_captcha">Skriv inn CAPTCHA:</string>
