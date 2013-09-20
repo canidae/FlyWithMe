@@ -36,6 +36,7 @@
         android:layout_alignParentRight="true"
         android:layout_below="@+id/takeoffDetailsWindroseNorth"
         android:scrollbars="vertical"
+        android:autoLink="web"
         android:text="@string/app_name" />
 
     <ImageView

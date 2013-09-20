@@ -8,7 +8,7 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.text.method.ScrollingMovementMethod;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -92,7 +92,7 @@ public class TakeoffDetails extends Fragment {
         takeoffName.setText(takeoff.getName());
         takeoffCoordAslHeight.setText(String.format("[%.2f,%.2f] " + getActivity().getString(R.string.asl) + ": %d " + getActivity().getString(R.string.height) + ": %d", takeoff.getLocation().getLatitude(), takeoff.getLocation().getLongitude(), takeoff.getAsl(), takeoff.getHeight()));
         takeoffDescription.setText(takeoff.getDescription());
-        takeoffDescription.setMovementMethod(new ScrollingMovementMethod());
+        takeoffDescription.setMovementMethod(LinkMovementMethod.getInstance());
     }
 
     @Override
