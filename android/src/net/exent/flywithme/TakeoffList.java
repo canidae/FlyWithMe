@@ -4,6 +4,7 @@ import net.exent.flywithme.bean.Takeoff;
 import net.exent.flywithme.data.Flightlog;
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -47,6 +48,7 @@ public class TakeoffList extends Fragment {
 
         ((ImageButton) getActivity().findViewById(R.id.fragmentButton1)).setImageDrawable(null);
         ((ImageButton) getActivity().findViewById(R.id.fragmentButton2)).setImageDrawable(null);
+        ((ImageButton) getActivity().findViewById(R.id.fragmentButton3)).setImageDrawable(null);
 
         TakeoffArrayAdapter adapter = new TakeoffArrayAdapter(getActivity());
         ListView listView = (ListView) getActivity().findViewById(R.id.takeoffListView);
@@ -85,6 +87,8 @@ public class TakeoffList extends Fragment {
             TextView takeoffName = (TextView) rowView.findViewById(R.id.takeoffListEntryName);
             TextView takeoffDistance = (TextView) rowView.findViewById(R.id.takeoffListEntryDistance);
             takeoffName.setText(takeoff.toString());
+            if (takeoff.isFavourite())
+            	takeoffName.setTextColor(Color.CYAN);
             takeoffDistance.setText(getContext().getString(R.string.geodesic_distance) + ": " + (int) location.distanceTo(takeoff.getLocation()) / 1000 + "km");
             /* windpai */
             ImageView windroseNorth = (ImageView) rowView.findViewById(R.id.takeoffListEntryWindroseNorth);

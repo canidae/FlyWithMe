@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 
 import net.exent.flywithme.R;
 import net.exent.flywithme.bean.Takeoff;
@@ -76,10 +77,15 @@ public class Flightlog {
     public static void sortTakeoffListToLocation(List<Takeoff> takeoffs, final Location location) {
         Collections.sort(takeoffs, new Comparator<Takeoff>() {
             public int compare(Takeoff lhs, Takeoff rhs) {
-                if (location.distanceTo(lhs.getLocation()) > location.distanceTo(rhs.getLocation()))
-                    return 1;
-                else if (location.distanceTo(lhs.getLocation()) < location.distanceTo(rhs.getLocation()))
-                    return -1;
+            	if (!lhs.isFavourite() && rhs.isFavourite())
+            		return 1;
+            	else if (lhs.isFavourite() && !rhs.isFavourite())
+            		return -1;
+        		// both or neither are favourites, sort by distance from user
+        		if (location.distanceTo(lhs.getLocation()) > location.distanceTo(rhs.getLocation()))
+        			return 1;
+        		else if (location.distanceTo(lhs.getLocation()) < location.distanceTo(rhs.getLocation()))
+        			return -1;
                 return 0;
             }
         });
@@ -87,13 +93,14 @@ public class Flightlog {
 
     public static void init(Context context) {
         if (takeoffs.isEmpty())
-            readTakeoffsFile(context);
+            initTakeoffList(context);
     }
 
     /**
      * Read file with takeoff details.
      */
-    private static void readTakeoffsFile(Context context) {
+    private static void initTakeoffList(Context context) {
+    	Set<Integer> favourites = Database.getInstance().getFavourites();
         List<Takeoff> tmpTakeoffs = new ArrayList<Takeoff>();
         try {
             DataInputStream inputStream = new DataInputStream(context.getResources().openRawResource(R.raw.flywithme));
@@ -108,8 +115,9 @@ public class Flightlog {
                 takeoffLocation.setLatitude(inputStream.readFloat());
                 takeoffLocation.setLongitude(inputStream.readFloat());
                 String windpai = inputStream.readUTF();
+                boolean favourite = favourites.contains(takeoff);
 
-                tmpTakeoffs.add(new Takeoff(takeoff, name, description, asl, height, takeoffLocation.getLatitude(), takeoffLocation.getLongitude(), windpai));
+                tmpTakeoffs.add(new Takeoff(takeoff, name, description, asl, height, takeoffLocation.getLatitude(), takeoffLocation.getLongitude(), windpai, favourite));
             }
         } catch (EOFException e) {
             /* expected to happen */

@@ -1,6 +1,7 @@
 package net.exent.flywithme;
 
 import net.exent.flywithme.bean.Takeoff;
+import net.exent.flywithme.data.Database;
 import net.exent.flywithme.task.NoaaForecastTask;
 import android.app.Activity;
 import android.content.Intent;
@@ -64,6 +65,15 @@ public class TakeoffDetails extends Fragment {
                 }
                 /* no cached forecast, need to fetch it */
                 new NoaaForecastTask().execute(takeoff);
+            }
+        });
+        final ImageButton favouriteButton = (ImageButton) getActivity().findViewById(R.id.fragmentButton3);
+        favouriteButton.setImageResource(takeoff.isFavourite() ? R.drawable.favourite_enabled : R.drawable.favourite_disabled);
+        favouriteButton.setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
+            	takeoff.setFavourite(!takeoff.isFavourite());
+            	Database.getInstance().updateFavourite(takeoff);
+                favouriteButton.setImageResource(takeoff.isFavourite() ? R.drawable.favourite_enabled : R.drawable.favourite_disabled);
             }
         });
 

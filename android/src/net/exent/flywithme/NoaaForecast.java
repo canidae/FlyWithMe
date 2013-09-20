@@ -48,6 +48,7 @@ public class NoaaForecast extends Fragment {
 
         ((ImageButton) getActivity().findViewById(R.id.fragmentButton1)).setImageDrawable(null);
         ((ImageButton) getActivity().findViewById(R.id.fragmentButton2)).setImageDrawable(null);
+        ((ImageButton) getActivity().findViewById(R.id.fragmentButton3)).setImageDrawable(null);
     }
 
     @Override

@@ -8,12 +8,12 @@ import net.exent.flywithme.TakeoffMap.TakeoffMapListener;
 import net.exent.flywithme.bean.Takeoff;
 import net.exent.flywithme.data.Airspace;
 import net.exent.flywithme.data.Flightlog;
+import net.exent.flywithme.task.InitDataTask;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -210,50 +210,5 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
             return true;
         }
         return false;
-    }
-
-    private class InitDataTask extends AsyncTask<Context, String, Void> {
-        @Override
-        protected Void doInBackground(Context... contexts) {
-            publishProgress("0", getString(R.string.loading_takeoffs));
-            Flightlog.init(contexts[0]);
-            publishProgress("33", getString(R.string.loading_airspace));
-            Airspace.init(contexts[0]);
-            publishProgress("67", getString(R.string.sorting_takeoffs));
-            Flightlog.sortTakeoffListToLocation(Flightlog.getAllTakeoffs(), location);
-            return null;
-        }
-
-        @Override
-        protected void onProgressUpdate(String... messages) {
-            showProgress(Integer.parseInt(messages[0]), messages[1]);
-        }
-        
-        @Override
-        protected void onPostExecute(Void nothing) {
-            getInstance().showTakeoffList();
-            showProgress(-1, null); // dismiss dialog
-        }
-
-        /**
-         * Show ProgressDialog fragment.
-         * @param progress Progress slider, value from 0 to 100.
-         * @param text Progress text.
-         */
-        private void showProgress(int progress, String text) {
-            ProgressDialog progressDialog = ProgressDialog.getInstance();
-            if (progress >= 0) {
-                if (progressDialog == null) {
-                    progressDialog = new ProgressDialog();
-                    progressDialog.show(getInstance().getSupportFragmentManager(), "progressDialog");
-                }
-                /* pass arguments */
-                progressDialog.setProgress(progress, text, null, null);
-                /* show fragment */
-            } else if (progressDialog != null) {
-                /* hide fragment */
-                progressDialog.dismiss();
-            }
-        }
     }
 }

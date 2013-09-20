@@ -10,15 +10,24 @@
         android:layout_height="wrap_content"
         android:background="@null"
         android:src="@drawable/ic_launcher" />
-
-    <FrameLayout
-        android:id="@+id/fragmentContainer"
+    
+    <ImageButton
+        android:id="@+id/mapButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/fwmButton" />
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/fwmButton"
+        android:background="@null"
+        android:src="@drawable/google_maps" />
+
+    <ImageButton
+        android:id="@+id/settingsButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/mapButton"
+        android:background="@null"
+        android:src="@drawable/hammer" />
 
     <ImageButton
         android:id="@+id/fragmentButton1"
@@ -39,21 +48,21 @@
         android:src="@null" />
 
     <ImageButton
-        android:id="@+id/mapButton"
+        android:id="@+id/fragmentButton3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/fwmButton"
+        android:layout_toLeftOf="@+id/fragmentButton2"
         android:background="@null"
-        android:src="@drawable/google_maps" />
-
-    <ImageButton
-        android:id="@+id/settingsButton"
+        android:src="@null" />
+    
+    <FrameLayout
+        android:id="@+id/fragmentContainer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/mapButton"
-        android:background="@null"
-        android:src="@drawable/hammer" />
-
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/fwmButton" />
+    
 </RelativeLayout>

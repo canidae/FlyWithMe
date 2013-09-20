@@ -7,6 +7,7 @@
     <string name="cancel">Cancel</string>
     
     <!-- Status messages -->
+    <string name="init_database">Init database…</string>
     <string name="loading_takeoffs">Loading takeoffs…</string>
     <string name="loading_airspace">Loading airspace map…</string>
     <string name="sorting_takeoffs">Sorting takeoffs…</string>

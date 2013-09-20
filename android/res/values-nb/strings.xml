@@ -7,6 +7,7 @@
     <string name="cancel">Avbryt</string>
     
     <!-- Startup messages -->
+    <string name="init_database">Klargjør database…</string>
     <string name="loading_takeoffs">Laster startsteder…</string>
     <string name="loading_airspace">Laster luftromskart…</string>
     <string name="sorting_takeoffs">Sorterer startsteder…</string>

@@ -9,7 +9,7 @@ import android.os.Parcelable;
 public class Takeoff implements Parcelable {
     public static final Parcelable.Creator<Takeoff> CREATOR = new Parcelable.Creator<Takeoff>() {
         public Takeoff createFromParcel(Parcel in) {
-            return new Takeoff(in.readInt(), in.readString(), in.readString(), in.readInt(), in.readInt(), in.readDouble(), in.readDouble(), in.readInt());
+            return new Takeoff(in.readInt(), in.readString(), in.readString(), in.readInt(), in.readInt(), in.readDouble(), in.readDouble(), in.readInt(), in.readByte() == 1);
         }
 
         public Takeoff[] newArray(int size) {
@@ -25,8 +25,9 @@ public class Takeoff implements Parcelable {
     private int exits;
     private Bitmap noaaForecast;
     private long noaaUpdated;
+    private boolean favourite;
 
-    public Takeoff(int id, String name, String description, int asl, int height, double latitude, double longitude, String exitDirections) {
+    public Takeoff(int id, String name, String description, int asl, int height, double latitude, double longitude, String exitDirections, boolean favourite) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -53,9 +54,10 @@ public class Takeoff implements Parcelable {
             if ("NW".equals(direction))
                 exits |= 1 << 1;
         }
+        this.favourite = favourite;
     }
 
-    public Takeoff(int id, String name, String description, int asl, int height, double latitude, double longitude, int exits) {
+    public Takeoff(int id, String name, String description, int asl, int height, double latitude, double longitude, int exits, boolean favourite) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -65,6 +67,7 @@ public class Takeoff implements Parcelable {
         location.setLatitude(latitude);
         location.setLongitude(longitude);
         this.exits = exits;
+        this.favourite = favourite;
     }
 
     public int getId() {
@@ -143,6 +146,14 @@ public class Takeoff implements Parcelable {
     public long getNoaaUpdated() {
         return noaaUpdated;
     }
+    
+    public void setFavourite(boolean favourite) {
+    	this.favourite = favourite;
+    }
+    
+    public boolean isFavourite() {
+    	return favourite;
+    }
 
     public int describeContents() {
         return 0;
@@ -157,6 +168,7 @@ public class Takeoff implements Parcelable {
         dest.writeDouble(location.getLatitude());
         dest.writeDouble(location.getLongitude());
         dest.writeInt(exits);
+        dest.writeByte((byte) (favourite ? 1 : 0));
     }
 
     @Override
