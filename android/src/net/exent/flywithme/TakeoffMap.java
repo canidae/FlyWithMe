@@ -210,7 +210,7 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
                         location.setLatitude(latLng.latitude);
                         location.setLongitude(latLng.longitude);
                     }
-                    
+
                     /* get the nearest takeoffs */ 
                     List<Takeoff> takeoffs = Flightlog.getTakeoffs(location, (int) (10240000000L / (256 * Math.pow(2, cameraPositions[0].zoom))));
 
@@ -244,7 +244,7 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
                         publishProgress(takeoff, markerOptions);
                     }
                 }
-                
+
                 /* remove markers that we didn't "add" */
                 for (Map.Entry<Takeoff, String> entry : visibleTakeoffs.entrySet())
                     publishProgress(entry.getValue());
@@ -253,7 +253,7 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
             }
             return null;
         }
-        
+
         @Override
         protected void onProgressUpdate(Object... objects) {
             try {
@@ -297,7 +297,7 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
                         Log.w(getClass().getSimpleName(), "Unable to parse max airspace distance setting as integer", e);
                     }
                     maxAirspaceDistance *= 1000;
-        
+
                     for (Map.Entry<String, List<PolygonOptions>> entry : Airspace.getAirspaceMap().entrySet()) {
                         if (entry.getKey() == null || prefs.getBoolean("pref_airspace_enabled_" + entry.getKey().trim(), true) == false)
                             continue;
@@ -307,7 +307,7 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
                         }
                     }
                 }
-    
+
                 /* in case user disabled while we were figuring out which polygons to show.
                  * it's not thread safe, so it's technically possibly to make it show polygons even though it was disabled, but it's unlikely to happen */
                 if (!prefs.getBoolean("pref_map_show_airspace", true))

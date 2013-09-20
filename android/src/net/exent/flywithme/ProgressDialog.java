@@ -26,9 +26,9 @@ public class ProgressDialog extends DialogFragment {
     private static Bitmap image;
     private static Runnable runnable;
     private View view;
-    
+
     public ProgressDialog() {
-    	instance = this;
+        instance = this;
     }
 
     @Override
@@ -60,34 +60,34 @@ public class ProgressDialog extends DialogFragment {
         super.onStart();
         showProgress();
     }
-    
+
     @Override
     public void onDetach() {
         super.onDetach();
         instance = null;
     }
-    
+
     public static ProgressDialog getInstance() {
         return instance;
     }
-    
+
     public String getInputText() {
         EditText progressInput = (EditText) view.findViewById(R.id.progressInput);
         return progressInput.getText().toString();
     }
-    
+
     public void setTask(AsyncTask<?, ?, ?> task) {
-    	ProgressDialog.task = task;
+        ProgressDialog.task = task;
     }
 
     public void setProgress(int progress, String text, Bitmap image, final Runnable runnable) {
-    	ProgressDialog.progress = progress;
-    	ProgressDialog.text = text;
-    	ProgressDialog.image = image;
-    	ProgressDialog.runnable = runnable;
+        ProgressDialog.progress = progress;
+        ProgressDialog.text = text;
+        ProgressDialog.image = image;
+        ProgressDialog.runnable = runnable;
         showProgress();
     }
-    
+
     private void showProgress() {
         try {
             /* apparently the method isVisible() does not tell whether the fragment actually is visible, but rather always return false even when the fragment is visible (at least in this case).
@@ -98,17 +98,17 @@ public class ProgressDialog extends DialogFragment {
             ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
             if (progressBar != null)
                 progressBar.setProgress(progress > progressBar.getMax() ? progressBar.getMax() : progress);
-    
+
             TextView progressText = (TextView) view.findViewById(R.id.progressText);
             if (progressText != null)
                 progressText.setText(text);
-    
+
             ImageView progressImage = (ImageView) view.findViewById(R.id.progressImage);
             if (progressImage != null) {
                 progressImage.setImageBitmap(image);
                 progressImage.setVisibility(image == null ? View.GONE : View.VISIBLE);
             }
-    
+
             final EditText progressInput = (EditText) view.findViewById(R.id.progressInput);
             if (progressInput != null) {
                 progressInput.setInputType(0x00001001); // set input to upper case

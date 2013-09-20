@@ -85,7 +85,7 @@ public class Takeoff implements Parcelable {
     public int getAsl() {
         return asl;
     }
-    
+
     public void setAsl(int asl) {
         this.asl = asl;
     }
@@ -146,13 +146,13 @@ public class Takeoff implements Parcelable {
     public long getNoaaUpdated() {
         return noaaUpdated;
     }
-    
+
     public void setFavourite(boolean favourite) {
-    	this.favourite = favourite;
+        this.favourite = favourite;
     }
-    
+
     public boolean isFavourite() {
-    	return favourite;
+        return favourite;
     }
 
     public int describeContents() {

@@ -28,7 +28,7 @@ public class Flightlog {
     public static List<Takeoff> getAllTakeoffs() {
         return takeoffs;
     }
-    
+
     /**
      * Fetch sorted list of takeoffs near the given location.
      * @param location Location of where to look for locations.
@@ -37,11 +37,11 @@ public class Flightlog {
     public static List<Takeoff> getTakeoffs(Location location) {
         return getTakeoffs(location, 40000000, DEFAULT_MIN_TAKEOFFS);
     }
-    
+
     public static List<Takeoff> getTakeoffs(Location location, int maxDistance) {
         return getTakeoffs(location, maxDistance, DEFAULT_MIN_TAKEOFFS);
     }
-    
+
     public static List<Takeoff> getTakeoffs(Location location, int maxDistance, int minTakeoffs) {
         /* limit the amount of takeoffs to sort (sorting is slow, reducing the list to sort by iterating some few times is significantly faster) */
         List<Takeoff> sortedTakeoffs;
@@ -73,19 +73,19 @@ public class Flightlog {
         sortTakeoffListToLocation(sortedTakeoffs, location);
         return sortedTakeoffs;
     }
-    
+
     public static void sortTakeoffListToLocation(List<Takeoff> takeoffs, final Location location) {
         Collections.sort(takeoffs, new Comparator<Takeoff>() {
             public int compare(Takeoff lhs, Takeoff rhs) {
-            	if (!lhs.isFavourite() && rhs.isFavourite())
-            		return 1;
-            	else if (lhs.isFavourite() && !rhs.isFavourite())
-            		return -1;
-        		// both or neither are favourites, sort by distance from user
-        		if (location.distanceTo(lhs.getLocation()) > location.distanceTo(rhs.getLocation()))
-        			return 1;
-        		else if (location.distanceTo(lhs.getLocation()) < location.distanceTo(rhs.getLocation()))
-        			return -1;
+                if (!lhs.isFavourite() && rhs.isFavourite())
+                    return 1;
+                else if (lhs.isFavourite() && !rhs.isFavourite())
+                    return -1;
+                // both or neither are favourites, sort by distance from user
+                if (location.distanceTo(lhs.getLocation()) > location.distanceTo(rhs.getLocation()))
+                    return 1;
+                else if (location.distanceTo(lhs.getLocation()) < location.distanceTo(rhs.getLocation()))
+                    return -1;
                 return 0;
             }
         });
@@ -100,7 +100,7 @@ public class Flightlog {
      * Read file with takeoff details.
      */
     private static void initTakeoffList(Context context) {
-    	Set<Integer> favourites = Database.getInstance().getFavourites();
+        Set<Integer> favourites = Database.getInstance().getFavourites();
         List<Takeoff> tmpTakeoffs = new ArrayList<Takeoff>();
         try {
             DataInputStream inputStream = new DataInputStream(context.getResources().openRawResource(R.raw.flywithme));

@@ -5,7 +5,7 @@
     <string name="asl">moh.</string>
     <string name="height">Høyde</string>
     <string name="cancel">Avbryt</string>
-    
+
     <!-- Startup messages -->
     <string name="init_database">Klargjør database…</string>
     <string name="loading_takeoffs">Laster startsteder…</string>
@@ -17,7 +17,7 @@
     <string name="type_noaa_captcha">Skriv inn CAPTCHA:</string>
     <string name="retrieving_noaa_forecast">Laster ned meteogram…</string>
     <string name="fetching_noaa_failed">Hente meteogram feilet</string>
-    
+
     <!-- Preferences -->
     <string name="preferences">Innstillinger</string>
 

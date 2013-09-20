@@ -88,7 +88,7 @@ public class TakeoffList extends Fragment {
             TextView takeoffDistance = (TextView) rowView.findViewById(R.id.takeoffListEntryDistance);
             takeoffName.setText(takeoff.toString());
             if (takeoff.isFavourite())
-            	takeoffName.setTextColor(Color.CYAN);
+                takeoffName.setTextColor(Color.CYAN);
             takeoffDistance.setText(getContext().getString(R.string.geodesic_distance) + ": " + (int) location.distanceTo(takeoff.getLocation()) / 1000 + "km");
             /* windpai */
             ImageView windroseNorth = (ImageView) rowView.findViewById(R.id.takeoffListEntryWindroseNorth);

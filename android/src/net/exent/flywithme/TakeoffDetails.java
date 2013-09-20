@@ -71,8 +71,8 @@ public class TakeoffDetails extends Fragment {
         favouriteButton.setImageResource(takeoff.isFavourite() ? R.drawable.favourite_enabled : R.drawable.favourite_disabled);
         favouriteButton.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
-            	takeoff.setFavourite(!takeoff.isFavourite());
-            	Database.getInstance().updateFavourite(takeoff);
+                takeoff.setFavourite(!takeoff.isFavourite());
+                Database.getInstance().updateFavourite(takeoff);
                 favouriteButton.setImageResource(takeoff.isFavourite() ? R.drawable.favourite_enabled : R.drawable.favourite_disabled);
             }
         });

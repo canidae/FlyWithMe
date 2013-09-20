@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:background="@null"
         android:src="@drawable/ic_launcher" />
-    
+
     <ImageButton
         android:id="@+id/mapButton"
         android:layout_width="wrap_content"
@@ -55,7 +55,7 @@
         android:layout_toLeftOf="@+id/fragmentButton2"
         android:background="@null"
         android:src="@null" />
-    
+
     <FrameLayout
         android:id="@+id/fragmentContainer"
         android:layout_width="wrap_content"
@@ -64,5 +64,5 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
         android:layout_below="@+id/fwmButton" />
-    
+
 </RelativeLayout>

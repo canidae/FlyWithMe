@@ -30,7 +30,7 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
     private static Location location = new Location(LocationManager.PASSIVE_PROVIDER);
     private static FlyWithMe instance;
     private static boolean mapLastViewed = false; // false == we entered TakeoffDetails from TakeoffList, true == we entered TakeoffDetails from TakeoffMap
-    
+
     public static FlyWithMe getInstance() {
         return instance;
     }
@@ -58,7 +58,7 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
         /* show fragment */
         showFragment(takeoffDetails, "takeoffDetails");
     }
-    
+
     /**
      * Show NOAA forecast in NoaaForecast fragment.
      * @param noaaForecastBitmap The bitmap containing the forecast.
@@ -136,7 +136,7 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
         location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
         if (location == null)
             location = new Location(LocationManager.PASSIVE_PROVIDER); // no location set, let's pretend we're skinny dipping in the gulf of guinea
-        
+
         instance = this;
 
         if (savedInstanceState != null || findViewById(R.id.fragmentContainer) == null)
@@ -168,7 +168,7 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
             }
         });
     }
-    
+
     @Override
     public void onBackPressed() {
         /* using our own "backstack", because the android one is utterly on crack */
@@ -190,7 +190,7 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
             super.onBackPressed();
         }
     }
-    
+
     private void showFragment(Fragment fragment, String name) {
         getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, fragment, name).commit();
     }

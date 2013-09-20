@@ -26,9 +26,9 @@ public class NoaaForecast extends Fragment {
             Log.w(getClass().getName(), "showNoaaForecast() failed unexpectedly", e);
         }
     }
-    
+
     public Takeoff getTakeoff() {
-    	return takeoff;
+        return takeoff;
     }
 
     @Override

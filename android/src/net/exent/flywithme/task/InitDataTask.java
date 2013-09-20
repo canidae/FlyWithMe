@@ -12,13 +12,14 @@ import android.os.AsyncTask;
 public class InitDataTask extends AsyncTask<Context, String, Void> {
     @Override
     protected Void doInBackground(Context... contexts) {
-        publishProgress("0", FlyWithMe.getInstance().getString(R.string.init_database));
-    	Database.init(contexts[0]);
-        publishProgress("25", FlyWithMe.getInstance().getString(R.string.loading_takeoffs));
+        Context context = contexts[0];
+        publishProgress("0", context.getString(R.string.init_database));
+        Database.init(contexts[0]);
+        publishProgress("25", context.getString(R.string.loading_takeoffs));
         Flightlog.init(contexts[0]);
-        publishProgress("50", FlyWithMe.getInstance().getString(R.string.loading_airspace));
+        publishProgress("50", context.getString(R.string.loading_airspace));
         Airspace.init(contexts[0]);
-        publishProgress("75", FlyWithMe.getInstance().getString(R.string.sorting_takeoffs));
+        publishProgress("75", context.getString(R.string.sorting_takeoffs));
         Flightlog.sortTakeoffListToLocation(Flightlog.getAllTakeoffs(), FlyWithMe.getInstance().getLocation());
         return null;
     }
@@ -27,10 +28,10 @@ public class InitDataTask extends AsyncTask<Context, String, Void> {
     protected void onProgressUpdate(String... messages) {
         showProgress(Integer.parseInt(messages[0]), messages[1]);
     }
-    
+
     @Override
     protected void onPostExecute(Void nothing) {
-    	FlyWithMe.getInstance().showTakeoffList();
+        FlyWithMe.getInstance().showTakeoffList();
         showProgress(-1, null); // dismiss dialog
     }
 
