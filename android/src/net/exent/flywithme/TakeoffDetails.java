@@ -91,7 +91,7 @@ public class TakeoffDetails extends Fragment {
 
         takeoffName.setText(takeoff.getName());
         takeoffCoordAslHeight.setText(String.format("[%.2f,%.2f] " + getActivity().getString(R.string.asl) + ": %d " + getActivity().getString(R.string.height) + ": %d", takeoff.getLocation().getLatitude(), takeoff.getLocation().getLongitude(), takeoff.getAsl(), takeoff.getHeight()));
-        takeoffDescription.setText(takeoff.getDescription());
+        takeoffDescription.setText("http://flightlog.org/fl.html?a=22&country_id=160&start_id=" + takeoff.getId() + "\n" + takeoff.getDescription());
         takeoffDescription.setMovementMethod(LinkMovementMethod.getInstance());
     }
 
