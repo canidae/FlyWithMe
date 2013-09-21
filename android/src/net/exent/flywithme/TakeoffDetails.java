@@ -2,6 +2,7 @@ package net.exent.flywithme;
 
 import net.exent.flywithme.bean.Takeoff;
 import net.exent.flywithme.data.Database;
+import net.exent.flywithme.data.Flightlog;
 import net.exent.flywithme.task.NoaaForecastTask;
 import android.app.Activity;
 import android.content.Intent;
@@ -74,6 +75,8 @@ public class TakeoffDetails extends Fragment {
                 takeoff.setFavourite(!takeoff.isFavourite());
                 Database.getInstance().updateFavourite(takeoff);
                 favouriteButton.setImageResource(takeoff.isFavourite() ? R.drawable.favourite_enabled : R.drawable.favourite_disabled);
+                // sort takeoff list
+                Flightlog.sortTakeoffListToLocation(Flightlog.getAllTakeoffs(), FlyWithMe.getInstance().getLocation());
             }
         });
 
