@@ -29,6 +29,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -223,23 +224,26 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
                         }
                         Bitmap bitmap = Bitmap.createBitmap(markerBitmap.getWidth(), markerBitmap.getHeight(), Bitmap.Config.ARGB_8888);
                         Canvas canvas = new Canvas(bitmap);
-                        canvas.drawBitmap(markerBitmap, 0, 0, null);
+                        Paint paint = new Paint();
+                        if (!takeoff.isFavourite())
+                            paint.setAlpha(123);
+                        canvas.drawBitmap(markerBitmap, 0, 0, paint);
                         if (takeoff.hasNorthExit())
-                            canvas.drawBitmap(markerNorthBitmap, 0, 0, null);
+                            canvas.drawBitmap(markerNorthBitmap, 0, 0, paint);
                         if (takeoff.hasNortheastExit())
-                            canvas.drawBitmap(markerNortheastBitmap, 0, 0, null);
+                            canvas.drawBitmap(markerNortheastBitmap, 0, 0, paint);
                         if (takeoff.hasEastExit())
-                            canvas.drawBitmap(markerEastBitmap, 0, 0, null);
+                            canvas.drawBitmap(markerEastBitmap, 0, 0, paint);
                         if (takeoff.hasSoutheastExit())
-                            canvas.drawBitmap(markerSoutheastBitmap, 0, 0, null);
+                            canvas.drawBitmap(markerSoutheastBitmap, 0, 0, paint);
                         if (takeoff.hasSouthExit())
-                            canvas.drawBitmap(markerSouthBitmap, 0, 0, null);
+                            canvas.drawBitmap(markerSouthBitmap, 0, 0, paint);
                         if (takeoff.hasSouthwestExit())
-                            canvas.drawBitmap(markerSouthwestBitmap, 0, 0, null);
+                            canvas.drawBitmap(markerSouthwestBitmap, 0, 0, paint);
                         if (takeoff.hasWestExit())
-                            canvas.drawBitmap(markerWestBitmap, 0, 0, null);
+                            canvas.drawBitmap(markerWestBitmap, 0, 0, paint);
                         if (takeoff.hasNorthwestExit())
-                            canvas.drawBitmap(markerNorthwestBitmap, 0, 0, null);
+                            canvas.drawBitmap(markerNorthwestBitmap, 0, 0, paint);
                         MarkerOptions markerOptions = new MarkerOptions().position(new LatLng(takeoff.getLocation().getLatitude(), takeoff.getLocation().getLongitude())).title(takeoff.getName()).snippet("Height: " + takeoff.getHeight()).icon(BitmapDescriptorFactory.fromBitmap(bitmap)).anchor(0.5f, 0.875f);
                         publishProgress(takeoff, markerOptions);
                     }
