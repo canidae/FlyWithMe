@@ -1,0 +1,26 @@
+<resources>
+    <!-- General -->
+    <string name="app_name">Fly With Me!</string>
+    <string name="geodesic_distance">Luftavstand</string>
+    <string name="asl">moh.</string>
+    <string name="height">Høyde</string>
+    <string name="cancel">Avbryt</string>
+
+    <!-- Startup messages -->
+    <string name="init_database">Klargjør database…</string>
+    <string name="loading_takeoffs">Laster startsteder…</string>
+    <string name="loading_airspace">Laster luftromskart…</string>
+    <string name="sorting_takeoffs">Sorterer startsteder…</string>
+    <string name="attempting_forecast_shortcut">Prøver snarvei…</string>
+    <string name="initiating_noaa_forecast">Forbereder meteogram…</string>
+    <string name="fetching_noaa_captcha">Henter CAPTCHA…</string>
+    <string name="type_noaa_captcha">Skriv inn CAPTCHA:</string>
+    <string name="retrieving_noaa_forecast">Laster ned meteogram…</string>
+    <string name="fetching_noaa_failed">Hente meteogram feilet</string>
+
+    <!-- Preferences -->
+    <string name="preferences">Innstillinger</string>
+
+    <!-- What airspace to draw (this is mostly set programatically) -->
+    <string name="show_airspace_types">Vis luftromstyper</string>
+</resources>
