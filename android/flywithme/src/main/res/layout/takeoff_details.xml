@@ -31,7 +31,6 @@
         android:id="@+id/takeoffDetailsDescription"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
         android:layout_below="@+id/takeoffDetailsWindroseNorth"
@@ -110,5 +109,13 @@
         android:layout_alignParentTop="true"
         android:layout_toRightOf="@+id/takeoffDetailsName"
         android:src="@drawable/windrose_circle" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@+id/takeoffDetailsCoordAslHeight"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"></LinearLayout>
 
 </RelativeLayout>

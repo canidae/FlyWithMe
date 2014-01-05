@@ -60,8 +60,8 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
     }
 
     /**
-     * Show NOAA forecast in NoaaForecast fragment.
-     * @param noaaForecastBitmap The bitmap containing the forecast.
+     * Show NOAA forecast for takeoff in NoaaForecast fragment.
+     * @param takeoff The takeoff we wish to display the forecast for.
      */
     public void showNoaaForecast(Takeoff takeoff) {
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragmentContainer);
