@@ -20,7 +20,7 @@ android {
         minSdkVersion 8
         targetSdkVersion 19
         versionCode 9
-        versionName "2.5"
+        versionName "3.0"
     }
 
     compileOptions {
