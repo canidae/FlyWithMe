@@ -180,9 +180,9 @@ public class TakeoffDetails extends Fragment {
         canvas.drawRect(0, bitmap.getHeight() - X_AXIS_HEIGHT + LINE_WIDTH, bitmap.getWidth(), bitmap.getHeight() - X_AXIS_HEIGHT, paint); // lower horizontal axis
         // draw labels
         paint.setColor(Color.WHITE);
-        canvas.drawText("Date", 4, X_AXIS_HEIGHT - LINE_WIDTH - 4, paint); // TODO: use strings.xml
-        canvas.drawText("Pilots", 4, bitmap.getHeight() - X_AXIS_HEIGHT - LINE_WIDTH - 4, paint); // TODO: use strings.xml
-        canvas.drawText("Time", 4, bitmap.getHeight() - 4, paint); // TODO: use strings.xml
+        canvas.drawText(getActivity().getString(R.string.date), 4, X_AXIS_HEIGHT - LINE_WIDTH - 4, paint);
+        canvas.drawText(getActivity().getString(R.string.pilots), 4, bitmap.getHeight() - X_AXIS_HEIGHT - LINE_WIDTH - 4, paint);
+        canvas.drawText(getActivity().getString(R.string.time), 4, bitmap.getHeight() - 4, paint);
 
 
         String prevDate = "";

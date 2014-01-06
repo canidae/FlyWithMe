@@ -125,6 +125,16 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
             }
 
             public void onLocationChanged(Location newLocation) {
+                /* TODO:
+                   some users disable android location services.
+                   this cause the map to be centered in the gulf of guinea,
+                   and the list of takeoffs is sorted after distance to that location.
+                   if location information is not available we should sort the list of takeoffs
+                   after the location centered in the map.
+                   we should also see if there's another way to find our location,
+                   GPS for example apparently can be turned on, but i don't know if the location
+                   data is any more accessible then.
+                 */
                 if (newLocation == null)
                     return;
                 location = newLocation;

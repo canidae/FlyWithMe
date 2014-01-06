@@ -18,6 +18,11 @@
     <string name="retrieving_noaa_forecast">Laster ned meteogram…</string>
     <string name="fetching_noaa_failed">Hente meteogram feilet</string>
 
+    <!-- Flight schedule graph -->
+    <string name="date">Dato</string>
+    <string name="pilots">Piloter</string>
+    <string name="time">Tid</string>
+
     <!-- Preferences -->
     <string name="preferences">Innstillinger</string>
 
