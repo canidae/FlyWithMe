@@ -1,9 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AndroidLayoutPreviewToolWindow">
+    <option name="state">
+      <GlobalState />
+    </option>
+  </component>
   <component name="AndroidLayouts">
     <shared>
-      <config />
+      <config>
+        <target>android-19</target>
+      </config>
     </shared>
+    <layouts>
+      <layout url="file://$PROJECT_DIR$/flywithme/src/main/res/layout/takeoff_details.xml">
+        <config>
+          <device>Nexus 4</device>
+          <theme>@style/AppTheme</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/flywithme/src/main/res/layout/takeoff_schedule.xml">
+        <config>
+          <device>Nexus 4</device>
+          <theme>@style/AppTheme</theme>
+        </config>
+      </layout>
+    </layouts>
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b281b944-8208-41d6-b4c2-0bea21275a18" name="Default" comment="" />
@@ -78,22 +99,35 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Messenger.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/flywithme/src/main/java/net/exent/flywithme/Messenger.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="3" column="35" selection-start="90" selection-end="90" vertical-scroll-proportion="0.0" vertical-offset="54" max-vertical-offset="198">
+      <file leaf-file-name="takeoff_schedule.xml" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/flywithme/src/main/res/layout/takeoff_schedule.xml">
+          <provider editor-type-id="text-editor">
+            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="846">
               <folding />
             </state>
+          </provider>
+          <provider selected="true" editor-type-id="android-designer">
+            <state />
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="takeoff_list.xml" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/flywithme/src/main/res/layout/takeoff_list.xml">
+          <provider editor-type-id="text-editor">
+            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="342">
+              <folding />
+            </state>
+          </provider>
+          <provider selected="true" editor-type-id="android-designer">
+            <state />
           </provider>
         </entry>
       </file>
       <file leaf-file-name="TakeoffDetails.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/flywithme/src/main/java/net/exent/flywithme/TakeoffDetails.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="184" column="98" selection-start="9639" selection-end="9639" vertical-scroll-proportion="0.0" vertical-offset="2826" max-vertical-offset="3762">
-              <folding>
-                <element signature="imports" expanded="false" />
-              </folding>
+            <state line="211" column="134" selection-start="10879" selection-end="10879" vertical-scroll-proportion="0.0" vertical-offset="3387" max-vertical-offset="4662">
+              <folding />
             </state>
           </provider>
         </entry>
@@ -101,16 +135,16 @@
       <file leaf-file-name="Database.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/flywithme/src/main/java/net/exent/flywithme/data/Database.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="64" column="102" selection-start="2221" selection-end="2221" vertical-scroll-proportion="0.0" vertical-offset="702" max-vertical-offset="2088">
+            <state line="54" column="0" selection-start="1568" selection-end="1568" vertical-scroll-proportion="0.0" vertical-offset="972" max-vertical-offset="2124">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Takeoff.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/flywithme/src/main/java/net/exent/flywithme/bean/Takeoff.java">
+      <file leaf-file-name="strings.xml" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/flywithme/src/main/res/values/strings.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="32" column="45" selection-start="1067" selection-end="1067" vertical-scroll-proportion="0.0" vertical-offset="72" max-vertical-offset="3402">
+            <state line="23" column="0" selection-start="1086" selection-end="1126" vertical-scroll-proportion="0.0" vertical-offset="414" max-vertical-offset="702">
               <folding />
             </state>
           </provider>
@@ -118,32 +152,39 @@
       </file>
       <file leaf-file-name="takeoff_details.xml" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/flywithme/src/main/res/layout/takeoff_details.xml">
+          <provider editor-type-id="text-editor">
+            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2592">
+              <folding />
+            </state>
+          </provider>
           <provider selected="true" editor-type-id="android-designer">
             <state />
           </provider>
-          <provider editor-type-id="text-editor">
-            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2358">
-              <folding />
-            </state>
-          </provider>
         </entry>
       </file>
-      <file leaf-file-name="TakeoffMap.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/flywithme/src/main/java/net/exent/flywithme/TakeoffMap.java">
+      <file leaf-file-name="strings.xml" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/flywithme/src/main/res/values-nb/strings.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="14" column="33" selection-start="393" selection-end="393" vertical-scroll-proportion="0.0" vertical-offset="252" max-vertical-offset="7182">
+            <state line="23" column="0" selection-start="1081" selection-end="1121" vertical-scroll-proportion="0.0" vertical-offset="414" max-vertical-offset="702">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="FlyWithMe.java" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="strings.xml" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/flywithme/src/main/res/values-nn/strings.xml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="23" column="0" selection-start="1118" selection-end="1118" vertical-scroll-proportion="0.0" vertical-offset="414" max-vertical-offset="702">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="FlyWithMe.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/flywithme/src/main/java/net/exent/flywithme/FlyWithMe.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="135" column="52" selection-start="5877" selection-end="5877" vertical-scroll-proportion="0.7791045" vertical-offset="1548" max-vertical-offset="3780">
-              <folding>
-                <element signature="imports" expanded="false" />
-              </folding>
+            <state line="135" column="52" selection-start="5877" selection-end="5877" vertical-scroll-proportion="0.0" vertical-offset="2430" max-vertical-offset="4140">
+              <folding />
             </state>
           </provider>
         </entry>
@@ -433,9 +474,9 @@
                 <option name="name" value="preReleaseBuild" />
               </ExternalTaskPojo>
               <ExternalTaskPojo>
-                <option name="description" value="Prepare com.android.support:appcompat-v7:19.0.0" />
+                <option name="description" value="Prepare com.android.support:appcompat-v7:19.0.1" />
                 <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/flywithme" />
-                <option name="name" value="prepareComAndroidSupportAppcompatV71900Library" />
+                <option name="name" value="prepareComAndroidSupportAppcompatV71901Library" />
               </ExternalTaskPojo>
               <ExternalTaskPojo>
                 <option name="description" value="Prepare com.android.support:gridlayout-v7:19.0.0" />
@@ -542,21 +583,25 @@
         <option value="$PROJECT_DIR$/flywithme/src/main/AndroidManifest.xml" />
         <option value="$PROJECT_DIR$/flywithme/src/main/java/net/exent/flywithme/Messenger.java" />
         <option value="$PROJECT_DIR$/flywithme/build.gradle" />
-        <option value="$PROJECT_DIR$/flywithme/src/main/res/layout/takeoff_details.xml" />
-        <option value="$PROJECT_DIR$/flywithme/src/main/res/values/strings.xml" />
-        <option value="$PROJECT_DIR$/flywithme/src/main/java/net/exent/flywithme/TakeoffDetails.java" />
-        <option value="$PROJECT_DIR$/flywithme/src/main/res/values-nb/strings.xml" />
-        <option value="$PROJECT_DIR$/flywithme/src/main/res/values-nn/strings.xml" />
         <option value="$PROJECT_DIR$/flywithme/src/main/java/net/exent/flywithme/bean/ScheduleEntry.java" />
+        <option value="$PROJECT_DIR$/flywithme/src/main/java/net/exent/flywithme/FlyWithMe.java" />
         <option value="$PROJECT_DIR$/flywithme/src/main/java/net/exent/flywithme/bean/Takeoff.java" />
         <option value="$PROJECT_DIR$/flywithme/src/main/java/net/exent/flywithme/data/Database.java" />
-        <option value="$PROJECT_DIR$/flywithme/src/main/java/net/exent/flywithme/FlyWithMe.java" />
+        <option value="$PROJECT_DIR$/flywithme/src/main/res/values-no/strings.xml" />
+        <option value="$PROJECT_DIR$/flywithme/src/main/res/layout/takeoff_details.xml" />
+        <option value="$PROJECT_DIR$/flywithme/src/main/res/values/strings.xml" />
+        <option value="$PROJECT_DIR$/flywithme/src/main/res/values-nb/strings.xml" />
+        <option value="$PROJECT_DIR$/flywithme/src/main/res/values-nn/strings.xml" />
+        <option value="$PROJECT_DIR$/flywithme/src/main/java/net/exent/flywithme/TakeoffDetails.java" />
+        <option value="$PROJECT_DIR$/flywithme/src/main/res/layout/takeoff_schedule.xml" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="width" value="1920" />
-    <option name="height" value="1174" />
+    <option name="x" value="-2" />
+    <option name="y" value="-1" />
+    <option name="width" value="1924" />
+    <option name="height" value="1182" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="false">
     <OptionsSetting value="true" id="Add" />
@@ -1002,19 +1047,6 @@
       <option name="PORT" value="5005" />
       <method />
     </configuration>
-    <configuration default="true" type="Applet" factoryName="Applet">
-      <module name="" />
-      <option name="MAIN_CLASS_NAME" />
-      <option name="HTML_FILE_NAME" />
-      <option name="HTML_USED" value="false" />
-      <option name="WIDTH" value="400" />
-      <option name="HEIGHT" value="300" />
-      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
-      <option name="VM_PARAMETERS" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-      <method />
-    </configuration>
     <configuration default="true" type="TestNG" factoryName="TestNG">
       <module name="" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
@@ -1040,6 +1072,19 @@
       <envs />
       <properties />
       <listeners />
+      <method />
+    </configuration>
+    <configuration default="true" type="Applet" factoryName="Applet">
+      <module name="" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="HTML_FILE_NAME" />
+      <option name="HTML_USED" value="false" />
+      <option name="WIDTH" value="400" />
+      <option name="HEIGHT" value="300" />
+      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
+      <option name="VM_PARAMETERS" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
       <method />
     </configuration>
     <configuration default="true" type="Application" factoryName="Application">
@@ -1128,6 +1173,28 @@
     </configuration>
   </component>
   <component name="ShelveChangesManager" show_recycled="false" />
+  <component name="SliceManager">
+    <option name="analysisUIOptions">
+      <AnalysisUIOptions />
+    </option>
+  </component>
+  <component name="SvnConfiguration" maxAnnotateRevisions="500" myUseAcceleration="nothing" myAutoUpdateAfterCommit="false" cleanupOnStartRun="false" SSL_PROTOCOLS="all">
+    <option name="USER" value="" />
+    <option name="PASSWORD" value="" />
+    <option name="mySSHConnectionTimeout" value="30000" />
+    <option name="mySSHReadTimeout" value="30000" />
+    <option name="LAST_MERGED_REVISION" />
+    <option name="MERGE_DRY_RUN" value="false" />
+    <option name="MERGE_DIFF_USE_ANCESTRY" value="true" />
+    <option name="UPDATE_LOCK_ON_DEMAND" value="false" />
+    <option name="IGNORE_SPACES_IN_MERGE" value="false" />
+    <option name="CHECK_NESTED_FOR_QUICK_MERGE" value="false" />
+    <option name="IGNORE_SPACES_IN_ANNOTATE" value="true" />
+    <option name="SHOW_MERGE_SOURCES_IN_ANNOTATE" value="true" />
+    <option name="FORCE_UPDATE" value="false" />
+    <option name="IGNORE_EXTERNALS" value="false" />
+    <myIsUseDefaultProxy>false</myIsUseDefaultProxy>
+  </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
       <changelist id="b281b944-8208-41d6-b4c2-0bea21275a18" name="Default" comment="" />
@@ -1157,7 +1224,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="0" width="1920" height="1174" extended-state="6" />
+    <frame x="-2" y="-1" width="1924" height="1182" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -1172,7 +1239,7 @@
       <window_info id="Build Variants" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Gradle Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3297975" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Android" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32786885" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Android" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3741562" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3297975" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -1184,6 +1251,7 @@
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32977587" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3294686" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
@@ -1206,37 +1274,14 @@
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/flywithme/src/main/AndroidManifest.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="10" column="0" selection-start="673" selection-end="673" vertical-scroll-proportion="0.0" vertical-offset="162" max-vertical-offset="828">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/flywithme/src/main/java/net/exent/flywithme/Messenger.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="3" column="35" selection-start="90" selection-end="90" vertical-scroll-proportion="0.0" vertical-offset="54" max-vertical-offset="198">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/flywithme/src/main/java/net/exent/flywithme/TakeoffDetails.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="208" column="49" selection-start="10693" selection-end="10693" vertical-scroll-proportion="0.0" vertical-offset="3744" max-vertical-offset="3762">
-          <folding>
-            <element signature="imports" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/flywithme/src/main/res/layout/takeoff_details.xml">
-      <provider selected="true" editor-type-id="android-designer">
-        <state />
-      </provider>
       <provider editor-type-id="text-editor">
         <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2358">
           <folding />
         </state>
+      </provider>
+      <provider selected="true" editor-type-id="android-designer">
+        <state />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/flywithme/src/main/java/net/exent/flywithme/TakeoffMap.java">
@@ -1249,9 +1294,7 @@
     <entry file="file://$PROJECT_DIR$/flywithme/src/main/java/net/exent/flywithme/FlyWithMe.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="200" column="22" selection-start="8424" selection-end="8424" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="3960">
-          <folding>
-            <element signature="imports" expanded="false" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -1272,9 +1315,7 @@
     <entry file="file://$PROJECT_DIR$/flywithme/src/main/java/net/exent/flywithme/TakeoffDetails.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="36" column="31" selection-start="1171" selection-end="1171" vertical-scroll-proportion="0.0" vertical-offset="648" max-vertical-offset="2592">
-          <folding>
-            <element signature="imports" expanded="false" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -1288,9 +1329,7 @@
     <entry file="file://$PROJECT_DIR$/flywithme/src/main/java/net/exent/flywithme/FlyWithMe.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="200" column="22" selection-start="8420" selection-end="8424" vertical-scroll-proportion="0.0" vertical-offset="3600" max-vertical-offset="3960">
-          <folding>
-            <element signature="imports" expanded="false" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -1325,9 +1364,7 @@
     <entry file="file://$PROJECT_DIR$/flywithme/src/main/java/net/exent/flywithme/FlyWithMe.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="99" column="40" selection-start="4240" selection-end="4240" vertical-scroll-proportion="0.0" vertical-offset="1782" max-vertical-offset="3960">
-          <folding>
-            <element signature="imports" expanded="false" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -1362,9 +1399,7 @@
     <entry file="file://$PROJECT_DIR$/flywithme/src/main/java/net/exent/flywithme/FlyWithMe.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="99" column="40" selection-start="4240" selection-end="4240" vertical-scroll-proportion="0.0" vertical-offset="1782" max-vertical-offset="3960">
-          <folding>
-            <element signature="imports" expanded="false" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -1392,9 +1427,7 @@
     <entry file="file://$PROJECT_DIR$/flywithme/src/main/java/net/exent/flywithme/FlyWithMe.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="41" column="7" selection-start="1874" selection-end="1874" vertical-scroll-proportion="0.0" vertical-offset="738" max-vertical-offset="3960">
-          <folding>
-            <element signature="imports" expanded="false" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -1408,9 +1441,7 @@
     <entry file="file://$PROJECT_DIR$/flywithme/src/main/java/net/exent/flywithme/FlyWithMe.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="41" column="7" selection-start="1874" selection-end="1874" vertical-scroll-proportion="0.0" vertical-offset="738" max-vertical-offset="3924">
-          <folding>
-            <element signature="imports" expanded="false" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -1453,21 +1484,14 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/flywithme/src/main/AndroidManifest.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="10" column="0" selection-start="673" selection-end="673" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="828">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/flywithme/src/main/res/layout/fly_with_me.xml">
-      <provider selected="true" editor-type-id="android-designer">
-        <state />
-      </provider>
       <provider editor-type-id="text-editor">
         <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1332">
           <folding />
         </state>
+      </provider>
+      <provider selected="true" editor-type-id="android-designer">
+        <state />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/flywithme/src/main/java/net/exent/flywithme/task/NoaaForecastTask.java">
@@ -1503,74 +1527,107 @@
         <state line="131" column="8" selection-start="5871" selection-end="5871" vertical-scroll-proportion="0.61585367" vertical-offset="1936" max-vertical-offset="2592" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/flywithme/src/main/res/layout/takeoff_details.xml">
-      <provider selected="true" editor-type-id="android-designer">
-        <state />
-      </provider>
-      <provider editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2142">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/flywithme/src/main/res/values/strings.xml">
+    <entry file="jar://$APPLICATION_HOME_DIR$/sdk/platforms/android-19/android.jar!/android/database/sqlite/SQLiteOpenHelper.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="24" column="0" selection-start="981" selection-end="1135" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="666">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/flywithme/src/main/res/values-nb/strings.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="24" column="0" selection-start="977" selection-end="1131" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="666">
-          <folding />
-        </state>
+        <state line="30" column="0" selection-start="1539" selection-end="1539" vertical-scroll-proportion="0.82495946" vertical-offset="31" max-vertical-offset="648" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/flywithme/src/main/res/values-no/strings.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="670">
+        <state line="22" column="0" selection-start="1013" selection-end="1091" vertical-scroll-proportion="0.6366559" vertical-offset="0" max-vertical-offset="684">
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/flywithme/src/main/res/values-nn/strings.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="23" column="36" selection-start="1127" selection-end="1127" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="666">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/flywithme/src/main/java/net/exent/flywithme/TakeoffDetails.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="184" column="98" selection-start="9639" selection-end="9639" vertical-scroll-proportion="0.0" vertical-offset="2826" max-vertical-offset="3600">
-          <folding>
-            <element signature="imports" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/flywithme/src/main/java/net/exent/flywithme/bean/Takeoff.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="32" column="45" selection-start="1067" selection-end="1067" vertical-scroll-proportion="0.0" vertical-offset="72" max-vertical-offset="3402">
+        <state line="8" column="0" selection-start="199" selection-end="199" vertical-scroll-proportion="0.2364532" vertical-offset="0" max-vertical-offset="3312">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/flywithme/src/main/java/net/exent/flywithme/data/Database.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="64" column="102" selection-start="2221" selection-end="2221" vertical-scroll-proportion="0.0" vertical-offset="702" max-vertical-offset="2088">
+        <state line="54" column="0" selection-start="1568" selection-end="1568" vertical-scroll-proportion="0.0" vertical-offset="1083" max-vertical-offset="2124">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/flywithme/src/main/res/values-nn/strings.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="23" column="0" selection-start="1118" selection-end="1118" vertical-scroll-proportion="0.0" vertical-offset="44" max-vertical-offset="702">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/flywithme/src/main/res/values-nb/strings.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="23" column="0" selection-start="1081" selection-end="1121" vertical-scroll-proportion="0.0" vertical-offset="44" max-vertical-offset="702">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/flywithme/src/main/res/values/strings.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="23" column="0" selection-start="1086" selection-end="1126" vertical-scroll-proportion="0.0" vertical-offset="44" max-vertical-offset="702">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/flywithme/src/main/java/net/exent/flywithme/FlyWithMe.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="135" column="52" selection-start="5877" selection-end="5877" vertical-scroll-proportion="0.7791045" vertical-offset="1548" max-vertical-offset="3780">
-          <folding>
-            <element signature="imports" expanded="false" />
-          </folding>
+        <state line="135" column="52" selection-start="5877" selection-end="5877" vertical-scroll-proportion="0.0" vertical-offset="2430" max-vertical-offset="3780">
+          <folding />
         </state>
+      </provider>
+    </entry>
+    <entry file="jar://$APPLICATION_HOME_DIR$/sdk/platforms/android-19/android.jar!/java/util/Calendar.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="33" column="28" selection-start="1302" selection-end="1302" vertical-scroll-proportion="0.5932476" vertical-offset="225" max-vertical-offset="2880" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/flywithme/src/main/java/net/exent/flywithme/TakeoffDetails.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="211" column="134" selection-start="10879" selection-end="10879" vertical-scroll-proportion="0.0" vertical-offset="3387" max-vertical-offset="4662">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/flywithme/src/main/res/layout/takeoff_details.xml">
+      <provider editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2142">
+          <folding />
+        </state>
+      </provider>
+      <provider selected="true" editor-type-id="android-designer">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/flywithme/src/main/res/layout/takeoff_list.xml">
+      <provider editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="342">
+          <folding />
+        </state>
+      </provider>
+      <provider selected="true" editor-type-id="android-designer">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/flywithme/src/main/AndroidManifest.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="10" column="0" selection-start="673" selection-end="673" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="828">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/flywithme/src/main/res/layout/takeoff_schedule.xml">
+      <provider editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="596">
+          <folding />
+        </state>
+      </provider>
+      <provider selected="true" editor-type-id="android-designer">
+        <state />
       </provider>
     </entry>
   </component>

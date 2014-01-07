@@ -18,7 +18,9 @@
     <string name="retrieving_noaa_forecast">Retrieving meteogram…</string>
     <string name="fetching_noaa_failed">Fetching meteogram failed</string>
 
-    <!-- Flight schedule graph -->
+    <!-- Flight schedule -->
+    <string name="graph_text">Flight schedule (click for details)</string>
+    <string name="today">Today</string>
     <string name="date">Date</string>
     <string name="pilots">Pilots</string>
     <string name="time">Time</string>

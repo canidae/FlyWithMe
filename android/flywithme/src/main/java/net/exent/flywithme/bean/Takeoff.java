@@ -6,10 +6,6 @@ import android.location.LocationManager;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
 public class Takeoff implements Parcelable {
     public static final Parcelable.Creator<Takeoff> CREATOR = new Parcelable.Creator<Takeoff>() {
         public Takeoff createFromParcel(Parcel in) {
@@ -30,7 +26,6 @@ public class Takeoff implements Parcelable {
     private Bitmap noaaForecast;
     private long noaaUpdated;
     private boolean favourite;
-    private Map<Date, List<String>> schedule;
 
     public Takeoff(int id, String name, String description, int asl, int height, double latitude, double longitude, String exitDirections, boolean favourite) {
         this.id = id;

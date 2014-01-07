@@ -1,12 +1,13 @@
 package net.exent.flywithme.data;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import net.exent.flywithme.bean.Takeoff;
 
@@ -15,6 +16,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 public class Database extends SQLiteOpenHelper {
     private static Database instance;
@@ -26,13 +28,13 @@ public class Database extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         createDatabaseV1(db);
-        updateDatabaseToV2(db);
+        upgradeDatabaseToV2(db);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         if (oldVersion < 2)
-            updateDatabaseToV2(db);
+            upgradeDatabaseToV2(db);
     }
 
     public static Database getInstance() {
@@ -44,18 +46,18 @@ public class Database extends SQLiteOpenHelper {
     }
 
     public Map<Date, List<String>> getTakeoffSchedule(Takeoff takeoff) {
-        Map<Date, List<String>> schedule = new HashMap<>();
+        Map<Date, List<String>> schedule = new TreeMap<>();
         SQLiteDatabase db = getReadableDatabase();
         if (db == null)
             return schedule;
-        Cursor cursor = db.query("schedule", new String[] {"timestamp", "pilot"}, "takeoff_id = " + takeoff.getId(), null, null, null, null);
+        Cursor cursor = db.query("schedule", new String[] {"timestamp", "pilot"}, "takeoff_id = " + takeoff.getId(), null, null, null, "timestamp");
         while (cursor.moveToNext()) {
-            Date timestamp = new Date(cursor.getInt(0) * 1000);
+            Date timestamp = new Date((long) cursor.getInt(0) * 1000L); // int * int = int. we want long, hence the cast & "L"
             String pilot = cursor.getString(1);
             if (schedule.containsKey(timestamp))
                 schedule.get(timestamp).add(pilot);
             else
-                schedule.put(timestamp, Arrays.asList(pilot));
+                schedule.put(timestamp, new ArrayList<>(Arrays.asList(pilot)));
         }
         return schedule;
     }
@@ -101,10 +103,10 @@ public class Database extends SQLiteOpenHelper {
     }
 
     private void createDatabaseV1(SQLiteDatabase db) {
-        db.execSQL("create table favourite(takeoff_id integer primary key);");
+        db.execSQL("create table favourite(takeoff_id integer primary key)");
     }
 
-    private void updateDatabaseToV2(SQLiteDatabase db) {
-        db.execSQL("create table schedule(takeoff_id integer not null, timestamp integer not null, pilot text not null");
+    private void upgradeDatabaseToV2(SQLiteDatabase db) {
+        db.execSQL("create table schedule(takeoff_id integer not null, timestamp integer not null, pilot text not null)");
     }
 }

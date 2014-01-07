@@ -28,9 +28,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.TimeZone;
 
 public class TakeoffDetails extends Fragment {
@@ -184,14 +188,33 @@ public class TakeoffDetails extends Fragment {
         canvas.drawText(getActivity().getString(R.string.pilots), 4, bitmap.getHeight() - X_AXIS_HEIGHT - LINE_WIDTH - 4, paint);
         canvas.drawText(getActivity().getString(R.string.time), 4, bitmap.getHeight() - 4, paint);
 
+        // TODO: temporary to add some flights to the schedule
+        Map<Date, List<String>> tmpSchedule = new HashMap<>();
+        for (int a = 0; a < 10; ++a) {
+            Date date = new Date(System.currentTimeMillis() + a * 1000 * 60 * 60 * 7);
+            List<String> list = new ArrayList<>();
+            for (int b = 0; b < Math.random() * 10; ++b)
+                list.add("" + b);
+            tmpSchedule.put(date, list);
+        }
+        Database.getInstance().updateTakeoffSchedule(takeoff, tmpSchedule);
+
+        // fetch flight schedule for takeoff
+        Map<Date, List<String>> schedule = Database.getInstance().getTakeoffSchedule(takeoff);
 
         String prevDate = "";
         int xPos = Y_AXIS_WIDTH - SCHEDULE_BAR_SPACE;
-        for (int a = 0; a < 10; ++a) {
+        Calendar today = GregorianCalendar.getInstance();
+        for (Map.Entry<Date, List<String>> entry : schedule.entrySet()) {
             Calendar cal = GregorianCalendar.getInstance();
-            cal.setTime(new Date(System.currentTimeMillis() + a * 1000 * 60 * 60 * 7));
-            SimpleDateFormat dayFormatter = new SimpleDateFormat("d. MMM");
-            String text = dayFormatter.format(cal.getTime());
+            cal.setTime(entry.getKey());
+            String text;
+            if (today.get(Calendar.DAY_OF_YEAR) == cal.get(Calendar.DAY_OF_YEAR) && today.get(Calendar.YEAR) == cal.get(Calendar.YEAR)) {
+                text = getActivity().getString(R.string.today);
+            } else {
+                SimpleDateFormat dayFormatter = new SimpleDateFormat("d. MMM");
+                text = dayFormatter.format(cal.getTime());
+            }
             if (!prevDate.equals(text)) {
                 /* this scheduled flight is on another day than today or the previous registered flight */
                 paint.setColor(Color.YELLOW);
@@ -205,14 +228,14 @@ public class TakeoffDetails extends Fragment {
             // set prevDate
             prevDate = text;
 
-            // draw bar
-            int amount = (int) (Math.random() * 10.0) + 1; // TODO: just picking a random number for the time being
-            int barTop = (int) (X_AXIS_HEIGHT + LINE_WIDTH + (bitmap.getHeight() - (X_AXIS_HEIGHT + LINE_WIDTH) * 2) / (amount + 0.5));
+            // draw amount of pilots bar
+            int pilots = entry.getValue().size();
+            int barTop = (int) (X_AXIS_HEIGHT + LINE_WIDTH + (bitmap.getHeight() - (X_AXIS_HEIGHT + LINE_WIDTH) * 2) / (pilots + 0.5));
             paint.setColor(Color.GREEN);
             xPos += SCHEDULE_BAR_SPACE;
             canvas.drawRect(xPos, bitmap.getHeight() - X_AXIS_HEIGHT, xPos + SCHEDULE_BAR_WIDTH, barTop, paint);
-            // draw amount
-            text = "" + amount;
+            // draw amount of pilots number
+            text = "" + pilots;
             int textWidth = (int) Math.ceil(paint.measureText(text));
             paint.setColor(Color.BLACK);
             canvas.drawText(text, xPos + (SCHEDULE_BAR_WIDTH - textWidth) / 2, bitmap.getHeight() - X_AXIS_HEIGHT - LINE_WIDTH - 4, paint);
@@ -224,10 +247,6 @@ public class TakeoffDetails extends Fragment {
             canvas.drawText(text, xPos + (SCHEDULE_BAR_WIDTH - textWidth) / 2, bitmap.getHeight() - 4, paint);
             xPos += SCHEDULE_BAR_WIDTH;
         }
-
-        // draw text
-        //canvas.drawText("Testing", 0, 20, textPaint);
-
         // set bitmap as image for button
         flyScheduleButton.setImageBitmap(bitmap);
     }
