@@ -17,7 +17,6 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
@@ -72,6 +71,17 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
         noaaForecast.setArguments(args);
         /* show fragment */
         showFragment(noaaForecast, "noaaForecast");
+    }
+
+    public void showTakeoffSchedule(Takeoff takeoff) {
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragmentContainer);
+        TakeoffSchedule takeoffSchedule = (fragment != null && fragment instanceof TakeoffSchedule) ? (TakeoffSchedule) fragment : new TakeoffSchedule();
+        /* pass arguments */
+        Bundle args = new Bundle();
+        args.putParcelable(TakeoffSchedule.ARG_TAKEOFF, takeoff);
+        takeoffSchedule.setArguments(args);
+        /* show fragment */
+        showFragment(takeoffSchedule, "takeoffSchedule");
     }
 
     /**

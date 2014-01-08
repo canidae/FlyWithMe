@@ -37,7 +37,7 @@
         android:scrollbars="vertical"
         android:autoLink="web"
         android:text="@string/app_name"
-        android:layout_above="@+id/takeoffDetailsFlyScheduleText" />
+        android:layout_above="@+id/scheduleTimeLabel" />
 
     <ImageView
         android:id="@+id/takeoffDetailsWindroseNorth"
@@ -116,8 +116,8 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:text="@string/graph_text"
-        android:id="@+id/takeoffDetailsFlyScheduleText"
-        android:layout_above="@+id/takeoffDetailsFlyScheduleButton"
+        android:id="@+id/scheduleTimeLabel"
+        android:layout_above="@+id/takeoffDetailsFlyScheduleChart"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignRight="@+id/takeoffDetailsWindroseNorth"
@@ -127,7 +127,7 @@
     <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/takeoffDetailsFlyScheduleButton"
+        android:id="@+id/takeoffDetailsFlyScheduleChart"
         android:background="@null"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"

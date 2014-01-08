@@ -35,13 +35,14 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TimeZone;
 
 public class TakeoffDetails extends Fragment {
     public interface TakeoffDetailsListener {
         Location getLocation();
 
         void showNoaaForecast(Takeoff takeoff);
+
+        void showTakeoffSchedule(Takeoff takeoff);
     }
 
     public static final String ARG_TAKEOFF = "takeoff";
@@ -130,13 +131,19 @@ public class TakeoffDetails extends Fragment {
         takeoffDescription.setText("http://flightlog.org/fl.html?a=22&country_id=160&start_id=" + takeoff.getId() + "\n" + takeoff.getDescription());
         takeoffDescription.setMovementMethod(LinkMovementMethod.getInstance());
 
-        final ImageButton flyScheduleButton = (ImageButton) getActivity().findViewById(R.id.takeoffDetailsFlyScheduleButton);
+        final ImageButton flyScheduleButton = (ImageButton) getActivity().findViewById(R.id.takeoffDetailsFlyScheduleChart);
         if (flyScheduleButton != null && flyScheduleButton.getViewTreeObserver() != null) {
             flyScheduleButton.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                 @Override
                 public void onGlobalLayout() {
                     flyScheduleButton.getViewTreeObserver().removeGlobalOnLayoutListener(this);
                     drawFlySchedule(flyScheduleButton);
+                }
+            });
+            flyScheduleButton.setOnClickListener(new OnClickListener() {
+                public void onClick(View v) {
+                    // show takeoff schedule details
+                    callback.showTakeoffSchedule(takeoff);
                 }
             });
         }
