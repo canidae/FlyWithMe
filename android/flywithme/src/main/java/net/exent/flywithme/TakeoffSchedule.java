@@ -119,6 +119,7 @@ public class TakeoffSchedule extends Fragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable(ARG_TAKEOFF, takeoff);
+        // TODO: save calendar too?
     }
 
     private void updateCalendar(int field, int value) {

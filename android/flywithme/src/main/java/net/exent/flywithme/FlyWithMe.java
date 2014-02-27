@@ -154,8 +154,12 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, LOCATION_UPDATE_TIME, LOCATION_UPDATE_DISTANCE, locationListener);
         location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-        if (location == null)
-            location = new Location(LocationManager.PASSIVE_PROVIDER); // no location set, let's pretend we're skinny dipping in the gulf of guinea
+        if (location == null) {
+            // no location set, let's pretend we're at the Rikssenter :)
+            location = new Location(LocationManager.PASSIVE_PROVIDER);
+            location.setLongitude(61.874655);
+            location.setLatitude(9.154848);
+        }
 
         instance = this;
 
