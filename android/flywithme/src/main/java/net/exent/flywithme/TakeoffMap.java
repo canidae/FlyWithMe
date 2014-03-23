@@ -199,7 +199,7 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
         protected Void doInBackground(CameraPosition... cameraPositions) {
             try {
                 /* clone markers & save visible takeoffs, so we know which markers to remove later */
-                Map<Takeoff, String> visibleTakeoffs = new HashMap<Takeoff, String>();
+                Map<Takeoff, String> visibleTakeoffs = new HashMap<>();
                 for (Map.Entry<String, Pair<Marker, Takeoff>> entry : markers.entrySet())
                     visibleTakeoffs.put(entry.getValue().second, entry.getKey());
 

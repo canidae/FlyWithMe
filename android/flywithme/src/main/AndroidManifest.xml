@@ -20,8 +20,16 @@
         android:theme="@style/AppTheme" >
 
         <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
+        <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyDxop_2QoIHu-zgof2EhWMC6f5gxAZQOpI" />
+
+        <service
+            android:name=".ScheduleService"
+            android:exported="false"/>
 
         <activity
             android:name="FlyWithMe"

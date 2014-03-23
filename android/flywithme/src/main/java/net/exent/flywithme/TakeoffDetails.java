@@ -96,7 +96,7 @@ public class TakeoffDetails extends Fragment {
         favouriteButton.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 takeoff.setFavourite(!takeoff.isFavourite());
-                Database.getInstance().updateFavourite(takeoff);
+                Database.updateFavourite(takeoff);
                 favouriteButton.setImageResource(takeoff.isFavourite() ? R.drawable.favourite_enabled : R.drawable.favourite_disabled);
                 // sort takeoff list
                 Flightlog.sortTakeoffListToLocation(Flightlog.getAllTakeoffs(), FlyWithMe.getInstance().getLocation());
@@ -204,10 +204,11 @@ public class TakeoffDetails extends Fragment {
                 list.add("" + b);
             tmpSchedule.put(date, list);
         }
-        Database.getInstance().updateTakeoffSchedule(takeoff, tmpSchedule);
+        Database.updateTakeoffSchedule(takeoff.getId(), tmpSchedule);
+        // TODO: END
 
         // fetch flight schedule for takeoff
-        Map<Date, List<String>> schedule = Database.getInstance().getTakeoffSchedule(takeoff);
+        Map<Date, List<String>> schedule = Database.getTakeoffSchedule(takeoff);
 
         String prevDate = "";
         int xPos = Y_AXIS_WIDTH - SCHEDULE_BAR_SPACE;

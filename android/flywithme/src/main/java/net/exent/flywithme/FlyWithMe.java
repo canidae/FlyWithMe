@@ -14,6 +14,7 @@ import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -111,7 +112,7 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
      */
     public void showSettings() {
         Intent preferenceIntent = new Intent(this, Preferences.class);
-        preferenceIntent.putStringArrayListExtra("airspaceList", new ArrayList<String>(Airspace.getAirspaceMap().keySet()));
+        preferenceIntent.putStringArrayListExtra("airspaceList", new ArrayList<>(Airspace.getAirspaceMap().keySet()));
         startActivity(preferenceIntent);
     }
 
@@ -166,6 +167,12 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
         if (savedInstanceState != null || findViewById(R.id.fragmentContainer) == null)
             return;
 
+        /* start background task */
+        Intent scheduleService = new Intent(this, ScheduleService.class);
+        scheduleService.setData(Uri.parse("10"));
+        startService(scheduleService);
+
+        /* init data */
         new InitDataTask().execute(this);
     }
 

@@ -100,7 +100,7 @@ public class Flightlog {
      * Read file with takeoff details.
      */
     private static void initTakeoffList(Context context) {
-        Set<Integer> favourites = Database.getInstance().getFavourites();
+        Set<Integer> favourites = Database.getFavourites();
         List<Takeoff> tmpTakeoffs = new ArrayList<Takeoff>();
         try {
             DataInputStream inputStream = new DataInputStream(context.getResources().openRawResource(R.raw.flywithme));

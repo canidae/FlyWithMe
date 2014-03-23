@@ -19,6 +19,7 @@ public class ScheduleServlet extends HttpServlet {
     private static Map<Integer, Map<Long, List<String>>> schedule = new ConcurrentHashMap<>(); // <takeoffId, <timestamp, <pilots>>>
     private static long lastScheduleClean = System.currentTimeMillis();
 
+    /*
     @Override
     protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws IOException {
         // TODO: remove, just for testing
@@ -149,6 +150,7 @@ public class ScheduleServlet extends HttpServlet {
         }
         inputStream.close();
     }
+    */
 
     @Override
     protected void doPost(final HttpServletRequest request, final HttpServletResponse response) throws IOException {

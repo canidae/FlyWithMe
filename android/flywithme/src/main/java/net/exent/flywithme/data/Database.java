@@ -16,7 +16,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 public class Database extends SQLiteOpenHelper {
     private static Database instance;
@@ -37,17 +36,13 @@ public class Database extends SQLiteOpenHelper {
             upgradeDatabaseToV2(db);
     }
 
-    public static Database getInstance() {
-        return instance;
-    }
-
     public static void init(Context context) {
         instance = new Database(context);
     }
 
-    public Map<Date, List<String>> getTakeoffSchedule(Takeoff takeoff) {
+    public static Map<Date, List<String>> getTakeoffSchedule(Takeoff takeoff) {
         Map<Date, List<String>> schedule = new TreeMap<>();
-        SQLiteDatabase db = getReadableDatabase();
+        SQLiteDatabase db = instance.getReadableDatabase();
         if (db == null)
             return schedule;
         Cursor cursor = db.query("schedule", new String[] {"timestamp", "pilot"}, "takeoff_id = " + takeoff.getId(), null, null, null, "timestamp");
@@ -62,18 +57,18 @@ public class Database extends SQLiteOpenHelper {
         return schedule;
     }
 
-    public void updateTakeoffSchedule(Takeoff takeoff, Map<Date, List<String>> schedule) {
+    public static void updateTakeoffSchedule(int takeoffId, Map<Date, List<String>> schedule) {
         // TODO: how will we handle the current user's registration? we need to store the id of the user, could just match that with the database, it's not unique, though, hmm, bad idea?
         // TODO: let's just save name/phone, timestamp and takeoffId for user like we save preferences
-        SQLiteDatabase db = getWritableDatabase();
+        SQLiteDatabase db = instance.getWritableDatabase();
         if (db == null)
             return;
         // we'll fully replace the entries for this takeoff
-        db.execSQL("delete from schedule where takeoff_id = " + takeoff.getId());
+        db.execSQL("delete from schedule where takeoff_id = " + takeoffId);
         for (Map.Entry<Date, List<String>> entry : schedule.entrySet()) {
             for (String pilot : entry.getValue()) {
                 ContentValues values = new ContentValues();
-                values.put("takeoff_id", takeoff.getId());
+                values.put("takeoff_id", takeoffId);
                 values.put("timestamp", entry.getKey().getTime() / 1000);
                 values.put("pilot", pilot);
                 db.insert("schedule", null, values);
@@ -81,9 +76,9 @@ public class Database extends SQLiteOpenHelper {
         }
     }
 
-    public Set<Integer> getFavourites() {
+    public static Set<Integer> getFavourites() {
         Set<Integer> favourites = new HashSet<>();
-        SQLiteDatabase db = getReadableDatabase();
+        SQLiteDatabase db = instance.getReadableDatabase();
         if (db == null)
             return favourites;
         Cursor cursor = db.query("favourite", new String[] {"takeoff_id"}, null, null, null, null, null);
@@ -92,8 +87,8 @@ public class Database extends SQLiteOpenHelper {
         return favourites;
     }
 
-    public void updateFavourite(Takeoff takeoff) {
-        SQLiteDatabase db = getWritableDatabase();
+    public static void updateFavourite(Takeoff takeoff) {
+        SQLiteDatabase db = instance.getWritableDatabase();
         if (db == null)
             return;
         if (takeoff.isFavourite())

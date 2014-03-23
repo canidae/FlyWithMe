@@ -4,17 +4,7 @@
    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
    version="2.5"> 
-  <display-name>New Project Template</display-name>
-  
-  <servlet>
-    <servlet-name>hello</servlet-name>
-    <servlet-class>org.example.HelloAppEngineServlet</servlet-class>
-  </servlet>
-
-  <servlet-mapping>
-    <servlet-name>hello</servlet-name>
-    <url-pattern>/helloappengine</url-pattern>
-  </servlet-mapping>
+  <display-name>Fly With Me!</display-name>
 
     <servlet>
         <servlet-name>fwm</servlet-name>
