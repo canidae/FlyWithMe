@@ -30,4 +30,11 @@
 
     <!-- What airspace to draw (this is mostly set programatically) -->
     <string name="show_airspace_types">Show airspace types</string>
+
+    <!-- config for PreferenceFragment -->
+    <!--  Strings for possible PreferenceActivity Back/Next buttons -->
+    <string name="back_button_label">Back</string>
+    <string name="next_button_label">Next</string>
+    <!-- Optional button to Skip a PreferenceActivity [CHAR LIMIT=20] -->
+    <string name="skip_button_label">Skip</string>
 </resources>
