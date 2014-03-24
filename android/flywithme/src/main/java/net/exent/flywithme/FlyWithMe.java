@@ -1,12 +1,9 @@
 package net.exent.flywithme;
 
-import java.util.ArrayList;
-
 import net.exent.flywithme.TakeoffDetails.TakeoffDetailsListener;
 import net.exent.flywithme.TakeoffList.TakeoffListListener;
 import net.exent.flywithme.TakeoffMap.TakeoffMapListener;
 import net.exent.flywithme.bean.Takeoff;
-import net.exent.flywithme.data.Airspace;
 import net.exent.flywithme.data.Flightlog;
 import net.exent.flywithme.task.InitDataTask;
 import android.content.Context;
@@ -18,9 +15,13 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class FlyWithMe extends FragmentActivity implements TakeoffListListener, TakeoffMapListener, TakeoffDetailsListener {
     private static final int LOCATION_UPDATE_TIME = 300000; // update location every LOCATION_UPDATE_TIME millisecond
@@ -29,7 +30,7 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
     private static Location lastSortedTakeoffsLocation;
     private static Location location = new Location(LocationManager.PASSIVE_PROVIDER);
     private static FlyWithMe instance;
-    private static boolean mapLastViewed = false; // false == we entered TakeoffDetails from TakeoffList, true == we entered TakeoffDetails from TakeoffMap
+    private static List<String> backstack = new ArrayList<>();
 
     public static FlyWithMe getInstance() {
         return instance;
@@ -92,7 +93,6 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragmentContainer);
         TakeoffList takeoffList = (fragment != null && fragment instanceof TakeoffList) ? (TakeoffList) fragment : new TakeoffList();
         /* show fragment */
-        mapLastViewed = false;
         showFragment(takeoffList, "takeoffList");
     }
 
@@ -103,17 +103,17 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragmentContainer);
         TakeoffMap takeoffMap = (fragment != null && fragment instanceof TakeoffMap) ? (TakeoffMap) fragment : new TakeoffMap();
         /* show fragment */
-        mapLastViewed = true;
         showFragment(takeoffMap, "map");
     }
 
     /**
-     * Show settings. TODO: There's no "SupportPreferenceFragment" (yet), thus this has to be an own activity for the time being
+     * Show settings.
      */
     public void showSettings() {
-        Intent preferenceIntent = new Intent(this, Preferences.class);
-        preferenceIntent.putStringArrayListExtra("airspaceList", new ArrayList<>(Airspace.getAirspaceMap().keySet()));
-        startActivity(preferenceIntent);
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragmentContainer);
+        Preferences preferences = (fragment != null && fragment instanceof Preferences) ? (Preferences) fragment : new Preferences();
+        /* show fragment */
+        showFragment(preferences, "preferences");
     }
 
     /**
@@ -203,26 +203,42 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
     @Override
     public void onBackPressed() {
         /* using our own "backstack", because the android one is utterly on crack */
-        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragmentContainer);
-        if (fragment instanceof NoaaForecast) {
-            /* when we're looking at a forecast, then the back button will always take us to TakeoffDetails */
-            showTakeoffDetails(((NoaaForecast) fragment).getTakeoff());
-        } else if (fragment instanceof TakeoffDetails) {
-            /* either TakeoffMap or TakeoffList */
-            if (mapLastViewed)
-                showMap();
-            else
+        /* last entry in backstack is currently viewed fragment, remove it */
+        if (!backstack.isEmpty())
+            backstack.remove(backstack.size() - 1);
+        if (backstack.isEmpty()) {
+            // no more entries in backstack, return to takeoff list, or exit application if we're looking at the takeoff list
+            Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragmentContainer);
+            if (fragment instanceof TakeoffList) {
+                super.onBackPressed();
+            } else {
                 showTakeoffList();
-        } else if (fragment instanceof TakeoffMap) {
-            /* when we're looking at map, the back button takes us to the list */
-            showTakeoffList();
+            }
         } else {
-            /* looking at list, call parent onBackPressed(), which probably exits the application */
-            super.onBackPressed();
+            /* more entries in backstack, show previous entry */
+            String lastFragment = backstack.remove(backstack.size() - 1);
+            if (lastFragment == null) {
+                // this shouldn't happen
+                super.onBackPressed();
+            } else if (lastFragment.equals("map")) {
+                showMap();
+            } else if (lastFragment.equals("preferences")) {
+                showSettings();
+            } else if (lastFragment.equals("takeoffList")) {
+                showTakeoffList();
+            } else if (lastFragment.startsWith("takeoffDetails")) {
+                showTakeoffDetails(Flightlog.getTakeoff(Integer.parseInt(lastFragment.substring(lastFragment.indexOf(',') + 1))));
+            } else if (lastFragment.startsWith("noaaForecast")) {
+                showNoaaForecast(Flightlog.getTakeoff(Integer.parseInt(lastFragment.substring(lastFragment.indexOf(',') + 1))));
+            } else if (lastFragment.startsWith("takeoffSchedule")) {
+                showTakeoffSchedule(Flightlog.getTakeoff(Integer.parseInt(lastFragment.substring(lastFragment.indexOf(',') + 1))));
+            }
         }
     }
 
     private void showFragment(Fragment fragment, String name) {
+        backstack.remove(name);
+        backstack.add(name);
         getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, fragment, name).commit();
     }
 

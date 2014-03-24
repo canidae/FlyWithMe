@@ -9,6 +9,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
+import net.exent.flywithme.FlyWithMe;
 import net.exent.flywithme.R;
 import net.exent.flywithme.bean.Takeoff;
 import android.content.Context;
@@ -18,7 +19,7 @@ import android.util.Log;
 
 public class Flightlog {
     private static final int DEFAULT_MIN_TAKEOFFS = 50;
-    private static List<Takeoff> takeoffs = new ArrayList<Takeoff>();
+    private static List<Takeoff> takeoffs = new ArrayList<>();
 
     /**
      * Fetch takeoffs without sorting them first.
@@ -26,7 +27,23 @@ public class Flightlog {
      * @return Takeoffs.
      */
     public static List<Takeoff> getAllTakeoffs() {
+        //init(FlyWithMe.getInstance()); // TODO: if we do this, then performance of takeoff map is utterly devastated. i'm completely dumbfounded as of why
         return takeoffs;
+    }
+
+    /**
+     * Fetch takeoff with given ID.
+     * @param takeoffId ID of the takeoff.
+     * @return The takeoff with given ID.
+     */
+    public static Takeoff getTakeoff(int takeoffId) {
+        // TODO: optimize, this is slow (but only used when back is pressed, so far)
+        init(FlyWithMe.getInstance());
+        for (Takeoff takeoff : getAllTakeoffs()) {
+            if (takeoff.getId() == takeoffId)
+                return takeoff;
+        }
+        return null;
     }
 
     /**
@@ -35,43 +52,13 @@ public class Flightlog {
      * @return Sorted list of takeoffs near location.
      */
     public static List<Takeoff> getTakeoffs(Location location) {
+        init(FlyWithMe.getInstance());
         return getTakeoffs(location, 40000000, DEFAULT_MIN_TAKEOFFS);
     }
 
     public static List<Takeoff> getTakeoffs(Location location, int maxDistance) {
+        init(FlyWithMe.getInstance());
         return getTakeoffs(location, maxDistance, DEFAULT_MIN_TAKEOFFS);
-    }
-
-    public static List<Takeoff> getTakeoffs(Location location, int maxDistance, int minTakeoffs) {
-        /* limit the amount of takeoffs to sort (sorting is slow, reducing the list to sort by iterating some few times is significantly faster) */
-        List<Takeoff> sortedTakeoffs;
-        if (minTakeoffs < 1)
-            minTakeoffs = 1;
-        long takeoffsUpperLimit = minTakeoffs * 4;
-        if (takeoffs.size() <= takeoffsUpperLimit) {
-            /* so few takeoffs that there's no need to reduce amount to sort */
-            sortedTakeoffs = takeoffs;
-        } else {
-            /* need to reduce amount of takeoffs to sort */
-            sortedTakeoffs = new ArrayList<Takeoff>();
-            for (Takeoff takeoff : takeoffs) {
-                if (location.distanceTo(takeoff.getLocation()) <= maxDistance)
-                    sortedTakeoffs.add(takeoff);
-            }
-            while (sortedTakeoffs.size() > takeoffsUpperLimit) {
-                maxDistance /= 2;
-                List<Takeoff> tmp = new ArrayList<Takeoff>();
-                for (Takeoff takeoff : sortedTakeoffs) {
-                    if (location.distanceTo(takeoff.getLocation()) <= maxDistance)
-                        tmp.add(takeoff);
-                }
-                if (tmp.size() < minTakeoffs)
-                    break; // dropped below amount of takeoffs to return, break loop to sort takeoffs from the previous reduction run 
-                sortedTakeoffs = tmp;
-            }
-        }
-        sortTakeoffListToLocation(sortedTakeoffs, location);
-        return sortedTakeoffs;
     }
 
     public static void sortTakeoffListToLocation(List<Takeoff> takeoffs, final Location location) {
@@ -92,16 +79,47 @@ public class Flightlog {
     }
 
     public static void init(Context context) {
+        Log.w("Flightlog", "init()");
+        // TODO: even when takeoffs.isEmpty() returns "false", takeoff map performance is utterly devastated. what?
+        // TODO: it seems to be memory related, but i still don't get why, this shouldn't cause a spike in memory usage
         if (takeoffs.isEmpty())
             initTakeoffList(context);
+    }
+
+    private static List<Takeoff> getTakeoffs(Location location, int maxDistance, int minTakeoffs) {
+        /* limit the amount of takeoffs to sort (sorting is slow, reducing the list to sort by iterating some few times is significantly faster) */
+        List<Takeoff> sortedTakeoffs;
+        if (minTakeoffs < 1)
+            minTakeoffs = 1;
+        long takeoffsUpperLimit = minTakeoffs * 4;
+        /* need to reduce amount of takeoffs to sort */
+        sortedTakeoffs = new ArrayList<>();
+        for (Takeoff takeoff : getAllTakeoffs()) {
+            if (location.distanceTo(takeoff.getLocation()) <= maxDistance)
+                sortedTakeoffs.add(takeoff);
+        }
+        while (sortedTakeoffs.size() > takeoffsUpperLimit) {
+            maxDistance /= 2;
+            List<Takeoff> tmp = new ArrayList<>();
+            for (Takeoff takeoff : sortedTakeoffs) {
+                if (location.distanceTo(takeoff.getLocation()) <= maxDistance)
+                    tmp.add(takeoff);
+            }
+            if (tmp.size() < minTakeoffs)
+                break; // dropped below amount of takeoffs to return, break loop to sort takeoffs from the previous reduction run
+            sortedTakeoffs = tmp;
+        }
+        sortTakeoffListToLocation(sortedTakeoffs, location);
+        return sortedTakeoffs;
     }
 
     /**
      * Read file with takeoff details.
      */
     private static void initTakeoffList(Context context) {
+        Log.w("Flightlog", "initTakeoffList()");
         Set<Integer> favourites = Database.getFavourites();
-        List<Takeoff> tmpTakeoffs = new ArrayList<Takeoff>();
+        List<Takeoff> tmpTakeoffs = new ArrayList<>();
         try {
             DataInputStream inputStream = new DataInputStream(context.getResources().openRawResource(R.raw.flywithme));
             while (true) {
