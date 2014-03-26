@@ -4,7 +4,7 @@ import net.exent.flywithme.TakeoffDetails.TakeoffDetailsListener;
 import net.exent.flywithme.TakeoffList.TakeoffListListener;
 import net.exent.flywithme.TakeoffMap.TakeoffMapListener;
 import net.exent.flywithme.bean.Takeoff;
-import net.exent.flywithme.data.Flightlog;
+import net.exent.flywithme.data.Database;
 import net.exent.flywithme.task.InitDataTask;
 import android.content.Context;
 import android.content.Intent;
@@ -149,7 +149,7 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
                 if (newLocation == null)
                     return;
                 location = newLocation;
-                updateTakeoffList();
+                //updateTakeoffList();
             }
         };
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -227,11 +227,11 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
             } else if (lastFragment.equals("takeoffList")) {
                 showTakeoffList();
             } else if (lastFragment.startsWith("takeoffDetails")) {
-                showTakeoffDetails(Flightlog.getTakeoff(Integer.parseInt(lastFragment.substring(lastFragment.indexOf(',') + 1))));
+                showTakeoffDetails(Database.getTakeoff(Integer.parseInt(lastFragment.substring(lastFragment.indexOf(',') + 1))));
             } else if (lastFragment.startsWith("noaaForecast")) {
-                showNoaaForecast(Flightlog.getTakeoff(Integer.parseInt(lastFragment.substring(lastFragment.indexOf(',') + 1))));
+                showNoaaForecast(Database.getTakeoff(Integer.parseInt(lastFragment.substring(lastFragment.indexOf(',') + 1))));
             } else if (lastFragment.startsWith("takeoffSchedule")) {
-                showTakeoffSchedule(Flightlog.getTakeoff(Integer.parseInt(lastFragment.substring(lastFragment.indexOf(',') + 1))));
+                showTakeoffSchedule(Database.getTakeoff(Integer.parseInt(lastFragment.substring(lastFragment.indexOf(',') + 1))));
             }
         }
     }
@@ -242,9 +242,10 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
         getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, fragment, name).commit();
     }
 
+    /*
     private synchronized boolean updateTakeoffList() {
         if (lastSortedTakeoffsLocation == null || location.distanceTo(lastSortedTakeoffsLocation) >= TAKEOFFS_SORT_DISTANCE) {
-            /* moved too much, need to sort takeoff list again */
+            // moved too much, need to sort takeoff list again
             Flightlog.sortTakeoffListToLocation(Flightlog.getAllTakeoffs(), location);
             lastSortedTakeoffsLocation = location;
             Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragmentContainer);
@@ -258,4 +259,5 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
         }
         return false;
     }
+    */
 }

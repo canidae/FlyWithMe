@@ -4,8 +4,6 @@ import net.exent.flywithme.FlyWithMe;
 import net.exent.flywithme.ProgressDialog;
 import net.exent.flywithme.R;
 import net.exent.flywithme.data.Airspace;
-import net.exent.flywithme.data.Database;
-import net.exent.flywithme.data.Flightlog;
 import android.content.Context;
 import android.os.AsyncTask;
 
@@ -13,14 +11,9 @@ public class InitDataTask extends AsyncTask<Context, String, Void> {
     @Override
     protected Void doInBackground(Context... contexts) {
         Context context = contexts[0];
-        publishProgress("0", context.getString(R.string.init_database));
-        Database.init(contexts[0]);
-        publishProgress("25", context.getString(R.string.loading_takeoffs));
-        Flightlog.init(contexts[0]);
         publishProgress("50", context.getString(R.string.loading_airspace));
         Airspace.init(contexts[0]);
         publishProgress("75", context.getString(R.string.sorting_takeoffs));
-        Flightlog.sortTakeoffListToLocation(Flightlog.getAllTakeoffs(), FlyWithMe.getInstance().getLocation());
         return null;
     }
 

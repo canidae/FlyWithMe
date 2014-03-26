@@ -31,7 +31,7 @@ public class ScheduleService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        Log.d(getClass().getSimpleName(), "onHandleIntent(" + intent.toString() + ")");
+        Log.d(getClass().getName(), "onHandleIntent(" + intent.toString() + ")");
         while (true) {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
             /* TODO: settings:
@@ -47,7 +47,7 @@ public class ScheduleService extends IntentService {
             Set<Integer> favourites = Database.getFavourites();
 
             try {
-                Log.i(getClass().getSimpleName(), "Fetching schedule from server");
+                Log.i(getClass().getName(), "Fetching schedule from server");
                 HttpURLConnection con = (HttpURLConnection) new URL("http://flywithme-server.appspot.com/fwm").openConnection();
                 con.setRequestMethod("POST");
                 con.setDoOutput(true);

@@ -9,7 +9,7 @@ import java.util.Set;
 
 import net.exent.flywithme.bean.Takeoff;
 import net.exent.flywithme.data.Airspace;
-import net.exent.flywithme.data.Flightlog;
+import net.exent.flywithme.data.Database;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -56,8 +56,8 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
     private static View view;
     /* we can't use Map<Marker, Takeoff> below, because the Marker may be recreated, invalidating the reference we got to the previous instantiation.
      * instead we'll have to keep the id (String) as a reference to the marker */
-    private static Map<String, Pair<Marker, Takeoff>> markers = new HashMap<String, Pair<Marker, Takeoff>>();
-    private static Map<Polygon, PolygonOptions> polygons = new HashMap<Polygon, PolygonOptions>();
+    private static Map<String, Pair<Marker, Takeoff>> markers = new HashMap<>();
+    private static Map<Polygon, PolygonOptions> polygons = new HashMap<>();
     private static Bitmap markerBitmap;
     private static Bitmap markerNorthBitmap;
     private static Bitmap markerNortheastBitmap;
@@ -71,7 +71,7 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
 
     public void drawMap() {
         if (callback == null) {
-            Log.w(getClass().getSimpleName(), "callback is null, returning");
+            Log.w(getClass().getName(), "callback is null, returning");
             return;
         }
         try {
@@ -121,7 +121,7 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
 
     public void onInfoWindowClick(Marker marker) {
         if (callback == null) {
-            Log.w(getClass().getSimpleName(), "callback is null, returning");
+            Log.w(getClass().getName(), "callback is null, returning");
             return;
         }
         /* tell main activity to show takeoff details */
@@ -129,7 +129,7 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
         if (pair != null)
             callback.showTakeoffDetails(pair.second);
         else
-            Log.w(getClass().getSimpleName(), "Strange, could not find takeoff for marker");
+            Log.w(getClass().getName(), "Strange, could not find takeoff for marker");
     }
 
     public void onCameraChange(CameraPosition cameraPosition) {
@@ -212,12 +212,13 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
                         location.setLongitude(latLng.longitude);
                     }
 
-                    /* get the nearest takeoffs */ 
-                    List<Takeoff> takeoffs = Flightlog.getTakeoffs(location, (int) (10240000000L / (256 * Math.pow(2, cameraPositions[0].zoom))));
+                    /* get the nearest takeoffs */
+                    Log.w(getClass().getName(), "Start fetching nearby takeoffs");
+                    List<Takeoff> takeoffs = Database.getTakeoffs(location.getLatitude(), location.getLongitude(), 25);
+                    Log.w(getClass().getName(), "Stop fetching nearby takeoffs");
 
                     /* add markers */
-                    for (int counter = 0; counter < 50 && counter < takeoffs.size(); ++counter) {
-                        Takeoff takeoff = takeoffs.get(counter);
+                    for (Takeoff takeoff : takeoffs) {
                         if (visibleTakeoffs.containsKey(takeoff)) {
                             visibleTakeoffs.remove(takeoff);
                             continue; // takeoff already shown
@@ -267,7 +268,7 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
                     MarkerOptions markerOptions = (MarkerOptions) objects[1];
                     GoogleMap map = ((SupportMapFragment) getFragmentManager().findFragmentById(R.id.takeoffMapFragment)).getMap();
                     Marker marker = map.addMarker(markerOptions);
-                    Pair<Marker, Takeoff> pair = new Pair<Marker, Takeoff>(marker, takeoff);
+                    Pair<Marker, Takeoff> pair = new Pair<>(marker, takeoff);
                     markers.put(marker.getId(), pair);
                 } else {
                     /* remove marker */
@@ -284,7 +285,7 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
         @Override
         protected Runnable doInBackground(CameraPosition... cameraPositions) {
             try {
-                final Set<PolygonOptions> showPolygons = new HashSet<PolygonOptions>();
+                final Set<PolygonOptions> showPolygons = new HashSet<>();
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
                 if (prefs.getBoolean("pref_map_show_airspace", true)) {
                     Location location = callback.getLocation();
@@ -298,12 +299,12 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
                     try {
                         maxAirspaceDistance = Integer.parseInt(prefs.getString("pref_max_airspace_distance", "" + DEFAULT_MAX_AIRSPACE_DISTANCE));
                     } catch (NumberFormatException e) {
-                        Log.w(getClass().getSimpleName(), "Unable to parse max airspace distance setting as integer", e);
+                        Log.w(getClass().getName(), "Unable to parse max airspace distance setting as integer", e);
                     }
                     maxAirspaceDistance *= 1000;
 
                     for (Map.Entry<String, List<PolygonOptions>> entry : Airspace.getAirspaceMap().entrySet()) {
-                        if (entry.getKey() == null || prefs.getBoolean("pref_airspace_enabled_" + entry.getKey().trim(), true) == false)
+                        if (entry.getKey() == null || !prefs.getBoolean("pref_airspace_enabled_" + entry.getKey().trim(), true))
                             continue;
                         for (PolygonOptions polygon : entry.getValue()) {
                             if (showPolygon(polygon, location, tmpLocation, maxAirspaceDistance))
@@ -336,14 +337,10 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
         /**
          * Figure out whether to draw polygon or not. The parameters "myLocation" and "tmpLocation" are only used to prevent excessive allocations.
          * 
-         * @param polygon
-         *            The polygon we want to figure out whether to draw or not.
-         * @param myLocation
-         *            Users current location.
-         * @param tmpLocation
-         *            Location object only used for determining distance from polygon points to user location.
-         * @param maxAirspaceDistance
-         *            User must be within a polygon or within this distance to one of the polygon points in order to be drawn.
+         * @param polygon The polygon we want to figure out whether to draw or not.
+         * @param myLocation Users current location.
+         * @param tmpLocation Location object only used for determining distance from polygon points to user location.
+         * @param maxAirspaceDistance User must be within a polygon or within this distance to one of the polygon points in order to be drawn.
          * @return Whether polygon should be drawn.
          */
         private boolean showPolygon(PolygonOptions polygon, Location myLocation, Location tmpLocation, int maxAirspaceDistance) {

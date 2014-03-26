@@ -1,13 +1,14 @@
 package net.exent.flywithme;
 
 import net.exent.flywithme.bean.Takeoff;
-import net.exent.flywithme.data.Flightlog;
+import net.exent.flywithme.data.Database;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,10 @@ import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.TextView;
 
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
 public class TakeoffList extends Fragment {
     public interface TakeoffListListener {
         void showTakeoffDetails(Takeoff takeoff);
@@ -29,6 +34,7 @@ public class TakeoffList extends Fragment {
     private static int savedPosition;
     private static int savedListTop;
     private TakeoffListListener callback;
+    private List<Takeoff> takeoffs;
 
     @Override
     public void onAttach(Activity activity) {
@@ -46,6 +52,25 @@ public class TakeoffList extends Fragment {
     public void onStart() {
         super.onStart();
 
+        Log.i(getClass().getName(), "onStart()");
+        final Location location = FlyWithMe.getInstance().getLocation();
+        takeoffs = Database.getTakeoffs(location.getLatitude(), location.getLongitude(), 200);
+        // TODO: fetch favourites
+        Collections.sort(takeoffs, new Comparator<Takeoff>() {
+            public int compare(Takeoff lhs, Takeoff rhs) {
+                if (!lhs.isFavourite() && rhs.isFavourite())
+                    return 1;
+                else if (lhs.isFavourite() && !rhs.isFavourite())
+                    return -1;
+                // both or neither are favourites, sort by distance from user
+                if (location.distanceTo(lhs.getLocation()) > location.distanceTo(rhs.getLocation()))
+                    return 1;
+                else if (location.distanceTo(lhs.getLocation()) < location.distanceTo(rhs.getLocation()))
+                    return -1;
+                return 0;
+            }
+        });
+
         ((ImageButton) getActivity().findViewById(R.id.fragmentButton1)).setImageDrawable(null);
         ((ImageButton) getActivity().findViewById(R.id.fragmentButton2)).setImageDrawable(null);
         ((ImageButton) getActivity().findViewById(R.id.fragmentButton3)).setImageDrawable(null);
@@ -55,7 +80,7 @@ public class TakeoffList extends Fragment {
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                callback.showTakeoffDetails(Flightlog.getAllTakeoffs().get(position));
+                callback.showTakeoffDetails(takeoffs.get(position));
             }
         });
         /* position list */
@@ -80,7 +105,7 @@ public class TakeoffList extends Fragment {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             Location location = callback.getLocation();
-            Takeoff takeoff = Flightlog.getAllTakeoffs().get(position);
+            Takeoff takeoff = takeoffs.get(position);
 
             LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             View rowView = inflater.inflate(R.layout.takeoff_list_entry, parent, false);
@@ -112,7 +137,7 @@ public class TakeoffList extends Fragment {
 
         @Override
         public int getCount() {
-            return Flightlog.getAllTakeoffs().size();
+            return takeoffs.size();
         }
     }
 }

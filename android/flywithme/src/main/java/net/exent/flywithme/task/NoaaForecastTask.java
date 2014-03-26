@@ -111,7 +111,7 @@ public class NoaaForecastTask extends AsyncTask<Takeoff, String, Boolean> {
             }
             takeoff.setNoaaForecast(bitmap);
         } catch (Exception e) {
-            Log.w(getClass().getSimpleName(), "doInBackground() failed unexpectedly", e);
+            Log.w(getClass().getName(), "doInBackground() failed unexpectedly", e);
         }
         return true;
     }
@@ -138,7 +138,7 @@ public class NoaaForecastTask extends AsyncTask<Takeoff, String, Boolean> {
                 showProgress(progress, message, null, null);
             }
         } catch (Exception e) {
-            Log.w(getClass().getSimpleName(), "onProgressUpdate() failed unexpectedly", e);
+            Log.w(getClass().getName(), "onProgressUpdate() failed unexpectedly", e);
         }
     }
 
@@ -170,7 +170,7 @@ public class NoaaForecastTask extends AsyncTask<Takeoff, String, Boolean> {
             }
             return ProgressDialog.getInstance().getInputText();
         } catch (Exception e) {
-            Log.w(getClass().getSimpleName(), "Unable to fetch CAPTCHA", e);
+            Log.w(getClass().getName(), "Unable to fetch CAPTCHA", e);
         }
         return null;
     }
@@ -183,7 +183,7 @@ public class NoaaForecastTask extends AsyncTask<Takeoff, String, Boolean> {
             response.getEntity().consumeContent();
             return bitmap;
         } catch (Exception e) {
-            Log.w(getClass().getSimpleName(), "Unable to fetch meteogram", e);
+            Log.w(getClass().getName(), "Unable to fetch meteogram", e);
         }
         return null;
     }
@@ -202,7 +202,7 @@ public class NoaaForecastTask extends AsyncTask<Takeoff, String, Boolean> {
                 request.setURI(website);
                 return httpClient.execute(request);
             } catch (Exception e2) {
-                Log.w(getClass().getSimpleName(), "Unable to fetch page: " + uri, e);
+                Log.w(getClass().getName(), "Unable to fetch page: " + uri, e);
             }
         }
         return null;
@@ -219,7 +219,7 @@ public class NoaaForecastTask extends AsyncTask<Takeoff, String, Boolean> {
             response.getEntity().consumeContent();
             return sb.toString();
         } catch (Exception e) {
-            Log.w(getClass().getSimpleName(), "Unable to fetch page content", e);
+            Log.w(getClass().getName(), "Unable to fetch page content", e);
         }
         return null;
     }

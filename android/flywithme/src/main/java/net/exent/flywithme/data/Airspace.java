@@ -20,7 +20,7 @@ import android.content.Context;
 import android.util.Log;
 
 public class Airspace {
-    private static Map<String, List<PolygonOptions>> polygonMap = new HashMap<String, List<PolygonOptions>>();
+    private static Map<String, List<PolygonOptions>> polygonMap = new HashMap<>();
 
     public static Map<String, List<PolygonOptions>> getAirspaceMap() {
         return polygonMap;
@@ -32,12 +32,12 @@ public class Airspace {
     }
 
     private static void readAirspaceMapFile(Context context) {
-        polygonMap = new HashMap<String, List<PolygonOptions>>();
+        polygonMap = new HashMap<>();
         InputStream inputStream = context.getResources().openRawResource(R.raw.airspace_map);
         try {
             XmlPullParser parser = XmlPullParserFactory.newInstance().newPullParser();
             parser.setInput(inputStream, null);
-            Map<String, PolygonOptions> polygonStyles = new HashMap<String, PolygonOptions>();
+            Map<String, PolygonOptions> polygonStyles = new HashMap<>();
             String folder = "";
             while (parser.next() != XmlPullParser.END_DOCUMENT) {
                 if (parser.getEventType() != XmlPullParser.START_TAG)
