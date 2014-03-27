@@ -155,6 +155,8 @@ public class NoaaForecastTask extends AsyncTask<Takeoff, String, Boolean> {
     }
 
     private String fetchCaptcha(String captchaUrl) {
+        if (captchaUrl == null)
+            return null;
         try {
             HttpResponse response = fetchPage(NOAA_URL + captchaUrl);
             captchaBitmap = BitmapFactory.decodeStream(response.getEntity().getContent());
@@ -178,6 +180,8 @@ public class NoaaForecastTask extends AsyncTask<Takeoff, String, Boolean> {
     private Bitmap fetchMeteogram(Location loc) {
         try {
             String meteogramUrl = getOne(fetchPageContent(NOAA_URL + "/ready2-bin/metgram2.pl?userid=" + noaaUserId + "&Lat=" + loc.getLatitude() + "&Lon=" + loc.getLongitude() + "&metdir=" + noaaMetdir + "&metcyc=" + noaaMetcyc + "&metdate=" + noaaMetdate + "&metfil=" + noaaMetfil + "&password1=" + noaaCaptcha + "&proc=" + noaaProc + NOAA_METGRAM_CONF), NOAA_METEOGRAM_PATTERN);
+            if (meteogramUrl == null)
+                return null;
             HttpResponse response = fetchPage(NOAA_URL + meteogramUrl);
             Bitmap bitmap = BitmapFactory.decodeStream(response.getEntity().getContent());
             response.getEntity().consumeContent();
@@ -189,6 +193,7 @@ public class NoaaForecastTask extends AsyncTask<Takeoff, String, Boolean> {
     }
 
     private HttpResponse fetchPage(String uri) {
+        Log.i(getClass().getName(), "Fetching page: " + uri);
         try {
             URI website = new URI(uri);
             HttpGet request = new HttpGet();

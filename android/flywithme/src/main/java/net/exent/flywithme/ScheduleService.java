@@ -3,10 +3,12 @@ package net.exent.flywithme;
 import android.app.IntentService;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.location.Location;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import net.exent.flywithme.bean.Takeoff;
 import net.exent.flywithme.data.Database;
 
 import java.io.DataInputStream;
@@ -19,7 +21,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Created by canidae on 3/10/14.
@@ -35,16 +36,16 @@ public class ScheduleService extends IntentService {
         while (true) {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
             /* TODO: settings:
-             * - fetch schedule at all?
-             * - how often to fetch?
-             * - fetch favourites within x km?
-             * - fetch non-favourites within y km?
-             * - max amount to fetch? could be a fixed amount, only 2 bytes per takeoff (but more data returned)
-             * - stop fetching for a certain period, i.e. no fetching between 20.00 and 08.00?
+             * - fetch schedule at all? - ok
+             * - how often to fetch? - ok
+             * - stop fetching for a certain period, i.e. no fetching between 20.00 and 08.00? - ok
              */
             long sleepTime = 3600000; // TODO: config setting
 
-            Set<Integer> favourites = Database.getFavourites();
+            Location location = FlyWithMe.getInstance().getLocation();
+            // TODO: amount (100) should be configurable
+            // TODO: fetch favourites should be configurable?
+            List<Takeoff> favourites = Database.getTakeoffs(location.getLatitude(), location.getLongitude(), 100, true);
 
             try {
                 Log.i(getClass().getName(), "Fetching schedule from server");
@@ -54,9 +55,8 @@ public class ScheduleService extends IntentService {
                 DataOutputStream outputStream = new DataOutputStream(con.getOutputStream());
                 outputStream.writeByte(0);
                 outputStream.writeShort(favourites.size());
-                for (Integer favourite : favourites) {
-                    outputStream.writeShort(favourite);
-                }
+                for (Takeoff favourite : favourites)
+                    outputStream.writeShort(favourite.getId());
                 outputStream.close();
                 int responseCode = con.getResponseCode();
                 Log.d(getClass().getName(), "Response code: " + responseCode);

@@ -6,10 +6,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 
 import net.exent.flywithme.FlyWithMe;
@@ -92,27 +90,14 @@ public class Database extends SQLiteOpenHelper {
         try {
             Cursor cursor = db.query("takeoff", Takeoff.COLUMNS, "takeoff_id = " + takeoffId, null, null, null, null);
             if (cursor.moveToNext())
-                return new Takeoff(new ImprovedCursor(cursor));
+                return Takeoff.create(new ImprovedCursor(cursor));
             return null;
         } finally {
             db.close();
         }
     }
 
-    public synchronized static List<Takeoff> getTakeoffs(Set<Integer> takeoffIds) {
-        SQLiteDatabase db = getDatabase();
-        try {
-            Cursor cursor = db.query("takeoff", Takeoff.COLUMNS, "takeoff_id in (" + commaSeparated(takeoffIds.toArray()) + ")", null, null, null, null);
-            List<Takeoff> takeoffs = new ArrayList<>();
-            while (cursor.moveToNext())
-                takeoffs.add(new Takeoff(new ImprovedCursor(cursor)));
-            return takeoffs;
-        } finally {
-            db.close();
-        }
-    }
-
-    public synchronized static List<Takeoff> getTakeoffs(double latitude, double longitude, int maxResult) {
+    public synchronized static List<Takeoff> getTakeoffs(double latitude, double longitude, int maxResult, boolean includeFavourites) {
         // order result by approximate distance
         double latitudeRadians = latitude * Math.PI / 180.0;
         double latitudeCos = Math.cos(latitudeRadians);
@@ -120,43 +105,17 @@ public class Database extends SQLiteOpenHelper {
         double longitudeRadians = longitude * Math.PI / 180.0;
         double longitudeCos = Math.cos(longitudeRadians);
         double longitudeSin = Math.sin(longitudeRadians);
-        String orderBy = "(" + latitudeCos + " * latitude_cos * (longitude_cos * " + longitudeCos + " + longitude_sin * " + longitudeSin + ") + " + latitudeSin + " * latitude_sin) DESC";
+        String orderBy = includeFavourites ? "favourite desc, " : "";
+        orderBy += "(" + latitudeCos + " * latitude_cos * (longitude_cos * " + longitudeCos + " + longitude_sin * " + longitudeSin + ") + " + latitudeSin + " * latitude_sin) desc";
 
         // execute the query
         SQLiteDatabase db = getDatabase();
         try {
-            Cursor cursor = db.query("takeoff", Takeoff.COLUMNS, null, null, null, null, orderBy, "" + maxResult);
             List<Takeoff> takeoffs = new ArrayList<>();
+            Cursor cursor = db.query("takeoff", Takeoff.COLUMNS, null, null, null, null, orderBy, "" + maxResult);
             while (cursor.moveToNext())
-                takeoffs.add(new Takeoff(new ImprovedCursor(cursor)));
+                takeoffs.add(Takeoff.create(new ImprovedCursor(cursor)));
             return takeoffs;
-        } finally {
-            db.close();
-        }
-    }
-
-    public synchronized static void updateTakeoff(Takeoff takeoff) {
-        Log.i("Database", "Updating takeoff: " + takeoff);
-        SQLiteDatabase db = getDatabase();
-        try {
-            ContentValues contentValues = takeoff.getContentValues();
-            if (db.update("takeoff", contentValues, Takeoff.TAKEOFF_ID + " = " + takeoff.getId(), null) <= 0) {
-                // no rows updated, insert instead
-                db.insert("takeoff", null, contentValues);
-            }
-        } finally {
-            db.close();
-        }
-    }
-
-    public synchronized static Set<Integer> getFavourites() {
-        Set<Integer> favourites = new HashSet<>();
-        SQLiteDatabase db = getDatabase();
-        try {
-            Cursor cursor = db.query("takeoff", new String[]{Takeoff.TAKEOFF_ID}, Takeoff.FAVOURITE + " = 1", null, null, null, null);
-            while (cursor.moveToNext())
-                favourites.add(cursor.getInt(0));
-            return favourites;
         } finally {
             db.close();
         }
@@ -164,22 +123,13 @@ public class Database extends SQLiteOpenHelper {
 
     public synchronized static void updateFavourite(Takeoff takeoff) {
         ContentValues contentValues = new ContentValues();
-        contentValues.put(Takeoff.FAVOURITE, takeoff.isFavourite() ? 1 : 0);
+        contentValues.put("favourite", takeoff.isFavourite() ? 1 : 0);
         SQLiteDatabase db = getDatabase();
         try {
-            db.update("takeoff", contentValues, Takeoff.TAKEOFF_ID + " = " + takeoff.getId(), null);
+            db.update("takeoff", contentValues, "takeoff_id = " + takeoff.getId(), null);
         } finally {
             db.close();
         }
-    }
-
-    private static String commaSeparated(Object... args) {
-        String result = "";
-        for (Object arg : args) {
-            if (arg != null)
-                result = (result.isEmpty() ? arg.toString() : ", " + arg);
-        }
-        return result;
     }
 
     private synchronized static SQLiteDatabase getDatabase() {
@@ -190,7 +140,7 @@ public class Database extends SQLiteOpenHelper {
 
     private synchronized void createDatabaseV2(SQLiteDatabase db) {
         db.execSQL("create table schedule(takeoff_id integer not null, timestamp integer not null, pilot text not null)");
-        db.execSQL("create table takeoff(takeoff_id integer primary key, name text not null default '', description text not null default '', asl integer not null default 0, height integer not null default 0, latitude real not null default 0.0, latitude_cos real not null default 0.0, latitude_sin real not null default 0.0, longitude real not null default 0.0, longitude_cos real not null default 0.0, longitude_sin real not null default 0.0, exits integer not null default 0, favourite integer not null default 0, noaa_forecast blob, noaa_updated integer not null default 0)");
+        db.execSQL("create table takeoff(takeoff_id integer primary key, name text not null default '', description text not null default '', asl integer not null default 0, height integer not null default 0, latitude real not null default 0.0, latitude_cos real not null default 0.0, latitude_sin real not null default 0.0, longitude real not null default 0.0, longitude_cos real not null default 0.0, longitude_sin real not null default 0.0, exits integer not null default 0, favourite integer not null default 0)");
     }
 
     private synchronized void upgradeDatabaseToV2(SQLiteDatabase db) {
@@ -218,7 +168,7 @@ public class Database extends SQLiteOpenHelper {
                 Takeoff takeoff = new Takeoff(takeoffId, name, description, asl, height, latitude, longitude, windpai, false);
                 // NOTE: can not call updateTakeoff() here, that will cause a recursion
                 ContentValues contentValues = takeoff.getContentValues();
-                if (db.update("takeoff", contentValues, Takeoff.TAKEOFF_ID + " = " + takeoff.getId(), null) <= 0) {
+                if (db.update("takeoff", contentValues, "takeoff_id = " + takeoff.getId(), null) <= 0) {
                     // no rows updated, insert instead
                     db.insert("takeoff", null, contentValues);
                 }

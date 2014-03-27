@@ -52,10 +52,8 @@ public class TakeoffList extends Fragment {
     public void onStart() {
         super.onStart();
 
-        Log.i(getClass().getName(), "onStart()");
         final Location location = FlyWithMe.getInstance().getLocation();
-        takeoffs = Database.getTakeoffs(location.getLatitude(), location.getLongitude(), 200);
-        // TODO: fetch favourites
+        takeoffs = Database.getTakeoffs(location.getLatitude(), location.getLongitude(), 100, true);
         Collections.sort(takeoffs, new Comparator<Takeoff>() {
             public int compare(Takeoff lhs, Takeoff rhs) {
                 if (!lhs.isFavourite() && rhs.isFavourite())

@@ -155,6 +155,8 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        /* YAAH (Yet Another Android Hack): Need this funky code to prevent the map from being recreated and redrawn */
+        /* http://stackoverflow.com/a/14695397/2040995 */
         if (view != null) {
             ViewGroup parent = (ViewGroup) view.getParent();
             if (parent != null)
@@ -213,9 +215,7 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
                     }
 
                     /* get the nearest takeoffs */
-                    Log.w(getClass().getName(), "Start fetching nearby takeoffs");
-                    List<Takeoff> takeoffs = Database.getTakeoffs(location.getLatitude(), location.getLongitude(), 25);
-                    Log.w(getClass().getName(), "Stop fetching nearby takeoffs");
+                    List<Takeoff> takeoffs = Database.getTakeoffs(location.getLatitude(), location.getLongitude(), 25, false);
 
                     /* add markers */
                     for (Takeoff takeoff : takeoffs) {

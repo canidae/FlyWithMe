@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.exent.flywithme.FlyWithMe;
 import net.exent.flywithme.R;
 
 import org.xmlpull.v1.XmlPullParser;
@@ -23,12 +24,9 @@ public class Airspace {
     private static Map<String, List<PolygonOptions>> polygonMap = new HashMap<>();
 
     public static Map<String, List<PolygonOptions>> getAirspaceMap() {
-        return polygonMap;
-    }
-
-    public static void init(Context context) {
         if (polygonMap.isEmpty())
-            readAirspaceMapFile(context);
+            readAirspaceMapFile(FlyWithMe.getInstance());
+        return polygonMap;
     }
 
     private static void readAirspaceMapFile(Context context) {

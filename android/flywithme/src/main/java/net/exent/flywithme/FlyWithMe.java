@@ -5,13 +5,11 @@ import net.exent.flywithme.TakeoffList.TakeoffListListener;
 import net.exent.flywithme.TakeoffMap.TakeoffMapListener;
 import net.exent.flywithme.bean.Takeoff;
 import net.exent.flywithme.data.Database;
-import net.exent.flywithme.task.InitDataTask;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -24,10 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FlyWithMe extends FragmentActivity implements TakeoffListListener, TakeoffMapListener, TakeoffDetailsListener {
-    private static final int LOCATION_UPDATE_TIME = 300000; // update location every LOCATION_UPDATE_TIME millisecond
+    private static final int LOCATION_UPDATE_TIME = 60000; // update location every LOCATION_UPDATE_TIME millisecond
     private static final int LOCATION_UPDATE_DISTANCE = 100; // or when we've moved more than LOCATION_UPDATE_DISTANCE meters
-    private static final int TAKEOFFS_SORT_DISTANCE = 1000; // only sort takeoff list when we've moved more than TAKEOFFS_SORT_DISTANCE meters
-    private static Location lastSortedTakeoffsLocation;
     private static Location location = new Location(LocationManager.PASSIVE_PROVIDER);
     private static FlyWithMe instance;
     private static List<String> backstack = new ArrayList<>();
@@ -57,7 +53,7 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
         args.putParcelable(TakeoffDetails.ARG_TAKEOFF, takeoff);
         takeoffDetails.setArguments(args);
         /* show fragment */
-        showFragment(takeoffDetails, "takeoffDetails");
+        showFragment(takeoffDetails, "takeoffDetails," + takeoff.getId());
     }
 
     /**
@@ -72,7 +68,7 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
         args.putParcelable(NoaaForecast.ARG_TAKEOFF, takeoff);
         noaaForecast.setArguments(args);
         /* show fragment */
-        showFragment(noaaForecast, "noaaForecast");
+        showFragment(noaaForecast, "noaaForecast," + takeoff.getId());
     }
 
     public void showTakeoffSchedule(Takeoff takeoff) {
@@ -83,7 +79,7 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
         args.putParcelable(TakeoffSchedule.ARG_TAKEOFF, takeoff);
         takeoffSchedule.setArguments(args);
         /* show fragment */
-        showFragment(takeoffSchedule, "takeoffSchedule");
+        showFragment(takeoffSchedule, "takeoffSchedule," + takeoff.getId());
     }
 
     /**
@@ -149,7 +145,6 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
                 if (newLocation == null)
                     return;
                 location = newLocation;
-                //updateTakeoffList();
             }
         };
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -162,18 +157,15 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
             location.setLatitude(9.154848);
         }
 
+        /* set instance/context, our fragments are using this a lot */
         instance = this;
-
-        if (savedInstanceState != null || findViewById(R.id.fragmentContainer) == null)
-            return;
 
         /* start background task */
         Intent scheduleService = new Intent(this, ScheduleService.class);
-        scheduleService.setData(Uri.parse("10"));
         startService(scheduleService);
 
-        /* init data */
-        new InitDataTask().execute(this);
+        /* show takeoff list */
+        showTakeoffList();
     }
 
     @Override
@@ -241,23 +233,4 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
         backstack.add(name);
         getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, fragment, name).commit();
     }
-
-    /*
-    private synchronized boolean updateTakeoffList() {
-        if (lastSortedTakeoffsLocation == null || location.distanceTo(lastSortedTakeoffsLocation) >= TAKEOFFS_SORT_DISTANCE) {
-            // moved too much, need to sort takeoff list again
-            Flightlog.sortTakeoffListToLocation(Flightlog.getAllTakeoffs(), location);
-            lastSortedTakeoffsLocation = location;
-            Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragmentContainer);
-            if (fragment == null)
-                return true;
-            else if (fragment instanceof TakeoffMap)
-                showMap();
-            else if (fragment instanceof TakeoffList)
-                showTakeoffList();
-            return true;
-        }
-        return false;
-    }
-    */
 }

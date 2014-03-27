@@ -9,7 +9,8 @@ import android.os.Parcelable;
 
 import net.exent.flywithme.data.Database;
 
-import java.nio.ByteBuffer;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Takeoff implements Parcelable {
     public static final Parcelable.Creator<Takeoff> CREATOR = new Parcelable.Creator<Takeoff>() {
@@ -22,21 +23,12 @@ public class Takeoff implements Parcelable {
         }
     };
 
-    public static final String TAKEOFF_ID = "takeoff_id";
-    public static final String NAME = "name";
-    public static final String DESCRIPTION = "description";
-    public static final String ASL = "asl";
-    public static final String HEIGHT = "height";
-    public static final String LATITUDE = "latitude";
-    public static final String LONGITUDE = "longitude";
-    public static final String EXITS = "exits";
-    public static final String FAVOURITE = "favourite";
-    public static final String NOAA_FORECAST = "noaa_forecast";
-    public static final String NOAA_UPDATED = "noaa_updated";
-
     public static final String[] COLUMNS = {
-            TAKEOFF_ID, NAME, DESCRIPTION, ASL, HEIGHT, LATITUDE, LONGITUDE, EXITS, FAVOURITE, NOAA_FORECAST, NOAA_UPDATED
+            "takeoff_id", "name", "description", "asl", "height", "latitude", "longitude", "exits", "favourite"
     };
+
+    // used to prevent excessive memory allocations. it means more memory used, but also that the garbage collector won't run so aggressively.
+    private static Map<Integer, Takeoff> takeoffCache = new HashMap<>();
 
     private int id;
     private String name;
@@ -50,21 +42,7 @@ public class Takeoff implements Parcelable {
     private long noaaUpdated;
     private boolean favourite;
 
-    public Takeoff(Database.ImprovedCursor cursor) {
-        id = cursor.getIntOrThrow(TAKEOFF_ID);
-        name = cursor.getString(NAME);
-        description = cursor.getString(DESCRIPTION);
-        asl = cursor.getInt(ASL);
-        height = cursor.getInt(HEIGHT);
-        latitude = cursor.getDouble(LATITUDE);
-        longitude = cursor.getDouble(LONGITUDE);
-        exits = cursor.getInt(EXITS);
-        // TODO: noaaForecast = geCursorBitmap(cursor, NOAA_FORECAST);
-        noaaUpdated = cursor.getLong(NOAA_UPDATED);
-        favourite = cursor.getInt(FAVOURITE) == 1;
-    }
-
-
+    /* Should only be used by Database for importing takeoffs from file */
     public Takeoff(int id, String name, String description, int asl, int height, double latitude, double longitude, String exitDirections, boolean favourite) {
         this.id = id;
         this.name = name;
@@ -94,8 +72,19 @@ public class Takeoff implements Parcelable {
         this.favourite = favourite;
     }
 
-    // TODO: remove? along with Parcel? fetch from database instead?
-    public Takeoff(int id, String name, String description, int asl, int height, double latitude, double longitude, int exits, boolean favourite) {
+    private Takeoff(Database.ImprovedCursor cursor) {
+        id = cursor.getIntOrThrow("takeoff_id");
+        name = cursor.getString("name");
+        description = cursor.getString("description");
+        asl = cursor.getInt("asl");
+        height = cursor.getInt("height");
+        latitude = cursor.getDouble("latitude");
+        longitude = cursor.getDouble("longitude");
+        exits = cursor.getInt("exits");
+        favourite = cursor.getInt("favourite") == 1;
+    }
+
+    private Takeoff(int id, String name, String description, int asl, int height, double latitude, double longitude, int exits, boolean favourite) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -105,6 +94,16 @@ public class Takeoff implements Parcelable {
         this.longitude = longitude;
         this.exits = exits;
         this.favourite = favourite;
+    }
+
+    public static Takeoff create(Database.ImprovedCursor cursor) {
+        int takeoffId = cursor.getIntOrThrow("takeoff_id");
+        Takeoff takeoff = takeoffCache.get(takeoffId);
+        if (takeoff != null)
+            return takeoff;
+        takeoff = new Takeoff(cursor);
+        takeoffCache.put(takeoffId, takeoff);
+        return takeoff;
     }
 
     public int getId() {
@@ -197,28 +196,21 @@ public class Takeoff implements Parcelable {
 
     public ContentValues getContentValues() {
         ContentValues contentValues = new ContentValues();
-        contentValues.put(TAKEOFF_ID, id);
-        contentValues.put(NAME, name);
-        contentValues.put(DESCRIPTION, description);
-        contentValues.put(ASL, asl);
-        contentValues.put(HEIGHT, height);
+        contentValues.put("takeoff_id", id);
+        contentValues.put("name", name);
+        contentValues.put("description", description);
+        contentValues.put("asl", asl);
+        contentValues.put("height", height);
         double latitudeRadians = latitude * Math.PI / 180.0;
-        contentValues.put(LATITUDE, latitude);
-        contentValues.put(LATITUDE + "_cos", Math.cos(latitudeRadians));
-        contentValues.put(LATITUDE + "_sin", Math.sin(latitudeRadians));
+        contentValues.put("latitude", latitude);
+        contentValues.put("latitude_cos", Math.cos(latitudeRadians));
+        contentValues.put("latitude_sin", Math.sin(latitudeRadians));
         double longitudeRadians = longitude * Math.PI / 180.0;
-        contentValues.put(LONGITUDE, longitude);
-        contentValues.put(LONGITUDE + "_cos", Math.cos(longitudeRadians));
-        contentValues.put(LONGITUDE + "_sin", Math.sin(longitudeRadians));
-        contentValues.put(EXITS, exits);
-        contentValues.put(FAVOURITE, favourite);
-        Bitmap bitmap = noaaForecast;
-        if (bitmap != null) {
-            ByteBuffer byteBuffer = ByteBuffer.allocate(bitmap.getRowBytes() * bitmap.getHeight());
-            bitmap.copyPixelsToBuffer(byteBuffer);
-            contentValues.put(NOAA_FORECAST, byteBuffer.array());
-        }
-        contentValues.put(NOAA_UPDATED, noaaUpdated);
+        contentValues.put("longitude", longitude);
+        contentValues.put("longitude_cos", Math.cos(longitudeRadians));
+        contentValues.put("longitude_sin", Math.sin(longitudeRadians));
+        contentValues.put("exits", exits);
+        contentValues.put("favourite", favourite);
         return contentValues;
     }
 

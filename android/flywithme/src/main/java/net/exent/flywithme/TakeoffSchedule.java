@@ -91,10 +91,6 @@ public class TakeoffSchedule extends Fragment {
         }
     }
 
-    public Takeoff getTakeoff() {
-        return takeoff;
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         if (savedInstanceState != null)
