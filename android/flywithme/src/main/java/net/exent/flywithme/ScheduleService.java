@@ -21,11 +21,15 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 /**
  * Created by canidae on 3/10/14.
  */
 public class ScheduleService extends IntentService {
+    private static final long MS_IN_DAY = 86400000;
+    private long lastUpdate = 0;
+
     public ScheduleService() {
         super("ScheduleService");
     }
@@ -35,18 +39,29 @@ public class ScheduleService extends IntentService {
         Log.d(getClass().getName(), "onHandleIntent(" + intent.toString() + ")");
         while (true) {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-            /* TODO: settings:
-             * - fetch schedule at all? - ok
-             * - how often to fetch? - ok
-             * - stop fetching for a certain period, i.e. no fetching between 20.00 and 08.00? - ok
-             */
-            long sleepTime = 3600000; // TODO: config setting
+            int fetchTakeoffs = Integer.parseInt(prefs.getString("pref_schedule_fetch_takeoffs", "-1"));
+            int startTime = Integer.parseInt(prefs.getString("pref_schedule_start_fetch_time", "28800")) * 1000;
+            int stopTime = Integer.parseInt(prefs.getString("pref_schedule_stop_fetch_time", "72000")) * 1000;
+            boolean fetchFavourites = prefs.getBoolean("pref_schedule_fetch_favourites", true);
+            long updateInterval = Integer.parseInt(prefs.getString("pref_schedule_update_interval", "3600")) * 1000;
+
+            long now = System.currentTimeMillis();
+            long localHour = (now + TimeZone.getDefault().getOffset(now)) % MS_IN_DAY;
+
+            // these two values tells us whether we're between start time and stop time
+            // if startTime == stopTime then we always want to update (setting maxValue to 24 hours)
+            long timeValue = (localHour - startTime + MS_IN_DAY) % MS_IN_DAY;
+            long maxValue = startTime == stopTime ? MS_IN_DAY : (stopTime - startTime + MS_IN_DAY) % MS_IN_DAY;
+
+            if (fetchTakeoffs == -1 || now < lastUpdate + updateInterval || timeValue > maxValue) {
+                // no update at this time, wait a minute and check again
+                SystemClock.sleep(60000);
+                continue;
+            }
+            lastUpdate = now;
 
             Location location = FlyWithMe.getInstance().getLocation();
-            // TODO: amount (100) should be configurable
-            // TODO: fetch favourites should be configurable?
-            List<Takeoff> favourites = Database.getTakeoffs(location.getLatitude(), location.getLongitude(), 100, true);
-
+            List<Takeoff> favourites = Database.getTakeoffs(location.getLatitude(), location.getLongitude(), fetchTakeoffs, fetchFavourites);
             try {
                 Log.i(getClass().getName(), "Fetching schedule from server");
                 HttpURLConnection con = (HttpURLConnection) new URL("http://flywithme-server.appspot.com/fwm").openConnection();
@@ -89,9 +104,6 @@ public class ScheduleService extends IntentService {
             } catch (IOException e) {
                 Log.w(getClass().getName(), "Fetching flight schedule failed unexpectedly", e);
             }
-
-            // sleep until next update
-            SystemClock.sleep(sleepTime - SystemClock.elapsedRealtime() % sleepTime);
         }
     }
 }

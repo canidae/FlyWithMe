@@ -1,4 +1,12 @@
 <resources>
+    <!-- Config for PreferenceFragment -->
+    <!-- Strings for possible PreferenceActivity Back/Next buttons -->
+    <string name="back_button_label">Back</string>
+    <string name="next_button_label">Next</string>
+    <!-- Optional button to Skip a PreferenceActivity [CHAR LIMIT=20] -->
+    <string name="skip_button_label">Skip</string>
+    <!-- End config for PreferenceFragment -->
+
     <!-- General -->
     <string name="app_name">Fly With Me!</string>
     <string name="geodesic_distance">Luftavstand</string>
@@ -7,10 +15,6 @@
     <string name="cancel">Avbryt</string>
 
     <!-- Startup messages -->
-    <string name="init_database">Klargjør database…</string>
-    <string name="loading_takeoffs">Laster startsteder…</string>
-    <string name="loading_airspace">Laster luftromskart…</string>
-    <string name="sorting_takeoffs">Sorterer startsteder…</string>
     <string name="attempting_forecast_shortcut">Prøver snarvei…</string>
     <string name="initiating_noaa_forecast">Forbereder meteogram…</string>
     <string name="fetching_noaa_captcha">Henter CAPTCHA…</string>
@@ -27,6 +31,35 @@
 
     <!-- Preferences -->
     <string name="preferences">Innstillinger</string>
+
+    <!-- Schedule -->
+    <string name="pref_schedule_fetch_takeoffs">Hent flyprogram</string>
+    <string-array name="pref_schedule_fetch_takeoffs_keys">
+        <item>Avslått</item>
+        <item>10 flysteder</item>
+        <item>25 flysteder</item>
+        <item>50 flysteder</item>
+        <item>100 flysteder</item>
+        <item>200 flysteder</item>
+    </string-array>
+
+    <string name="schedule_settings">Innstillinger, henting av flyprogram</string>
+
+    <string name="pref_schedule_fetch_favourites">Hent favoritter</string>
+    <string name="pref_schedule_fetch_favourites_summary">Hent favoritter, uavhengig av distanse</string>
+
+    <string name="pref_schedule_update_interval">Oppdateringsfrekvens</string>
+    <string-array name="pref_schedule_update_interval_keys">
+        <item>Hver 15. min</item>
+        <item>Hver 30. min</item>
+        <item>Hver time</item>
+        <item>Hver 2. time</item>
+        <item>Hver 4. time</item>
+        <item>Hver 8. time</item>
+    </string-array>
+
+    <string name="pref_schedule_start_fetch_time">Oppdater flyprogram fra</string>
+    <string name="pref_schedule_stop_fetch_time">Oppdater flyprogram til</string>
 
     <!-- What airspace to draw (this is mostly set programatically) -->
     <string name="show_airspace_types">Vis luftromstyper</string>
