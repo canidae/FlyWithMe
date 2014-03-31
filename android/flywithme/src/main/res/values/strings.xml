@@ -28,11 +28,12 @@
     <string name="date">Date</string>
     <string name="pilots">Pilots</string>
     <string name="time">Time</string>
+    <string name="may_not_register">You haven\'t set your name in the preferences, you need to set this in order to schedule a flight.</string>
 
     <!-- Preferences -->
     <string name="preferences">Preferences</string>
 
-    <!-- Schedule -->
+    <!-- Schedule preferences -->
     <string name="pref_schedule_fetch_takeoffs">Fetch takeoff schedules</string>
     <string name="pref_schedule_fetch_takeoffs_default_value">50</string>
     <string-array name="pref_schedule_fetch_takeoffs_keys">
@@ -52,10 +53,31 @@
         <item>200</item>
     </string-array>
 
+    <string name="pref_schedule_pilot_name">My name</string>
+    <string name="pref_schedule_pilot_name_description">When scheduling a flight, this name will be shown to other pilots. This field is required (or you won\'t be allowed to schedule flights).</string>
+
+    <string name="pref_schedule_pilot_phone">My phone number</string>
+    <string name="pref_schedule_pilot_phone_description">When scheduling a flight, this phone number will be shown to other pilots. You don\'t have to fill this in, but it is recommended so other pilots can contact you.</string>
+
     <string name="schedule_settings">Fetch schedule settings</string>
 
     <string name="pref_schedule_fetch_favourites">Fetch favourites</string>
     <string name="pref_schedule_fetch_favourites_summary">Fetch favourites, regardless of distance</string>
+
+    <string name="pref_schedule_notification">Notifications</string>
+    <string name="pref_schedule_notification_default_value">3</string>
+    <string-array name="pref_schedule_notification_keys">
+        <item>Disabled</item>
+        <item>Only for favourites</item>
+        <item>Only for nearby takeoffs</item>
+        <item>Both favourites and nearby</item>
+    </string-array>
+    <string-array name="pref_schedule_notification_values">
+        <item>-1</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
 
     <string name="pref_schedule_update_interval">Update interval</string>
     <string name="pref_schedule_update_interval_default_value">3600</string>

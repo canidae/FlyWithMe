@@ -1,6 +1,8 @@
 package net.exent.flywithme;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -9,6 +11,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.TableLayout;
 import android.widget.TextView;
 
 import net.exent.flywithme.bean.Takeoff;
@@ -109,6 +112,21 @@ public class TakeoffSchedule extends Fragment {
         ((ImageButton) getActivity().findViewById(R.id.fragmentButton1)).setImageDrawable(null);
         ((ImageButton) getActivity().findViewById(R.id.fragmentButton2)).setImageDrawable(null);
         ((ImageButton) getActivity().findViewById(R.id.fragmentButton3)).setImageDrawable(null);
+
+        // don't show buttons for registering flight if user haven't set a name
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String name = prefs.getString("pref_schedule_pilot_name", null);
+        TextView mayNotRegister = (TextView) getActivity().findViewById(R.id.scheduleMayNotRegister);
+        TableLayout registerTime = (TableLayout) getActivity().findViewById(R.id.scheduleRegisterTime);
+        if (name == null || "".equals(name.trim())) {
+            mayNotRegister.setVisibility(View.VISIBLE);
+            registerTime.setVisibility(View.GONE);
+        } else {
+            mayNotRegister.setVisibility(View.GONE);
+            registerTime.setVisibility(View.VISIBLE);
+        }
+
+        // TODO: accordion list (ExpandableListView) with takeoff schedule
     }
 
     @Override

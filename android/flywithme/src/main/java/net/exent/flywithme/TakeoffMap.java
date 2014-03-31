@@ -155,7 +155,7 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        /* YAAH (Yet Another Android Hack): Need this funky code to prevent the map from being recreated and redrawn */
+        /* AAH! (Another Android Hack!): Need this funky code to prevent the map from being recreated and redrawn */
         /* http://stackoverflow.com/a/14695397/2040995 */
         if (view != null) {
             ViewGroup parent = (ViewGroup) view.getParent();

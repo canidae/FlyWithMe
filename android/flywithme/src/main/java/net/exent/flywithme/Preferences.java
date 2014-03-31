@@ -6,11 +6,13 @@ import java.util.Collections;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
+import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceCategory;
 import android.support.v4.preference.PreferenceFragment;
 import android.util.Log;
+import android.widget.ImageButton;
 
 import net.exent.flywithme.data.Airspace;
 
@@ -46,7 +48,18 @@ public class Preferences extends PreferenceFragment implements SharedPreferences
         }
     }
 
-    /* YAAH (Yet Another Android Hack): Setting a preference value only updates the preference, not the PreferenceFragment view */
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        setRetainInstance(true);
+
+        ((ImageButton) getActivity().findViewById(R.id.fragmentButton1)).setImageDrawable(null);
+        ((ImageButton) getActivity().findViewById(R.id.fragmentButton2)).setImageDrawable(null);
+        ((ImageButton) getActivity().findViewById(R.id.fragmentButton3)).setImageDrawable(null);
+    }
+
+    /* AAH! (Another Android Hack!): Setting a preference value only updates the preference, not the PreferenceFragment view */
     /* http://stackoverflow.com/a/15329652/2040995 */
     @Override
     public void onResume() {
@@ -64,7 +77,7 @@ public class Preferences extends PreferenceFragment implements SharedPreferences
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         updateDynamicPreferenceScreen();
     }
-    /* END YAAH */
+    /* END AAH! */
 
     private void updateDynamicPreferenceScreen() {
         ListPreference scheduleFetchTakeoffs = (ListPreference) findPreference("pref_schedule_fetch_takeoffs");
@@ -72,19 +85,23 @@ public class Preferences extends PreferenceFragment implements SharedPreferences
         scheduleFetchTakeoffs.setSummary(scheduleFetchTakeoffs.getEntry());
 
         PreferenceCategory scheduleCategory = (PreferenceCategory) findPreference("pref_schedule");
-        if ("-1".equals(scheduleFetchTakeoffs.getValue())) {
-            scheduleCategory.setEnabled(false);
-        } else {
-            scheduleCategory.setEnabled(true);
-            ListPreference scheduleFetchInterval = (ListPreference) findPreference("pref_schedule_update_interval");
-            scheduleFetchInterval.setOnPreferenceChangeListener(preferenceChangeListener);
-            scheduleFetchInterval.setSummary(scheduleFetchInterval.getEntry());
-            ListPreference scheduleFetchStartTime = (ListPreference) findPreference("pref_schedule_start_fetch_time");
-            scheduleFetchStartTime.setOnPreferenceChangeListener(preferenceChangeListener);
-            scheduleFetchStartTime.setSummary(scheduleFetchStartTime.getEntry());
-            ListPreference scheduleFetchStopTime = (ListPreference) findPreference("pref_schedule_stop_fetch_time");
-            scheduleFetchStopTime.setOnPreferenceChangeListener(preferenceChangeListener);
-            scheduleFetchStopTime.setSummary(scheduleFetchStopTime.getEntry());
-        }
+        scheduleCategory.setEnabled(!"-1".equals(scheduleFetchTakeoffs.getValue()));
+
+        EditTextPreference schedulePilotName = (EditTextPreference) findPreference("pref_schedule_pilot_name");
+        schedulePilotName.setSummary(schedulePilotName.getText());
+        EditTextPreference schedulePilotPhone = (EditTextPreference) findPreference("pref_schedule_pilot_phone");
+        schedulePilotPhone.setSummary(schedulePilotPhone.getText());
+        ListPreference scheduleNotification = (ListPreference) findPreference("pref_schedule_notification");
+        scheduleNotification.setOnPreferenceChangeListener(preferenceChangeListener);
+        scheduleNotification.setSummary(scheduleNotification.getEntry());
+        ListPreference scheduleFetchInterval = (ListPreference) findPreference("pref_schedule_update_interval");
+        scheduleFetchInterval.setOnPreferenceChangeListener(preferenceChangeListener);
+        scheduleFetchInterval.setSummary(scheduleFetchInterval.getEntry());
+        ListPreference scheduleFetchStartTime = (ListPreference) findPreference("pref_schedule_start_fetch_time");
+        scheduleFetchStartTime.setOnPreferenceChangeListener(preferenceChangeListener);
+        scheduleFetchStartTime.setSummary(scheduleFetchStartTime.getEntry());
+        ListPreference scheduleFetchStopTime = (ListPreference) findPreference("pref_schedule_stop_fetch_time");
+        scheduleFetchStopTime.setOnPreferenceChangeListener(preferenceChangeListener);
+        scheduleFetchStopTime.setSummary(scheduleFetchStopTime.getEntry());
     }
 }

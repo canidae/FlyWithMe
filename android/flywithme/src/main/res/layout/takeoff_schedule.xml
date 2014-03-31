@@ -4,12 +4,24 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/may_not_register"
+        android:id="@+id/scheduleMayNotRegister"
+        android:layout_span="4"
+        android:visibility="visible"
+        android:textColor="#ff4444" />
+
     <TableLayout
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:stretchColumns="*">
+        android:stretchColumns="*"
+        android:id="@+id/scheduleRegisterTime"
+        android:layout_below="@+id/scheduleMayNotRegister">
 
         <TableRow
             android:layout_width="fill_parent"
@@ -199,5 +211,14 @@
         </TableRow>
 
     </TableLayout>
+
+    <ExpandableListView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/scheduleRegisteredFlights"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/scheduleRegisterTime"
+        android:layout_alignParentBottom="true" />
 
 </RelativeLayout>
