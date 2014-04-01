@@ -64,13 +64,25 @@ public class Database extends SQLiteOpenHelper {
         }
     }
 
+    public static synchronized List<String> getTakeoffsWithScheduledFlightsToday(String ignorePilot) {
+        List<String> takeoffs = new ArrayList<>();
+        SQLiteDatabase db = getDatabase();
+        try {
+            Cursor cursor = db.rawQuery("select distinct takeoff.name from takeoff join schedule on takeoff.takeoff_id = schedule.takeoff_id where date(schedule.timestamp, 'unixepoch') = date('now') and schedule.pilot != ?", new String[]{ignorePilot});
+            while (cursor.moveToNext())
+                takeoffs.add(cursor.getString(0));
+            return takeoffs;
+        } finally {
+            db.close();
+        }
+    }
+
     public synchronized static void updateTakeoffSchedule(int takeoffId, Map<Date, List<String>> schedule) {
-        // TODO: how will we handle the current user's registration? we need to store the id of the user, could just match that with the database, it's not unique, though, hmm, bad idea?
-        // TODO: let's just save name/phone, timestamp and takeoffId for user like we save preferences
         SQLiteDatabase db = getDatabase();
         try {
             // we'll fully replace the entries for this takeoff
-            db.execSQL("delete from schedule where takeoff_id = " + takeoffId);
+            // we'll also delete old entries to clean up the database
+            db.execSQL("delete from schedule where takeoff_id = " + takeoffId + " or date(timestamp, 'unixepoch', '+7 days') < date('now')");
             for (Map.Entry<Date, List<String>> entry : schedule.entrySet()) {
                 for (String pilot : entry.getValue()) {
                     ContentValues values = new ContentValues();

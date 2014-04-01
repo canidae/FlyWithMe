@@ -1,11 +1,14 @@
 package net.exent.flywithme;
 
 import android.app.IntentService;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import net.exent.flywithme.bean.Takeoff;
@@ -27,6 +30,7 @@ import java.util.TimeZone;
  * Created by canidae on 3/10/14.
  */
 public class ScheduleService extends IntentService {
+    private static final int NOTIFICATION_ID = 42;
     private static final long MS_IN_DAY = 86400000;
     private long lastUpdate = 0;
 
@@ -37,6 +41,17 @@ public class ScheduleService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         Log.d(getClass().getName(), "onHandleIntent(" + intent.toString() + ")");
+
+        // setup notification builder
+        List<String> notificationTakeoffs = new ArrayList<>();
+        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this);
+        notificationBuilder.setSmallIcon(R.drawable.ic_launcher);
+        notificationBuilder.setContentTitle(getString(R.string.get_your_wing));
+        notificationBuilder.setAutoCancel(true);
+        PendingIntent notificationIntent = PendingIntent.getActivity(this, 0, new Intent(this, FlyWithMe.class), PendingIntent.FLAG_UPDATE_CURRENT);
+        notificationBuilder.setContentIntent(notificationIntent);
+
         while (true) {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
             int fetchTakeoffs = Integer.parseInt(prefs.getString("pref_schedule_fetch_takeoffs", "-1"));
@@ -100,6 +115,16 @@ public class ScheduleService extends IntentService {
                         schedule.put(date, pilotList);
                         Database.updateTakeoffSchedule(takeoffId, schedule);
                     }
+                }
+                List<String> takeoffsWithScheduledFlightsToday = Database.getTakeoffsWithScheduledFlightsToday(prefs.getString("pref_schedule_pilot_name", ""));
+                if (!notificationTakeoffs.containsAll(takeoffsWithScheduledFlightsToday)) {
+                    // notify the user that people are planning to fly today
+                    notificationTakeoffs = takeoffsWithScheduledFlightsToday;
+                    String notificationText = "";
+                    for (String takeoff : notificationTakeoffs)
+                        notificationText += "".equals(notificationText) ? takeoff : " | " + takeoff;
+                    notificationBuilder.setContentText(notificationText);
+                    notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build());
                 }
             } catch (IOException e) {
                 Log.w(getClass().getName(), "Fetching flight schedule failed unexpectedly", e);

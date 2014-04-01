@@ -13,6 +13,7 @@
     <string name="asl">moh.</string>
     <string name="height">Høyde</string>
     <string name="cancel">Avbryt</string>
+    <string name="get_your_wing">Folk flyr i dag!</string>
 
     <!-- Startup messages -->
     <string name="attempting_forecast_shortcut">Prøver snarvei…</string>
