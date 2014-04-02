@@ -165,7 +165,8 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
         startService(scheduleService);
 
         /* show takeoff list */
-        showTakeoffList();
+        if (savedInstanceState == null)
+            showTakeoffList();
     }
 
     @Override

@@ -124,6 +124,7 @@ public class ScheduleService extends IntentService {
                     for (String takeoff : notificationTakeoffs)
                         notificationText += "".equals(notificationText) ? takeoff : " | " + takeoff;
                     notificationBuilder.setContentText(notificationText);
+                    notificationBuilder.setWhen(System.currentTimeMillis());
                     notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build());
                 }
             } catch (IOException e) {
