@@ -3,7 +3,7 @@
 <Document>
 <description>
 Luftromsinfo for HG/PG.
-Sist oppdatert 13.03.2013
+Sist oppdatert 06.04.2014
 Det gis ingen garanti for feil og mangler.
 Sjekk www.ippc.no  for oppdatert info.
 Husk at du alltid har en eller flere soner over deg,
@@ -27,7 +27,7 @@ Hans Cato Grytnes
 <IconStyle>
 <color>ffffffff</color>
 <Icon>
-<href>http://home.no/grytnes/luftrom/vik.png</href>
+<href>http://grytnes-it.no/pg/luftrom/markers/vik.png</href>
 </Icon>
 </IconStyle>
 </Style>
@@ -45,7 +45,7 @@ Hans Cato Grytnes
 <IconStyle>
 <color>ffffffff</color>
 <Icon>
-<href>http://home.no/grytnes/luftrom/pg1.png</href>
+<href>http://grytnes-it.no/pg/luftrom/markers/pg1.png</href>
 </Icon>
 </IconStyle>
 </Style>
@@ -63,7 +63,7 @@ Hans Cato Grytnes
 <IconStyle>
 <color>ffffffff</color>
 <Icon>
-<href>http://home.no/grytnes/luftrom/motorfly.png</href>
+<href>http://grytnes-it.no/pg/luftrom/markers/motorfly.png</href>
 </Icon>
 </IconStyle>
 </Style>
@@ -81,7 +81,7 @@ Hans Cato Grytnes
 <IconStyle>
 <color>ffffffff</color>
 <Icon>
-<href>http://home.no/grytnes/luftrom/seilfly.png</href>
+<href>http://grytnes-it.no/pg/luftrom/markers/seilfly.png</href>
 </Icon>
 </IconStyle>
 </Style>
@@ -99,7 +99,7 @@ Hans Cato Grytnes
 <IconStyle>
 <color>ffffffff</color>
 <Icon>
-<href>http://home.no/grytnes/hlsk/markers/start.png</href>
+<href>http://grytnes-it.no/pg/luftrom/markers/start.png</href>
 </Icon>
 </IconStyle>
 </Style>
@@ -117,7 +117,7 @@ Hans Cato Grytnes
 <IconStyle>
 <color>ffffffff</color>
 <Icon>
-<href>http://home.no/grytnes/luftrom/cta-.png</href>
+<href>http://grytnes-it.no/pg/luftrom/markers/cta-.png</href>
 </Icon>
 </IconStyle>
 </Style>
@@ -135,7 +135,7 @@ Hans Cato Grytnes
 <IconStyle>
 <color>ffffffff</color>
 <Icon>
-<href>http://home.no/grytnes/luftrom/cta1676.png</href>
+<href>http://grytnes-it.no/pg/luftrom/markers/cta1676.png</href>
 </Icon>
 </IconStyle>
 </Style>
@@ -153,7 +153,7 @@ Hans Cato Grytnes
 <IconStyle>
 <color>ffffffff</color>
 <Icon>
-<href>http://home.no/grytnes/luftrom/cta1981.png</href>
+<href>http://grytnes-it.no/pg/luftrom/markers/cta1981.png</href>
 </Icon>
 </IconStyle>
 </Style>
@@ -171,7 +171,7 @@ Hans Cato Grytnes
 <IconStyle>
 <color>ffffffff</color>
 <Icon>
-<href>http://home.no/grytnes/luftrom/cta2286.png</href>
+<href>http://grytnes-it.no/pg/luftrom/markers/cta2286.png</href>
 </Icon>
 </IconStyle>
 </Style>
@@ -189,7 +189,7 @@ Hans Cato Grytnes
 <IconStyle>
 <color>ffffffff</color>
 <Icon>
-<href>http://home.no/grytnes/luftrom/cta2590.png</href>
+<href>http://grytnes-it.no/pg/luftrom/markers/cta2590.png</href>
 </Icon>
 </IconStyle>
 </Style>
@@ -207,7 +207,7 @@ Hans Cato Grytnes
 <IconStyle>
 <color>ffffffff</color>
 <Icon>
-<href>http://home.no/grytnes/luftrom/cta2895.png</href>
+<href>http://grytnes-it.no/pg/luftrom/markers/cta2895.png</href>
 </Icon>
 </IconStyle>
 </Style>
@@ -225,7 +225,7 @@ Hans Cato Grytnes
 <IconStyle>
 <color>ffffffff</color>
 <Icon>
-<href>http://home.no/grytnes/luftrom/cta3200.png</href>
+<href>http://grytnes-it.no/pg/luftrom/markers/cta3200.png</href>
 </Icon>
 </IconStyle>
 </Style>
@@ -243,7 +243,7 @@ Hans Cato Grytnes
 <IconStyle>
 <color>ffffffff</color>
 <Icon>
-<href>http://home.no/grytnes/luftrom/cta3505.png</href>
+<href>http://grytnes-it.no/pg/luftrom/markers/cta3505.png</href>
 </Icon>
 </IconStyle>
 </Style>
@@ -261,7 +261,7 @@ Hans Cato Grytnes
 <IconStyle>
 <color>ffffffff</color>
 <Icon>
-<href>http://home.no/grytnes/luftrom/cta3810.png</href>
+<href>http://grytnes-it.no/pg/luftrom/markers/cta3810.png</href>
 </Icon>
 </IconStyle>
 </Style>
@@ -279,7 +279,7 @@ Hans Cato Grytnes
 <IconStyle>
 <color>ffffffff</color>
 <Icon>
-<href>http://home.no/grytnes/luftrom/cta4114.png</href>
+<href>http://grytnes-it.no/pg/luftrom/markers/cta4114.png</href>
 </Icon>
 </IconStyle>
 </Style>
@@ -297,7 +297,7 @@ Hans Cato Grytnes
 <IconStyle>
 <color>ffffffff</color>
 <Icon>
-<href>http://home.no/grytnes/luftrom/tma-.png</href>
+<href>http://grytnes-it.no/pg/luftrom/markers/tma-.png</href>
 </Icon>
 </IconStyle>
 </Style>
@@ -315,7 +315,7 @@ Hans Cato Grytnes
 <IconStyle>
 <color>ffffffff</color>
 <Icon>
-<href>http://home.no/grytnes/luftrom/tma213.png</href>
+<href>http://grytnes-it.no/pg/luftrom/markers/tma213.png</href>
 </Icon>
 </IconStyle>
 </Style>
@@ -333,7 +333,7 @@ Hans Cato Grytnes
 <IconStyle>
 <color>ffffffff</color>
 <Icon>
-<href>http://home.no/grytnes/luftrom/tma305.png</href>
+<href>http://grytnes-it.no/pg/luftrom/markers/tma305.png</href>
 </Icon>
 </IconStyle>
 </Style>
@@ -351,7 +351,7 @@ Hans Cato Grytnes
 <IconStyle>
 <color>ffffffff</color>
 <Icon>
-<href>http://home.no/grytnes/luftrom/tma365.png</href>
+<href>http://grytnes-it.no/pg/luftrom/markers/tma365.png</href>
 </Icon>
 </IconStyle>
 </Style>
@@ -369,7 +369,7 @@ Hans Cato Grytnes
 <IconStyle>
 <color>ffffffff</color>
 <Icon>
-<href>http://home.no/grytnes/luftrom/tma457.png</href>
+<href>http://grytnes-it.no/pg/luftrom/markers/tma457.png</href>
 </Icon>
 </IconStyle>
 </Style>
@@ -387,7 +387,7 @@ Hans Cato Grytnes
 <IconStyle>
 <color>ffffffff</color>
 <Icon>
-<href>http://home.no/grytnes/luftrom/tma518.png</href>
+<href>http://grytnes-it.no/pg/luftrom/markers/tma518.png</href>
 </Icon>
 </IconStyle>
 </Style>
@@ -405,7 +405,7 @@ Hans Cato Grytnes
 <IconStyle>
 <color>ffffffff</color>
 <Icon>
-<href>http://home.no/grytnes/luftrom/tma610.png</href>
+<href>http://grytnes-it.no/pg/luftrom/markers/tma610.png</href>
 </Icon>
 </IconStyle>
 </Style>
@@ -423,7 +423,7 @@ Hans Cato Grytnes
 <IconStyle>
 <color>ffffffff</color>
 <Icon>
-<href>http://home.no/grytnes/luftrom/tma609.png</href>
+<href>http://grytnes-it.no/pg/luftrom/markers/tma610.png</href>
 </Icon>
 </IconStyle>
 </Style>
@@ -441,7 +441,7 @@ Hans Cato Grytnes
 <IconStyle>
 <color>ffffffff</color>
 <Icon>
-<href>http://home.no/grytnes/luftrom/tma700.png</href>
+<href>http://grytnes-it.no/pg/luftrom/markers/tma701.png</href>
 </Icon>
 </IconStyle>
 </Style>
@@ -459,7 +459,7 @@ Hans Cato Grytnes
 <IconStyle>
 <color>ffffffff</color>
 <Icon>
-<href>http://home.no/grytnes/luftrom/tma730.png</href>
+<href>http://grytnes-it.no/pg/luftrom/markers/tma732.png</href>
 </Icon>
 </IconStyle>
 </Style>
@@ -477,7 +477,7 @@ Hans Cato Grytnes
 <IconStyle>
 <color>ffffffff</color>
 <Icon>
-<href>http://home.no/grytnes/luftrom/tma762.png</href>
+<href>http://grytnes-it.no/pg/luftrom/markers/tma762.png</href>
 </Icon>
 </IconStyle>
 </Style>
@@ -495,7 +495,7 @@ Hans Cato Grytnes
 <IconStyle>
 <color>ffffffff</color>
 <Icon>
-<href>http://home.no/grytnes/luftrom/tma790.png</href>
+<href>http://grytnes-it.no/pg/luftrom/markers/tma792.png</href>
 </Icon>
 </IconStyle>
 </Style>
@@ -513,7 +513,7 @@ Hans Cato Grytnes
 <IconStyle>
 <color>ffffffff</color>
 <Icon>
-<href>http://home.no/grytnes/luftrom/tma914.png</href>
+<href>http://grytnes-it.no/pg/luftrom/markers/tma914.png</href>
 </Icon>
 </IconStyle>
 </Style>
@@ -531,7 +531,7 @@ Hans Cato Grytnes
 <IconStyle>
 <color>ffffffff</color>
 <Icon>
-<href>http://home.no/grytnes/luftrom/tma945.png</href>
+<href>http://grytnes-it.no/pg/luftrom/markers/tma945.png</href>
 </Icon>
 </IconStyle>
 </Style>
@@ -549,7 +549,7 @@ Hans Cato Grytnes
 <IconStyle>
 <color>ffffffff</color>
 <Icon>
-<href>http://home.no/grytnes/luftrom/tma1005.png</href>
+<href>http://grytnes-it.no/pg/luftrom/markers/tma1006.png</href>
 </Icon>
 </IconStyle>
 </Style>
@@ -567,7 +567,7 @@ Hans Cato Grytnes
 <IconStyle>
 <color>ffffffff</color>
 <Icon>
-<href>http://home.no/grytnes/luftrom/tma1067.png</href>
+<href>http://grytnes-it.no/pg/luftrom/markers/tma1067.png</href>
 </Icon>
 </IconStyle>
 </Style>
@@ -585,7 +585,7 @@ Hans Cato Grytnes
 <IconStyle>
 <color>ffffffff</color>
 <Icon>
-<href>http://home.no/grytnes/luftrom/tma1219.png</href>
+<href>http://grytnes-it.no/pg/luftrom/markers/tma1219.png</href>
 </Icon>
 </IconStyle>
 </Style>
@@ -603,25 +603,7 @@ Hans Cato Grytnes
 <IconStyle>
 <color>ffffffff</color>
 <Icon>
-<href>http://home.no/grytnes/luftrom/tma1350.png</href>
-</Icon>
-</IconStyle>
-</Style>
-
-<Style id="tma1372">
-<LineStyle>
-<width>2.1</width>
-<color>ff143C8C</color>
-</LineStyle>
-<PolyStyle>
-<color>05143C8C</color>
-<fill>1</fill>
-<outline>1</outline>
-</PolyStyle>
-<IconStyle>
-<color>ffffffff</color>
-<Icon>
-<href>http://home.no/grytnes/luftrom/tma1372.png</href>
+<href>http://grytnes-it.no/pg/luftrom/markers/tma1372.png</href>
 </Icon>
 </IconStyle>
 </Style>
@@ -639,25 +621,7 @@ Hans Cato Grytnes
 <IconStyle>
 <color>ffffffff</color>
 <Icon>
-<href>http://home.no/grytnes/luftrom/tma1500.png</href>
-</Icon>
-</IconStyle>
-</Style>
-
-<Style id="tma1524">
-<LineStyle>
-<width>2.1</width>
-<color>ff143C8C</color>
-</LineStyle>
-<PolyStyle>
-<color>05143C8C</color>
-<fill>1</fill>
-<outline>1</outline>
-</PolyStyle>
-<IconStyle>
-<color>ffffffff</color>
-<Icon>
-<href>http://home.no/grytnes/luftrom/tma1524.png</href>
+<href>http://grytnes-it.no/pg/luftrom/markers/tma1524.png</href>
 </Icon>
 </IconStyle>
 </Style>
@@ -675,7 +639,7 @@ Hans Cato Grytnes
 <IconStyle>
 <color>ffffffff</color>
 <Icon>
-<href>http://home.no/grytnes/luftrom/tma1676.png</href>
+<href>http://grytnes-it.no/pg/luftrom/markers/tma1676.png</href>
 </Icon>
 </IconStyle>
 </Style>
@@ -693,7 +657,7 @@ Hans Cato Grytnes
 <IconStyle>
 <color>ffffffff</color>
 <Icon>
-<href>http://home.no/grytnes/luftrom/tma1981.png</href>
+<href>http://grytnes-it.no/pg/luftrom/markers/tma1981.png</href>
 </Icon>
 </IconStyle>
 </Style>
@@ -711,7 +675,7 @@ Hans Cato Grytnes
 <IconStyle>
 <color>ffffffff</color>
 <Icon>
-<href>http://home.no/grytnes/luftrom/tma2286.png</href>
+<href>http://grytnes-it.no/pg/luftrom/markers/tma2286.png</href>
 </Icon>
 </IconStyle>
 </Style>
@@ -729,7 +693,7 @@ Hans Cato Grytnes
 <IconStyle>
 <color>ffffffff</color>
 <Icon>
-<href>http://home.no/grytnes/luftrom/fly-ctr.png</href>
+<href>http://grytnes-it.no/pg/luftrom/markers/fly-ctr.png</href>
 </Icon>
 </IconStyle>
 </Style>
@@ -747,7 +711,7 @@ Hans Cato Grytnes
 <IconStyle>
 <color>ffffffff</color>
 <Icon>
-<href>http://home.no/grytnes/luftrom/tiz.png</href>
+<href>http://grytnes-it.no/pg/luftrom/markers/tiz.png</href>
 </Icon>
 </IconStyle>
 </Style>
@@ -765,7 +729,7 @@ Hans Cato Grytnes
 <IconStyle>
 <color>ffffffff</color>
 <Icon>
-<href>http://home.no/grytnes/luftrom/swe-flag.png</href>
+<href>http://grytnes-it.no/pg/luftrom/markers/swe-flag.png</href>
 </Icon>
 </IconStyle>
 </Style>
@@ -783,7 +747,7 @@ Hans Cato Grytnes
 <IconStyle>
 <color>ffffffff</color>
 <Icon>
-<href>http://home.no/grytnes/luftrom/tia-.png</href>
+<href>http://grytnes-it.no/pg/luftrom/markers/tia-.png</href>
 </Icon>
 </IconStyle>
 </Style>
@@ -801,7 +765,7 @@ Hans Cato Grytnes
 <IconStyle>
 <color>ffffffff</color>
 <Icon>
-<href>http://home.no/grytnes/luftrom/tia305.png</href>
+<href>http://grytnes-it.no/pg/luftrom/markers/tia305.png</href>
 </Icon>
 </IconStyle>
 </Style>
@@ -819,7 +783,7 @@ Hans Cato Grytnes
 <IconStyle>
 <color>ffffffff</color>
 <Icon>
-<href>http://home.no/grytnes/luftrom/tia610.png</href>
+<href>http://grytnes-it.no/pg/luftrom/markers/tia610.png</href>
 </Icon>
 </IconStyle>
 </Style>
@@ -837,7 +801,7 @@ Hans Cato Grytnes
 <IconStyle>
 <color>ffffffff</color>
 <Icon>
-<href>http://home.no/grytnes/luftrom/tia762.png</href>
+<href>http://grytnes-it.no/pg/luftrom/markers/tia762.png</href>
 </Icon>
 </IconStyle>
 </Style>
@@ -855,7 +819,7 @@ Hans Cato Grytnes
 <IconStyle>
 <color>ffffffff</color>
 <Icon>
-<href>http://home.no/grytnes/luftrom/tia792.png</href>
+<href>http://grytnes-it.no/pg/luftrom/markers/tia792.png</href>
 </Icon>
 </IconStyle>
 </Style>
@@ -873,7 +837,7 @@ Hans Cato Grytnes
 <IconStyle>
 <color>ffffffff</color>
 <Icon>
-<href>http://home.no/grytnes/luftrom/tia945.png</href>
+<href>http://grytnes-it.no/pg/luftrom/markers/tia945.png</href>
 </Icon>
 </IconStyle>
 </Style>
@@ -891,7 +855,7 @@ Hans Cato Grytnes
 <IconStyle>
 <color>ffffffff</color>
 <Icon>
-<href>http://home.no/grytnes/luftrom/tia1067.png</href>
+<href>http://grytnes-it.no/pg/luftrom/markers/tia1067.png</href>
 </Icon>
 </IconStyle>
 </Style>
@@ -909,7 +873,7 @@ Hans Cato Grytnes
 <IconStyle>
 <color>ffffffff</color>
 <Icon>
-<href>http://home.no/grytnes/luftrom/tia1372.png</href>
+<href>http://grytnes-it.no/pg/luftrom/markers/tia1372.png</href>
 </Icon>
 </IconStyle>
 </Style>
@@ -927,7 +891,7 @@ Hans Cato Grytnes
 <IconStyle>
 <color>ffffffff</color>
 <Icon>
-<href>http://home.no/grytnes/luftrom/tia1676.png</href>
+<href>http://grytnes-it.no/pg/luftrom/markers/tia1676.png</href>
 </Icon>
 </IconStyle>
 </Style>
@@ -945,7 +909,7 @@ Hans Cato Grytnes
 <IconStyle>
 <color>ffffffff</color>
 <Icon>
-<href>http://home.no/grytnes/luftrom/tia1981.png</href>
+<href>http://grytnes-it.no/pg/luftrom/markers/tia1981.png</href>
 </Icon>
 </IconStyle>
 </Style>
@@ -963,7 +927,7 @@ Hans Cato Grytnes
 <IconStyle>
 <color>ffffffff</color>
 <Icon>
-<href>http://home.no/grytnes/luftrom/fare.png</href>
+<href>http://grytnes-it.no/pg/luftrom/markers/fare.png</href>
 </Icon>
 </IconStyle>
 </Style>
@@ -983,7 +947,7 @@ Hans Cato Grytnes
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 4114<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -1006,6 +970,7 @@ Hoydebegr. PG/HG, meter: 4114<br/>
 9.95,61.5
 9.5575,61.2
 7.5,61.2
+6.3333,62
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -1019,7 +984,7 @@ Hoydebegr. PG/HG, meter: 4114<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 4114<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <Point>
 <coordinates>
@@ -1034,7 +999,7 @@ Hoydebegr. PG/HG, meter: 4114<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 4114<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <Point>
 <coordinates>
@@ -1049,7 +1014,7 @@ Hoydebegr. PG/HG, meter: 4114<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 4114<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <Point>
 <coordinates>
@@ -1064,7 +1029,7 @@ Hoydebegr. PG/HG, meter: 4114<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 3505<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -1087,6 +1052,7 @@ Hoydebegr. PG/HG, meter: 3505<br/>
 17.2813,68.1182
 17.1811,68.0503
 17.0122,68
+16.6667,68
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -1100,7 +1066,7 @@ Hoydebegr. PG/HG, meter: 3505<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 3505<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -1165,6 +1131,7 @@ Hoydebegr. PG/HG, meter: 3505<br/>
 10.2,64.433333
 7.75,63.416667
 6.666667,63.083333
+5,62
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -1234,7 +1201,7 @@ Hoydebegr. PG/HG, meter: 3505<br/>]]>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 3505<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -1255,6 +1222,7 @@ Hoydebegr. PG/HG, meter: 3505<br/>
 6.5,61
 6.3333,61.5
 6.3333,62
+7.5,61.2
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -1268,7 +1236,7 @@ Hoydebegr. PG/HG, meter: 3505<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 3505<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <Point>
 <coordinates>
@@ -1283,7 +1251,7 @@ Hoydebegr. PG/HG, meter: 3505<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 3505<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <Point>
 <coordinates>
@@ -1298,7 +1266,7 @@ Hoydebegr. PG/HG, meter: 3505<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 3505<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -1316,6 +1284,7 @@ Hoydebegr. PG/HG, meter: 3505<br/>
 9,59.76361
 8.59,59.66667
 8.333333,59.66667
+8.333333,60.03333
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -1329,7 +1298,7 @@ Hoydebegr. PG/HG, meter: 3505<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 3505<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <Point>
 <coordinates>
@@ -1344,7 +1313,7 @@ Hoydebegr. PG/HG, meter: 3505<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 3200<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -1599,6 +1568,7 @@ Hoydebegr. PG/HG, meter: 3200<br/>
 14.5851,65.9
 14.626,65.8117
 14.5783,65.75
+11.6553,65.75
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -1640,7 +1610,7 @@ Hoydebegr. PG/HG, meter: 3200<br/>]]>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 2895<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -1789,6 +1759,7 @@ Hoydebegr. PG/HG, meter: 2895<br/>
 6.5,61
 6.3333,61.5
 6.3333,62
+5,62
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -1914,7 +1885,7 @@ Hoydebegr. PG/HG, meter: 2895<br/>]]>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 3200<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -1929,6 +1900,7 @@ Hoydebegr. PG/HG, meter: 3200<br/>
 6.8403,61.8214
 7.8269,61.6786
 7.5,61.4667
+6.8403,61.8214
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -1942,7 +1914,7 @@ Hoydebegr. PG/HG, meter: 3200<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 2895<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -1960,6 +1932,7 @@ Hoydebegr. PG/HG, meter: 2895<br/>
 8.5194,62
 8.3333,62
 7.8269,61.6786
+6.8403,61.8214
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -1973,7 +1946,7 @@ Hoydebegr. PG/HG, meter: 2895<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 2590<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -1992,6 +1965,7 @@ Hoydebegr. PG/HG, meter: 2590<br/>
 8.299167,62.76
 8.625,62.35
 7.666667,62.35
+6.840278,61.821389
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -2033,7 +2007,7 @@ Hoydebegr. PG/HG, meter: 2590<br/>]]>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 2286<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -2057,6 +2031,7 @@ Hoydebegr. PG/HG, meter: 2286<br/>
 16.1576,67.519
 16.1083,67.4578
 13.9167,67.6667
+14.9333,68.8333
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -2070,7 +2045,7 @@ Hoydebegr. PG/HG, meter: 2286<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 2286<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -2088,6 +2063,7 @@ Hoydebegr. PG/HG, meter: 2286<br/>
 11.7492,62.1983
 11.75,62
 10.65,62
+10.6667,62.4667
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -2101,7 +2077,7 @@ Hoydebegr. PG/HG, meter: 2286<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1981<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -2120,6 +2096,7 @@ Hoydebegr. PG/HG, meter: 1981<br/>
 12,64.083333
 11,64.233333
 10.2,64.433333
+11.583333,65.343611
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -2133,7 +2110,7 @@ Hoydebegr. PG/HG, meter: 1981<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1981<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -2152,6 +2129,7 @@ Hoydebegr. PG/HG, meter: 1981<br/>
 10.8,62.7833
 10.8,62.4983
 10.6667,62.4667
+10.1333,63
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -2165,7 +2143,7 @@ Hoydebegr. PG/HG, meter: 1981<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1676<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -2181,6 +2159,7 @@ Hoydebegr. PG/HG, meter: 1676<br/>
 8.5,63.3167
 9.6333,63.4667
 10.1333,63
+8.6667,63.1333
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -2194,7 +2173,7 @@ Hoydebegr. PG/HG, meter: 1676<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 2286<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -2212,6 +2191,7 @@ Hoydebegr. PG/HG, meter: 2286<br/>
 22.195,69.791667
 22.434444,69.735278
 20,69.45
+20,70.083333
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -2225,7 +2205,7 @@ Hoydebegr. PG/HG, meter: 2286<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 2895<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -2248,6 +2228,7 @@ Hoydebegr. PG/HG, meter: 2895<br/>
 11.749167,62.198333
 11.5,62.166667
 11.066667,62.373333
+10.8,62.498333
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -2262,7 +2243,7 @@ Hoydebegr. PG/HG, meter: 2895<br/>
 <![CDATA[Luftromsklasse: D<br/>
 Nedre grense: 457<br/>
 Ovre grense: 2590<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -2280,6 +2261,7 @@ Ovre grense: 2590<br/>
 4.3333,60.25
 1.9942,60.3331
 1.7883,61.3561
+1.6539,61.5825
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -2297,7 +2279,7 @@ Ovre grense: 2590<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1067<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -2314,6 +2296,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 24,70.3139
 24,69.6667
 23.1053,69.6667
+22.4078,70.2067
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -2327,7 +2310,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1372<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -2344,6 +2327,7 @@ Hoydebegr. PG/HG, meter: 1372<br/>
 22.7217,69.6667
 22.1950,69.7917
 21.8433,70.0833
+22.4078,70.2067
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -2357,7 +2341,7 @@ Hoydebegr. PG/HG, meter: 1372<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1372<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -2373,6 +2357,7 @@ Hoydebegr. PG/HG, meter: 1372<br/>
 17.3333,69.6667
 17.5833,69.4167
 17.1667,69.3333
+16.6667,69.6667
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -2386,7 +2371,7 @@ Hoydebegr. PG/HG, meter: 1372<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 762<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -2404,6 +2389,7 @@ Hoydebegr. PG/HG, meter: 762<br/>
 17.1667,69.3333
 16.9667,69.0833
 15.6833,68.8167
+15.3333,69.4167
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -2417,7 +2403,7 @@ Hoydebegr. PG/HG, meter: 762<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1067<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -2432,6 +2418,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 15.3333,69.4167
 15.6833,68.8167
 14.9333,68.8333
+15.3333,69.4167
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -2445,7 +2432,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1067<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -2465,6 +2452,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 25.5833,69.5833
 24.6667,69.5833
 24,69.6667
+24,70.3139
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -2478,7 +2466,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1676<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -2495,6 +2483,7 @@ Hoydebegr. PG/HG, meter: 1676<br/>
 20,68.8333
 19.25,68.7
 18.15,68.6833
+18.2833,68.8667
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -2508,7 +2497,7 @@ Hoydebegr. PG/HG, meter: 1676<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1372<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -2531,6 +2520,7 @@ Hoydebegr. PG/HG, meter: 1372<br/>
 18.15,68.6833
 17.25,68.95
 16.9667,69.0833
+17.1667,69.3333
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -2544,7 +2534,7 @@ Hoydebegr. PG/HG, meter: 1372<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 457<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -2565,6 +2555,7 @@ Hoydebegr. PG/HG, meter: 457<br/>
 14.0833,67.15
 13.5833,67.1
 13.5,67.3
+13.6667,67.4833
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -2578,7 +2569,7 @@ Hoydebegr. PG/HG, meter: 457<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1067<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -2606,6 +2597,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 14.3333,67
 14.0833,66.8833
 13,66.95
+13,67.4167
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -2619,7 +2611,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1372<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -2637,6 +2629,7 @@ Hoydebegr. PG/HG, meter: 1372<br/>
 14.3333,67
 15.1667,67.2292
 15.1667,67.3167
+14.8333,67.5833
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -2650,7 +2643,7 @@ Hoydebegr. PG/HG, meter: 1372<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1981<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -2667,6 +2660,7 @@ Hoydebegr. PG/HG, meter: 1981<br/>
 16.0431,66.9142
 14.8333,66.8333
 14.0833,66.8833
+14.3333,67
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -2680,7 +2674,7 @@ Hoydebegr. PG/HG, meter: 1981<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1372<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -2706,6 +2700,7 @@ Hoydebegr. PG/HG, meter: 1372<br/>
 16.6667,68.25
 16.4833,68.1167
 15.6739,68.2819
+16.1689,68.9194
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -2719,7 +2714,7 @@ Hoydebegr. PG/HG, meter: 1372<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 762<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -2740,6 +2735,7 @@ Hoydebegr. PG/HG, meter: 762<br/>
 17.5333,68.55
 17.6333,68.6167
 17.8831,68.5631
+17.3833,68.3333
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -2753,7 +2749,7 @@ Hoydebegr. PG/HG, meter: 762<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1676<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -2771,6 +2767,7 @@ Hoydebegr. PG/HG, meter: 1676<br/>
 17.3833,68.3333
 16.6667,68
 15.6,68.1833
+15.6739,68.2819
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -2784,7 +2781,7 @@ Hoydebegr. PG/HG, meter: 1676<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 762<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -2807,6 +2804,7 @@ Hoydebegr. PG/HG, meter: 762<br/>
 9.457778,58.975
 9.695556,58.974722
 9.953889,59.069444
+9.955278,59.248889
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -2820,7 +2818,7 @@ Hoydebegr. PG/HG, meter: 762<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 762<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <Point>
 <coordinates>
@@ -2835,7 +2833,7 @@ Hoydebegr. PG/HG, meter: 762<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 762<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -2854,6 +2852,7 @@ Hoydebegr. PG/HG, meter: 762<br/>
 9.457778,58.975
 9.4,59.016667
 9.316667,59.183333
+9.398333,59.25
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -2867,7 +2866,7 @@ Hoydebegr. PG/HG, meter: 762<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1067<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -2894,6 +2893,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 10.558611,58.666667
 9.708333,58.666667
 9.166667,59.033333
+9.166667,59.25
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -2907,7 +2907,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1372<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -2929,6 +2929,7 @@ Hoydebegr. PG/HG, meter: 1372<br/>
 9.056389,58.965278
 9,59
 9,59.083333
+9,59.25
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -2942,7 +2943,7 @@ Hoydebegr. PG/HG, meter: 1372<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1372<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -2967,6 +2968,7 @@ Hoydebegr. PG/HG, meter: 1372<br/>
 9.193056,59.434722
 9.391667,59.570833
 9.548333,59.677222
+9.595556,59.709722
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -2980,7 +2982,7 @@ Hoydebegr. PG/HG, meter: 1372<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1372<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <Point>
 <coordinates>
@@ -2995,7 +2997,7 @@ Hoydebegr. PG/HG, meter: 1372<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1067<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -3017,6 +3019,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 9.166667,59.25
 9.166667,59.283333
 9.769722,59.54
+9.927500,59.607222
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -3030,7 +3033,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1067<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <Point>
 <coordinates>
@@ -3045,7 +3048,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1067<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <Point>
 <coordinates>
@@ -3060,7 +3063,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1067<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <Point>
 <coordinates>
@@ -3075,7 +3078,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 762<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -3091,6 +3094,7 @@ Hoydebegr. PG/HG, meter: 762<br/>
 9.955278,59.248889
 9.398333,59.25
 9.5,59.333333
+9.957222,59.488333
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -3104,7 +3108,7 @@ Hoydebegr. PG/HG, meter: 762<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 762<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <Point>
 <coordinates>
@@ -3119,7 +3123,7 @@ Hoydebegr. PG/HG, meter: 762<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 762<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -3146,6 +3150,7 @@ Hoydebegr. PG/HG, meter: 762<br/>
 9.955278,59.248889
 9.957222,59.488333
 10.083333,59.5
+10.3,59.604167
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -3159,7 +3164,7 @@ Hoydebegr. PG/HG, meter: 762<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 762<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <Point>
 <coordinates>
@@ -3174,7 +3179,7 @@ Hoydebegr. PG/HG, meter: 762<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 762<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <Point>
 <coordinates>
@@ -3189,7 +3194,7 @@ Hoydebegr. PG/HG, meter: 762<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1067<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -3225,6 +3230,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 10.843889,59.004167
 11.233333,59.133333
 11.633333,59.133333
+11.633333,59.3925
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -3238,7 +3244,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1067<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <Point>
 <coordinates>
@@ -3253,7 +3259,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1372<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -3287,6 +3293,7 @@ Hoydebegr. PG/HG, meter: 1372<br/>
 11.7113,59.0332
 11.775,59.0867
 11.776111,59.095278
+11.339444,59.115
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -3300,7 +3307,7 @@ Hoydebegr. PG/HG, meter: 1372<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 762<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -3317,6 +3324,7 @@ Hoydebegr. PG/HG, meter: 762<br/>
 11.019444,59.611111
 11.122222,59.473611
 10.3,59.604167
+10.475,59.683333
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -3330,7 +3338,7 @@ Hoydebegr. PG/HG, meter: 762<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1676<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -3348,6 +3356,7 @@ Hoydebegr. PG/HG, meter: 1676<br/>
 9.056389,58.965278
 8.781111,58.959722
 8.733333,59
+8.733333,59.25
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -3361,7 +3370,7 @@ Hoydebegr. PG/HG, meter: 1676<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1676<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -3380,6 +3389,7 @@ Hoydebegr. PG/HG, meter: 1676<br/>
 9,59.25
 8.733333,59.25
 8.733333,59.301667
+9.006389,59.52
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -3393,7 +3403,7 @@ Hoydebegr. PG/HG, meter: 1676<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 213<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -3413,6 +3423,7 @@ Hoydebegr. PG/HG, meter: 213<br/>
 4.4833,60
 4.3333,60.25
 4.4669,60.8333
+4.5667,60.8333
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -3426,7 +3437,7 @@ Hoydebegr. PG/HG, meter: 213<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 610<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -3445,6 +3456,7 @@ Hoydebegr. PG/HG, meter: 610<br/>
 5.0333,60.1167
 4.9333,60.3667
 5.0167,60.4667
+4.8333,60.6167
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -3458,7 +3470,7 @@ Hoydebegr. PG/HG, meter: 610<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1067<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -3481,6 +3493,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 5.5667,59.9833
 5.3667,60.6167
 4.8333,60.6167
+4.5667,60.8333
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -3494,7 +3507,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1676<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -3516,6 +3529,7 @@ Hoydebegr. PG/HG, meter: 1676<br/>
 5.6667,60.5833
 5.3,60.8333
 4.4669,60.8333
+4.5056,61
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -3529,7 +3543,7 @@ Hoydebegr. PG/HG, meter: 1676<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1676<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <Point>
 <coordinates>
@@ -3544,7 +3558,7 @@ Hoydebegr. PG/HG, meter: 1676<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 762<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -3562,6 +3576,7 @@ Hoydebegr. PG/HG, meter: 762<br/>
 23.1297,70.4778
 22.5358,70.7603
 23.9619,70.9667
+24.2250,71.0233
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -3575,7 +3590,7 @@ Hoydebegr. PG/HG, meter: 762<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1067<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -3598,6 +3613,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 22.5358,70.7603
 23.1297,70.4778
 23.5833,70.475
+24.8,70.7333
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -3611,7 +3627,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 762<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -3630,6 +3646,7 @@ Hoydebegr. PG/HG, meter: 762<br/>
 11.5833,65
 11.5833,65.25
 11.5833,65.6833
+12.3333,66.3611
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -3643,7 +3660,7 @@ Hoydebegr. PG/HG, meter: 762<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 762<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <Point>
 <coordinates>
@@ -3658,7 +3675,7 @@ Hoydebegr. PG/HG, meter: 762<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1372<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -3678,6 +3695,7 @@ Hoydebegr. PG/HG, meter: 1372<br/>
 13.4167,65.25
 12.45,65.25
 13.0333,66.2417
+12.3333,66.3611
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -3691,7 +3709,7 @@ Hoydebegr. PG/HG, meter: 1372<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1372<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <Point>
 <coordinates>
@@ -3706,7 +3724,7 @@ Hoydebegr. PG/HG, meter: 1372<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1981<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -3723,6 +3741,7 @@ Hoydebegr. PG/HG, meter: 1981<br/>
 14.7792,66.5
 13.8333,66.5
 12.3333,66.3611
+13,66.95
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -3736,7 +3755,7 @@ Hoydebegr. PG/HG, meter: 1981<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 762<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -3796,6 +3815,7 @@ Hoydebegr. PG/HG, meter: 762<br/>
 30.81778,69.79472
 30.66667,69.66667
 30.15111,69.66917
+30.08674,69.65756
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -3809,7 +3829,7 @@ Hoydebegr. PG/HG, meter: 762<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1524<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -3826,6 +3846,7 @@ Hoydebegr. PG/HG, meter: 1524<br/>
 8.577222,58.7325
 8.350556,58.609444
 7.673889,58.579722
+7.891111,58.746667
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -3839,7 +3860,7 @@ Hoydebegr. PG/HG, meter: 1524<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1067<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -3855,6 +3876,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 8.350556,58.609444
 8,58.416667
 7.289444,58.279444
+7.673889,58.579722
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -3868,7 +3890,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 762<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -3889,6 +3911,7 @@ Hoydebegr. PG/HG, meter: 762<br/>
 7.25,57.8
 7.25,57.916667
 7.237778,58.121667
+7.289444,58.279444
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -3902,7 +3925,7 @@ Hoydebegr. PG/HG, meter: 762<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1067<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -3918,6 +3941,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 8.7,57.883333
 8.3,57.6
 7.672222,57.608889
+7.25,57.8
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -3931,7 +3955,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 213<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -3951,6 +3975,7 @@ Hoydebegr. PG/HG, meter: 213<br/>
 8.1667,63.2333
 7.6167,63.2333
 7.1167,63.1333
+6.6667,63.0833
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -3964,7 +3989,7 @@ Hoydebegr. PG/HG, meter: 213<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 762<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -3984,6 +4009,7 @@ Hoydebegr. PG/HG, meter: 762<br/>
 8.6667,63.1333
 8.2,62.9667
 7.3333,62.8833
+6.6667,63.0833
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -3997,7 +4023,7 @@ Hoydebegr. PG/HG, meter: 762<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1067<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -4015,6 +4041,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 8.4003,62.8636
 7.5,62.7
 7.5,62.8333
+7.3333,62.8833
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -4028,7 +4055,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1372<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -4044,6 +4071,7 @@ Hoydebegr. PG/HG, meter: 1372<br/>
 8.4003,62.8636
 8.1942,62.6514
 7.5,62.45
+7.5,62.7
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -4057,7 +4085,7 @@ Hoydebegr. PG/HG, meter: 1372<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1067<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -4081,6 +4109,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 11.63333,67.25
 11.63333,67.4
 12.06667,67.66667
+14.93333,68.83333
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -4094,7 +4123,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 762<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -4121,6 +4150,7 @@ Hoydebegr. PG/HG, meter: 762<br/>
 10.914722,60.044444
 10.9,60.066667
 10.868611,60.256944
+11,60.333333
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -4134,7 +4164,7 @@ Hoydebegr. PG/HG, meter: 762<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 914<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -4158,6 +4188,7 @@ Hoydebegr. PG/HG, meter: 914<br/>
 10.2,60
 10.275,60.125
 10.3,60.166667
+10.362222,60.271389
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -4171,7 +4202,7 @@ Hoydebegr. PG/HG, meter: 914<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1067<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -4197,6 +4228,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 10.362222,60.271389
 10.616667,60.722222
 10.691667,60.802778
+11.072222,60.877778
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -4210,7 +4242,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1372<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -4241,6 +4273,7 @@ Hoydebegr. PG/HG, meter: 1372<br/>
 9.688889,59.922222
 9.819444,60.183333
 9.975,60.491667
+10.1,60.729167
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -4254,7 +4287,7 @@ Hoydebegr. PG/HG, meter: 1372<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1372<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <Point>
 <coordinates>
@@ -4269,7 +4302,7 @@ Hoydebegr. PG/HG, meter: 1372<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1372<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <Point>
 <coordinates>
@@ -4284,7 +4317,7 @@ Hoydebegr. PG/HG, meter: 1372<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1676<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -4304,6 +4337,7 @@ Hoydebegr. PG/HG, meter: 1676<br/>
 12.033333,60.516667
 11.966667,60.666667
 11.695833,60.797222
+11.829167,60.875
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -4317,7 +4351,7 @@ Hoydebegr. PG/HG, meter: 1676<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1372<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -4351,6 +4385,7 @@ Hoydebegr. PG/HG, meter: 1372<br/>
 11.558333,59.830556
 11.633333,59.95
 11.904167,60.333333
+11.9375,60.366667
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -4364,7 +4399,7 @@ Hoydebegr. PG/HG, meter: 1372<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1067<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -4407,6 +4442,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 11.122222,59.473611
 11.019444,59.611111
 11.1,59.7625
+11.333333,59.833333
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -4422,7 +4458,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 Hoydebegr. PG/HG, meter: 1372<br/>
 Hvis ekstra hoyde onskes: <br/>
 ta evt. kontakt med tarnet pa tlf.72411452<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -4443,6 +4479,7 @@ ta evt. kontakt med tarnet pa tlf.72411452<br/>
 11.749167,62.198333
 11.5,62.166667
 11.066667,62.373333
+11.066667,62.815556
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -4458,7 +4495,7 @@ ta evt. kontakt med tarnet pa tlf.72411452<br/>
 Hoydebegr. PG/HG, meter: 1981<br/>
 Hvis ekstra hoyde onskes: <br/>
 ta evt. kontakt med tarnet pa tlf.72411452<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -4474,6 +4511,7 @@ ta evt. kontakt med tarnet pa tlf.72411452<br/>
 11.0667,62.8156
 11.0667,62.3733
 10.8,62.4983
+10.8,62.7833
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -4487,7 +4525,7 @@ ta evt. kontakt med tarnet pa tlf.72411452<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 213<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -4511,6 +4549,7 @@ Hoydebegr. PG/HG, meter: 213<br/>
 5.2667,58.3833
 4.8833,58.5667
 4.6667,58.9
+4.6667,59.4167
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -4524,7 +4563,7 @@ Hoydebegr. PG/HG, meter: 213<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 457<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -4550,6 +4589,7 @@ Hoydebegr. PG/HG, meter: 457<br/>
 5.2,59.15
 4.6667,59.4167
 4.6667,59.45
+4.7167,59.6167
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -4563,7 +4603,7 @@ Hoydebegr. PG/HG, meter: 457<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 762<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -4583,6 +4623,7 @@ Hoydebegr. PG/HG, meter: 762<br/>
 5.6333,58.55
 5.9333,58.75
 6,58.9167
+5.7667,59.2833
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -4596,7 +4637,7 @@ Hoydebegr. PG/HG, meter: 762<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1067<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -4617,6 +4658,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 6.2333,58.9167
 5.9667,59.2833
 5.7667,59.2833
+5.1592,59.6378
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -4630,7 +4672,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1067<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <Point>
 <coordinates>
@@ -4645,7 +4687,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1372<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -4664,6 +4706,7 @@ Hoydebegr. PG/HG, meter: 1372<br/>
 18.2653,69.3700
 17.5833,69.4167
 17.3333,69.6667
+18.8333,70.0833
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -4677,7 +4720,7 @@ Hoydebegr. PG/HG, meter: 1372<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 762<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -4697,6 +4740,7 @@ Hoydebegr. PG/HG, meter: 762<br/>
 5.8167,62.3167
 5.5833,62.2
 5,62.2
+5,62.75
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -4710,7 +4754,7 @@ Hoydebegr. PG/HG, meter: 762<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1067<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -4735,6 +4779,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 6,62.0833
 5.6667,62
 5,62
+5,62.2
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -4748,7 +4793,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1372<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -4764,6 +4809,7 @@ Hoydebegr. PG/HG, meter: 1372<br/>
 7.5,62.7
 7.5,62.45
 6.3333,62.1667
+6.8333,62.5833
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -4777,7 +4823,7 @@ Hoydebegr. PG/HG, meter: 1372<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1676<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -4794,6 +4840,7 @@ Hoydebegr. PG/HG, meter: 1676<br/>
 6.3333,62.1667
 7.5,62.45
 6.5,62
+5.6667,62
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -4807,12 +4854,12 @@ Hoydebegr. PG/HG, meter: 1676<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 762<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
 <coordinates>
-10.055,63.458
+10.3354,63.4861
 </coordinates>
 </Point>
 <Polygon>
@@ -4824,6 +4871,7 @@ Hoydebegr. PG/HG, meter: 762<br/>
 11.4167,63.5833
 11.4167,63.3333
 10.25,63.3333
+9.6333,63.4667
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -4832,27 +4880,12 @@ Hoydebegr. PG/HG, meter: 762<br/>
 </Placemark>
 
 <Placemark>
-<styleUrl>#tma762</styleUrl>
-<name>Varnes TMA 1</name>
-<description>
-<![CDATA[Luftromsklasse: C<br/>
-Hoydebegr. PG/HG, meter: 762<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
-</description>
-<Point>
-<coordinates>
-10.3354,63.4861
-</coordinates>
-</Point>
-</Placemark>
-
-<Placemark>
 <styleUrl>#tma1067</styleUrl>
 <name>Varnes TMA 2</name>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1067<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -4875,6 +4908,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 11.4167,63.3333
 11.4167,63.5833
 10.25,63.5833
+10.5,63.8
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -4888,7 +4922,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1372<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -4904,6 +4938,7 @@ Hoydebegr. PG/HG, meter: 1372<br/>
 12,64.0833
 12,63.7150
 10.5,63.8
+11,64.2333
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -4917,7 +4952,7 @@ Hoydebegr. PG/HG, meter: 1372<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1676<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -4934,6 +4969,7 @@ Hoydebegr. PG/HG, meter: 1676<br/>
 11.8833,63.25
 11.75,63
 10.1333,63
+10.0833,63.05
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -4947,7 +4983,7 @@ Hoydebegr. PG/HG, meter: 1676<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 762<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -4965,6 +5001,7 @@ Hoydebegr. PG/HG, meter: 762<br/>
 9.6333,63.4667
 9.1711,63.4067
 8.5992,63.9589
+9.6706,64.2803
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -4978,7 +5015,7 @@ Hoydebegr. PG/HG, meter: 762<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1067<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -4994,6 +5031,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 11,64.2333
 10.3664,63.6864
 9.6706,64.2803
+10.2,64.4333
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -5007,7 +5045,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 <description>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1067<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -5024,6 +5062,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 8.5,63.3167
 8,63.5667
 8,63.7725
+8.5992,63.9589
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -5042,7 +5081,8 @@ Hoydebegr. PG/HG, meter: 1067<br/>
 <![CDATA[Luftromsklasse: D<br/>
 Nedre grense : 0<br/>
 Ovre grense: 1067<br/>
-PG/HG-flyging er normalt forbudt her.<br/>]]>
+PG/HG-flyging er normalt forbudt her.<br/>
+<a href="https://www.ippc.no/norway_aip/current/aip/ad/enat/EN_AD_2_ENAT_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -5062,6 +5102,7 @@ PG/HG-flyging er normalt forbudt her.<br/>]]>
 23.1833,69.8
 22.9667,69.85
 22.8333,70.0333
+23,70.1333
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -5076,7 +5117,8 @@ PG/HG-flyging er normalt forbudt her.<br/>]]>
 <![CDATA[Luftromsklasse: D<br/>
 Nedre grense : 0<br/>
 Ovre grense: 762<br/>
-PG/HG-flyging er normalt forbudt her.<br/>]]>
+PG/HG-flyging er normalt forbudt her.<br/>
+<a href="https://www.ippc.no/norway_aip/current/aip/ad/enan/EN_AD_2_ENAN_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -5093,6 +5135,7 @@ PG/HG-flyging er normalt forbudt her.<br/>]]>
 16.6667,69.1167
 16.0833,69.0333
 15.5167,69.4833
+16,69.5833
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -5107,7 +5150,8 @@ PG/HG-flyging er normalt forbudt her.<br/>]]>
 <![CDATA[Luftromsklasse: D<br/>
 Nedre grense : 0<br/>
 Ovre grense: 1372<br/>
-PG/HG-flyging er normalt forbudt her.<br/>]]>
+PG/HG-flyging er normalt forbudt her.<br/>
+<a href="https://www.ippc.no/norway_aip/current/aip/ad/endu/EN_AD_2_ENDU_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -5123,6 +5167,7 @@ PG/HG-flyging er normalt forbudt her.<br/>]]>
 19.25,69.0833
 19.0833,68.9167
 17.6667,69.0833
+17.8833,69.25
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -5134,11 +5179,11 @@ PG/HG-flyging er normalt forbudt her.<br/>]]>
 <styleUrl>#ctr</styleUrl>
 <name>Flesland CTR</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Nedre grense : 0<br/>
 Ovre grense: 610<br/>
 PG/HG-flyging er normalt forbudt her.<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_6_3-9_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/ad/enbr/EN_AD_2_ENBR_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -5156,6 +5201,7 @@ PG/HG-flyging er normalt forbudt her.<br/>
 5.3833,60.1333
 5.0333,60.1167
 4.9333,60.3667
+5.0167,60.4667
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -5171,7 +5217,7 @@ PG/HG-flyging er normalt forbudt her.<br/>
 Nedre grense : 0<br/>
 Ovre grense: 457<br/>
 PG/HG-flyging er normalt forbudt her.<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_6_3-23_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/ad/enbo/EN_AD_2_ENBO_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -5188,6 +5234,7 @@ PG/HG-flyging er normalt forbudt her.<br/>
 14.8333,67.2167
 14.0833,67.15
 13.9167,67.2667
+14.3,67.425
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -5202,7 +5249,8 @@ PG/HG-flyging er normalt forbudt her.<br/>
 <![CDATA[Luftromsklasse: D<br/>
 Nedre grense : 0<br/>
 Ovre grense: 762<br/>
-PG/HG-flyging er normalt forbudt her.<br/>]]>
+PG/HG-flyging er normalt forbudt her.<br/>
+<a href="https://www.ippc.no/norway_aip/current/aip/ad/enev/EN_AD_2_ENEV_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -5218,6 +5266,7 @@ PG/HG-flyging er normalt forbudt her.<br/>]]>
 16.8333,68.7333
 16.8333,68.3667
 16.25,68.3667
+16.5,68.7333
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -5233,7 +5282,7 @@ PG/HG-flyging er normalt forbudt her.<br/>]]>
 Nedre grense : 0<br/>
 Ovre grense: 457<br/>
 PG/HG-flyging er normalt forbudt her.<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_6_2-1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/ad/enhd/EN_AD_2_ENHD_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -5252,6 +5301,7 @@ PG/HG-flyging er normalt forbudt her.<br/>
 5.3833,59.1667
 5.2,59.15
 4.6667,59.4167
+4.6667,59.45
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -5261,12 +5311,13 @@ PG/HG-flyging er normalt forbudt her.<br/>
 
 <Placemark>
 <styleUrl>#ctr</styleUrl>
-<name>Kirkenes CTR 1</name>
+<name>Kirkenes CTR</name>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
 Nedre grense : 0<br/>
 Ovre grense: 762<br/>
-PG/HG-flyging er normalt forbudt her.<br/>]]>
+PG/HG-flyging er normalt forbudt her.<br/>
+<a href="https://www.ippc.no/norway_aip/current/aip/ad/enkr/EN_AD_2_ENKR_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -5281,6 +5332,7 @@ PG/HG-flyging er normalt forbudt her.<br/>]]>
 29.1339,69.6956
 29.6667,69.8333
 30.4167,69.8667
+29.1339,69.6956
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -5296,7 +5348,7 @@ PG/HG-flyging er normalt forbudt her.<br/>]]>
 Nedre grense : 0<br/>
 Ovre grense: 762<br/>
 PG/HG-flyging er normalt forbudt her.<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_6_2-1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/ad/encn/EN_AD_2_ENCN_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -5315,6 +5367,7 @@ PG/HG-flyging er normalt forbudt her.<br/>
 7.866667,58.075
 7.808333,58.116667
 7.966667,58.266667
+8.2,58.383333
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -5329,7 +5382,8 @@ PG/HG-flyging er normalt forbudt her.<br/>
 <![CDATA[Luftromsklasse: D<br/>
 Nedre grense : 0<br/>
 Ovre grense: 762<br/>
-PG/HG-flyging er normalt forbudt her.<br/>]]>
+PG/HG-flyging er normalt forbudt her.<br/>
+<a href="https://www.ippc.no/norway_aip/current/aip/ad/enkb/EN_AD_2_ENKB_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -5353,6 +5407,7 @@ PG/HG-flyging er normalt forbudt her.<br/>]]>
 </Polygon>
 </MultiGeometry>
 </Placemark>
+
 <Placemark>
 <styleUrl>#ctr</styleUrl>
 <name>Banak CTR</name>
@@ -5360,7 +5415,8 @@ PG/HG-flyging er normalt forbudt her.<br/>]]>
 <![CDATA[Luftromsklasse: D<br/>
 Nedre grense : 0<br/>
 Ovre grense: 1067<br/>
-PG/HG-flyging er normalt forbudt her.<br/>]]>
+PG/HG-flyging er normalt forbudt her.<br/>
+<a href="https://www.ippc.no/norway_aip/current/aip/ad/enna/EN_AD_2_ENNA_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -5376,6 +5432,7 @@ PG/HG-flyging er normalt forbudt her.<br/>]]>
 25.3333,70.3333
 25.3333,69.75
 24.6667,69.75
+24.6667,70.3333
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -5390,7 +5447,8 @@ PG/HG-flyging er normalt forbudt her.<br/>]]>
 <![CDATA[Luftromsklasse: D<br/>
 Nedre grense : 0<br/>
 Ovre grense: 762<br/>
-PG/HG-flyging er normalt forbudt her.<br/>]]>
+PG/HG-flyging er normalt forbudt her.<br/>
+<a href="https://www.ippc.no/norway_aip/current/aip/ad/enry/EN_AD_2_ENRY_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -5410,6 +5468,7 @@ PG/HG-flyging er normalt forbudt her.<br/>]]>
 10.85,59.2667
 10.5833,59.3389
 10.4583,59.3944
+10.5639,59.5
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -5425,7 +5484,7 @@ PG/HG-flyging er normalt forbudt her.<br/>]]>
 Nedre grense : 0<br/>
 Ovre grense: 762<br/>
 PG/HG-flyging er normalt forbudt her.<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_6_3-1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/ad/engm/EN_AD_2_ENGM_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -5437,15 +5496,16 @@ PG/HG-flyging er normalt forbudt her.<br/>
 <outerBoundaryIs>
 <LinearRing>
 <coordinates>
-11,60.3333
+11,60.333333
 11.154722,60.386111
 11.256944,60.371111
-11.2833,60.3
-11.3833,60.1333
-11.2333,60
-10.9147,60.0444
-10.9,60.0667
-10.8686,60.2569
+11.283333,60.3
+11.291944,60.205
+11.134444,60.013056
+10.914722,60.044444
+10.9,60.066667
+10.868611,60.256944
+11,60.333333
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -5477,6 +5537,7 @@ ta evt. kontakt med tarnet pa tlf.72411452<br/>]]>
 11.75,62.5
 11.5,62.3667
 11.0667,62.55
+11.0667,62.7522
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -5493,7 +5554,7 @@ Nedre grense : 0<br/>
 Ovre grense: 762<br/>
 PG/HG-flyging er normalt forbudt her.<br/>
 Tlf.nr til tarnet: 33426150 <br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_6_3-3_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/ad/ento/EN_AD_2_ENTO_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -5512,6 +5573,7 @@ Tlf.nr til tarnet: 33426150 <br/>
 10.15,59
 10.1,59.1
 10.1,59.2667
+10.15,59.3558
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -5527,7 +5589,7 @@ Tlf.nr til tarnet: 33426150 <br/>
 Nedre grense : 0<br/>
 Ovre grense: 457<br/>
 PG/HG-flyging er normalt forbudt her.<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_6_2-1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/ad/enzv/EN_AD_2_ENZV_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -5545,6 +5607,7 @@ PG/HG-flyging er normalt forbudt her.<br/>
 5.7,58.75
 5.4667,58.75
 5.3333,58.85
+5.55,59.0833
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -5559,7 +5622,8 @@ PG/HG-flyging er normalt forbudt her.<br/>
 <![CDATA[Luftromsklasse: D<br/>
 Nedre grense : 0<br/>
 Ovre grense: 1372<br/>
-PG/HG-flyging er normalt forbudt her.<br/>]]>
+PG/HG-flyging er normalt forbudt her.<br/>
+<a href="https://www.ippc.no/norway_aip/current/aip/ad/entc/EN_AD_2_ENTC_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -5575,6 +5639,7 @@ PG/HG-flyging er normalt forbudt her.<br/>]]>
 19.5,69.9
 19.0500,69.4375
 18.4333,69.4667
+18.7333,69.9667
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -5586,11 +5651,11 @@ PG/HG-flyging er normalt forbudt her.<br/>]]>
 <styleUrl>#ctr</styleUrl>
 <name>Varnes CTR</name>
 <description>
-<![CDATA[Luftromsklasse: D<br/>
+<![CDATA[Luftromsklasse: C<br/>
 Nedre grense : 0<br/>
 Ovre grense: 762<br/>
 PG/HG-flyging er normalt forbudt her.<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_6_3-17_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/ad/enva/EN_AD_2_ENVA_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -5602,10 +5667,15 @@ PG/HG-flyging er normalt forbudt her.<br/>
 <outerBoundaryIs>
 <LinearRing>
 <coordinates>
-10.25,63.5833
-11.4167,63.5833
-11.4167,63.3333
-10.25,63.3333
+11.265,63.490556
+11.270833,63.421667
+11.071667,63.372778
+10.751667,63.373611
+10.517222,63.432778
+10.517222,63.482778
+10.770833,63.544722
+11.084722,63.543611
+11.265,63.490556
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -5619,7 +5689,9 @@ PG/HG-flyging er normalt forbudt her.<br/>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
 Nedre grense : 0<br/>
-Ovre grense: 762<br/>]]>
+Ovre grense: 762<br/>
+PG/HG-flyging er normalt forbudt her.<br/>
+<a href="https://www.ippc.no/norway_aip/current/aip/ad/enol/EN_AD_2_ENOL_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -5637,6 +5709,7 @@ Ovre grense: 762<br/>]]>
 9.6333,63.4667
 9.1833,63.5667
 9,63.9333
+9.4167,64
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -5650,7 +5723,9 @@ Ovre grense: 762<br/>]]>
 <description>
 <![CDATA[Luftromsklasse: D<br/>
 Nedre grense : 0<br/>
-Ovre grense: 762<br/>]]>
+Ovre grense: 762<br/>
+PG/HG-flyging er normalt forbudt her.<br/>
+<a href="https://www.ippc.no/norway_aip/current/aip/ad/enal/EN_AD_2_ENAL_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -5668,6 +5743,7 @@ Ovre grense: 762<br/>]]>
 6.0167,62.4
 5.8333,62.3833
 5.6333,62.5667
+6.3667,62.7167
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -5688,7 +5764,7 @@ Nedre grense : 0<br/>
 Ovre grense: 1067<br/>
 PG/HG-flyging er normalt forbudt her.<br/>
 Kontakt evt. taarnet.<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_2_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_2_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -5704,6 +5780,7 @@ Kontakt evt. taarnet.<br/>
 29.5833,71
 29.7,70.8333
 28.8333,70.8
+28.8333,70.9667
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -5720,7 +5797,7 @@ Nedre grense : 0<br/>
 Ovre grense: 762<br/>
 PG/HG-flyging er normalt forbudt her.<br/>
 Kontakt evt. taarnet.<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_2_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_2_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -5738,6 +5815,7 @@ Kontakt evt. taarnet.<br/>
 12,65.2167
 11.65,65.3667
 11.7333,65.4556
+11.9833,65.65
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -5754,7 +5832,7 @@ Nedre grense : 0<br/>
 Ovre grense: 1067<br/>
 PG/HG-flyging er normalt forbudt her.<br/>
 Kontakt evt. taarnet.<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_2_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_2_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -5770,6 +5848,7 @@ Kontakt evt. taarnet.<br/>
 30.25,70.6917
 29.5333,70.4250
 29.1833,70.5417
+29.8833,70.7833
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -5786,7 +5865,7 @@ Nedre grense : 0<br/>
 Ovre grense: 1981<br/>
 PG/HG-flyging er normalt forbudt her.<br/>
 Kontakt evt. taarnet tlf.67030200.<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_2_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_2_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -5806,6 +5885,7 @@ Kontakt evt. taarnet tlf.67030200.<br/>
 9.370833,61.055
 9.708889,60.883056
 9.533333,60.816667
+9.367778,60.810278
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -5822,7 +5902,7 @@ Nedre grense : 0<br/>
 Ovre grense: 1372<br/>
 PG/HG-flyging er normalt forbudt her.<br/>
 Kontakt evt. taarnet.<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_2_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_2_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -5840,6 +5920,7 @@ Kontakt evt. taarnet.<br/>
 5.25,61.4
 4.6,61.4
 4.6333,61.5333
+4.7761,61.7167
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -5856,7 +5937,7 @@ Nedre grense : 0<br/>
 Ovre grense: 1372<br/>
 PG/HG-flyging er normalt forbudt her.<br/>
 Kontakt evt. taarnet.<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_2_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_2_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -5872,6 +5953,7 @@ Kontakt evt. taarnet.<br/>
 6.0167,61.5333
 6.1333,61.3667
 5.4333,61.2583
+5.35,61.4167
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -5888,7 +5970,7 @@ Nedre grense : 0<br/>
 Ovre grense: 762<br/>
 PG/HG-flyging er normalt forbudt her.<br/>
 Kontakt evt. taarnet.<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_2_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_2_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -5905,6 +5987,7 @@ Kontakt evt. taarnet.<br/>
 23.4167,70.5333
 23.1667,70.6333
 23.5333,70.7667
+24.0167,70.85
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -5921,7 +6004,7 @@ Nedre grense : 0<br/>
 Ovre grense: 1067<br/>
 PG/HG-flyging er normalt forbudt her.<br/>
 Kontakt evt. taarnet.<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_2_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_2_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -5939,6 +6022,7 @@ Kontakt evt. taarnet.<br/>
 22.5167,70.3
 22.1,70.3833
 21.55,70.4056
+21.6,70.6083
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -5955,7 +6039,7 @@ Nedre grense : 0<br/>
 Ovre grense: 1067<br/>
 PG/HG-flyging er normalt forbudt her.<br/>
 Kontakt evt. taarnet.<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_2_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_2_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -5971,6 +6055,7 @@ Kontakt evt. taarnet.<br/>
 26.55,71.1167
 26,70.8917
 25.75,71.0500
+26.1667,71.2167
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -5985,7 +6070,7 @@ Kontakt evt. taarnet.<br/>
 <![CDATA[Luftromsklasse: G<br/>
 Nedre grense : 0<br/>
 Ovre grense (fly over denne eller kontakt taarnet): 1067<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_2_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_2_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -6001,6 +6086,7 @@ Ovre grense (fly over denne eller kontakt taarnet): 1067<br/>
 13.8333,68.2167
 13.8333,67.9
 13.3833,67.9
+13.3833,68.2167
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -6017,7 +6103,7 @@ Nedre grense : 0<br/>
 Ovre grense: 1067<br/>
 PG/HG-flyging er normalt forbudt her.<br/>
 Kontakt evt. taarnet.<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_2_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_2_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -6033,6 +6119,7 @@ Kontakt evt. taarnet.<br/>
 28.1333,71.2
 28.1,70.9
 27.6667,70.9083
+27.6333,71.2167
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -6049,7 +6136,7 @@ Nedre grense : 0<br/>
 Ovre grense: 1372<br/>
 PG/HG-flyging er normalt forbudt her.<br/>
 Kontakt evt. taarnet.<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_2_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_2_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -6065,6 +6152,7 @@ Kontakt evt. taarnet.<br/>
 14.5111,66.45
 14.6417,66.2667
 13.8,66.1917
+13.7333,66.3667
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -6081,7 +6169,7 @@ Nedre grense : 0<br/>
 Ovre grense: 1067<br/>
 PG/HG-flyging er normalt forbudt her.<br/>
 Kontakt evt. taarnet.<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_2_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_2_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -6100,6 +6188,7 @@ Kontakt evt. taarnet.<br/>
 7.9006,62.7736
 7.5,62.7
 6.8333,62.5833
+6.7,62.7
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -6116,7 +6205,7 @@ Nedre grense : 0<br/>
 Ovre grense: 1372<br/>
 PG/HG-flyging er normalt forbudt her.<br/>
 Kontakt evt. taarnet.<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_2_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_2_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -6133,6 +6222,7 @@ Kontakt evt. taarnet.<br/>
 13.1167,65.55
 13.5,65.55
 13.55,65.8833
+13.2167,65.9583
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -6149,7 +6239,7 @@ Nedre grense : 0<br/>
 Ovre grense: 1067<br/>
 PG/HG-flyging er normalt forbudt her.<br/>
 Kontakt evt. taarnet.<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_2_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_2_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -6165,6 +6255,7 @@ Kontakt evt. taarnet.<br/>
 12.1167,64.45
 11.15,64.3333
 11.0667,64.4917
+12.0333,64.6250
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -6179,7 +6270,7 @@ Kontakt evt. taarnet.<br/>
 <![CDATA[Luftromsklasse: G<br/>
 Nedre grense : 0<br/>
 Ovre grense (fly over denne eller kontakt taarnet): 762<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_2_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_2_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -6196,6 +6287,7 @@ Ovre grense (fly over denne eller kontakt taarnet): 762<br/>
 17.4833,68.3833
 17,68.3833
 17,68.5333
+17.4667,68.6333
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -6210,7 +6302,7 @@ Ovre grense (fly over denne eller kontakt taarnet): 762<br/>
 <![CDATA[Luftromsklasse: G<br/>
 Nedre grense : 0<br/>
 Ovre grense (fly over denne eller kontakt taarnet, tlf.35011666): 1372<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/AD/ENNO/EN_AD_2_ENNO_6-1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/ad/enno/EN_AD_2_ENNO_6-1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -6229,6 +6321,7 @@ Ovre grense (fly over denne eller kontakt taarnet, tlf.35011666): 1372<br/>
 9.38333,59.43333
 8.8,59.56667
 8.8,59.62
+8.90316,59.78427
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -6243,7 +6336,7 @@ Ovre grense (fly over denne eller kontakt taarnet, tlf.35011666): 1372<br/>
 <![CDATA[Luftromsklasse: G<br/>
 Nedre grense : 0<br/>
 Ovre grense (fly over denne eller kontakt taarnet, tlf.35011666): 1372<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/AD/ENNO/EN_AD_2_ENNO_6-1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/ad/enno/EN_AD_2_ENNO_6-1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <Point>
 <coordinates>
@@ -6259,7 +6352,7 @@ Ovre grense (fly over denne eller kontakt taarnet, tlf.35011666): 1372<br/>
 <![CDATA[Luftromsklasse: G<br/>
 Nedre grense : 0<br/>
 Ovre grense (fly over denne eller kontakt taarnet, tlf.35011666): 1372<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/AD/ENNO/EN_AD_2_ENNO_6-1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/ad/enno/EN_AD_2_ENNO_6-1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <Point>
 <coordinates>
@@ -6277,7 +6370,7 @@ Nedre grense : 0<br/>
 Ovre grense: 1067<br/>
 PG/HG-flyging er normalt forbudt her.<br/>
 Kontakt evt. taarnet.<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_2_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_2_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -6293,6 +6386,7 @@ Kontakt evt. taarnet.<br/>
 11.6167,64.9250
 10.9833,64.6250
 10.7,64.7417
+11.3167,65.0333
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -6307,7 +6401,7 @@ Kontakt evt. taarnet.<br/>
 <![CDATA[Luftromsklasse: G<br/>
 Nedre grense : 0<br/>
 Ovre grense (fly over denne eller kontakt taarnet): 1067<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_2_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_2_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -6324,6 +6418,7 @@ Ovre grense (fly over denne eller kontakt taarnet): 1067<br/>
 12.55,67.5833
 12.1,67.3
 11.6333,67.4
+12.0667,67.6667
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -6340,7 +6435,7 @@ Nedre grense : 0<br/>
 Ovre grense: 762<br/>
 PG/HG-flyging er normalt forbudt her.<br/>
 Kontakt evt. taarnet.<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_2_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_2_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -6358,6 +6453,7 @@ Kontakt evt. taarnet.<br/>
 6.5333,61.8
 6.15,61.7556
 5.6667,61.8333
+5.8,61.9833
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -6374,7 +6470,7 @@ Nedre grense : 0<br/>
 Ovre grense: 762<br/>
 PG/HG-flyging er normalt forbudt her.<br/>
 Kontakt evt. taarnet.<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_2_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_2_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -6392,6 +6488,7 @@ Kontakt evt. taarnet.<br/>
 12.2,65.7833
 11.9333,65.9333
 12.2333,66
+12.4333,66.2
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -6408,7 +6505,7 @@ Nedre grense : 0<br/>
 Ovre grense: 762<br/>
 PG/HG-flyging er normalt forbudt her.<br/>
 Kontakt evt. taarnet.<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_2_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_2_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -6425,6 +6522,7 @@ Kontakt evt. taarnet.<br/>
 9.6167,59.0167
 9.4,59.0167
 9.3167,59.1833
+9.5,59.3333
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -6441,7 +6539,7 @@ Nedre grense : 0<br/>
 Ovre grense: 1676<br/>
 PG/HG-flyging er normalt forbudt her.<br/>
 Kontakt evt. taarnet.<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_2_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_2_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -6457,6 +6555,7 @@ Kontakt evt. taarnet.<br/>
 7.35,61.3333
 7.55,61.1917
 6.9167,60.9833
+6.7333,61.1250
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -6471,7 +6570,7 @@ Kontakt evt. taarnet.<br/>
 <![CDATA[Luftromsklasse: G<br/>
 Nedre grense : 0<br/>
 Ovre grense (fly over denne eller kontakt taarnet): 1067<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_2_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_2_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -6489,6 +6588,7 @@ Ovre grense (fly over denne eller kontakt taarnet): 1067<br/>
 15.1833,68.4167
 14.7333,68.4417
 14.8333,68.6333
+15.4667,68.75
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -6503,7 +6603,7 @@ Ovre grense (fly over denne eller kontakt taarnet): 1067<br/>
 <![CDATA[Luftromsklasse: G<br/>
 Nedre grense : 0<br/>
 Ovre grense (fly over denne eller kontakt taarnet): 1067<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_2_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_2_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -6522,6 +6622,7 @@ Ovre grense (fly over denne eller kontakt taarnet): 1067<br/>
 5.7333,59.6667
 5.4667,59.5667
 5.2333,59.7417
+4.9833,59.9167
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -6536,7 +6637,7 @@ Ovre grense (fly over denne eller kontakt taarnet): 1067<br/>
 <![CDATA[Luftromsklasse: G<br/>
 Nedre grense : 0<br/>
 Ovre grense (fly over denne eller kontakt taarnet): 1067<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_2_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_2_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -6553,6 +6654,7 @@ Ovre grense (fly over denne eller kontakt taarnet): 1067<br/>
 14.75,68.0167
 14.3167,68.0500
 14.4167,68.2250
+14.6,68.3083
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -6567,7 +6669,7 @@ Ovre grense (fly over denne eller kontakt taarnet): 1067<br/>
 <![CDATA[Luftromsklasse: G<br/>
 Nedre grense : 0<br/>
 Ovre grense (fly over denne eller kontakt taarnet): 1372<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_2_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_2_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -6599,7 +6701,7 @@ Ovre grense (fly over denne eller kontakt taarnet): 1372<br/>
 <![CDATA[Luftromsklasse: G<br/>
 Nedre grense : 0<br/>
 Ovre grense (fly over denne eller kontakt taarnet): 1982<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_2_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_2_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -6632,7 +6734,7 @@ Nedre grense : 0<br/>
 Ovre grense: 762<br/>
 PG/HG-flyging er normalt forbudt her.<br/>
 Kontakt evt. taarnet.<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_2_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_2_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -6648,6 +6750,7 @@ Kontakt evt. taarnet.<br/>
 30.3667,70.15
 30.3667,69.9833
 29.3333,69.9667
+29.3333,70.1417
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -6664,7 +6767,7 @@ Nedre grense : 0<br/>
 Ovre grense: 1067<br/>
 PG/HG-flyging er normalt forbudt her.<br/>
 Kontakt evt. taarnet.<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_2_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_2_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -6680,6 +6783,7 @@ Kontakt evt. taarnet.<br/>
 31.1333,70.55
 31.45,70.2167
 30.9167,70.1667
+30.6,70.5
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -6696,7 +6800,7 @@ Nedre grense : 0<br/>
 Ovre grense: 1067<br/>
 PG/HG-flyging er normalt forbudt her.<br/>
 Kontakt evt. taarnet.<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_2_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_2_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -6712,6 +6816,7 @@ Kontakt evt. taarnet.<br/>
 6.3333,62.1667
 6.0667,62.0667
 5.5833,62.2
+5.8167,62.3167
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -6747,6 +6852,7 @@ Flykontollen Royken styrer denne. tlf.66792530<br/>]]>
 9.735833,60.712778
 9.421389,60.651944
 8.913333,60.739167
+9.36,61.060556
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -6777,6 +6883,7 @@ Flykontollen Royken styrer denne. tlf.66792530<br/>]]>
 8.913333,60.739167
 8.418333,60.821667
 8.3525,60.923056
+9.083333,61.2
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -6819,6 +6926,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>]]>
 25.316667,70.683333
 24.8,70.733333
 24.225,71.023333
+26.35,71.333333
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -6850,6 +6958,7 @@ Hoydebegr. PG/HG, meter: 1981<br/>]]>
 28.833333,70.8
 28.633333,70.333333
 25.316667,70.683333
+26,70.891667
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -6881,6 +6990,7 @@ Hoydebegr. PG/HG, meter: 1067<br/>]]>
 12,64.083333
 11,64.233333
 10.2,64.433333
+11.583333,65.343611
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -6908,6 +7018,7 @@ Hoydebegr. PG/HG, meter: 1372<br/>]]>
 6.3333,62
 6.7158,61.7433
 6.3333,61.5
+6.3333,62
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -6936,6 +7047,7 @@ Hoydebegr. PG/HG, meter: 1372<br/>]]>
 6.5,62
 6.8403,61.8214
 6.7158,61.7433
+6.3333,62
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -6967,6 +7079,7 @@ Hoydebegr. PG/HG, meter: 1372<br/>]]>
 5.4833,61
 4.5050,61
 4.6333,61.5333
+5,62
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -6999,6 +7112,7 @@ Hoydebegr. PG/HG, meter: 1676<br/>]]>
 7.6667,61
 6.5,60.8044
 6.5,61
+6.3333,61.5
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -7029,6 +7143,7 @@ Hoydebegr. PG/HG, meter: 1676<br/>]]>
 7.7333,61.2
 7.5,61.2
 6.7158,61.7433
+6.8403,61.8214
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -7060,6 +7175,7 @@ Hoydebegr. PG/HG, meter: 1676<br/>]]>
 6.5,60.8044
 6,60.7167
 5.7092,60.9083
+5.4833,61
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -7080,7 +7196,7 @@ Hoydebegr. PG/HG, meter: 1676<br/>]]>
 <![CDATA[Luftsportsomrade Starmoen A<br/>
 Hoydebegr. hvis aktivert: 2134m om ikke annet avtalt.<br/>
 Tlf.bakkestasjon: 95905887<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_5_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_5_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -7096,6 +7212,7 @@ Tlf.bakkestasjon: 95905887<br/>
 11.829167,60.875
 12.291667,60.7125
 11.966667,60.666667
+11.695833,60.797222
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -7110,7 +7227,7 @@ Tlf.bakkestasjon: 95905887<br/>
 <![CDATA[Luftsportsomrade Starmoen B<br/>
 Hoydebegr. hvis aktivert: 2134m om ikke annet avtalt.<br/>
 Tlf.bakkestasjon: 95905887<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_5_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_5_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -7131,6 +7248,7 @@ Tlf.bakkestasjon: 95905887<br/>
 12.151944,60.332222
 11.9375,60.366667
 12.033333,60.516667
+11.966667,60.666667
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -7145,7 +7263,7 @@ Tlf.bakkestasjon: 95905887<br/>
 <![CDATA[Luftsportsomrade Starmoen C<br/>
 Hoydebegr. hvis aktivert: 1829m om ikke annet avtalt.<br/>
 Tlf.bakkestasjon: 95905887<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_5_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_5_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -7166,6 +7284,7 @@ Tlf.bakkestasjon: 95905887<br/>
 12.029167,60.097222
 11.904167,60.250000
 11.904167,60.333333
+11.9375,60.366667
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -7180,7 +7299,7 @@ Tlf.bakkestasjon: 95905887<br/>
 <![CDATA[Luftsportsomrade Starmoen D<br/>
 Hoydebegr. hvis aktivert: 1829m om ikke annet avtalt.<br/>
 Tlf.bakkestasjon: 95905887<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_5_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_5_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -7204,6 +7323,7 @@ Tlf.bakkestasjon: 95905887<br/>
 11.9229,59.8747
 11.920833,59.881667
 11.948333,59.955556
+12.029167,60.097222
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -7219,7 +7339,7 @@ Tlf.bakkestasjon: 95905887<br/>
 Hoydebegr. hvis aktivert: 2134m om ikke annet avtalt.<br/>
 Tlf.bakkestasjon, Starmoen: 95905887<br/>
 Tlf.bakkestasjon, Hamar: 91187921<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_5_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_5_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -7238,6 +7358,7 @@ Tlf.bakkestasjon, Hamar: 91187921<br/>
 10.333333,60.675
 10.254167,60.730556
 10.226389,60.783333
+10.558333,60.925
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -7253,7 +7374,7 @@ Tlf.bakkestasjon, Hamar: 91187921<br/>
 Hoydebegr. hvis aktivert: 2134m om ikke annet avtalt.<br/>
 Tlf.bakkestasjon, Starmoen: 95905887<br/>
 Tlf.bakkestasjon, Hamar: 91187921<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_5_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_5_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -7269,6 +7390,7 @@ Tlf.bakkestasjon, Hamar: 91187921<br/>
 11.072222,60.877778
 11.695833,60.797222
 11.868889,60.714167
+10.854444,60.835000
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -7284,7 +7406,7 @@ Tlf.bakkestasjon, Hamar: 91187921<br/>
 Hoydebegr. hvis aktivert: 1829m om ikke annet avtalt.<br/>
 Tlf.bakkestasjon, Starmoen: 95905887<br/>
 Tlf.bakkestasjon, Hamar: 91187921<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_5_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_5_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -7301,6 +7423,7 @@ Tlf.bakkestasjon, Hamar: 91187921<br/>
 11.966667,60.666667
 12.033333,60.516667
 11.996944,60.46
+11.695833,60.797222
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -7315,7 +7438,7 @@ Tlf.bakkestasjon, Hamar: 91187921<br/>
 <![CDATA[Luftsportsomrade Eggemoen A<br/>
 Hoydebegr. hvis aktivert: 2134m om ikke annet avtalt.<br/>
 Tlf.bakkestasjon: 95529944<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_5_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_5_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -7333,6 +7456,7 @@ Tlf.bakkestasjon: 95529944<br/>
 9.955556,60.1625
 9.819444,60.183333
 9.975,60.491667
+10.1,60.729167
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -7347,7 +7471,7 @@ Tlf.bakkestasjon: 95529944<br/>
 <![CDATA[Luftsportsomrade Eggemoen B<br/>
 Hoydebegr. hvis aktivert: 1829m om ikke annet avtalt.<br/>
 Tlf.bakkestasjon: 95529944<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_5_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_5_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -7366,6 +7490,7 @@ Tlf.bakkestasjon: 95529944<br/>
 10.3,60.166667
 10.275,60.125
 9.955556,60.1625
+10.254167,60.730556
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -7380,7 +7505,7 @@ Tlf.bakkestasjon: 95529944<br/>
 <![CDATA[Luftsportsomrade Eina<br/>
 Hoydebegr. hvis aktivert: 1829m om ikke annet avtalt.<br/>
 Tlf.bakkestasjon, Reinsvoll: 91107060<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_5_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_5_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -7396,6 +7521,7 @@ Tlf.bakkestasjon, Reinsvoll: 91107060<br/>
 10.691667,60.802778
 10.677222,60.637778
 10.4,60.490278
+10.333333,60.675
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -7411,7 +7537,7 @@ Tlf.bakkestasjon, Reinsvoll: 91107060<br/>
 Hoydebegr. hvis aktivert: 2134m om ikke annet avtalt.<br/>
 Tlf.bakkestasjon: 48175195<br/>
 <a href="http://www.dfk.no">  Drammen Flyklubb </a>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_5_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_5_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -7430,6 +7556,7 @@ Tlf.bakkestasjon: 48175195<br/>
 9.769722,59.684167
 9.595556,59.709722
 9.688889,59.922222
+9.819444,60.183333
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -7445,7 +7572,7 @@ Tlf.bakkestasjon: 48175195<br/>
 Hoydebegr. hvis aktivert: 1829m om ikke annet avtalt.<br/>
 Tlf.bakkestasjon: 48175195<br/>
 <a href="http://www.dfk.no">  Drammen Flyklubb </a>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_5_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_5_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -7464,6 +7591,7 @@ Tlf.bakkestasjon: 48175195<br/>
 10.106944,59.633611
 9.952778,59.656944
 9.827778,59.904167
+9.955556,60.1625
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -7477,7 +7605,7 @@ Tlf.bakkestasjon: 48175195<br/>
 <description>
 <![CDATA[Luftsportsomrade motorfly<br/>
 Hoydebegr. hvis aktivert: 1829m om ikke annet avtalt.<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_5_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_5_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -7501,6 +7629,7 @@ Hoydebegr. hvis aktivert: 1829m om ikke annet avtalt.<br/>
 11.8424,59.8382
 11.849444,59.833333
 11.558333,59.830556
+11.633333,59.95
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -7514,7 +7643,7 @@ Hoydebegr. hvis aktivert: 1829m om ikke annet avtalt.<br/>
 <description>
 <![CDATA[Luftsportsomrade motorfly<br/>
 Hoydebegr. hvis aktivert: 1829m om ikke annet avtalt.<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_5_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_5_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -7543,6 +7672,7 @@ Hoydebegr. hvis aktivert: 1829m om ikke annet avtalt.<br/>
 11.8551,59.6481
 11.779167,59.643056
 11.5125,59.631944
+11.558333,59.830556
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -7556,7 +7686,7 @@ Hoydebegr. hvis aktivert: 1829m om ikke annet avtalt.<br/>
 <description>
 <![CDATA[Luftsportsomrade motorfly<br/>
 Hoydebegr. hvis aktivert: 1219m om ikke annet avtalt.<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_5_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_5_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -7574,6 +7704,7 @@ Hoydebegr. hvis aktivert: 1219m om ikke annet avtalt.<br/>
 11.5125,59.631944
 11.416667,59.556944
 11.271111,59.576944
+11.242778,59.805833
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -7587,7 +7718,7 @@ Hoydebegr. hvis aktivert: 1219m om ikke annet avtalt.<br/>
 <description>
 <![CDATA[Luftsportsomrade motorfly<br/>
 Hoydebegr. hvis aktivert: 1219m om ikke annet avtalt.<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_5_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_5_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -7604,6 +7735,7 @@ Hoydebegr. hvis aktivert: 1219m om ikke annet avtalt.<br/>
 11.271111,59.576944
 11.019444,59.611111
 10.912778,59.625556
+11.015000,59.737778
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -7617,7 +7749,7 @@ Hoydebegr. hvis aktivert: 1219m om ikke annet avtalt.<br/>
 <description>
 <![CDATA[Luftsportsomrade motorfly<br/>
 Hoydebegr. hvis aktivert: 1829m om ikke annet avtalt.<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_5_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_5_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -7637,6 +7769,7 @@ Hoydebegr. hvis aktivert: 1829m om ikke annet avtalt.<br/>
 11.6919,59.5894
 11.725278,59.518056
 11.416667,59.556944
+11.5125,59.631944
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -7650,8 +7783,8 @@ Hoydebegr. hvis aktivert: 1829m om ikke annet avtalt.<br/>
 <description>
 <![CDATA[Luftsportsomrade Hvittingfoss A<br/>
 Hoydebegr. hvis aktivert: 1219m om ikke annet avtalt.<br/>
-<a href="http://home.no/grytnes/luftrom/ens631.htm"> Viktig - les vilkarene HER! </a>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_5_en.pdf"> gjeldende AIP </a>]]>
+<a href="http://grytnes-it.no/pg/luftrom/ens631.htm"> Viktig - les vilkarene HER! </a>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_5_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -7667,6 +7800,7 @@ Hoydebegr. hvis aktivert: 1219m om ikke annet avtalt.<br/>
 10.016667,59.566667
 9.957222,59.488333
 9.769722,59.54
+9.9275,59.607222
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -7680,8 +7814,8 @@ Hoydebegr. hvis aktivert: 1219m om ikke annet avtalt.<br/>
 <description>
 <![CDATA[Luftsportsomrade Hvittingfoss B<br/>
 Hoydebegr. hvis aktivert: 2134m om ikke annet avtalt.<br/>
-<a href="http://home.no/grytnes/luftrom/ens631.htm"> Viktig - les vilkarene HER! </a>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_5_en.pdf"> gjeldende AIP </a>]]>
+<a href="http://grytnes-it.no/pg/luftrom/ens631.htm"> Viktig - les vilkarene HER! </a>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_5_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -7698,6 +7832,7 @@ Hoydebegr. hvis aktivert: 2134m om ikke annet avtalt.<br/>
 9.9275,59.607222
 9.769722,59.54
 9.548333,59.677222
+9.595556,59.709722
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -7711,7 +7846,7 @@ Hoydebegr. hvis aktivert: 2134m om ikke annet avtalt.<br/>
 <description>
 <![CDATA[Luftsportsomrade Sundvollen<br/>
 Hoydebegr. hvis aktivert: 1524m om ikke annet avtalt.<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_5_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_5_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -7728,6 +7863,7 @@ Hoydebegr. hvis aktivert: 1524m om ikke annet avtalt.<br/>
 10.416667,60.1
 10.383333,60.166667
 10.3,60.166667
+10.2,60
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -7742,7 +7878,7 @@ Hoydebegr. hvis aktivert: 1524m om ikke annet avtalt.<br/>
 <![CDATA[Luftsportsomrade Hemsedal E<br/>
 Hoydebegr. hvis aktivert: 2895m <br/>
 <a href="http://www.67967.websys.sysedata.no/luftrom/hemsedal/Hemsedal_E_W_og_Etne.PDF"> Les Avtalen! (gjelder fra 26.juli-12) </a>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_5_en.pdf"> ..gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_5_en.pdf"> ..gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -7758,6 +7894,7 @@ Hoydebegr. hvis aktivert: 2895m <br/>
 9.469444,60.661389
 9.421389,60.651944
 8.913333,60.739167
+9.021095,60.817004
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -7772,7 +7909,7 @@ Hoydebegr. hvis aktivert: 2895m <br/>
 <![CDATA[Luftsportsomrade Hemsedal W<br/>
 Hoydebegr. hvis aktivert: 3505m <br/>
 <a href="http://www.67967.websys.sysedata.no/luftrom/hemsedal/Hemsedal_E_W_og_Etne.PDF"> Les Avtalen! (gjelder fra 26.juli-12) </a>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_5_en.pdf"> ..gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_5_en.pdf"> ..gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -7789,6 +7926,7 @@ Hoydebegr. hvis aktivert: 3505m <br/>
 8.913333,60.739167
 8.418333,60.821667
 8.3525,60.923056
+8.52,60.987222
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -7803,7 +7941,7 @@ Hoydebegr. hvis aktivert: 3505m <br/>
 <![CDATA[Luftsportsomrade Etne<br/>
 Hoydebegr. hvis aktivert: 2895m <br/>
 <a href="http://www.67967.websys.sysedata.no/luftrom/hemsedal/Hemsedal_E_W_og_Etne.PDF"> Les Avtalen! (gjelder fra 26.juli-12) </a>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_5_en.pdf"> ..gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_5_en.pdf"> ..gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -7819,6 +7957,7 @@ Hoydebegr. hvis aktivert: 2895m <br/>
 9.891667,60.7875
 9.858056,60.771389
 9.641111,60.8575
+9.708889,60.883056
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -7832,7 +7971,7 @@ Hoydebegr. hvis aktivert: 2895m <br/>
 <description>
 <![CDATA[Luftsportsomrade Kopparen-1<br/>
 Hoydebegr. hvis aktivert: 1676m om ikke annet avtalt.<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_5_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_5_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -7848,6 +7987,7 @@ Hoydebegr. hvis aktivert: 1676m om ikke annet avtalt.<br/>
 9.765278,63.838889
 9.816667,63.816667
 9.590278,63.768333
+9.569444,63.798611
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -7861,7 +8001,7 @@ Hoydebegr. hvis aktivert: 1676m om ikke annet avtalt.<br/>
 <description>
 <![CDATA[Luftsportsomrade Kopparen-2<br/>
 Hoydebegr. hvis aktivert: 1676m om ikke annet avtalt.<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_5_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_5_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -7878,6 +8018,7 @@ Hoydebegr. hvis aktivert: 1676m om ikke annet avtalt.<br/>
 9.860278,63.810556
 9.804167,63.77
 9.755556,63.769444
+9.681944,63.809167
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -7891,7 +8032,7 @@ Hoydebegr. hvis aktivert: 1676m om ikke annet avtalt.<br/>
 <description>
 <![CDATA[Luftsportsomrade Bodo North<br/>
 Hoydebegr. hvis aktivert: 1067m om ikke annet avtalt.<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_5_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_5_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -7909,6 +8050,7 @@ Hoydebegr. hvis aktivert: 1067m om ikke annet avtalt.<br/>
 14.833333,67.3875
 14.677778,67.348611
 14.5625,67.372222
+14.583333,67.416667
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -7924,7 +8066,7 @@ Hoydebegr. hvis aktivert: 1067m om ikke annet avtalt.<br/>
 Hoydebegr. hvis aktivert: 1829m om ikke annet avtalt.<br/>
 Tlf.bakkestasjon, Notodden: 94854344<br/>
 Tlf.bakkestasjon, Lunde: 47619757<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_5_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_5_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -7940,6 +8082,7 @@ Tlf.bakkestasjon, Lunde: 47619757<br/>
 9.488889,59.513889
 9.302778,59.380556
 9.193056,59.434722
+9.391667,59.570833
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -7955,7 +8098,7 @@ Tlf.bakkestasjon, Lunde: 47619757<br/>
 Hoydebegr. hvis aktivert: 1829m om ikke annet avtalt.<br/>
 Tlf.bakkestasjon, Notodden: 94854344<br/>
 Tlf.bakkestasjon, Lunde: 47619757<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_5_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_5_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -7973,6 +8116,7 @@ Tlf.bakkestasjon, Lunde: 47619757<br/>
 9.166667,59.25
 9,59.25
 9,59.301667
+9.193056,59.434722
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -7988,7 +8132,7 @@ Tlf.bakkestasjon, Lunde: 47619757<br/>
 Hoydebegr. hvis aktivert: 1829m om ikke annet avtalt.<br/>
 Tlf.bakkestasjon, Notodden: 94854344<br/>
 Tlf.bakkestasjon, Lunde: 47619757<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_5_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_5_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -8004,6 +8148,7 @@ Tlf.bakkestasjon, Lunde: 47619757<br/>
 9.166667,59.25
 9.166667,59.083333
 9,59.083333
+9,59.25
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -8018,7 +8163,7 @@ Tlf.bakkestasjon, Lunde: 47619757<br/>
 <![CDATA[Luftsportsomrade Gauldal<br/>
 Hoydebegr. hvis aktivert: 1067m om ikke annet avtalt.<br/>
 <a href="http://www.gauldal.aero"> Gauldal seilfly-klubb </a>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_5_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_5_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -8035,6 +8180,7 @@ Hoydebegr. hvis aktivert: 1067m om ikke annet avtalt.<br/>
 10.416667,63
 10.133333,63
 10,63.116667
+10.166667,63.316667
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -8051,7 +8197,7 @@ Hoydebegr. hvis aktivert: 1067m om ikke annet avtalt.<br/>
 Hoydebegr.: 1676m<br/>
 <a href="http://www.himmelseglarane.com">Hent mer info fra Himmelseglarane</a>
 <a href="http://www.lfv.se/AISInfo.asp?TextFile=odinenos.txt&SubTitle=&T=Norway%20S&Frequency=250"> -  NOTAM via Sverige  -</a>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_5_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_5_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -8083,7 +8229,7 @@ Hoydebegr.: 1676m<br/>
 Hoydebegr.: 1676m<br/>
 <a href="http://www.himmelseglarane.com">Hent mer info fra Himmelseglarane</a>
 <a href="http://www.lfv.se/AISInfo.asp?TextFile=odinenos.txt&SubTitle=&T=Norway%20S&Frequency=250"> -  NOTAM via Sverige  -</a>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_5_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_5_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -8115,7 +8261,7 @@ Hoydebegr.: 1676m<br/>
 Hoydebegr.: 1676m<br/>
 <a href="http://www.himmelseglarane.com">Hent mer info fra Himmelseglarane</a>
 <a href="http://www.lfv.se/AISInfo.asp?TextFile=odinenos.txt&SubTitle=&T=Norway%20S&Frequency=250"> -  NOTAM via Sverige  -</a>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_5_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_5_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -8147,7 +8293,7 @@ Hoydebegr.: 1676m<br/>
 <![CDATA[Luftsportsomrade Forbodsfjellet area1<br/>
 Hoydebegr. hvis aktivert: 914m om ikke annet avtalt.<br/>
 <a href="http://www.shgpgk.org"> Stjordal Hang og Paragliderklubb </a>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_5_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_5_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -8164,6 +8310,7 @@ Hoydebegr. hvis aktivert: 914m om ikke annet avtalt.<br/>
 10.833333,63.533333
 10.95,63.566667
 11,63.5
+10.916667,63.5
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -8178,7 +8325,7 @@ Hoydebegr. hvis aktivert: 914m om ikke annet avtalt.<br/>
 <![CDATA[Luftsportsomrade Forbodsfjellet area2<br/>
 Hoydebegr. hvis aktivert: 1524m om ikke annet avtalt.<br/>
 <a href="http://www.shgpgk.org"> Stjordal Hang og Paragliderklubb </a>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_5_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_5_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -8199,6 +8346,7 @@ Hoydebegr. hvis aktivert: 1524m om ikke annet avtalt.<br/>
 11.116667,63.583333
 11,63.5
 10.916667,63.5
+10.866667,63.5
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -8213,7 +8361,7 @@ Hoydebegr. hvis aktivert: 1524m om ikke annet avtalt.<br/>
 <![CDATA[Luftsportsomrade Meraker North<br/>
 Hoydebegr. hvis aktivert: 1829m om ikke annet avtalt.<br/>
 <a href="http://www.shgpgk.org"> Stjordal Hang og Paragliderklubb </a>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_5_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_5_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -8229,6 +8377,7 @@ Hoydebegr. hvis aktivert: 1829m om ikke annet avtalt.<br/>
 12,63.833333
 11.783611,63.541667
 11.555833,63.541667
+11.466667,63.833333
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -8243,7 +8392,7 @@ Hoydebegr. hvis aktivert: 1829m om ikke annet avtalt.<br/>
 <![CDATA[Luftsportsomrade Meraker South<br/>
 Hoydebegr. hvis aktivert: 1219m om ikke annet avtalt.<br/>
 <a href="http://www.shgpgk.org"> Stjordal Hang og Paragliderklubb </a>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_5_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_5_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -8259,6 +8408,7 @@ Hoydebegr. hvis aktivert: 1219m om ikke annet avtalt.<br/>
 11.783611,63.541667
 11.716667,63.45
 11.583333,63.45
+11.555833,63.541667
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -8273,7 +8423,7 @@ Hoydebegr. hvis aktivert: 1219m om ikke annet avtalt.<br/>
 <![CDATA[Luftsportsomrade Nidaros<br/>
 Hoydebegr. hvis aktivert: 1067m om ikke annet avtalt.<br/>
 <a href="http://www.nlsk.org"> Nidaros Luftsportsklubb </a>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_5_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_5_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -8290,6 +8440,7 @@ Hoydebegr. hvis aktivert: 1067m om ikke annet avtalt.<br/>
 10.156944,63.019444
 10.231111,63.026389
 10.467500,63.145278
+10.343333,63.310278
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -8708,6 +8859,77 @@ Hoydebegr. hvis aktivert: 1067m om ikke annet avtalt.<br/>
 
 <Placemark>
 <styleUrl>#pgstart</styleUrl>
+<name>Loyning SV</name>
+<description>
+<![CDATA[1000 m.o.h <br/>
+<a href="http://no.flightlog.org/fl.html?l=2&a=107"> Loggboka  </a>]]>
+</description>
+<Point>
+<coordinates>6.627778,59.918056</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<styleUrl>#pgstart</styleUrl>
+<name>Loyning N</name>
+<description>
+<![CDATA[975 m.o.h <br/>]]>
+</description>
+<Point>
+<coordinates>6.618611,59.926667</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<styleUrl>#pgstart</styleUrl>
+<name>Haradalen</name>
+<description>
+<![CDATA[1125 m.o.h <br/>
+<a href="http://no.flightlog.org/fl.html?l=2&a=22&country_id=160&start_id=118"> Loggboka  </a>]]>
+</description>
+<Point>
+<coordinates>6.716944,59.830278</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<styleUrl>#pgstart</styleUrl>
+<name>Novle</name>
+<description>
+<![CDATA[1025 m.o.h <br/>
+<a href="http://no.flightlog.org/fl.html?l=2&a=22&country_id=160&start_id=138"> Loggboka  </a>]]>
+</description>
+<Point>
+<coordinates>6.890556,59.842222</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<styleUrl>#pgstart</styleUrl>
+<name>Lauvas</name>
+<description>
+<![CDATA[750 m.o.h <br/>
+<a href="http://no.flightlog.org/fl.html?l=2&a=22&country_id=160&start_id=790"> Loggboka  </a>]]>
+</description>
+<Point>
+<coordinates>6.822778,59.815556</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<styleUrl>#pgstart</styleUrl>
+<name>Vagslinuten</name>
+<description>
+<![CDATA[1160 m.o.h <br/>
+<a href="http://no.flightlog.org/fl.html?l=2&a=22&country_id=160&start_id=790"> Loggboka  </a>]]>
+</description>
+<Point>
+<coordinates>7.373611,59.776944</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<styleUrl>#pgstart</styleUrl>
 <name>Kvitegga</name>
 <description>
 <![CDATA[580 m.o.h <br/>
@@ -8806,7 +9028,7 @@ Hoydebegr. hvis aktivert: 1067m om ikke annet avtalt.<br/>
 <![CDATA[Permanent restriksjons-omrade<br/>
 Nedre grense : 0<br/>
 Ovre grense: 914<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -8822,6 +9044,7 @@ Ovre grense: 914<br/>
 9.6319,59.1411
 9.7069,59.0494
 9.6486,59.0328
+9.5486,59.1161
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -8836,7 +9059,7 @@ Ovre grense: 914<br/>
 <![CDATA[Permanent restriksjons-omrade<br/>
 Nedre grense : 0<br/>
 Ovre grense: 914<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -8860,6 +9083,7 @@ Ovre grense: 914<br/>
 10.733333,59.900029403
 10.749929,59.902258419
 10.7620778,59.9083482
+10.7665246,59.916667
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -8874,7 +9098,7 @@ Ovre grense: 914<br/>
 <![CDATA[Permanent restriksjons-omrade<br/>
 Nedre grense : 0<br/>
 Ovre grense: 457<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -8898,6 +9122,7 @@ Ovre grense: 457<br/>
 4.8389,60.5383
 4.8472,60.5394
 4.8536,60.5425
+4.8558,60.5467
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -8912,7 +9137,7 @@ Ovre grense: 457<br/>
 <![CDATA[Permanent restriksjons-omrade<br/>
 Nedre grense : 0<br/>
 Ovre grense: 610<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -8936,6 +9161,7 @@ Ovre grense: 610<br/>
 5.0250,60.7958
 5.0419,60.7981
 5.0544,60.8042
+5.0592,60.8125
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -8950,7 +9176,7 @@ Ovre grense: 610<br/>
 <![CDATA[Permanent restriksjons-omrade<br/>
 Nedre grense : 0<br/>
 Ovre grense: 457<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -8966,6 +9192,7 @@ Ovre grense: 457<br/>
 5.5306,59.2667
 5.4778,59.2667
 5.4833,59.2806
+5.5244,59.2806
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -8980,7 +9207,7 @@ Ovre grense: 457<br/>
 <![CDATA[Permanent restriksjons-omrade<br/>
 Nedre grense : 0<br/>
 Ovre grense: 610<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -9004,6 +9231,7 @@ Ovre grense: 610<br/>
 6.9428,62.8406
 6.9536,62.8419
 6.9617,62.8456
+6.9647,62.8506
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -9018,7 +9246,7 @@ Ovre grense: 610<br/>
 <![CDATA[Permanent restriksjons-omrade<br/>
 Nedre grense : 0<br/>
 Ovre grense: 99999<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -9053,6 +9281,7 @@ Ovre grense: 99999<br/>
 27.9844,70.0925
 27.5528,70.0708
 27,69.9272
+27,71.2167
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -9067,7 +9296,7 @@ Ovre grense: 99999<br/>
 <![CDATA[Permanent restriksjons-omrade<br/>
 Nedre grense : 0<br/>
 Ovre grense: 762<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -9091,6 +9320,7 @@ Ovre grense: 762<br/>
 23.5992,70.6836
 23.6117,70.6847
 23.6208,70.6878
+23.6244,70.6919
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -9110,7 +9340,7 @@ Ovre grense: 762<br/>
 <![CDATA[Fareomr.:Ansees som aktivt<br/>
 Nedre grense : 0<br/>
 Ovre grense: 914<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -9146,6 +9376,7 @@ Ovre grense: 914<br/>
 11.7386,61.2144
 11.7553,61.2247
 11.7656,61.2367
+11.7692,61.2497
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -9160,7 +9391,7 @@ Ovre grense: 914<br/>
 <![CDATA[Fareomr.:Ansees som aktivt<br/>
 Nedre grense : 0<br/>
 Ovre grense: 914<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -9196,6 +9427,7 @@ Ovre grense: 914<br/>
 11.825597,60.691277
 11.840883,60.697237
 11.858805,60.701055
+11.878137,60.702471
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -9211,7 +9443,7 @@ Ovre grense: 914<br/>
 <![CDATA[Fareomr.:Ansees som aktivt<br/>
 Nedre grense : 0<br/>
 Ovre grense: 1219<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -9235,6 +9467,7 @@ Ovre grense: 1219<br/>
 10.5467,60.6925
 10.5636,60.6947
 10.5761,60.7008
+10.5806,60.7092
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -9249,7 +9482,7 @@ Ovre grense: 1219<br/>
 <![CDATA[Fareomr.:Ansees som aktivt<br/>
 Nedre grense : 0<br/>
 Ovre grense: 3962<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -9285,6 +9518,7 @@ Ovre grense: 3962<br/>
 11.4642,61.1364
 11.4861,61.15
 11.5,61.1661
+11.5047,61.1833
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -9299,7 +9533,7 @@ Ovre grense: 3962<br/>
 <![CDATA[Fareomr.:Ansees som aktivt<br/>
 Nedre grense : 0<br/>
 Ovre grense: 2134<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -9323,6 +9557,7 @@ Ovre grense: 2134<br/>
 11.5153,60.8414
 11.5408,60.8447
 11.5597,60.8539
+11.5667,60.8664
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -9337,7 +9572,7 @@ Ovre grense: 2134<br/>
 <![CDATA[Fareomr.:Ansees som aktivt<br/>
 Nedre grense : 0<br/>
 Ovre grense: 6401<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -9359,6 +9594,7 @@ Ovre grense: 6401<br/>
 11.5131,61.4236
 11.4206,61.4036
 11.4283,61.375
+11.5658,61.2075
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -9373,7 +9609,7 @@ Ovre grense: 6401<br/>
 <![CDATA[Fareomr.:Ansees som aktivt<br/>
 Nedre grense : 0<br/>
 Ovre grense: 610<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -9397,6 +9633,7 @@ Ovre grense: 610<br/>
 5.4233,60.1703
 5.4442,60.1731
 5.4594,60.1808
+5.4653,60.1911
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -9411,7 +9648,7 @@ Ovre grense: 610<br/>
 <![CDATA[Fareomr.:Ansees som aktivt<br/>
 Nedre grense : 0<br/>
 Ovre grense: 18593<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -9427,6 +9664,7 @@ Ovre grense: 18593<br/>
 4.8667,60.1333
 4.8667,59.9167
 4,59.9167
+4,60.1333
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -9441,7 +9679,7 @@ Ovre grense: 18593<br/>
 <![CDATA[Fareomr.:Ansees som aktivt<br/>
 Nedre grense : 0<br/>
 Ovre grense: 18593<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -9457,6 +9695,7 @@ Ovre grense: 18593<br/>
 5.0333,60.0500
 5.0667,59.9167
 4.8667,59.9167
+4.8667,60.1333
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -9471,7 +9710,7 @@ Ovre grense: 18593<br/>
 <![CDATA[Fareomr.:Ansees som aktivt<br/>
 Nedre grense : 0<br/>
 Ovre grense: 18593<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -9487,6 +9726,7 @@ Ovre grense: 18593<br/>
 4.8667,59.9167
 4.8667,59.6333
 4.0000,59.6333
+4.0000,59.9167
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -9501,7 +9741,7 @@ Ovre grense: 18593<br/>
 <![CDATA[Fareomr.:Ansees som aktivt<br/>
 Nedre grense : 0<br/>
 Ovre grense: 18593<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -9517,6 +9757,7 @@ Ovre grense: 18593<br/>
 5.0667,59.9167
 5.0667,59.7500
 4.8667,59.6333
+4.8667,59.9167
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -9531,7 +9772,7 @@ Ovre grense: 18593<br/>
 <![CDATA[Fareomr.:Ansees som aktivt<br/>
 Nedre grense : 0<br/>
 Ovre grense: 213<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -9553,6 +9794,7 @@ Ovre grense: 213<br/>
 5.57759,58.92464
 5.57618,58.92537
 5.57421,58.92553
+5.57245,58.92506
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -9569,7 +9811,7 @@ Nedre grense : 0<br/>
 Ovre grense: 7620<br/>
 <a href="http://www.forsvarsbygg.no/newsread/ReadImage.asp?WCI=GetByID&IMAGEID=1&DOCID=10874"> info fra Forsvaret </a>
 <a href="http://www.forsvarsbygg.no/hjerkinn"> mer info </a>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -9588,6 +9830,7 @@ Ovre grense: 7620<br/>
 9.5983,62.2164
 9.5983,62.1664
 9.2150,62.1664
+9.2650,62.2831
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -9616,7 +9859,7 @@ Her kan du bare fly igjennom med tillatelse fra Forsvaret<br/>
 <![CDATA[Fareomr.:Ansees som aktivt<br/>
 Nedre grense : 0<br/>
 Ovre grense: 610<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -9640,6 +9883,7 @@ Ovre grense: 610<br/>
 12.5022,65.3872
 12.5122,65.3883
 12.5194,65.3914
+12.5222,65.3956
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -9654,7 +9898,7 @@ Ovre grense: 610<br/>
 <![CDATA[Fareomr.:Ansees som aktivt<br/>
 Nedre grense : 0<br/>
 Ovre grense: 7620<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -9671,6 +9915,7 @@ Ovre grense: 7620<br/>
 18.5319,68.6667
 18.0819,68.7000
 18.1819,68.8167
+18.2819,68.8667
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -9685,7 +9930,7 @@ Ovre grense: 7620<br/>
 <![CDATA[Fareomr.:Ansees som aktivt<br/>
 Nedre grense : 0<br/>
 Ovre grense: 10973<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -9704,6 +9949,7 @@ Ovre grense: 10973<br/>
 19.0681,69.1375
 18.8486,69.1056
 18.5986,69.1528
+18.6236,69.2
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -9718,7 +9964,7 @@ Ovre grense: 10973<br/>
 <![CDATA[Fareomr.:Ansees som aktivt<br/>
 Nedre grense : 0<br/>
 Ovre grense: 9144<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -9736,6 +9982,7 @@ Ovre grense: 9144<br/>
 19.2253,69.0267
 19.0536,69.0361
 19.0233,69.0578
+19.0603,69.08
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -9750,7 +9997,7 @@ Ovre grense: 9144<br/>
 <![CDATA[Fareomr.:Ansees som aktivt<br/>
 Nedre grense : 0<br/>
 Ovre grense: 8230<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -9767,6 +10014,7 @@ Ovre grense: 8230<br/>
 25.4647,69.8811
 25.1433,69.8369
 24.9428,69.8619
+24.9403,69.9306
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -9781,7 +10029,7 @@ Ovre grense: 8230<br/>
 <![CDATA[Fareomr.:Ansees som aktivt<br/>
 Nedre grense : 0<br/>
 Ovre grense: 14021<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -9797,6 +10045,7 @@ Ovre grense: 14021<br/>
 15.6317,69.9833
 16.2483,69.7667
 14.9150,69.3000
+14.2983,69.5167
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -9811,7 +10060,7 @@ Ovre grense: 14021<br/>
 <![CDATA[Fareomr.:Ansees som aktivt<br/>
 Nedre grense : 0<br/>
 Ovre grense: 14021<br/>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -9828,6 +10077,7 @@ Ovre grense: 14021<br/>
 16.1317,69.25
 16.8983,69.2667
 16.7983,69.0433
+16.3333,69.0433
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -9849,7 +10099,7 @@ Nedre grense : 0<br/>
 Ovre grense: 14021<br/>
 <a href="http://www.ippc.no/"> NOTAM (klikk pa kartet) </a>
 <a href="http://www.lfv.se/AISInfo.asp?TextFile=odinenos.txt&SubTitle=&T=Norway%20S&Frequency=250"> -  NOTAM via Sverige  -</a>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -9865,6 +10115,7 @@ Ovre grense: 14021<br/>
 9.8819,58.3161
 8.9653,57.8328
 8.6653,58.0328
+9.5319,58.4994
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -9881,7 +10132,7 @@ Nedre grense : 0<br/>
 Ovre grense: 6097<br/>
 <a href="http://www.ippc.no/"> NOTAM (klikk pa kartet) </a>
 <a href="http://www.lfv.se/AISInfo.asp?TextFile=odinenos.txt&SubTitle=&T=Norway%20S&Frequency=250"> -  NOTAM via Sverige  -</a>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -9898,6 +10149,7 @@ Ovre grense: 6097<br/>
 11.9344,60.1167
 11.9244,60.1153
 11.9053,60.1111
+11.9553,60.0678
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -9914,7 +10166,7 @@ Nedre grense : 0<br/>
 Ovre grense: 4877<br/>
 <a href="http://www.ippc.no/"> NOTAM (klikk pa kartet) </a>
 <a href="http://www.lfv.se/AISInfo.asp?TextFile=odinenos.txt&SubTitle=&T=Norway%20S&Frequency=250"> -  NOTAM via Sverige  -</a>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -9930,6 +10182,7 @@ Ovre grense: 4877<br/>
 9.4122,59.6642
 9.4625,59.6703
 9.4322,59.6358
+9.3764,59.6461
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -9946,7 +10199,7 @@ Nedre grense : 0<br/>
 Ovre grense: 8839<br/>
 <a href="http://www.ippc.no/"> NOTAM (klikk pa kartet) </a>
 <a href="http://www.lfv.se/AISInfo.asp?TextFile=odinenos.txt&SubTitle=&T=Norway%20S&Frequency=250"> -  NOTAM via Sverige  -</a>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -9968,6 +10221,7 @@ Ovre grense: 8839<br/>
 11.5131,61.4236
 11.4206,61.4036
 11.4283,61.3750
+11.5658,61.2075
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -9984,7 +10238,7 @@ Nedre grense : 0<br/>
 Ovre grense: 10973<br/>
 <a href="http://www.ippc.no/"> NOTAM (klikk pa kartet) </a>
 <a href="http://www.lfv.se/AISInfo.asp?TextFile=odinenos.txt&SubTitle=&T=Norway%20S&Frequency=250"> -  NOTAM via Sverige  -</a>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -10006,6 +10260,7 @@ Ovre grense: 10973<br/>
 11.5131,61.4236
 11.4206,61.4036
 11.4283,61.375
+11.5658,61.2075
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -10022,7 +10277,7 @@ Nedre grense : 0<br/>
 Ovre grense: 10973<br/>
 <a href="http://www.ippc.no/"> NOTAM (klikk pa kartet) </a>
 <a href="http://www.lfv.se/AISInfo.asp?TextFile=odinenos.txt&SubTitle=&T=Norway%20S&Frequency=250"> -  NOTAM via Sverige  -</a>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -10042,6 +10297,7 @@ Ovre grense: 10973<br/>
 10.2408,58.8347
 10.3394,58.8914
 10.3861,58.9733
+10.0319,58.9828
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -10058,7 +10314,7 @@ Nedre grense : 0<br/>
 Ovre grense: 5486<br/>
 <a href="http://www.ippc.no/"> NOTAM (klikk pa kartet) </a>
 <a href="http://www.lfv.se/AISInfo.asp?TextFile=odinenos.txt&SubTitle=&T=Norway%20S&Frequency=250"> -  NOTAM via Sverige  -</a>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -10089,6 +10345,7 @@ Ovre grense: 5486<br/>
 5.4417,58.9994
 5.425,58.9917
 5.415,58.985
+5.5397,58.955
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -10105,7 +10362,7 @@ Nedre grense : 0<br/>
 Ovre grense: 14021<br/>
 <a href="http://www.ippc.no/"> NOTAM (klikk pa kartet) </a>
 <a href="http://www.lfv.se/AISInfo.asp?TextFile=odinenos.txt&SubTitle=&T=Norway%20S&Frequency=250"> -  NOTAM via Sverige  -</a>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -10121,6 +10378,7 @@ Ovre grense: 14021<br/>
 4.6817,59.5328
 4.4983,59.2994
 3.2817,59.5494
+3.4483,59.7828
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -10137,7 +10395,7 @@ Nedre grense : 0<br/>
 Ovre grense: 7620<br/>
 <a href="http://www.ippc.no/"> NOTAM (klikk pa kartet) </a>
 <a href="http://www.lfv.se/AISInfo.asp?TextFile=odinenos.txt&SubTitle=&T=Norway%20S&Frequency=250"> -  NOTAM via Sverige  -</a>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -10153,6 +10411,7 @@ Ovre grense: 7620<br/>
 6.915,60.8286
 6.915,60.7494
 6.865,60.6994
+6.665,60.8286
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -10169,7 +10428,7 @@ Nedre grense : 0<br/>
 Ovre grense: 8230<br/>
 <a href="http://www.ippc.no/"> NOTAM (klikk pa kartet) </a>
 <a href="http://www.lfv.se/AISInfo.asp?TextFile=odinenos.txt&SubTitle=&T=Norway%20S&Frequency=250"> -  NOTAM via Sverige  -</a>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -10185,6 +10444,7 @@ Ovre grense: 8230<br/>
 5.5519,58.8944
 5.5519,58.7994
 4.7983,58.5661
+4.7983,59.0994
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -10201,7 +10461,7 @@ Nedre grense : 0<br/>
 Ovre grense: 2134<br/>
 <a href="http://www.ippc.no/"> NOTAM (klikk pa kartet) </a>
 <a href="http://www.lfv.se/AISInfo.asp?TextFile=odinenos.txt&SubTitle=&T=Norway%20S&Frequency=250"> -  NOTAM via Sverige  -</a>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -10217,6 +10477,7 @@ Ovre grense: 2134<br/>
 5.5519,58.8944
 5.5519,58.7994
 5.0317,58.6392
+5.0317,59.0367
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -10233,7 +10494,7 @@ Nedre grense : 0<br/>
 Ovre grense: 2134<br/>
 <a href="http://www.ippc.no/"> NOTAM (klikk pa kartet) </a>
 <a href="http://www.lfv.se/AISInfo.asp?TextFile=odinenos.txt&SubTitle=&T=Norway%20S&Frequency=250"> -  NOTAM via Sverige  -</a>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -10250,6 +10511,7 @@ Ovre grense: 2134<br/>
 5.5519,58.7994
 5.3617,58.7411
 5.1736,58.8411
+5.3206,58.9581
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -10266,7 +10528,7 @@ Nedre grense : 0<br/>
 Ovre grense: 18593<br/>
 <a href="http://www.ippc.no/"> NOTAM (klikk pa kartet) </a>
 <a href="http://www.lfv.se/AISInfo.asp?TextFile=odinenos.txt&SubTitle=&T=Norway%20S&Frequency=250"> -  NOTAM via Sverige  -</a>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -10283,6 +10545,7 @@ Ovre grense: 18593<br/>
 7.25,57.9167
 7.25,57.8
 6.6583,57.4750
+6.05,58
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -10299,7 +10562,7 @@ Nedre grense : 0<br/>
 Ovre grense: 18593<br/>
 <a href="http://www.ippc.no/"> NOTAM (klikk pa kartet) </a>
 <a href="http://www.lfv.se/AISInfo.asp?TextFile=odinenos.txt&SubTitle=&T=Norway%20S&Frequency=250"> -  NOTAM via Sverige  -</a>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -10315,6 +10578,7 @@ Ovre grense: 18593<br/>
 6.6583,57.475
 6.25,57.25
 6,57.4
+6.05,58
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -10331,7 +10595,7 @@ Nedre grense : 0<br/>
 Ovre grense: 14021<br/>
 <a href="http://www.ippc.no/"> NOTAM (klikk pa kartet) </a>
 <a href="http://www.lfv.se/AISInfo.asp?TextFile=odinenos.txt&SubTitle=&T=Norway%20S&Frequency=250"> -  NOTAM via Sverige  -</a>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -10347,6 +10611,7 @@ Ovre grense: 14021<br/>
 10.3317,64.65
 9.4650,64.2167
 8.9483,64.4
+9.815,64.85
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -10363,7 +10628,7 @@ Nedre grense : 0<br/>
 Ovre grense: 2438<br/>
 <a href="http://www.ippc.no/"> NOTAM (klikk pa kartet) </a>
 <a href="http://www.lfv.se/AISInfo.asp?TextFile=odinenos.txt&SubTitle=&T=Norway%20S&Frequency=250"> -  NOTAM via Sverige  -</a>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -10396,6 +10661,7 @@ Ovre grense: 2438<br/>
 9.3758,64.3856
 9.3517,64.3808
 9.4150,64.3333
+9.4572,64.3333
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -10412,7 +10678,7 @@ Nedre grense : 0<br/>
 Ovre grense: 1219<br/>
 <a href="http://www.ippc.no/"> NOTAM (klikk pa kartet) </a>
 <a href="http://www.lfv.se/AISInfo.asp?TextFile=odinenos.txt&SubTitle=&T=Norway%20S&Frequency=250"> -  NOTAM via Sverige  -</a>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -10429,6 +10695,7 @@ Ovre grense: 1219<br/>
 11.1181,63.4325
 11.1808,63.4164
 11.0639,63.3917
+11.0058,63.4156
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -10445,7 +10712,7 @@ Nedre grense : 0<br/>
 Ovre grense: 10973<br/>
 <a href="http://www.ippc.no/"> NOTAM (klikk pa kartet) </a>
 <a href="http://www.lfv.se/AISInfo.asp?TextFile=odinenos.txt&SubTitle=&T=Norway%20S&Frequency=250"> -  NOTAM via Sverige  -</a>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -10465,6 +10732,7 @@ Ovre grense: 10973<br/>
 9.4150,63.9033
 9.3742,63.8681
 9.3633,63.8464
+9.6469,63.8289
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -10481,7 +10749,7 @@ Nedre grense : 0<br/>
 Ovre grense: 10973<br/>
 <a href="http://www.ippc.no/"> NOTAM (klikk pa kartet) </a>
 <a href="http://www.lfv.se/AISInfo.asp?TextFile=odinenos.txt&SubTitle=&T=Norway%20S&Frequency=250"> -  NOTAM via Sverige  -</a>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -10513,6 +10781,7 @@ Ovre grense: 10973<br/>
 9.3228,63.8417
 9.3039,63.8369
 9.3733,63.7914
+9.3847,63.7914
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -10529,7 +10798,7 @@ Nedre grense : 0<br/>
 Ovre grense: 99999<br/>
 <a href="http://www.ippc.no/"> NOTAM (klikk pa kartet) </a>
 <a href="http://www.lfv.se/AISInfo.asp?TextFile=odinenos.txt&SubTitle=&T=Norway%20S&Frequency=250"> -  NOTAM via Sverige  -</a>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -10552,6 +10821,7 @@ Ovre grense: 99999<br/>
 16.1150,69.3694
 15.7400,69.3722
 15.7483,69.4417
+16.1428,69.6958
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -10568,7 +10838,7 @@ Nedre grense : 0<br/>
 Ovre grense: 9144<br/>
 <a href="http://www.ippc.no/"> NOTAM (klikk pa kartet) </a>
 <a href="http://www.lfv.se/AISInfo.asp?TextFile=odinenos.txt&SubTitle=&T=Norway%20S&Frequency=250"> -  NOTAM via Sverige  -</a>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -10592,6 +10862,7 @@ Ovre grense: 9144<br/>
 14.0900,67.3789
 14.1972,67.3900
 14.2756,67.4200
+14.3044,67.4611
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -10608,7 +10879,7 @@ Nedre grense : 0<br/>
 Ovre grense: 9144<br/>
 <a href="http://www.ippc.no/"> NOTAM (klikk pa kartet) </a>
 <a href="http://www.lfv.se/AISInfo.asp?TextFile=odinenos.txt&SubTitle=&T=Norway%20S&Frequency=250"> -  NOTAM via Sverige  -</a>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -10624,6 +10895,7 @@ Ovre grense: 9144<br/>
 14.1350,67.3753
 14.0650,67.3028
 13.8561,67.3300
+13.9219,67.4050
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -10640,7 +10912,7 @@ Nedre grense : 0<br/>
 Ovre grense: 14021<br/>
 <a href="http://www.ippc.no/"> NOTAM (klikk pa kartet) </a>
 <a href="http://www.lfv.se/AISInfo.asp?TextFile=odinenos.txt&SubTitle=&T=Norway%20S&Frequency=250"> -  NOTAM via Sverige  -</a>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -10656,6 +10928,7 @@ Ovre grense: 14021<br/>
 11.9650,67.3667
 12.5317,67.2500
 11.6983,66.6667
+11.1317,66.8000
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -10672,7 +10945,7 @@ Nedre grense : 0<br/>
 Ovre grense: 3048<br/>
 <a href="http://www.ippc.no/"> NOTAM (klikk pa kartet) </a>
 <a href="http://www.lfv.se/AISInfo.asp?TextFile=odinenos.txt&SubTitle=&T=Norway%20S&Frequency=250"> -  NOTAM via Sverige  -</a>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -10692,6 +10965,7 @@ Ovre grense: 3048<br/>
 16.2822,69.3267
 16.2719,69.3311
 16.2564,69.3364
+16.1567,69.2944
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -10708,7 +10982,7 @@ Nedre grense : 0<br/>
 Ovre grense: 10973<br/>
 <a href="http://www.ippc.no/"> NOTAM (klikk pa kartet) </a>
 <a href="http://www.lfv.se/AISInfo.asp?TextFile=odinenos.txt&SubTitle=&T=Norway%20S&Frequency=250"> -  NOTAM via Sverige  -</a>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -10727,6 +11001,7 @@ Ovre grense: 10973<br/>
 16.6100,69.3714
 16.4858,69.4317
 16.3194,69.4644
+16.1461,69.2983
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -10743,7 +11018,7 @@ Nedre grense : 0<br/>
 Ovre grense: 14021<br/>
 <a href="http://www.ippc.no/"> NOTAM (klikk pa kartet) </a>
 <a href="http://www.lfv.se/AISInfo.asp?TextFile=odinenos.txt&SubTitle=&T=Norway%20S&Frequency=250"> -  NOTAM via Sverige  -</a>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -10760,6 +11035,7 @@ Ovre grense: 14021<br/>
 16.3000,69.1350
 16.2583,68.9167
 15.9100,68.9650
+15.8733,69.0283
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -10776,7 +11052,7 @@ Nedre grense : 0<br/>
 Ovre grense: 6401<br/>
 <a href="http://www.ippc.no/"> NOTAM (klikk pa kartet) </a>
 <a href="http://www.lfv.se/AISInfo.asp?TextFile=odinenos.txt&SubTitle=&T=Norway%20S&Frequency=250"> -  NOTAM via Sverige  -</a>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -10793,6 +11069,7 @@ Ovre grense: 6401<br/>
 16.7983,68.7317
 16.6167,68.7717
 16.585,68.87
+16.77,68.95
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -10809,7 +11086,7 @@ Nedre grense : 0<br/>
 Ovre grense: 7620<br/>
 <a href="http://www.ippc.no/"> NOTAM (klikk pa kartet) </a>
 <a href="http://www.lfv.se/AISInfo.asp?TextFile=odinenos.txt&SubTitle=&T=Norway%20S&Frequency=250"> -  NOTAM via Sverige  -</a>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -10826,6 +11103,7 @@ Ovre grense: 7620<br/>
 17.6631,68.5378
 17.6181,68.5300
 17.5786,68.5322
+17.5819,68.5428
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -10842,7 +11120,7 @@ Nedre grense : 0<br/>
 Ovre grense: 10973<br/>
 <a href="http://www.ippc.no/"> NOTAM (klikk pa kartet) </a>
 <a href="http://www.lfv.se/AISInfo.asp?TextFile=odinenos.txt&SubTitle=&T=Norway%20S&Frequency=250"> -  NOTAM via Sverige  -</a>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -10860,6 +11138,7 @@ Ovre grense: 10973<br/>
 14.4583,67.5211
 14.3572,67.4861
 14.3231,67.4633
+14.6219,67.4122
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -10876,7 +11155,7 @@ Nedre grense : 0<br/>
 Ovre grense: 8839<br/>
 <a href="http://www.ippc.no/"> NOTAM (klikk pa kartet) </a>
 <a href="http://www.lfv.se/AISInfo.asp?TextFile=odinenos.txt&SubTitle=&T=Norway%20S&Frequency=250"> -  NOTAM via Sverige  -</a>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -10892,6 +11171,7 @@ Ovre grense: 8839<br/>
 16.1483,68.3867
 15.865,68.2017
 15.515,68.25
+15.865,68.3833
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -10908,7 +11188,7 @@ Nedre grense : 0<br/>
 Ovre grense: 14021<br/>
 <a href="http://www.ippc.no/"> NOTAM (klikk pa kartet) </a>
 <a href="http://www.lfv.se/AISInfo.asp?TextFile=odinenos.txt&SubTitle=&T=Norway%20S&Frequency=250"> -  NOTAM via Sverige  -</a>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -10924,6 +11204,7 @@ Ovre grense: 14021<br/>
 18.3667,69.5283
 18.4483,69.495
 18.135,69.455
+18.0717,69.4883
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -10940,7 +11221,7 @@ Nedre grense : 0<br/>
 Ovre grense: 14021<br/>
 <a href="http://www.ippc.no/"> NOTAM (klikk pa kartet) </a>
 <a href="http://www.lfv.se/AISInfo.asp?TextFile=odinenos.txt&SubTitle=&T=Norway%20S&Frequency=250"> -  NOTAM via Sverige  -</a>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -10956,6 +11237,7 @@ Ovre grense: 14021<br/>
 17.9783,69.605
 18.1906,69.5044
 18.0717,69.4883
+17.855,69.59
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -10972,7 +11254,7 @@ Nedre grense : 0<br/>
 Ovre grense: 14021<br/>
 <a href="http://www.ippc.no/"> NOTAM (klikk pa kartet) </a>
 <a href="http://www.lfv.se/AISInfo.asp?TextFile=odinenos.txt&SubTitle=&T=Norway%20S&Frequency=250"> -  NOTAM via Sverige  -</a>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -10988,6 +11270,7 @@ Ovre grense: 14021<br/>
 17.165,69.7867
 17.4733,69.62
 16.9567,69.5083
+16.6567,69.675
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -11004,7 +11287,7 @@ Nedre grense : 0<br/>
 Ovre grense: 14021<br/>
 <a href="http://www.ippc.no/"> NOTAM (klikk pa kartet) </a>
 <a href="http://www.lfv.se/AISInfo.asp?TextFile=odinenos.txt&SubTitle=&T=Norway%20S&Frequency=250"> -  NOTAM via Sverige  -</a>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -11020,6 +11303,7 @@ Ovre grense: 14021<br/>
 17.665,69.9
 17.9817,69.73
 17.4733,69.62
+17.165,69.7867
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -11036,7 +11320,7 @@ Nedre grense : 0<br/>
 Ovre grense: 1524<br/>
 <a href="http://www.ippc.no/"> NOTAM (klikk pa kartet) </a>
 <a href="http://www.lfv.se/AISInfo.asp?TextFile=odinenos.txt&SubTitle=&T=Norway%20S&Frequency=250"> -  NOTAM via Sverige  -</a>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -11052,6 +11336,40 @@ Ovre grense: 1524<br/>
 16.4844,68.4414
 16.4844,68.4683
 16.5725,68.4714
+16.5936,68.4586
+</coordinates>
+</LinearRing>
+</outerBoundaryIs>
+</Polygon>
+</MultiGeometry>
+</Placemark>
+
+<Placemark>
+<styleUrl>#fare</styleUrl>
+<name>EN D471,Falkefjell</name>
+<description>
+<![CDATA[Fareomr.:Aktivt hvis NOTAM<br/>
+Nedre grense : 0<br/>
+Ovre grense: 6096<br/>
+<a href="http://www.ippc.no/"> NOTAM (klikk pa kartet) </a>
+<a href="http://www.lfv.se/AISInfo.asp?TextFile=odinenos.txt&SubTitle=&T=Norway%20S&Frequency=250"> -  NOTAM via Sverige  -</a>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_5_1_en.pdf"> gjeldende AIP </a>]]>
+</description>
+<MultiGeometry>
+<Point>
+<coordinates>
+19.05,69.1053
+</coordinates>
+</Point>
+<Polygon>
+<outerBoundaryIs>
+<LinearRing>
+<coordinates>
+18.848611,69.105556 
+19.068056,69.1375 
+19.253889,69.065833
+19.060278,69.08
+18.848611,69.105556 
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -11096,6 +11414,7 @@ Ovre grense: 1524<br/>
 6.52833,60.63
 6.53167,60.66
 6.45833,60.6433
+6.46,60.6367
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -11576,6 +11895,7 @@ Hoydebegr. PG/HG, meter: 2895<br/>
 20.91,68.951
 20.818,69.016
 20.671,69.044
+20.5503,69.0599
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -11590,7 +11910,7 @@ Hoydebegr. PG/HG, meter: 2895<br/>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1981<br/>
 <a href="http://www.lfv.se/AIP/ENR/ENR%202/ES_ENR_2_1_en.pdf"> gjeldende AIP </a>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_2_en.pdf"> Se ogsa norsk AIP, 4.2.2 </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_2_en.pdf"> Se ogsa norsk AIP, 4.2.2 </a>]]>
 </description>
 <MultiGeometry>
 <Point>
@@ -11633,6 +11953,7 @@ Hoydebegr. PG/HG, meter: 1981<br/>
 11.6919,59.5894
 11.72528,59.51806
 11.89444,59.62778
+12.09889,59.89056
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -11647,7 +11968,7 @@ Hoydebegr. PG/HG, meter: 1981<br/>
 <![CDATA[Luftromsklasse: C<br/>
 Hoydebegr. PG/HG, meter: 1981<br/>
 <a href="http://www.lfv.se/AIP/ENR/ENR%202/ES_ENR_2_1_en.pdf"> gjeldende AIP </a>
-<a href="https://www.ippc.no/norway_aip/current/AIP/EN_ENR_2_2_en.pdf"> Se ogsa norsk AIP, 4.2.2 </a>]]>
+<a href="https://www.ippc.no/norway_aip/current/aip/EN_ENR_2_2_en.pdf"> Se ogsa norsk AIP, 4.2.2 </a>]]>
 </description>
 <Point>
 <coordinates>
@@ -11819,6 +12140,7 @@ Hoydebegr. PG/HG, meter: 2895<br/>
 11.36535,54.56887
 11.49169,56.2952
 11.20056,57.65421
+10.5,58.5
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -11860,6 +12182,7 @@ PG/HG-flyging er normalt forbudt her.<br/>
 19.389167,65.455278
 19.137222,65.517222
 18.865833,65.683889
+18.958611,65.733056
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -11893,6 +12216,7 @@ PG/HG-flyging er normalt forbudt her.<br/>
 15.730278,60.251667
 15.381667,60.349444
 15.155278,60.507778
+15.296944,60.582778
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -11926,6 +12250,7 @@ PG/HG-flyging er normalt forbudt her.<br/>
 20.245556,67.623611
 19.978889,67.673611
 20.117778,67.865
+20.462222,68.015
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -11959,6 +12284,7 @@ PG/HG-flyging er normalt forbudt her.<br/>
 22.295556,65.412222
 21.962222,65.468889
 21.703889,65.652222
+21.887222,65.7225
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -11992,6 +12318,7 @@ PG/HG-flyging er normalt forbudt her.<br/>
 22.940278,67.155278
 22.644167,67.293056
 22.689722,67.334167
+23.150278,67.344722
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -12025,6 +12352,7 @@ PG/HG-flyging er normalt forbudt her.<br/>
 20.951389,64.532222
 20.767778,64.628889
 20.805556,64.689167
+21.079167,64.721667
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -12058,6 +12386,7 @@ PG/HG-flyging er normalt forbudt her.<br/>
 17.448611,62.300556
 17.246667,62.508889
 17.229722,62.668611
+17.426944,62.699167
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -12092,6 +12421,7 @@ PG/HG-flyging er normalt forbudt her.<br/>
 20.224167,63.670556
 19.986944,63.772222
 19.898333,63.883611
+20.0575,63.959167
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -12125,6 +12455,7 @@ PG/HG-flyging er normalt forbudt her.<br/>
 20.4125,65.748611
 20.029167,65.815278
 19.579167,65.915278
+19.7125,66.031944
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -12158,6 +12489,7 @@ PG/HG-flyging er normalt forbudt her.<br/>
 19.169167,63.305556
 18.871667,63.324167
 18.675833,63.448889
+18.766389,63.515278
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -12192,6 +12524,7 @@ PG/HG-flyging er normalt forbudt her.<br/>
 14.630278,63.068889
 14.3525,63.132222
 14.169167,63.21
+14.246944,63.287778
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -12215,17 +12548,19 @@ Hoydebegr. PG/HG, meter: 945<br/>
 <MultiGeometry>
 <Point>
 <coordinates>
-18.7976,65.6605
+18.55,65.668
 </coordinates>
 </Point>
 <Polygon>
 <outerBoundaryIs>
 <LinearRing>
 <coordinates>
-18.920278,65.858333
+18.856389,65.878889
 19.455278,65.685278
-19.113333,65.504444
-18.578056,65.676944
+19.052222,65.471667
+18.452778,65.664444
+18.856389,65.878889
+18.856389,65.878889
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -12244,7 +12579,7 @@ Hoydebegr. PG/HG, meter: 792<br/>
 <MultiGeometry>
 <Point>
 <coordinates>
-19.635,65.393
+19.62,65.382
 </coordinates>
 </Point>
 <Polygon>
@@ -12252,9 +12587,42 @@ Hoydebegr. PG/HG, meter: 792<br/>
 <LinearRing>
 <coordinates>
 19.455278,65.685278
-20.004167,65.503611
-19.658889,65.324444
-19.113333,65.504444
+20.066389,65.482778
+19.721111,65.250556
+19.052222,65.471667
+19.455278,65.685278
+19.455278,65.685278
+</coordinates>
+</LinearRing>
+</outerBoundaryIs>
+</Polygon>
+</MultiGeometry>
+</Placemark>
+
+<Placemark>
+<styleUrl>#tma1067</styleUrl>
+<name>Arvidsjaur c</name>
+<description>
+<![CDATA[Luftromsklasse: C<br/>
+Hoydebegr. PG/HG, meter: 1067<br/>
+<a href="http://www.lfv.se/AIP/ENR/ENR%202/ES_ENR_2_1_en.pdf"> gjeldende AIP </a>]]>
+</description>
+<MultiGeometry>
+<Point>
+<coordinates>
+18.96,65.349
+</coordinates>
+</Point>
+<Polygon>
+<outerBoundaryIs>
+<LinearRing>
+<coordinates>
+18.452778,65.664444
+19.052222,65.471667
+19.721111,65.250556
+19.434167,65.049444
+18.485278,65.360833
+18.452778,65.664444
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -12285,6 +12653,7 @@ Hoydebegr. PG/HG, meter: 762<br/><a href="http://www.lfv.se/AIP/ENR/ENR%202/ES_E
 15.109444,60.237778
 15.124722,60.266111
 15.005278,60.511944
+15.263611,60.657778
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -12316,6 +12685,7 @@ Hoydebegr. PG/HG, meter: 1372<br/><a href="http://www.lfv.se/AIP/ENR/ENR%202/ES_
 15.080278,60.182778
 15.109444,60.237778
 15.813611,60.160556
+16.146667,60.349444
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -12333,7 +12703,7 @@ Hoydebegr. PG/HG, meter: 945<br/><a href="http://www.lfv.se/AIP/ENR/ENR%202/ES_E
 <MultiGeometry>
 <Point>
 <coordinates>
-20.621,67.625
+20.26,67.632
 </coordinates>
 </Point>
 <Polygon>
@@ -12348,6 +12718,7 @@ Hoydebegr. PG/HG, meter: 945<br/><a href="http://www.lfv.se/AIP/ENR/ENR%202/ES_E
 19.829167,67.748611
 20.038889,67.856944
 20.079722,67.985000
+20.398889,68.161944
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -12365,7 +12736,7 @@ Hoydebegr. PG/HG, meter: 1372<br/><a href="http://www.lfv.se/AIP/ENR/ENR%202/ES_
 <MultiGeometry>
 <Point>
 <coordinates>
-20.418,67.615
+20.36,67.429
 </coordinates>
 </Point>
 <Polygon>
@@ -12377,6 +12748,7 @@ Hoydebegr. PG/HG, meter: 1372<br/><a href="http://www.lfv.se/AIP/ENR/ENR%202/ES_
 20.917778,67.398611
 20.495556,67.331944
 19.995833,67.356944
+19.918333,67.54
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -12409,6 +12781,7 @@ Hoydebegr. PG/HG, meter: 365<br/><a href="http://www.lfv.se/AIP/ENR/ENR%202/ES_E
 21.685,65.725556
 21.803611,65.776111
 22.011944,65.754722
+22.324444,65.849444
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -12441,6 +12814,7 @@ Hoydebegr. PG/HG, meter: 610<br/><a href="http://www.lfv.se/AIP/ENR/ENR%202/ES_E
 21.198611,65.559167
 21.245556,65.898611
 21.495556,65.948611
+22.045556,66.006944
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -12470,6 +12844,7 @@ Hoydebegr. PG/HG, meter: 610<br/><a href="http://www.lfv.se/AIP/ENR/ENR%202/ES_E
 22.47,65.031111
 22.395556,64.975556
 21.155,65.236944
+21.198611,65.559167
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -12498,6 +12873,7 @@ Hoydebegr. PG/HG, meter: 457<br/><a href="http://www.lfv.se/AIP/ENR/ENR%202/ES_E
 22.324444,65.849444
 22.011944,65.754722
 21.803611,65.776111
+22.176389,65.933611
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -12525,6 +12901,7 @@ Hoydebegr. PG/HG, meter: 450<br/><a href="http://www.lfv.se/AIP/ENR/ENR%202/ES_E
 21.578611,65.689444
 21.489167,65.441111
 21.198611,65.559167
+21.578611,65.689444
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -12555,6 +12932,7 @@ Hoydebegr. PG/HG, meter: 610<br/><a href="http://www.lfv.se/AIP/ENR/ENR%202/ES_E
 23.669444,67.069722
 23.528333,66.969167
 22.268889,67.230556
+22.601389,67.475278
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -12583,6 +12961,7 @@ Hoydebegr. PG/HG, meter: 1372<br/><a href="http://www.lfv.se/AIP/ENR/ENR%202/ES_
 23.528333,66.969167
 23.238889,66.804167
 22.490278,66.837778
+22.268889,67.230556
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -12613,6 +12992,7 @@ Hoydebegr. PG/HG, meter: 610<br/><a href="http://www.lfv.se/AIP/ENR/ENR%202/ES_E
 21.52,64.344722
 20.497222,64.463611
 20.447222,64.590556
+20.565556,64.788889
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -12641,6 +13021,7 @@ Hoydebegr. PG/HG, meter: 1372<br/><a href="http://www.lfv.se/AIP/ENR/ENR%202/ES_
 21.52,64.344722
 21.355556,64.186667
 20.581944,64.246111
+20.497222,64.463611
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -12669,6 +13050,7 @@ Hoydebegr. PG/HG, meter: 762<br/><a href="http://www.lfv.se/AIP/ENR/ENR%202/ES_E
 17.965,62.684167
 16.776389,62.473333
 16.631389,62.731667
+17.291944,62.880833
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -12698,6 +13080,7 @@ Hoydebegr. PG/HG, meter: 610<br/><a href="http://www.lfv.se/AIP/ENR/ENR%202/ES_E
 17.0375,62.189444
 16.876944,62.291667
 16.776389,62.473333
+17.965,62.684167
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -12726,6 +13109,7 @@ Hoydebegr. PG/HG, meter: 1372<br/><a href="http://www.lfv.se/AIP/ENR/ENR%202/ES_
 18.040833,62.896389
 17.965,62.684167
 17.291944,62.880833
+17.851389,63.034444
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -12754,6 +13138,7 @@ Hoydebegr. PG/HG, meter: 1372<br/><a href="http://www.lfv.se/AIP/ENR/ENR%202/ES_
 18.055833,62.042500
 17.422778,61.940833
 17.0375,62.189444
+17.908611,62.241111
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -12783,6 +13168,7 @@ Hoydebegr. PG/HG, meter: 610<br/><a href="http://www.lfv.se/AIP/ENR/ENR%202/ES_E
 20.646389,63.481111
 20.423333,63.378889
 19.333611,63.8725
+20.109722,64.235833
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -12812,6 +13198,7 @@ Hoydebegr. PG/HG, meter: 1372<br/><a href="http://www.lfv.se/AIP/ENR/ENR%202/ES_
 21.355556,64.186667
 20.944167,63.783056
 20.109722,64.235833
+20.193611,64.274444
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -12841,6 +13228,7 @@ Hoydebegr. PG/HG, meter: 1372<br/><a href="http://www.lfv.se/AIP/ENR/ENR%202/ES_
 20.094444,63.204444
 19.717778,63.398889
 19.048056,63.735556
+19.333611,63.8725
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -12858,7 +13246,7 @@ Hoydebegr. PG/HG, meter: 305<br/><a href="http://www.lfv.se/AIP/ENR/ENR%202/ES_E
 <MultiGeometry>
 <Point>
 <coordinates>
-20.7697,65.8489
+20.44,65.785
 </coordinates>
 </Point>
 <Polygon>
@@ -12869,6 +13257,7 @@ Hoydebegr. PG/HG, meter: 305<br/><a href="http://www.lfv.se/AIP/ENR/ENR%202/ES_E
 21.095556,65.915278
 20.595833,65.532222
 19.196111,65.831944
+19.6875,66.215278
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -12897,6 +13286,7 @@ Hoydebegr. PG/HG, meter: 732<br/><a href="http://www.lfv.se/AIP/ENR/ENR%202/ES_E
 19.171944,63.5425
 18.727778,63.218056
 18.254722,63.346944
+18.681111,63.668611
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -12925,6 +13315,7 @@ Hoydebegr. PG/HG, meter: 518<br/><a href="http://www.lfv.se/AIP/ENR/ENR%202/ES_E
 19.717778,63.398889
 19.260833,63.069722
 18.727778,63.218056
+19.171944,63.5425
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -12953,6 +13344,7 @@ Hoydebegr. PG/HG, meter: 1372<br/><a href="http://www.lfv.se/AIP/ENR/ENR%202/ES_
 19.717778,63.398889
 19.171944,63.5425
 18.681111,63.668611
+19.048056,63.735556
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -12982,6 +13374,7 @@ Hoydebegr. PG/HG, meter: 1372<br/><a href="http://www.lfv.se/AIP/ENR/ENR%202/ES_
 19.260833,63.069722
 18.993056,62.837778
 18.656389,62.845
+18.254722,63.346944
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -12999,7 +13392,7 @@ Hoydebegr. PG/HG, meter: 701<br/><a href="http://www.lfv.se/AIP/ENR/ENR%202/ES_E
 <MultiGeometry>
 <Point>
 <coordinates>
-14.6558,63.3866
+14.3,63.25
 </coordinates>
 </Point>
 <Polygon>
@@ -13014,6 +13407,7 @@ Hoydebegr. PG/HG, meter: 701<br/><a href="http://www.lfv.se/AIP/ENR/ENR%202/ES_E
 14.032778,63.151944
 13.893333,63.230278
 14.013889,63.332778
+14.488333,63.484722
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -13031,7 +13425,7 @@ Hoydebegr. PG/HG, meter: 1006<br/><a href="http://www.lfv.se/AIP/ENR/ENR%202/ES_
 <MultiGeometry>
 <Point>
 <coordinates>
-15.0815,62.7812
+15.12,62.823
 </coordinates>
 </Point>
 <Polygon>
@@ -13047,6 +13441,7 @@ Hoydebegr. PG/HG, meter: 1006<br/><a href="http://www.lfv.se/AIP/ENR/ENR%202/ES_
 14.359722,62.966111
 14.8225,62.855
 15.196944,63.057222
+15.278333,63.339722
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -13064,7 +13459,7 @@ Hoydebegr. PG/HG, meter: 1006<br/><a href="http://www.lfv.se/AIP/ENR/ENR%202/ES_
 <MultiGeometry>
 <Point>
 <coordinates>
-13.9279,63.4468
+13.9,63.426
 </coordinates>
 </Point>
 <Polygon>
@@ -13076,6 +13471,7 @@ Hoydebegr. PG/HG, meter: 1006<br/><a href="http://www.lfv.se/AIP/ENR/ENR%202/ES_
 14.013889,63.332778
 13.893333,63.230278
 13.53,63.325833
+13.849167,63.597778
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -13093,7 +13489,7 @@ Hoydebegr. PG/HG, meter: 1524<br/><a href="http://www.lfv.se/AIP/ENR/ENR%202/ES_
 <MultiGeometry>
 <Point>
 <coordinates>
-13.62,63.19
+13.72,63.167
 </coordinates>
 </Point>
 <Polygon>
@@ -13105,6 +13501,7 @@ Hoydebegr. PG/HG, meter: 1524<br/><a href="http://www.lfv.se/AIP/ENR/ENR%202/ES_
 14.032778,63.151944
 14.0325,62.978611
 13.347222,63.167222
+13.53,63.325833
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -13153,6 +13550,7 @@ Kontakt evt. taarnet.<br/>
 19.389167,65.455278
 19.137222,65.517222
 18.865833,65.683889
+18.958611,65.733056
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -13185,6 +13583,7 @@ Kontakt evt. taarnet.<br/>
 20.9975,67.125833
 20.933611,67.078056
 20.626667,67.140278
+20.690278,67.188056
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -13200,7 +13599,7 @@ Kontakt evt. taarnet.<br/>
 Nedre grense : 0<br/>
 Ovre grense: 305<br/>
 PG/HG-flyging er normalt forbudt her.<br/>
-Kontakt evt. taarnet tlf +46 56360368_<br/>
+Kontakt evt. taarnet.<br/>
 <a href="http://www.lfv.se/AIP/AD/AD%202/ESNK/ES_AD_2_ESNK_en.pdf">gjeldende AIP</a>]]>
 </description>
 <MultiGeometry>
@@ -13219,6 +13618,7 @@ Kontakt evt. taarnet tlf +46 56360368_<br/>
 13.528056,59.894167
 13.423889,60.016667
 13.504444,60.142222
+13.621667,60.145556
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -13251,6 +13651,7 @@ Kontakt evt. taarnet.<br/>
 17.849722,62.986111
 17.7325,62.978056
 17.688333,63.111111
+17.806111,63.119167
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -13279,10 +13680,81 @@ Kontakt evt. taarnet.<br/>
 <outerBoundaryIs>
 <LinearRing>
 <coordinates>
-18.528333,64.714167
-19.024167,64.424722
-18.906389,64.3875
-18.41,64.675833
+18.503889,64.705556
+18.851667,64.593611
+19.006111,64.419167
+18.923611,64.392222
+18.577778,64.504722
+18.420833,64.678333
+18.503889,64.705556
+</coordinates>
+</LinearRing>
+</outerBoundaryIs>
+</Polygon>
+</MultiGeometry>
+</Placemark>
+
+<Placemark>
+<styleUrl>#tiz</styleUrl>
+<name>Hemavan TIZ</name>
+<description>
+<![CDATA[Luftromsklasse: G<br/>
+Nedre grense : 0<br/>
+Ovre grense: 305<br/>
+PG/HG-flyging er normalt forbudt her.<br/>
+Kontakt evt. taarnet.<br/>
+<a href="http://www.lfv.se/AIP/AD/AD%202/ESUT/ES_AD_2_ESUT_en.pdf">gjeldende AIP</a>]]>
+</description>
+<MultiGeometry>
+<Point>
+<coordinates>
+ 15.16,65.817
+</coordinates>
+</Point>
+<Polygon>
+<outerBoundaryIs>
+<LinearRing>
+<coordinates>
+15.052222,65.934167
+15.514722,65.645556
+15.153611,65.568611
+14.783056,65.876389
+15.052222,65.934167
+</coordinates>
+</LinearRing>
+</outerBoundaryIs>
+</Polygon>
+</MultiGeometry>
+</Placemark>
+
+<Placemark>
+<styleUrl>#tiz</styleUrl>
+<name>Storuman TIZ</name>
+<description>
+<![CDATA[Luftromsklasse: G<br/>
+Nedre grense : 0<br/>
+Ovre grense: 305<br/>
+PG/HG-flyging er normalt forbudt her.<br/>
+Kontakt evt. taarnet.<br/>
+<a href="http://www.lfv.se/AIP/AD/AD%202/ESUD/ES_AD_2_ESUD_en.pdf">gjeldende AIP</a>]]>
+</description>
+<MultiGeometry>
+<Point>
+<coordinates>
+17.7,64.935
+</coordinates>
+</Point>
+<Polygon>
+<outerBoundaryIs>
+<LinearRing>
+<coordinates>
+17.6225,65.085
+17.876389,65.025278
+18.022500,64.791389
+17.846389,64.751111
+17.482500,64.927778
+17.468333,65.049722
+17.6225,65.085
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -13315,6 +13787,7 @@ Kontakt evt. taarnet.<br/>
 14.6075,60.903611
 14.502778,60.886111
 14.413333,61.013611
+14.518333,61.031111
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -13349,6 +13822,7 @@ Kontakt evt. taarnet.<br/>
 22.940278,67.155278
 22.644167,67.293056
 22.689722,67.334167
+23.150278,67.344722
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -13364,7 +13838,7 @@ Kontakt evt. taarnet.<br/>
 Nedre grense : 0<br/>
 Ovre grense: 305<br/>
 PG/HG-flyging er normalt forbudt her.<br/>
-Kontakt evt. taarnet tlf +46 680711350_<br/>
+Kontakt evt. taarnet.<br/>
 <a href="http://www.lfv.se/AIP/AD/AD%202/ESND/ES_AD_2_ESND_en.pdf">gjeldende AIP</a>]]>
 </description>
 <MultiGeometry>
@@ -13383,6 +13857,7 @@ Kontakt evt. taarnet tlf +46 680711350_<br/>
 14.433611,61.969167
 14.096389,62.018056
 14.091389,62.060833
+14.416667,62.126667
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -13398,7 +13873,7 @@ Kontakt evt. taarnet tlf +46 680711350_<br/>
 Nedre grense : 0<br/>
 Ovre grense: 305<br/>
 PG/HG-flyging er normalt forbudt her.<br/>
-Kontakt evt. taarnet tlf +46 56071724_<br/>
+Kontakt evt. taarnet.<br/>
 <a href="http://www.lfv.se/aIP/aIP%20Amdt/ES_Amdt_A_2012_3_D_en.pdf">gjeldende AIP</a>]]>
 </description>
 <MultiGeometry>
@@ -13417,6 +13892,7 @@ Kontakt evt. taarnet tlf +46 56071724_<br/>
 13.008333,60.056389
 12.903889,60.145278
 12.852222,60.258333
+12.948056,60.277778
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -13451,6 +13927,7 @@ Kontakt evt. taarnet.<br/>
 17.177778,64.501944
 16.793889,64.5025
 16.443056,64.573333
+16.486944,64.661111
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -13485,6 +13962,7 @@ Hoydebegr. PG/HG, meter: 945 eller fly over 1524 <br/>
 19.455278,65.685278
 19.113333,65.504444
 18.578056,65.676944
+18.920278,65.858333
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -13514,6 +13992,7 @@ Hoydebegr. PG/HG, meter: 792 eller fly over 1524 <br/>
 20.004167,65.503611
 19.658889,65.324444
 19.113333,65.504444
+19.455278,65.685278
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -13543,6 +14022,7 @@ Hoydebegr. PG/HG, meter: 305 eller fly over 1524 <br/>
 21.402778,67.089167
 21.241111,66.97
 20.219444,67.176944
+20.3775,67.296111
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -13603,6 +14083,7 @@ Hoydebegr. PG/HG, meter: 305 eller fly over 1524 <br/>
 17.843333,63.28
 17.988889,62.835556
 17.696944,62.816111
+17.5475,63.260278
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -13628,10 +14109,73 @@ Hoydebegr. PG/HG, meter: 305 eller fly over 1524 <br/>
 <outerBoundaryIs>
 <LinearRing>
 <coordinates>
-18.604444,64.783333
-19.1975,64.435556
-18.829167,64.318611
-18.235833,64.665278
+18.508611,64.839167
+19.303611,64.384444
+18.914444,64.258611
+18.135,64.701944
+18.2625,64.759167
+18.508611,64.839167
+</coordinates>
+</LinearRing>
+</outerBoundaryIs>
+</Polygon>
+</MultiGeometry>
+</Placemark>
+
+<Placemark>
+<styleUrl>#tia305</styleUrl>
+<name>Hemavan TIA</name>
+<description>
+<![CDATA[Luftromsklasse: G<br/>
+Hoydebegr. PG/HG, meter: 305 <br/>
+<a href="http://www.lfv.se/AIP/AD/AD%202/ESUT/ES_AD_2_ESUT_en.pdf">gjeldende AIP</a>]]>
+</description>
+<MultiGeometry>
+<Point>
+<coordinates>
+14.87,65.946
+</coordinates>
+</Point>
+<Polygon>
+<outerBoundaryIs>
+<LinearRing>
+<coordinates>
+15.056111,66.020833
+15.624167,65.6025
+15.173889,65.506667
+14.592778,65.921111
+15.056111,66.020833
+</coordinates>
+</LinearRing>
+</outerBoundaryIs>
+</Polygon>
+</MultiGeometry>
+</Placemark>
+
+<Placemark>
+<styleUrl>#tia305</styleUrl>
+<name>Storuman TIA</name>
+<description>
+<![CDATA[Luftromsklasse: G<br/>
+Hoydebegr. PG/HG, meter: 305 eller fly over 1524 <br/>
+<a href="http://www.lfv.se/AIP/AD/AD%202/ESUD/ES_AD_2_ESUD_en.pdf">gjeldende AIP</a>]]>
+</description>
+<MultiGeometry>
+<Point>
+<coordinates>
+17.46,65.158
+</coordinates>
+</Point>
+<Polygon>
+<outerBoundaryIs>
+<LinearRing>
+<coordinates>
+17.619167,65.266667
+18.262500,64.759167
+18.135000,64.701944
+17.801667,64.625556
+17.124167,65.152778
+17.619167,65.266667
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -13661,6 +14205,7 @@ Hoydebegr. PG/HG, meter: 305 eller fly over 1524 <br/>
 14.789167,60.768056
 14.528056,60.724444
 14.228611,61.149167
+14.492778,61.192778
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -13692,6 +14237,7 @@ Hoydebegr. PG/HG, meter: 610 eller fly over 1524 <br/>
 23.669444,67.069722
 23.528333,66.969167
 22.268889,67.230556
+22.601389,67.475278
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -13722,6 +14268,7 @@ Tlf. nr. til tarnet: +46 680711350_ <br/>
 14.880833,62.160556
 14.876944,61.911111
 13.824167,61.910833
+13.819167,62.160278
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -13752,6 +14299,7 @@ Tlf. nr. til tarnet: +46 56071724_ <br/>
 13.351667,59.926944
 13.051667,59.865833
 12.621667,60.385833
+12.925556,60.448056
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -13781,6 +14329,7 @@ Hoydebegr. PG/HG, meter: 305 eller fly over 1524 <br/>
 17.53,64.680833
 17.361111,64.364444
 16.140833,64.4825
+16.298889,64.798889
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -13828,6 +14377,7 @@ Ovre grense: 2560<br/>
 15.555059,65.536926
 15.620871,65.558843
 15.678611,65.5825
+15.076944,65.811944
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -13891,6 +14441,7 @@ Ovre grense: 99999<br/>
 21.86,68.591
 22.07,68.48
 21.995,68.534167
+21.77,68.295833
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -13923,6 +14474,7 @@ Ovre grense: 99999<br/>
 20.162222,65.865278
 19.445833,65.865278
 17.879444,66.515278
+18.579167,66.915
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -13960,6 +14512,7 @@ Ovre grense: 9610<br/>
 21.212222,65.665278
 21.312222,65.756944
 21.512222,65.765278
+21.604444,65.809722
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -13990,6 +14543,7 @@ Ovre grense: 9610<br/>
 21.662222,65.673611
 21.553889,65.665278
 21.603889,65.731944
+21.695556,65.756944
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -14019,6 +14573,7 @@ Ovre grense: 9610<br/>
 21.587222,65.815278
 21.604444,65.809722
 21.512222,65.765278
+21.587222,65.815278
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -14052,6 +14607,7 @@ Ovre grense: 3350<br/>
 20.2475,63.836667
 20.194167,63.863333
 20.162222,63.938333
+20.304167,63.946111
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -14083,6 +14639,7 @@ Ovre grense: 8550<br/>
 14.68,63.202222
 14.655,63.228333
 14.693889,63.258611
+14.735556,63.265556
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -14113,6 +14670,7 @@ Ovre grense: 8550<br/>
 14.788333,63.201667
 14.696667,63.185
 14.68,63.202222
+14.771667,63.240556
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -14144,6 +14702,7 @@ Ovre grense: 8550<br/>
 14.818889,63.1475
 14.78,63.155833
 14.696667,63.185
+14.788333,63.201667
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -14179,6 +14738,7 @@ Ovre grense: 3200<br/>
 19.420492,63.408129
 19.42919,63.415732
 19.434167,63.423889
+19.262778,63.448889
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -14209,6 +14769,7 @@ Ovre grense: 3500<br/>
 17.413056,63.115556
 17.229722,63.098889
 17.243611,63.132222
+17.313056,63.162778
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -14246,6 +14807,7 @@ Kontakt Arlanda ATC +46 859492250<br/>
 13.586389,61.33
 13.357222,61.532778
 13.462778,61.6075
+13.598056,61.657222
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -14276,6 +14838,7 @@ Ovre grense: 1850<br/>
 22.545278,65.398611
 22.328611,65.331944
 22.111944,65.473611
+22.328611,65.540278
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -14309,6 +14872,7 @@ Ovre grense: 4250<br/>
 20.628611,67.668611
 20.419444,67.702222
 20.338333,67.734722
+20.345556,67.783056
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -14340,6 +14904,7 @@ Ovre grense: 4250<br/>
 20.338333,67.734722
 20.240833,67.734444
 20.253889,67.792778
+20.286111,67.795833
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -14373,6 +14938,7 @@ Ovre grense: 12350<br/>
 21.495556,64.809722
 21.253889,64.819722
 21.312222,64.990278
+21.712222,65.056944
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -14405,6 +14971,7 @@ Ovre grense: 1050<br/>
 21.280556,64.898611
 21.162222,64.948611
 21.2125,65.032222
+21.378889,65.048611
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -14436,6 +15003,7 @@ Ovre grense: 4701<br/>
 21.595556,65.873611
 21.412222,65.865278
 21.345556,65.915278
+21.495556,65.948611
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -14469,6 +15037,7 @@ Ovre grense: 8400<br/>
 18.346111,62.448889
 17.946389,62.448889
 17.979722,62.565556
+18.196111,62.782222
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -14500,6 +15069,7 @@ Ovre grense: 1372<br/>
 18.079722,62.665556
 18.008889,62.665556
 18.013056,62.690556
+18.129444,62.765556
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -14530,6 +15100,7 @@ Ovre grense: 5050<br/>
 18.162778,62.665556
 18.096389,62.598889
 17.996389,62.598889
+18.008889,62.665556
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -14561,6 +15132,7 @@ Ovre grense: 1372<br/>
 17.979722,62.565556
 17.968611,62.532222
 17.879722,62.565556
+17.963056,62.598889
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -14594,6 +15166,7 @@ Ovre grense: 4701<br/>
 19.2375,65.498611
 19.0625,65.473611
 19.0375,65.548611
+19.054167,65.590278
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -14671,6 +15244,7 @@ Ovre grense: 610<br/>
 17.92436,62.66591
 17.91484,62.66945
 17.90341,62.67146
+17.89119,62.67176
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -14713,6 +15287,7 @@ Info: ring LKAB, +46 98071001
 21.015496,67.653517
 21.005172,67.657444
 20.990747,67.658313
+20.977736,67.655791
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -14755,6 +15330,7 @@ Ovre grense: 99999<br/>
 22.495278,65.781944
 22.445278,65.848611
 22.828611,66.331944
+22.745278,66.598611
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -14790,6 +15366,7 @@ Ovre grense: 99999<br/>
 21.545556,65.831944
 21.412222,65.865278
 21.178889,66.015278
+21.412222,66.098611
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -14822,6 +15399,7 @@ Ovre grense: 99999<br/>
 18.296111,62.640556
 17.963056,62.640556
 18.029722,62.832222
+18.079444,62.873889
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -14853,6 +15431,7 @@ Ovre grense: 99999<br/>
 20.920833,63.682222
 20.770833,63.532222
 20.670833,63.582222
+20.845833,63.682222
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -14903,6 +15482,7 @@ Ovre grense: 2450<br/>
 17.621111,67.065
 17.140556,67.176111
 17.078333,67.406944
+17.203056,67.553889
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -14918,7 +15498,7 @@ Ovre grense: 2450<br/>
 Nedre grense : 0<br/>
 Ovre grense: 2305<br/>
 <a href="http://www.lfv.se/AIP/ENR/ENR%205/ES_ENR_5_1_en.pdf"> gjeldende AIP </a>
-<a href="http://no.wikipedia.org/wiki/Stora_Sjöfallets_nasjonalpark">Wikipedia</a>
+<a href="http://no.wikipedia.org/wiki/Stora_Sj?fallets_nasjonalpark">Wikipedia</a>
 <a href="http://www.naturvardsverket.se/Documents/foreskrifter/nfs1987/SNFS1987_08.pdf">Forskrift for Nasjonalpark</a>]]>
 </description>
 <MultiGeometry>
@@ -14944,6 +15524,7 @@ Ovre grense: 2305<br/>
 17.401944,67.519167
 17.203056,67.553889
 17.183889,67.567778
+17.618611,67.801389
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -14988,6 +15569,7 @@ Ovre grense: 2150<br/>
 16.4068,67.5345
 16.5557,67.6475
 16.62055,67.74310
+16.622222,67.7425
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>
@@ -15022,6 +15604,7 @@ Ovre grense: 1524<br/>
 13.596944,62.223889
 13.421944,62.223889
 13.405278,62.248889
+13.480278,62.340556
 </coordinates>
 </LinearRing>
 </outerBoundaryIs>

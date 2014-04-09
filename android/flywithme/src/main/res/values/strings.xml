@@ -9,7 +9,7 @@
 
     <!-- General -->
     <string name="app_name">Fly With Me!</string>
-    <string name="geodesic_distance">Geodesic distance</string>
+    <string name="distance">Distance</string>
     <string name="asl">ASL</string>
     <string name="height">Height</string>
     <string name="cancel">Cancel</string>

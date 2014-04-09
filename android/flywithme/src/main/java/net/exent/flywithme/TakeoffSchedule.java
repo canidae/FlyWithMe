@@ -1,6 +1,9 @@
 package net.exent.flywithme;
 
+import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
@@ -9,16 +12,22 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
+import android.widget.ExpandableListView;
 import android.widget.ImageButton;
 import android.widget.TableLayout;
 import android.widget.TextView;
 
 import net.exent.flywithme.bean.Takeoff;
+import net.exent.flywithme.data.Database;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Map;
+import java.util.Set;
 
 public class TakeoffSchedule extends Fragment {
     public static final String ARG_TAKEOFF = "takeoff";
@@ -126,7 +135,8 @@ public class TakeoffSchedule extends Fragment {
             registerTime.setVisibility(View.VISIBLE);
         }
 
-        // TODO: accordion list (ExpandableListView) with takeoff schedule
+        ExpandableListView scheduleList = (ExpandableListView) getActivity().findViewById(R.id.scheduleRegisteredFlights);
+        scheduleList.setAdapter(new TakeoffScheduleAdapter());
     }
 
     @Override
@@ -160,5 +170,114 @@ public class TakeoffSchedule extends Fragment {
         hourText.setText(new SimpleDateFormat("HH").format(calendar.getTime()));
         TextView minuteText = (TextView) getActivity().findViewById(R.id.scheduleMinute);
         minuteText.setText(new SimpleDateFormat("mm").format(calendar.getTime()));
+    }
+
+    private class TakeoffScheduleAdapter extends BaseExpandableListAdapter {
+        private Map<Date, Set<String>> schedule;
+        private SimpleDateFormat dateFormatter = new SimpleDateFormat("EEE dd. MMM, HH:mm");
+
+        public TakeoffScheduleAdapter() {
+            schedule = Database.getTakeoffSchedule(takeoff);
+        }
+
+        @Override
+        public int getGroupCount() {
+            return schedule.size();
+        }
+
+        @Override
+        public int getChildrenCount(int groupPosition) {
+            return getEntryGroup(groupPosition).getValue().size();
+        }
+
+        @Override
+        public Object getGroup(int groupPosition) {
+            return getEntryGroup(groupPosition).getKey();
+        }
+
+        @Override
+        public Object getChild(int groupPosition, int childPosition) {
+            return getEntryGroupChild(groupPosition, childPosition);
+        }
+
+        @Override
+        public long getGroupId(int groupPosition) {
+            return 0;
+        }
+
+        @Override
+        public long getChildId(int groupPosition, int childPosition) {
+            return 0;
+        }
+
+        @Override
+        public boolean hasStableIds() {
+            return false;
+        }
+
+        @Override
+        public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
+            if (convertView == null) {
+                LayoutInflater inflater = (LayoutInflater) FlyWithMe.getInstance().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                convertView = inflater.inflate(R.layout.takeoff_schedule_group, null);
+            }
+            TextView groupTime = (TextView) convertView.findViewById(R.id.scheduleGroupTime);
+            Date date = getEntryGroup(groupPosition).getKey();
+            groupTime.setText(dateFormatter.format(date));
+            TextView groupPilots = (TextView) convertView.findViewById(R.id.scheduleGroupPilots);
+            groupPilots.setText(getString(R.string.pilots) + ": " + getEntryGroup(groupPosition).getValue().size());
+            return convertView;
+        }
+
+        @Override
+        public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
+            if (convertView == null) {
+                LayoutInflater inflater = (LayoutInflater) FlyWithMe.getInstance().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                convertView = inflater.inflate(R.layout.takeoff_schedule_entry, null);
+            }
+            String nameAndPhone = getEntryGroupChild(groupPosition, childPosition);
+            int commaPos = nameAndPhone.lastIndexOf(',');
+            String name = commaPos > 0 ? nameAndPhone.substring(0, commaPos) : nameAndPhone;
+            final String phone = commaPos > 0 ? nameAndPhone.substring(commaPos + 1) : "";
+            TextView entryPilotName = (TextView) convertView.findViewById(R.id.scheduleEntryPilotName);
+            entryPilotName.setText(name);
+            TextView entryPilotPhone = (TextView) convertView.findViewById(R.id.scheduleEntryPilotPhone);
+            entryPilotPhone.setText(phone);
+            ImageButton entryCallButton = (ImageButton) convertView.findViewById(R.id.scheduleEntryCallButton);
+            if ("".equals(phone)) {
+                entryCallButton.setVisibility(View.INVISIBLE);
+            } else {
+                entryCallButton.setVisibility(View.VISIBLE);
+                entryCallButton.setOnClickListener(new OnClickListener() {
+                    public void onClick(View v) {
+                        Intent callIntent = new Intent(Intent.ACTION_DIAL);
+                        callIntent.setData(Uri.parse("tel:" + phone));
+                        startActivity(callIntent);
+                    }
+                });
+            }
+            return convertView;
+        }
+
+        @Override
+        public boolean isChildSelectable(int groupPosition, int childPosition) {
+            return false;
+        }
+
+        private Map.Entry<Date, Set<String>> getEntryGroup(int group) {
+            for (Map.Entry<Date, Set<String>> entry : schedule.entrySet()) {
+                if (group-- <= 0)
+                    return entry;
+            }
+            return null;
+        }
+
+        private String getEntryGroupChild(int group, int child) {
+            for (String entry : getEntryGroup(group).getValue()) {
+                if (child-- <= 0)
+                    return entry;
+            }
+            return null;
+        }
     }
 }

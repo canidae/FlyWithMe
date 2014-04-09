@@ -34,6 +34,7 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class TakeoffDetails extends Fragment {
     public interface TakeoffDetailsListener {
@@ -198,19 +199,19 @@ public class TakeoffDetails extends Fragment {
             Date date = new Date(System.currentTimeMillis() + a * 1000 * 60 * 60 * 7);
             List<String> list = new ArrayList<>();
             for (int b = 0; b < Math.random() * 10; ++b)
-                list.add("" + b);
+                list.add("Vidar Wahlberg,+4795728262");
             tmpSchedule.put(date, list);
         }
         Database.updateTakeoffSchedule(takeoff.getId(), tmpSchedule);
         // TODO: END
 
         // fetch flight schedule for takeoff
-        Map<Date, List<String>> schedule = Database.getTakeoffSchedule(takeoff);
+        Map<Date, Set<String>> schedule = Database.getTakeoffSchedule(takeoff);
 
         String prevDate = "";
         int xPos = Y_AXIS_WIDTH - SCHEDULE_BAR_SPACE;
         Calendar today = GregorianCalendar.getInstance();
-        for (Map.Entry<Date, List<String>> entry : schedule.entrySet()) {
+        for (Map.Entry<Date, Set<String>> entry : schedule.entrySet()) {
             Calendar cal = GregorianCalendar.getInstance();
             cal.setTime(entry.getKey());
             String text;

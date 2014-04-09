@@ -38,9 +38,9 @@ public class Takeoff implements Parcelable {
     private double latitude;
     private double longitude;
     private int exits;
+    private boolean favourite;
     private Bitmap noaaForecast;
     private long noaaUpdated;
-    private boolean favourite;
 
     /* Should only be used by Database for importing takeoffs from file */
     public Takeoff(int id, String name, String description, int asl, int height, double latitude, double longitude, String exitDirections, boolean favourite) {
@@ -173,6 +173,14 @@ public class Takeoff implements Parcelable {
         return (exits & (1 << 1)) != 0;
     }
 
+    public void setFavourite(boolean favourite) {
+        this.favourite = favourite;
+    }
+
+    public boolean isFavourite() {
+        return favourite;
+    }
+
     public Bitmap getNoaaforecast() {
         return noaaForecast;
     }
@@ -184,14 +192,6 @@ public class Takeoff implements Parcelable {
 
     public long getNoaaUpdated() {
         return noaaUpdated;
-    }
-
-    public void setFavourite(boolean favourite) {
-        this.favourite = favourite;
-    }
-
-    public boolean isFavourite() {
-        return favourite;
     }
 
     public ContentValues getContentValues() {

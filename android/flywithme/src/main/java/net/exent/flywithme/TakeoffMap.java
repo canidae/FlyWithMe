@@ -67,6 +67,7 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
     private static Bitmap markerSouthwestBitmap;
     private static Bitmap markerWestBitmap;
     private static Bitmap markerNorthwestBitmap;
+    private static Bitmap markerExclamation;
     private TakeoffMapListener callback;
 
     public void drawMap() {
@@ -150,6 +151,7 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
             markerSouthwestBitmap = BitmapFactory.decodeResource(getResources(), R.raw.mapmarker_octant_sw);
             markerWestBitmap = BitmapFactory.decodeResource(getResources(), R.raw.mapmarker_octant_w);
             markerNorthwestBitmap = BitmapFactory.decodeResource(getResources(), R.raw.mapmarker_octant_nw);
+            markerExclamation = BitmapFactory.decodeResource(getResources(), R.raw.mapmarker_exclamation);
         }
     }
 
@@ -245,6 +247,7 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
                             canvas.drawBitmap(markerWestBitmap, 0, 0, paint);
                         if (takeoff.hasNorthwestExit())
                             canvas.drawBitmap(markerNorthwestBitmap, 0, 0, paint);
+                        // TODO: set markerExclamation if scheduled flights here
                         MarkerOptions markerOptions = new MarkerOptions().position(new LatLng(takeoff.getLocation().getLatitude(), takeoff.getLocation().getLongitude())).title(takeoff.getName()).snippet("Height: " + takeoff.getHeight()).icon(BitmapDescriptorFactory.fromBitmap(bitmap)).anchor(0.5f, 0.875f);
                         publishProgress(takeoff, markerOptions);
                     }

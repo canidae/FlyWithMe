@@ -9,7 +9,7 @@
 
     <!-- General -->
     <string name="app_name">Fly With Me!</string>
-    <string name="geodesic_distance">Luftavstand</string>
+    <string name="distance">Luftavstand</string>
     <string name="asl">moh.</string>
     <string name="height">Høyde</string>
     <string name="cancel">Avbryt</string>

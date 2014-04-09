@@ -6,8 +6,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import net.exent.flywithme.FlyWithMe;
@@ -45,20 +47,35 @@ public class Database extends SQLiteOpenHelper {
         }
     }
 
-    public synchronized static Map<Date, List<String>> getTakeoffSchedule(Takeoff takeoff) {
-        Map<Date, List<String>> schedule = new TreeMap<>();
+    public synchronized static Map<Date, Set<String>> getTakeoffSchedule(Takeoff takeoff) {
+        Map<Date, Set<String>> schedule = new TreeMap<>();
         SQLiteDatabase db = getDatabase();
         try {
             Cursor cursor = db.query("schedule", new String[]{"timestamp", "pilot"}, "takeoff_id = " + takeoff.getId(), null, null, null, "timestamp");
             while (cursor.moveToNext()) {
-                Date timestamp = new Date((long) cursor.getInt(0) * 1000L); // int * int = int. we want long, hence the cast & "L"
+                Date timestamp = new Date((long) cursor.getInt(0) * 1000);
                 String pilot = cursor.getString(1);
-                if (schedule.containsKey(timestamp))
-                    schedule.get(timestamp).add(pilot);
-                else
-                    schedule.put(timestamp, new ArrayList<>(Arrays.asList(pilot)));
+                Set<String> pilots = schedule.get(timestamp);
+                if (pilots == null) {
+                    pilots = new HashSet<>();
+                    schedule.put(timestamp, pilots);
+                }
+                pilots.add(pilot);
             }
             return schedule;
+        } finally {
+            db.close();
+        }
+    }
+
+    public static synchronized Set<Integer> getTakeoffIdsWithScheduledFlightsToday() {
+        Set<Integer> takeoffIds = new HashSet<>();
+        SQLiteDatabase db = getDatabase();
+        try {
+            Cursor cursor = db.rawQuery("select distinct takeoff_id from schedule where date(timestamp, 'unixepoch') = date('now')", null);
+            while (cursor.moveToNext())
+                takeoffIds.add(cursor.getInt(0));
+            return takeoffIds;
         } finally {
             db.close();
         }

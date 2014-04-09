@@ -23,6 +23,7 @@ import android.widget.TextView;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 
 public class TakeoffList extends Fragment {
     public interface TakeoffListListener {
@@ -54,13 +55,21 @@ public class TakeoffList extends Fragment {
 
         final Location location = FlyWithMe.getInstance().getLocation();
         takeoffs = Database.getTakeoffs(location.getLatitude(), location.getLongitude(), 100, true);
+        final Set<Integer> takeoffIdsScheduled = Database.getTakeoffIdsWithScheduledFlightsToday();
+
         Collections.sort(takeoffs, new Comparator<Takeoff>() {
             public int compare(Takeoff lhs, Takeoff rhs) {
                 if (!lhs.isFavourite() && rhs.isFavourite())
                     return 1;
                 else if (lhs.isFavourite() && !rhs.isFavourite())
                     return -1;
-                // both or neither are favourites, sort by distance from user
+                // both or neither are favourites, sort those with scheduled flights first
+                // TODO: we need to store this information in the takeoff objects after all
+                if (!takeoffIdsScheduled.contains(lhs.getId()) && takeoffIdsScheduled.contains(rhs.getId()))
+                    return 1;
+                else if (takeoffIdsScheduled.contains(lhs.getId()) && !takeoffIdsScheduled.contains(rhs.getId()))
+                    return -1;
+                // both or neither have scheduled flights, sort by distance from user
                 if (location.distanceTo(lhs.getLocation()) > location.distanceTo(rhs.getLocation()))
                     return 1;
                 else if (location.distanceTo(lhs.getLocation()) < location.distanceTo(rhs.getLocation()))
@@ -112,7 +121,7 @@ public class TakeoffList extends Fragment {
             takeoffName.setText(takeoff.toString());
             if (takeoff.isFavourite())
                 takeoffName.setTextColor(Color.CYAN);
-            takeoffDistance.setText(getContext().getString(R.string.geodesic_distance) + ": " + (int) location.distanceTo(takeoff.getLocation()) / 1000 + "km");
+            takeoffDistance.setText(getContext().getString(R.string.distance) + ": " + (int) location.distanceTo(takeoff.getLocation()) / 1000 + "km");
             /* windpai */
             ImageView windroseNorth = (ImageView) rowView.findViewById(R.id.takeoffListEntryWindroseNorth);
             ImageView windroseNorthwest = (ImageView) rowView.findViewById(R.id.takeoffListEntryWindroseNorthwest);
