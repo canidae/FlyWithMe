@@ -14,8 +14,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class ScheduleServlet extends HttpServlet {
-    private static final Logger log = Logger.getLogger(FlightlogDatabase.class.getName());
+    private static final Logger log = Logger.getLogger(ScheduleServlet.class.getName());
 
+    // TODO: store registration time, store unregistered, have client ask for a time frame (registrations/unregistrations for the last x seconds)
     private static Map<Integer, Map<Long, List<String>>> schedule = new ConcurrentHashMap<>(); // <takeoffId, <timestamp, <pilots>>>
     private static long lastScheduleClean = System.currentTimeMillis();
 
@@ -284,17 +285,5 @@ public class ScheduleServlet extends HttpServlet {
                 schedule.remove(takeoffId);
         }
         outputStream.writeBoolean(true);
-    }
-
-    /* returns the Haversine distance in meters between two points */
-    private static double haversineDistance(double lat1, double lng1, double lat2, double lng2) {
-        double earthRadius = 6371000;
-        double dLat = Math.toRadians(lat2 - lat1);
-        double dLng = Math.toRadians(lng2 - lng1);
-        double sindLat = Math.sin(dLat / 2);
-        double sindLng = Math.sin(dLng / 2);
-        double a = Math.pow(sindLat, 2) + Math.pow(sindLng, 2) * Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2));
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        return earthRadius * c;
     }
 }

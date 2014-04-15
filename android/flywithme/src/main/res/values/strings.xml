@@ -29,7 +29,10 @@
     <string name="date">Date</string>
     <string name="pilots">Pilots</string>
     <string name="time">Time</string>
-    <string name="may_not_register">You haven\'t set your name in the preferences, you need to set this in order to schedule a flight.</string>
+    <string name="may_not_register">You haven\'t set your name/phone in the preferences, you need to set this in order to schedule a flight.</string>
+    <string name="schedule_flight">Schedule flight</string>
+    <string name="scheduling_flight">Scheduling flight</string>
+    <string name="unscheduling_flight">Unscheduling flight</string>
 
     <!-- Preferences -->
     <string name="preferences">Preferences</string>
@@ -61,9 +64,6 @@
     <string name="pref_schedule_pilot_phone_description">When scheduling a flight, this phone number will be shown to other pilots. You don\'t have to fill this in, but it is recommended so other pilots can contact you.</string>
 
     <string name="schedule_settings">Fetch schedule settings</string>
-
-    <string name="pref_schedule_fetch_favourites">Fetch favourites</string>
-    <string name="pref_schedule_fetch_favourites_summary">Fetch favourites, regardless of distance</string>
 
     <string name="pref_schedule_notification">Notifications</string>
     <string name="pref_schedule_notification_default_value">3</string>

@@ -13,7 +13,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.exent.flywithme.FlyWithMe;
-import net.exent.flywithme.ProgressDialog;
+import net.exent.flywithme.dialog.ProgressDialog;
 import net.exent.flywithme.R;
 import net.exent.flywithme.bean.Takeoff;
 

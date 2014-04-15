@@ -1,4 +1,4 @@
-package net.exent.flywithme;
+package net.exent.flywithme.layout;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -14,6 +14,7 @@ import android.support.v4.preference.PreferenceFragment;
 import android.util.Log;
 import android.widget.ImageButton;
 
+import net.exent.flywithme.R;
 import net.exent.flywithme.data.Airspace;
 
 // TODO: screen rotation throws the user out of preference screen

@@ -1,5 +1,6 @@
-package net.exent.flywithme;
+package net.exent.flywithme.layout;
 
+import net.exent.flywithme.R;
 import net.exent.flywithme.bean.Takeoff;
 import net.exent.flywithme.view.GestureImageView;
 import android.os.Bundle;

@@ -28,7 +28,7 @@
             android:value="AIzaSyDxop_2QoIHu-zgof2EhWMC6f5gxAZQOpI" />
 
         <service
-            android:name=".ScheduleService"
+            android:name=".service.ScheduleService"
             android:exported="false"/>
 
         <activity
@@ -42,7 +42,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name="Preferences" />
+        <activity android:name=".layout.Preferences" />
     </application>
 
 </manifest>

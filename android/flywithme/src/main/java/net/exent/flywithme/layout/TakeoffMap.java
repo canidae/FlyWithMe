@@ -1,4 +1,4 @@
-package net.exent.flywithme;
+package net.exent.flywithme.layout;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import net.exent.flywithme.R;
 import net.exent.flywithme.bean.Takeoff;
 import net.exent.flywithme.data.Airspace;
 import net.exent.flywithme.data.Database;

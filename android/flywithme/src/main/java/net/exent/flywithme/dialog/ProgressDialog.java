@@ -1,4 +1,4 @@
-package net.exent.flywithme;
+package net.exent.flywithme.dialog;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -17,6 +17,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import net.exent.flywithme.R;
 
 public class ProgressDialog extends DialogFragment {
     private static ProgressDialog instance;

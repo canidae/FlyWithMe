@@ -1,4 +1,4 @@
-package net.exent.flywithme;
+package net.exent.flywithme.service;
 
 import android.app.IntentService;
 import android.app.NotificationManager;
@@ -11,6 +11,8 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import net.exent.flywithme.FlyWithMe;
+import net.exent.flywithme.R;
 import net.exent.flywithme.bean.Takeoff;
 import net.exent.flywithme.data.Database;
 
@@ -20,16 +22,19 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.TimeZone;
 
 /**
  * Created by canidae on 3/10/14.
  */
 public class ScheduleService extends IntentService {
+    private static final String SERVER_URL = "http://flywithme-server.appspot.com/fwm";
     private static final int NOTIFICATION_ID = 42;
     private static final long MS_IN_DAY = 86400000;
     private long lastUpdate = 0;
@@ -57,7 +62,6 @@ public class ScheduleService extends IntentService {
             int fetchTakeoffs = Integer.parseInt(prefs.getString("pref_schedule_fetch_takeoffs", "-1"));
             int startTime = Integer.parseInt(prefs.getString("pref_schedule_start_fetch_time", "28800")) * 1000;
             int stopTime = Integer.parseInt(prefs.getString("pref_schedule_stop_fetch_time", "72000")) * 1000;
-            boolean fetchFavourites = prefs.getBoolean("pref_schedule_fetch_favourites", true);
             long updateInterval = Integer.parseInt(prefs.getString("pref_schedule_update_interval", "3600")) * 1000;
 
             long now = System.currentTimeMillis();
@@ -76,10 +80,10 @@ public class ScheduleService extends IntentService {
             lastUpdate = now;
 
             Location location = FlyWithMe.getInstance().getLocation();
-            List<Takeoff> favourites = Database.getTakeoffs(location.getLatitude(), location.getLongitude(), fetchTakeoffs, fetchFavourites);
+            List<Takeoff> favourites = Database.getTakeoffs(location.getLatitude(), location.getLongitude(), fetchTakeoffs, true);
             try {
                 Log.i(getClass().getName(), "Fetching schedule from server");
-                HttpURLConnection con = (HttpURLConnection) new URL("http://flywithme-server.appspot.com/fwm").openConnection();
+                HttpURLConnection con = (HttpURLConnection) new URL(SERVER_URL).openConnection();
                 con.setRequestMethod("POST");
                 con.setDoOutput(true);
                 DataOutputStream outputStream = new DataOutputStream(con.getOutputStream());
@@ -131,5 +135,23 @@ public class ScheduleService extends IntentService {
                 Log.w(getClass().getName(), "Fetching flight schedule failed unexpectedly", e);
             }
         }
+    }
+
+    public static void scheduleFlight(Calendar calendar) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(FlyWithMe.getInstance());
+        String name = prefs.getString("pref_schedule_pilot_name", null);
+        String phone = prefs.getString("pref_schedule_pilot_phone", null);
+        long id = prefs.getLong("pref_schedule_pilot_id", 0);
+        while (id == 0) {
+            // generate a random ID for identifying the pilot's registrations
+            id = (new Random()).nextLong();
+            prefs.edit().putLong("pref_schedule_pilot_id", id).commit();
+        }
+    }
+
+    public static void unscheduleFlight(Calendar calendar) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(FlyWithMe.getInstance());
+        long id = prefs.getLong("pref_schedule_pilot_id", 0);
+        // TODO
     }
 }

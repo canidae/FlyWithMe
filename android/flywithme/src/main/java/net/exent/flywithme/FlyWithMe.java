@@ -1,10 +1,18 @@
 package net.exent.flywithme;
 
-import net.exent.flywithme.TakeoffDetails.TakeoffDetailsListener;
-import net.exent.flywithme.TakeoffList.TakeoffListListener;
-import net.exent.flywithme.TakeoffMap.TakeoffMapListener;
+import net.exent.flywithme.layout.NoaaForecast;
+import net.exent.flywithme.layout.Preferences;
+import net.exent.flywithme.layout.TakeoffDetails;
+import net.exent.flywithme.layout.TakeoffDetails.TakeoffDetailsListener;
+import net.exent.flywithme.layout.TakeoffList;
+import net.exent.flywithme.layout.TakeoffList.TakeoffListListener;
+import net.exent.flywithme.layout.TakeoffMap;
+import net.exent.flywithme.layout.TakeoffMap.TakeoffMapListener;
 import net.exent.flywithme.bean.Takeoff;
 import net.exent.flywithme.data.Database;
+import net.exent.flywithme.layout.TakeoffSchedule;
+import net.exent.flywithme.service.ScheduleService;
+
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
@@ -13,7 +21,6 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
@@ -47,11 +54,16 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
      */
     public void showTakeoffDetails(Takeoff takeoff) {
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragmentContainer);
-        TakeoffDetails takeoffDetails = (fragment != null && fragment instanceof TakeoffDetails) ? (TakeoffDetails) fragment : new TakeoffDetails();
-        /* pass arguments */
-        Bundle args = new Bundle();
-        args.putParcelable(TakeoffDetails.ARG_TAKEOFF, takeoff);
-        takeoffDetails.setArguments(args);
+        TakeoffDetails takeoffDetails;
+        if (fragment != null && fragment instanceof TakeoffDetails) {
+            takeoffDetails = (TakeoffDetails) fragment;
+        } else {
+            takeoffDetails = new TakeoffDetails();
+            /* pass arguments */
+            Bundle args = new Bundle();
+            args.putParcelable(TakeoffDetails.ARG_TAKEOFF, takeoff);
+            takeoffDetails.setArguments(args);
+        }
         /* show fragment */
         showFragment(takeoffDetails, "takeoffDetails," + takeoff.getId());
     }
@@ -62,22 +74,32 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
      */
     public void showNoaaForecast(Takeoff takeoff) {
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragmentContainer);
-        NoaaForecast noaaForecast = (fragment != null && fragment instanceof NoaaForecast) ? (NoaaForecast) fragment : new NoaaForecast();
-        /* pass arguments */
-        Bundle args = new Bundle();
-        args.putParcelable(NoaaForecast.ARG_TAKEOFF, takeoff);
-        noaaForecast.setArguments(args);
+        NoaaForecast noaaForecast;
+        if (fragment != null && fragment instanceof NoaaForecast) {
+            noaaForecast = (NoaaForecast) fragment;
+        } else {
+            noaaForecast = new NoaaForecast();
+            /* pass arguments */
+            Bundle args = new Bundle();
+            args.putParcelable(NoaaForecast.ARG_TAKEOFF, takeoff);
+            noaaForecast.setArguments(args);
+        }
         /* show fragment */
         showFragment(noaaForecast, "noaaForecast," + takeoff.getId());
     }
 
     public void showTakeoffSchedule(Takeoff takeoff) {
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragmentContainer);
-        TakeoffSchedule takeoffSchedule = (fragment != null && fragment instanceof TakeoffSchedule) ? (TakeoffSchedule) fragment : new TakeoffSchedule();
-        /* pass arguments */
-        Bundle args = new Bundle();
-        args.putParcelable(TakeoffSchedule.ARG_TAKEOFF, takeoff);
-        takeoffSchedule.setArguments(args);
+        TakeoffSchedule takeoffSchedule;
+        if (fragment != null && fragment instanceof TakeoffSchedule) {
+            takeoffSchedule = (TakeoffSchedule) fragment;
+        } else {
+            takeoffSchedule = new TakeoffSchedule();
+            /* pass arguments */
+            Bundle args = new Bundle();
+            args.putParcelable(TakeoffSchedule.ARG_TAKEOFF, takeoff);
+            takeoffSchedule.setArguments(args);
+        }
         /* show fragment */
         showFragment(takeoffSchedule, "takeoffSchedule," + takeoff.getId());
     }

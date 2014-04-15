@@ -1,9 +1,10 @@
-package net.exent.flywithme;
+package net.exent.flywithme.layout;
 
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
@@ -19,8 +20,11 @@ import android.widget.ImageButton;
 import android.widget.TableLayout;
 import android.widget.TextView;
 
+import net.exent.flywithme.FlyWithMe;
+import net.exent.flywithme.R;
 import net.exent.flywithme.bean.Takeoff;
 import net.exent.flywithme.data.Database;
+import net.exent.flywithme.service.ScheduleService;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -94,10 +98,24 @@ public class TakeoffSchedule extends Fragment {
                 }
             });
 
-            // this serves two purposes: guesstimate when we're gonna fly and set the text for day/month/hour/year
-            // TODO: if someone have scheduled today, use the next time, otherwise guesstimate how long it'll take us to get there
-            updateCalendar(Calendar.MILLISECOND, 0);
+            // setup register schedule button
+            final Button scheduleFlight = (Button) getActivity().findViewById(R.id.scheduleFlightButton);
+            scheduleFlight.setOnClickListener(new OnClickListener() {
+                public void onClick(View v) {
+                    scheduleFlight.setText(getString(R.string.scheduling_flight));
+                    scheduleFlight.setEnabled(false);
+                    new ScheduleFlightTask().execute(calendar);
+                }
+            });
 
+            // guesstimate when we're gonna fly by using distance to takeoff
+            // travel time of 12 m/s seems to be a fair rough estimate
+            double travelTime = FlyWithMe.getInstance().getLocation().distanceTo(takeoff.getLocation()) / 12;
+            // then round up travel time and current time to nearest 15 minute
+            travelTime = Math.ceil(travelTime / 900.0) * 900.0;
+            calendar.set(Calendar.MINUTE, (int) Math.ceil(calendar.get(Calendar.MINUTE) / 15.0) * 15);
+            // update calendar
+            updateCalendar(Calendar.SECOND, (int) travelTime);
         } catch (Exception e) {
             Log.w(getClass().getName(), "showTakeoffSchedule() failed unexpectedly", e);
         }
@@ -126,13 +144,13 @@ public class TakeoffSchedule extends Fragment {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         String name = prefs.getString("pref_schedule_pilot_name", null);
         TextView mayNotRegister = (TextView) getActivity().findViewById(R.id.scheduleMayNotRegister);
-        TableLayout registerTime = (TableLayout) getActivity().findViewById(R.id.scheduleRegisterTime);
+        TableLayout flightTime = (TableLayout) getActivity().findViewById(R.id.scheduleFlightTime);
         if (name == null || "".equals(name.trim())) {
             mayNotRegister.setVisibility(View.VISIBLE);
-            registerTime.setVisibility(View.GONE);
+            flightTime.setVisibility(View.GONE);
         } else {
             mayNotRegister.setVisibility(View.GONE);
-            registerTime.setVisibility(View.VISIBLE);
+            flightTime.setVisibility(View.VISIBLE);
         }
 
         ExpandableListView scheduleList = (ExpandableListView) getActivity().findViewById(R.id.scheduleRegisteredFlights);
@@ -143,7 +161,6 @@ public class TakeoffSchedule extends Fragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable(ARG_TAKEOFF, takeoff);
-        // TODO: save calendar too?
     }
 
     private void updateCalendar(int field, int value) {
@@ -216,11 +233,23 @@ public class TakeoffSchedule extends Fragment {
         }
 
         @Override
-        public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
+        public View getGroupView(final int groupPosition, boolean isExpanded, View convertView, final ViewGroup parent) {
             if (convertView == null) {
                 LayoutInflater inflater = (LayoutInflater) FlyWithMe.getInstance().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 convertView = inflater.inflate(R.layout.takeoff_schedule_group, null);
             }
+            /* AAH! Adding a button to the ExpandableListView apparently breaks Android in multiple ways. It removes expansion/collapse of group as well as background color when clicked */
+            convertView.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ExpandableListView listView = ((ExpandableListView) parent);
+                    if (listView.isGroupExpanded(groupPosition))
+                        listView.collapseGroup(groupPosition);
+                    else
+                        listView.expandGroup(groupPosition, true);
+                }
+            });
+            /* END AAH! */
             TextView groupTime = (TextView) convertView.findViewById(R.id.scheduleGroupTime);
             Date date = getEntryGroup(groupPosition).getKey();
             groupTime.setText(dateFormatter.format(date));
@@ -244,7 +273,7 @@ public class TakeoffSchedule extends Fragment {
             TextView entryPilotPhone = (TextView) convertView.findViewById(R.id.scheduleEntryPilotPhone);
             entryPilotPhone.setText(phone);
             ImageButton entryCallButton = (ImageButton) convertView.findViewById(R.id.scheduleEntryCallButton);
-            if ("".equals(phone)) {
+            if ("".equals(phone) || phone.equals(PreferenceManager.getDefaultSharedPreferences(getActivity()).getString("pref_schedule_pilot_phone", null))) {
                 entryCallButton.setVisibility(View.INVISIBLE);
             } else {
                 entryCallButton.setVisibility(View.VISIBLE);
@@ -278,6 +307,38 @@ public class TakeoffSchedule extends Fragment {
                     return entry;
             }
             return null;
+        }
+    }
+
+    private class ScheduleFlightTask extends AsyncTask<Calendar, Void, Void> {
+        @Override
+        protected Void doInBackground(Calendar... params) {
+            ScheduleService.scheduleFlight(params[0]);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void param) {
+            Button scheduleFlight = (Button) getActivity().findViewById(R.id.scheduleFlightButton);
+            scheduleFlight.setText(getString(R.string.schedule_flight));
+            scheduleFlight.setEnabled(true);
+            // TODO: how can we update the view/list?
+        }
+    }
+
+    private class UnscheduleFlightTask extends AsyncTask<Calendar, Void, Void> {
+        @Override
+        protected Void doInBackground(Calendar... params) {
+            ScheduleService.unscheduleFlight(params[0]);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void param) {
+            Button scheduleFlight = (Button) getActivity().findViewById(R.id.scheduleFlightButton);
+            scheduleFlight.setText(getString(R.string.schedule_flight));
+            scheduleFlight.setEnabled(true);
+            // TODO: how can we update the view/list?
         }
     }
 }

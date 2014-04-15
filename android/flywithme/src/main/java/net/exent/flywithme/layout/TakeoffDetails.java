@@ -1,5 +1,6 @@
-package net.exent.flywithme;
+package net.exent.flywithme.layout;
 
+import net.exent.flywithme.R;
 import net.exent.flywithme.bean.Takeoff;
 import net.exent.flywithme.data.Database;
 import net.exent.flywithme.task.NoaaForecastTask;
@@ -222,7 +223,7 @@ public class TakeoffDetails extends Fragment {
                 text = dayFormatter.format(cal.getTime());
             }
             if (!prevDate.equals(text)) {
-                /* this scheduled flight is on another day than today or the previous registered flight */
+                /* this scheduled flight is on another day than today or the previous scheduled flight */
                 paint.setColor(Color.YELLOW);
                 // draw day separator
                 xPos += SCHEDULE_BAR_SPACE;

@@ -20,7 +20,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:stretchColumns="*"
-        android:id="@+id/scheduleRegisterTime"
+        android:id="@+id/scheduleFlightTime"
         android:layout_below="@+id/scheduleMayNotRegister">
 
         <TableRow
@@ -105,11 +105,11 @@
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="8."
                 android:id="@+id/scheduleDay"
-                android:layout_below="@+id/button"
+                android:layout_below="@+id/scheduleFlightButton"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:layout_alignRight="@+id/button"
-                android:layout_alignEnd="@+id/button"
+                android:layout_alignRight="@+id/scheduleFlightButton"
+                android:layout_alignEnd="@+id/scheduleFlightButton"
                 android:gravity="center"
                 android:singleLine="false" />
 
@@ -119,11 +119,11 @@
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="Jan"
                 android:id="@+id/scheduleMonth"
-                android:layout_below="@+id/button"
+                android:layout_below="@+id/scheduleFlightButton"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:layout_alignRight="@+id/button"
-                android:layout_alignEnd="@+id/button"
+                android:layout_alignRight="@+id/scheduleFlightButton"
+                android:layout_alignEnd="@+id/scheduleFlightButton"
                 android:gravity="center" />
 
             <TextView
@@ -132,11 +132,11 @@
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="19"
                 android:id="@+id/scheduleHour"
-                android:layout_below="@+id/button"
+                android:layout_below="@+id/scheduleFlightButton"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:layout_alignRight="@+id/button"
-                android:layout_alignEnd="@+id/button"
+                android:layout_alignRight="@+id/scheduleFlightButton"
+                android:layout_alignEnd="@+id/scheduleFlightButton"
                 android:gravity="center"
                 android:layout_marginLeft="10dp" />
 
@@ -146,11 +146,11 @@
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="45"
                 android:id="@+id/scheduleMinute"
-                android:layout_below="@+id/button"
+                android:layout_below="@+id/scheduleFlightButton"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:layout_alignRight="@+id/button"
-                android:layout_alignEnd="@+id/button"
+                android:layout_alignRight="@+id/scheduleFlightButton"
+                android:layout_alignEnd="@+id/scheduleFlightButton"
                 android:gravity="center" />
         </TableRow>
 
@@ -212,13 +212,26 @@
 
     </TableLayout>
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/scheduleFlightButton"
+        android:layout_below="@+id/scheduleFlightTime"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:text="@string/schedule_flight" />
+
     <ExpandableListView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/scheduleRegisteredFlights"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/scheduleRegisterTime"
-        android:layout_alignParentBottom="true" />
+        android:layout_alignParentBottom="true"
+        android:layout_below="@+id/scheduleFlightButton"
+        android:focusable="false"
+        android:clickable="true" />
 
 </RelativeLayout>
