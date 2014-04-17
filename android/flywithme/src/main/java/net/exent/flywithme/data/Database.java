@@ -4,7 +4,6 @@ import java.io.DataInputStream;
 import java.io.EOFException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -56,7 +55,7 @@ public class Database extends SQLiteOpenHelper {
             while (cursor.moveToNext()) {
                 Date timestamp = new Date((long) cursor.getInt(0) * 1000);
                 String pilotName = cursor.getString(1);
-                String pilotPhone = cursor.getString(1);
+                String pilotPhone = cursor.getString(2);
                 Set<Pilot> pilots = schedule.get(timestamp);
                 if (pilots == null) {
                     pilots = new HashSet<>();
@@ -90,25 +89,26 @@ public class Database extends SQLiteOpenHelper {
         SQLiteDatabase db = getDatabase();
         try {
             Cursor cursor = db.rawQuery("select distinct takeoff.name from takeoff join schedule on takeoff.takeoff_id = schedule.takeoff_id where date(schedule.timestamp, 'unixepoch') = date('now') and schedule.pilot_name != ?", new String[]{ignorePilot});
-            while (cursor.moveToNext())
+            while (cursor.moveToNext()) {
                 takeoffs.add(cursor.getString(0));
+            }
             return takeoffs;
         } finally {
             db.close();
         }
     }
 
-    public synchronized static void updateTakeoffSchedule(int takeoffId, Map<Date, List<Pilot>> schedule) {
+    public synchronized static void updateTakeoffSchedule(int takeoffId, Map<Long, List<Pilot>> schedule) {
         SQLiteDatabase db = getDatabase();
         try {
             // we'll fully replace the entries for this takeoff
             // we'll also delete old entries to clean up the database
-            db.execSQL("delete from schedule where takeoff_id = " + takeoffId + " or date(timestamp, 'unixepoch', '+7 days') < date('now')");
-            for (Map.Entry<Date, List<Pilot>> entry : schedule.entrySet()) {
+            db.execSQL("delete from schedule where takeoff_id = " + takeoffId + " or date(timestamp, 'unixepoch', '+2 days') < date('now')");
+            for (Map.Entry<Long, List<Pilot>> entry : schedule.entrySet()) {
                 for (Pilot pilot : entry.getValue()) {
                     ContentValues values = new ContentValues();
                     values.put("takeoff_id", takeoffId);
-                    values.put("timestamp", entry.getKey().getTime() / 1000);
+                    values.put("timestamp", entry.getKey() / 1000); // SQLite doesn't support 64bit values, need to store value as seconds since epoch, not milliseconds
                     values.put("pilot_name", pilot.getName());
                     values.put("pilot_phone", pilot.getPhone());
                     db.insert("schedule", null, values);

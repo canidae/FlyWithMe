@@ -57,6 +57,9 @@ public class TakeoffList extends Fragment {
 
         final Location location = FlyWithMe.getInstance().getLocation();
         takeoffs = Database.getTakeoffs(location.getLatitude(), location.getLongitude(), 100, true);
+
+        // TODO: need to store scheduled flights in takeoff if we want to mark takeoff in list/map
+        // TODO: then we don't need to fetch it here as we've done below
         final Set<Integer> takeoffIdsScheduled = Database.getTakeoffIdsWithScheduledFlightsToday();
 
         Collections.sort(takeoffs, new Comparator<Takeoff>() {
@@ -66,7 +69,6 @@ public class TakeoffList extends Fragment {
                 else if (lhs.isFavourite() && !rhs.isFavourite())
                     return -1;
                 // both or neither are favourites, sort those with scheduled flights first
-                // TODO: we need to store this information in the takeoff objects after all
                 if (!takeoffIdsScheduled.contains(lhs.getId()) && takeoffIdsScheduled.contains(rhs.getId()))
                     return 1;
                 else if (takeoffIdsScheduled.contains(lhs.getId()) && !takeoffIdsScheduled.contains(rhs.getId()))

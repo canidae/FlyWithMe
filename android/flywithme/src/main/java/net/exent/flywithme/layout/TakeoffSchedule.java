@@ -44,13 +44,13 @@ public class TakeoffSchedule extends Fragment {
             this.takeoff = takeoff;
 
             // setup day buttons
-            final Button dayPlus = (Button) getActivity().findViewById(R.id.scheduleDayPlus);
+            Button dayPlus = (Button) getActivity().findViewById(R.id.scheduleDayPlus);
             dayPlus.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
                     updateCalendar(Calendar.DAY_OF_YEAR, 1);
                 }
             });
-            final Button dayMinus = (Button) getActivity().findViewById(R.id.scheduleDayMinus);
+            Button dayMinus = (Button) getActivity().findViewById(R.id.scheduleDayMinus);
             dayMinus.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
                     updateCalendar(Calendar.DAY_OF_YEAR, -1);
@@ -58,13 +58,13 @@ public class TakeoffSchedule extends Fragment {
             });
 
             // setup month buttons
-            final Button monthPlus = (Button) getActivity().findViewById(R.id.scheduleMonthPlus);
+            Button monthPlus = (Button) getActivity().findViewById(R.id.scheduleMonthPlus);
             monthPlus.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
                     updateCalendar(Calendar.MONTH, 1);
                 }
             });
-            final Button monthMinus = (Button) getActivity().findViewById(R.id.scheduleMonthMinus);
+            Button monthMinus = (Button) getActivity().findViewById(R.id.scheduleMonthMinus);
             monthMinus.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
                     updateCalendar(Calendar.MONTH, -1);
@@ -72,13 +72,13 @@ public class TakeoffSchedule extends Fragment {
             });
 
             // setup hour buttons
-            final Button hourPlus = (Button) getActivity().findViewById(R.id.scheduleHourPlus);
+            Button hourPlus = (Button) getActivity().findViewById(R.id.scheduleHourPlus);
             hourPlus.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
                     updateCalendar(Calendar.HOUR, 1);
                 }
             });
-            final Button hourMinus = (Button) getActivity().findViewById(R.id.scheduleHourMinus);
+            Button hourMinus = (Button) getActivity().findViewById(R.id.scheduleHourMinus);
             hourMinus.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
                     updateCalendar(Calendar.HOUR, -1);
@@ -86,13 +86,13 @@ public class TakeoffSchedule extends Fragment {
             });
 
             // setup minute buttons
-            final Button minutePlus = (Button) getActivity().findViewById(R.id.scheduleMinutePlus);
+            Button minutePlus = (Button) getActivity().findViewById(R.id.scheduleMinutePlus);
             minutePlus.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
                     updateCalendar(Calendar.MINUTE, 15);
                 }
             });
-            final Button minuteMinus = (Button) getActivity().findViewById(R.id.scheduleMinuteMinus);
+            Button minuteMinus = (Button) getActivity().findViewById(R.id.scheduleMinuteMinus);
             minuteMinus.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
                     updateCalendar(Calendar.MINUTE, -15);
@@ -101,12 +101,9 @@ public class TakeoffSchedule extends Fragment {
 
             // setup register schedule button
             final Button scheduleFlight = (Button) getActivity().findViewById(R.id.scheduleFlightButton);
-            final long takeoffId = takeoff.getId();
             scheduleFlight.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
-                    scheduleFlight.setText(getString(R.string.scheduling_flight));
-                    scheduleFlight.setEnabled(false);
-                    new ScheduleFlightTask().execute(takeoffId, calendar.getTimeInMillis());
+                    scheduleFlight(calendar.getTimeInMillis());
                 }
             });
 
@@ -159,7 +156,11 @@ public class TakeoffSchedule extends Fragment {
         }
 
         ExpandableListView scheduleList = (ExpandableListView) getActivity().findViewById(R.id.scheduleRegisteredFlights);
-        scheduleList.setAdapter(new TakeoffScheduleAdapter());
+        TakeoffScheduleAdapter adapter = new TakeoffScheduleAdapter();
+        scheduleList.setAdapter(adapter);
+        // expand all groups by default
+        for (int i = 0; i < adapter.getGroupCount(); ++i)
+            scheduleList.expandGroup(i);
     }
 
     @Override
@@ -192,6 +193,20 @@ public class TakeoffSchedule extends Fragment {
         hourText.setText(new SimpleDateFormat("HH").format(calendar.getTime()));
         TextView minuteText = (TextView) getActivity().findViewById(R.id.scheduleMinute);
         minuteText.setText(new SimpleDateFormat("mm").format(calendar.getTime()));
+    }
+
+    private void scheduleFlight(long timestamp) {
+        Button scheduleFlight = (Button) getActivity().findViewById(R.id.scheduleFlightButton);
+        scheduleFlight.setText(getString(R.string.scheduling_flight));
+        scheduleFlight.setEnabled(false);
+        new ScheduleFlightTask(false).execute((long) takeoff.getId(), timestamp);
+    }
+
+    private void unscheduleFlight(long timestamp) {
+        Button scheduleFlight = (Button) getActivity().findViewById(R.id.scheduleFlightButton);
+        scheduleFlight.setText(getString(R.string.scheduling_flight));
+        scheduleFlight.setEnabled(false);
+        new ScheduleFlightTask(true).execute((long) takeoff.getId(), timestamp);
     }
 
     private class TakeoffScheduleAdapter extends BaseExpandableListAdapter {
@@ -243,7 +258,7 @@ public class TakeoffSchedule extends Fragment {
                 LayoutInflater inflater = (LayoutInflater) FlyWithMe.getInstance().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 convertView = inflater.inflate(R.layout.takeoff_schedule_group, null);
             }
-            /* AAH! Adding a button to the ExpandableListView apparently breaks Android in multiple ways. It removes expansion/collapse of group as well as background color when clicked */
+            /* AAH! Adding a button to the ExpandableListView removes expansion/collapse functionality of group as well as background color when clicked */
             convertView.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -256,10 +271,17 @@ public class TakeoffSchedule extends Fragment {
             });
             /* END AAH! */
             TextView groupTime = (TextView) convertView.findViewById(R.id.scheduleGroupTime);
-            Date date = getEntryGroup(groupPosition).getKey();
+            final Date date = getEntryGroup(groupPosition).getKey();
             groupTime.setText(dateFormatter.format(date));
             TextView groupPilots = (TextView) convertView.findViewById(R.id.scheduleGroupPilots);
             groupPilots.setText(getString(R.string.pilots) + ": " + getEntryGroup(groupPosition).getValue().size());
+            ImageButton joinOrLeave = (ImageButton) convertView.findViewById(R.id.joinOrLeaveButton);
+            joinOrLeave.setOnClickListener(new OnClickListener() {
+                public void onClick(View v) {
+                    scheduleFlight(date.getTime());
+                    // TODO: remove if already registered
+                }
+            });
             return convertView;
         }
 
@@ -313,9 +335,18 @@ public class TakeoffSchedule extends Fragment {
     }
 
     private class ScheduleFlightTask extends AsyncTask<Long, Void, Void> {
+        private final boolean unschedule;
+
+        public ScheduleFlightTask(boolean unschedule) {
+            this.unschedule = unschedule;
+        }
+
         @Override
         protected Void doInBackground(Long... params) {
-            ScheduleService.scheduleFlight(params[0], params[1]);
+            if (unschedule)
+                ScheduleService.unscheduleFlight(params[0].intValue(), params[1]);
+            else
+                ScheduleService.scheduleFlight(params[0].intValue(), params[1]);
             return null;
         }
 
@@ -324,23 +355,7 @@ public class TakeoffSchedule extends Fragment {
             Button scheduleFlight = (Button) getActivity().findViewById(R.id.scheduleFlightButton);
             scheduleFlight.setText(getString(R.string.schedule_flight));
             scheduleFlight.setEnabled(true);
-            // TODO: how can we update the view/list?
-        }
-    }
-
-    private class UnscheduleFlightTask extends AsyncTask<Integer, Void, Void> {
-        @Override
-        protected Void doInBackground(Integer... takeoffIds) {
-            ScheduleService.unscheduleFlight(takeoffIds[0]);
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void param) {
-            Button scheduleFlight = (Button) getActivity().findViewById(R.id.scheduleFlightButton);
-            scheduleFlight.setText(getString(R.string.schedule_flight));
-            scheduleFlight.setEnabled(true);
-            // TODO: how can we update the view/list?
+            // TODO: update database & expandablelistview adapter
         }
     }
 }

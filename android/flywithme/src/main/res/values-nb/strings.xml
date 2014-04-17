@@ -29,6 +29,7 @@
     <string name="date">Dato</string>
     <string name="pilots">Piloter</string>
     <string name="time">Tid</string>
+    <string name="no_scheduled_flights">Ingen registrerte flyplaner</string>
     <string name="may_not_register">Du har ikke satt navn/tlf i innstillingene. Du må gjøre dette for å registrere en planlagt flytur.</string>
     <string name="schedule_flight">Registrer flyplan</string>
     <string name="scheduling_flight">Registrerer flyplan</string>

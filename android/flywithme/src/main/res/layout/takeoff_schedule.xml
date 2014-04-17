@@ -14,6 +14,17 @@
         android:visibility="visible"
         android:textColor="#ff4444" />
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/scheduleFlightButton"
+        android:text="@string/schedule_flight"
+        android:layout_column="4"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_above="@+id/scheduleRegisteredFlights"
+        android:layout_alignTop="@+id/scheduleFlightTime" />
+
     <TableLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -21,31 +32,8 @@
         android:layout_alignParentStart="true"
         android:stretchColumns="*"
         android:id="@+id/scheduleFlightTime"
-        android:layout_below="@+id/scheduleMayNotRegister">
-
-        <TableRow
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="@string/date"
-                android:id="@+id/scheduleDateLabel"
-                android:layout_span="2"
-                android:gravity="center" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="@string/time"
-                android:id="@+id/scheduleTimeLabel"
-                android:layout_span="2"
-                android:gravity="center"
-                android:layout_marginLeft="10dp" />
-        </TableRow>
+        android:layout_below="@+id/scheduleMayNotRegister"
+        android:layout_toLeftOf="@+id/scheduleFlightButton">
 
         <TableRow
             android:layout_width="fill_parent"
@@ -212,26 +200,14 @@
 
     </TableLayout>
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/scheduleFlightButton"
-        android:layout_below="@+id/scheduleFlightTime"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:text="@string/schedule_flight" />
-
     <ExpandableListView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/scheduleRegisteredFlights"
+        android:focusable="false"
+        android:clickable="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_alignParentBottom="true"
-        android:layout_below="@+id/scheduleFlightButton"
-        android:focusable="false"
-        android:clickable="true" />
+        android:layout_below="@+id/scheduleFlightTime" />
 
 </RelativeLayout>

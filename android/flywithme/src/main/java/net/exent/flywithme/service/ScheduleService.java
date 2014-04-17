@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -80,7 +79,7 @@ public class ScheduleService extends IntentService {
             lastUpdate = now;
 
             Location location = FlyWithMe.getInstance().getLocation();
-            List<Takeoff> favourites = Database.getTakeoffs(location.getLatitude(), location.getLongitude(), fetchTakeoffs, true);
+            List<Takeoff> takeoffs = Database.getTakeoffs(location.getLatitude(), location.getLongitude(), fetchTakeoffs, false);
             try {
                 Log.i(getClass().getName(), "Fetching schedule from server");
                 HttpURLConnection con = (HttpURLConnection) new URL(SERVER_URL).openConnection();
@@ -88,9 +87,9 @@ public class ScheduleService extends IntentService {
                 con.setDoOutput(true);
                 DataOutputStream outputStream = new DataOutputStream(con.getOutputStream());
                 outputStream.writeByte(0);
-                outputStream.writeShort(favourites.size());
-                for (Takeoff favourite : favourites)
-                    outputStream.writeShort(favourite.getId());
+                outputStream.writeShort(takeoffs.size());
+                for (Takeoff takeoff : takeoffs)
+                    outputStream.writeShort(takeoff.getId());
                 outputStream.close();
                 int responseCode = con.getResponseCode();
                 Log.d(getClass().getName(), "Response code: " + responseCode);
@@ -100,24 +99,18 @@ public class ScheduleService extends IntentService {
                     int takeoffId = inputStream.readUnsignedShort();
                     if (takeoffId == 0)
                         break; // no more data to be read
-                    Log.d(getClass().getName(), "Takeoff ID: " + takeoffId);
                     int timestamps = inputStream.readUnsignedShort();
-                    Log.d(getClass().getName(), "Timestamps: " + timestamps);
-                    Map<Date, List<Pilot>> schedule = new HashMap<>();
+                    Map<Long, List<Pilot>> schedule = new HashMap<>();
                     for (int b = 0; b < timestamps; ++b) {
                         long timestamp = inputStream.readLong();
-                        Date date = new Date(timestamp * 1000);
                         List<Pilot> pilotList = new ArrayList<>();
-                        Log.d(getClass().getName(), "Timestamp: " + timestamp);
                         int pilots = inputStream.readUnsignedShort();
-                        Log.d(getClass().getName(), "Pilots: " + pilots);
                         for (int c = 0; c < pilots; ++c) {
                             String pilotName = inputStream.readUTF();
                             String pilotPhone = inputStream.readUTF();
                             pilotList.add(new Pilot(pilotName, pilotPhone));
-                            Log.d(getClass().getName(), "Pilot: " + pilotName + ", Phone: " + pilotPhone);
                         }
-                        schedule.put(date, pilotList);
+                        schedule.put(timestamp, pilotList);
                         Database.updateTakeoffSchedule(takeoffId, schedule);
                     }
                 }
@@ -138,7 +131,7 @@ public class ScheduleService extends IntentService {
         }
     }
 
-    public static void scheduleFlight(long takeoffId, long timestamp) {
+    public static void scheduleFlight(int takeoffId, long timestamp) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(FlyWithMe.getInstance());
         String name = prefs.getString("pref_schedule_pilot_name", null);
         String phone = prefs.getString("pref_schedule_pilot_phone", null);

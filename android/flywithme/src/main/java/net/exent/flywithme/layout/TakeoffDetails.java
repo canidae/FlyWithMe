@@ -29,12 +29,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -136,7 +133,7 @@ public class TakeoffDetails extends Fragment {
             flyScheduleButton.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                 @Override
                 public void onGlobalLayout() {
-                    flyScheduleButton.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                    flyScheduleButton.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                     drawFlySchedule(flyScheduleButton);
                 }
             });
@@ -189,26 +186,24 @@ public class TakeoffDetails extends Fragment {
         paint.setColor(Color.CYAN);
         canvas.drawRect(0, X_AXIS_HEIGHT - LINE_WIDTH, bitmap.getWidth(), X_AXIS_HEIGHT, paint); // upper horizontal axis
         canvas.drawRect(0, bitmap.getHeight() - X_AXIS_HEIGHT + LINE_WIDTH, bitmap.getWidth(), bitmap.getHeight() - X_AXIS_HEIGHT, paint); // lower horizontal axis
+
+        // fetch flight schedule for takeoff
+        Map<Date, Set<Pilot>> schedule = Database.getTakeoffSchedule(takeoff);
+        if (schedule.isEmpty()) {
+            // no flights scheduled, don't draw labels, show instead a message
+            paint.setColor(Color.YELLOW);
+            String text = getActivity().getString(R.string.no_scheduled_flights);
+            int textWidth = (int) Math.ceil(paint.measureText(text));
+            canvas.drawText(text, (bitmap.getWidth() - textWidth) / 2, bitmap.getHeight() / 2 + 4, paint);
+            flyScheduleButton.setImageBitmap(bitmap);
+            return;
+        }
+
         // draw labels
         paint.setColor(Color.WHITE);
         canvas.drawText(getActivity().getString(R.string.date), 4, X_AXIS_HEIGHT - LINE_WIDTH - 4, paint);
         canvas.drawText(getActivity().getString(R.string.pilots), 4, bitmap.getHeight() - X_AXIS_HEIGHT - LINE_WIDTH - 4, paint);
         canvas.drawText(getActivity().getString(R.string.time), 4, bitmap.getHeight() - 4, paint);
-
-        // TODO: temporary to add some flights to the schedule
-        Map<Date, List<Pilot>> tmpSchedule = new HashMap<>();
-        for (int a = 0; a < 10; ++a) {
-            Date date = new Date(System.currentTimeMillis() + a * 1000 * 60 * 60 * 7);
-            List<Pilot> list = new ArrayList<>();
-            for (int b = 0; b < Math.random() * 10; ++b)
-                list.add(new Pilot("Vidar Wahlberg", "+4795728262"));
-            tmpSchedule.put(date, list);
-        }
-        Database.updateTakeoffSchedule(takeoff.getId(), tmpSchedule);
-        // TODO: END
-
-        // fetch flight schedule for takeoff
-        Map<Date, Set<Pilot>> schedule = Database.getTakeoffSchedule(takeoff);
 
         String prevDate = "";
         int xPos = Y_AXIS_WIDTH - SCHEDULE_BAR_SPACE;

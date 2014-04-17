@@ -29,6 +29,7 @@
     <string name="date">Date</string>
     <string name="pilots">Pilots</string>
     <string name="time">Time</string>
+    <string name="no_scheduled_flights">No scheduled flights</string>
     <string name="may_not_register">You haven\'t set your name/phone in the preferences, you need to set this in order to schedule a flight.</string>
     <string name="schedule_flight">Schedule flight</string>
     <string name="scheduling_flight">Scheduling flight</string>
