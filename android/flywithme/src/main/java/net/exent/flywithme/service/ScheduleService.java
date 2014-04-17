@@ -13,6 +13,7 @@ import android.util.Log;
 
 import net.exent.flywithme.FlyWithMe;
 import net.exent.flywithme.R;
+import net.exent.flywithme.bean.Pilot;
 import net.exent.flywithme.bean.Takeoff;
 import net.exent.flywithme.data.Database;
 
@@ -22,7 +23,6 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -96,25 +96,26 @@ public class ScheduleService extends IntentService {
                 Log.d(getClass().getName(), "Response code: " + responseCode);
                 DataInputStream inputStream = new DataInputStream(con.getInputStream());
 
-                int takeoffs = inputStream.readUnsignedShort();
-                Log.d(getClass().getName(), "Takeoffs: " + takeoffs);
-                for (int a = 0; a < takeoffs; ++a) {
+                while (true) {
                     int takeoffId = inputStream.readUnsignedShort();
+                    if (takeoffId == 0)
+                        break; // no more data to be read
                     Log.d(getClass().getName(), "Takeoff ID: " + takeoffId);
                     int timestamps = inputStream.readUnsignedShort();
                     Log.d(getClass().getName(), "Timestamps: " + timestamps);
-                    Map<Date, List<String>> schedule = new HashMap<>();
+                    Map<Date, List<Pilot>> schedule = new HashMap<>();
                     for (int b = 0; b < timestamps; ++b) {
                         long timestamp = inputStream.readLong();
                         Date date = new Date(timestamp * 1000);
-                        List<String> pilotList = new ArrayList<>();
+                        List<Pilot> pilotList = new ArrayList<>();
                         Log.d(getClass().getName(), "Timestamp: " + timestamp);
                         int pilots = inputStream.readUnsignedShort();
                         Log.d(getClass().getName(), "Pilots: " + pilots);
                         for (int c = 0; c < pilots; ++c) {
-                            String pilot = inputStream.readUTF();
-                            pilotList.add(pilot);
-                            Log.d(getClass().getName(), "Pilot: " + pilot);
+                            String pilotName = inputStream.readUTF();
+                            String pilotPhone = inputStream.readUTF();
+                            pilotList.add(new Pilot(pilotName, pilotPhone));
+                            Log.d(getClass().getName(), "Pilot: " + pilotName + ", Phone: " + pilotPhone);
                         }
                         schedule.put(date, pilotList);
                         Database.updateTakeoffSchedule(takeoffId, schedule);
@@ -137,21 +138,52 @@ public class ScheduleService extends IntentService {
         }
     }
 
-    public static void scheduleFlight(Calendar calendar) {
+    public static void scheduleFlight(long takeoffId, long timestamp) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(FlyWithMe.getInstance());
         String name = prefs.getString("pref_schedule_pilot_name", null);
         String phone = prefs.getString("pref_schedule_pilot_phone", null);
-        long id = prefs.getLong("pref_schedule_pilot_id", 0);
-        while (id == 0) {
+        long pilotId = prefs.getLong("pref_schedule_pilot_id", 0);
+        while (pilotId == 0) {
             // generate a random ID for identifying the pilot's registrations
-            id = (new Random()).nextLong();
-            prefs.edit().putLong("pref_schedule_pilot_id", id).commit();
+            pilotId = (new Random()).nextLong();
+            prefs.edit().putLong("pref_schedule_pilot_id", pilotId).commit();
+        }
+        try {
+            HttpURLConnection con = (HttpURLConnection) new URL(SERVER_URL).openConnection();
+            con.setRequestMethod("POST");
+            con.setDoOutput(true);
+            DataOutputStream outputStream = new DataOutputStream(con.getOutputStream());
+            outputStream.writeByte(1);
+            outputStream.writeShort((int) takeoffId);
+            outputStream.writeLong(timestamp);
+            outputStream.writeLong(pilotId);
+            outputStream.writeUTF(name);
+            outputStream.writeUTF(phone);
+            outputStream.close();
+            int responseCode = con.getResponseCode();
+            Log.d(ScheduleService.class.getName(), "Response code: " + responseCode);
+        } catch (IOException e) {
+            Log.w(ScheduleService.class.getName(), "Scheduling flight failed unexpectedly", e);
         }
     }
 
-    public static void unscheduleFlight(Calendar calendar) {
+    public static void unscheduleFlight(int takeoffId, long timestamp) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(FlyWithMe.getInstance());
-        long id = prefs.getLong("pref_schedule_pilot_id", 0);
-        // TODO
+        long pilotId = prefs.getLong("pref_schedule_pilot_id", 0);
+        try {
+            HttpURLConnection con = (HttpURLConnection) new URL(SERVER_URL).openConnection();
+            con.setRequestMethod("POST");
+            con.setDoOutput(true);
+            DataOutputStream outputStream = new DataOutputStream(con.getOutputStream());
+            outputStream.writeByte(2);
+            outputStream.writeShort(takeoffId);
+            outputStream.writeLong(timestamp);
+            outputStream.writeLong(pilotId);
+            outputStream.close();
+            int responseCode = con.getResponseCode();
+            Log.d(ScheduleService.class.getName(), "Response code: " + responseCode);
+        } catch (IOException e) {
+            Log.w(ScheduleService.class.getName(), "Unscheduling flight failed unexpectedly", e);
+        }
     }
 }

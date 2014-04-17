@@ -22,6 +22,7 @@ import android.widget.TextView;
 
 import net.exent.flywithme.FlyWithMe;
 import net.exent.flywithme.R;
+import net.exent.flywithme.bean.Pilot;
 import net.exent.flywithme.bean.Takeoff;
 import net.exent.flywithme.data.Database;
 import net.exent.flywithme.service.ScheduleService;
@@ -100,11 +101,12 @@ public class TakeoffSchedule extends Fragment {
 
             // setup register schedule button
             final Button scheduleFlight = (Button) getActivity().findViewById(R.id.scheduleFlightButton);
+            final long takeoffId = takeoff.getId();
             scheduleFlight.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
                     scheduleFlight.setText(getString(R.string.scheduling_flight));
                     scheduleFlight.setEnabled(false);
-                    new ScheduleFlightTask().execute(calendar);
+                    new ScheduleFlightTask().execute(takeoffId, calendar.getTimeInMillis());
                 }
             });
 
@@ -142,15 +144,18 @@ public class TakeoffSchedule extends Fragment {
 
         // don't show buttons for registering flight if user haven't set a name
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        String name = prefs.getString("pref_schedule_pilot_name", null);
+        String pilotName = prefs.getString("pref_schedule_pilot_name", null);
         TextView mayNotRegister = (TextView) getActivity().findViewById(R.id.scheduleMayNotRegister);
         TableLayout flightTime = (TableLayout) getActivity().findViewById(R.id.scheduleFlightTime);
-        if (name == null || "".equals(name.trim())) {
+        Button scheduleFlight = (Button) getActivity().findViewById(R.id.scheduleFlightButton);
+        if (pilotName == null || "".equals(pilotName.trim())) {
             mayNotRegister.setVisibility(View.VISIBLE);
             flightTime.setVisibility(View.GONE);
+            scheduleFlight.setVisibility(View.GONE);
         } else {
             mayNotRegister.setVisibility(View.GONE);
             flightTime.setVisibility(View.VISIBLE);
+            scheduleFlight.setVisibility(View.VISIBLE);
         }
 
         ExpandableListView scheduleList = (ExpandableListView) getActivity().findViewById(R.id.scheduleRegisteredFlights);
@@ -190,7 +195,7 @@ public class TakeoffSchedule extends Fragment {
     }
 
     private class TakeoffScheduleAdapter extends BaseExpandableListAdapter {
-        private Map<Date, Set<String>> schedule;
+        private Map<Date, Set<Pilot>> schedule;
         private SimpleDateFormat dateFormatter = new SimpleDateFormat("EEE dd. MMM, HH:mm");
 
         public TakeoffScheduleAdapter() {
@@ -264,23 +269,20 @@ public class TakeoffSchedule extends Fragment {
                 LayoutInflater inflater = (LayoutInflater) FlyWithMe.getInstance().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 convertView = inflater.inflate(R.layout.takeoff_schedule_entry, null);
             }
-            String nameAndPhone = getEntryGroupChild(groupPosition, childPosition);
-            int commaPos = nameAndPhone.lastIndexOf(',');
-            String name = commaPos > 0 ? nameAndPhone.substring(0, commaPos) : nameAndPhone;
-            final String phone = commaPos > 0 ? nameAndPhone.substring(commaPos + 1) : "";
+            final Pilot pilot = getEntryGroupChild(groupPosition, childPosition);
             TextView entryPilotName = (TextView) convertView.findViewById(R.id.scheduleEntryPilotName);
-            entryPilotName.setText(name);
+            entryPilotName.setText(pilot.getName());
             TextView entryPilotPhone = (TextView) convertView.findViewById(R.id.scheduleEntryPilotPhone);
-            entryPilotPhone.setText(phone);
+            entryPilotPhone.setText(pilot.getPhone());
             ImageButton entryCallButton = (ImageButton) convertView.findViewById(R.id.scheduleEntryCallButton);
-            if ("".equals(phone) || phone.equals(PreferenceManager.getDefaultSharedPreferences(getActivity()).getString("pref_schedule_pilot_phone", null))) {
+            if ("".equals(pilot.getPhone()) || pilot.getPhone().equals(PreferenceManager.getDefaultSharedPreferences(getActivity()).getString("pref_schedule_pilot_phone", null))) {
                 entryCallButton.setVisibility(View.INVISIBLE);
             } else {
                 entryCallButton.setVisibility(View.VISIBLE);
                 entryCallButton.setOnClickListener(new OnClickListener() {
                     public void onClick(View v) {
                         Intent callIntent = new Intent(Intent.ACTION_DIAL);
-                        callIntent.setData(Uri.parse("tel:" + phone));
+                        callIntent.setData(Uri.parse("tel:" + pilot.getPhone()));
                         startActivity(callIntent);
                     }
                 });
@@ -293,27 +295,27 @@ public class TakeoffSchedule extends Fragment {
             return false;
         }
 
-        private Map.Entry<Date, Set<String>> getEntryGroup(int group) {
-            for (Map.Entry<Date, Set<String>> entry : schedule.entrySet()) {
+        private Map.Entry<Date, Set<Pilot>> getEntryGroup(int group) {
+            for (Map.Entry<Date, Set<Pilot>> entry : schedule.entrySet()) {
                 if (group-- <= 0)
                     return entry;
             }
             return null;
         }
 
-        private String getEntryGroupChild(int group, int child) {
-            for (String entry : getEntryGroup(group).getValue()) {
+        private Pilot getEntryGroupChild(int group, int child) {
+            for (Pilot pilot : getEntryGroup(group).getValue()) {
                 if (child-- <= 0)
-                    return entry;
+                    return pilot;
             }
             return null;
         }
     }
 
-    private class ScheduleFlightTask extends AsyncTask<Calendar, Void, Void> {
+    private class ScheduleFlightTask extends AsyncTask<Long, Void, Void> {
         @Override
-        protected Void doInBackground(Calendar... params) {
-            ScheduleService.scheduleFlight(params[0]);
+        protected Void doInBackground(Long... params) {
+            ScheduleService.scheduleFlight(params[0], params[1]);
             return null;
         }
 
@@ -326,10 +328,10 @@ public class TakeoffSchedule extends Fragment {
         }
     }
 
-    private class UnscheduleFlightTask extends AsyncTask<Calendar, Void, Void> {
+    private class UnscheduleFlightTask extends AsyncTask<Integer, Void, Void> {
         @Override
-        protected Void doInBackground(Calendar... params) {
-            ScheduleService.unscheduleFlight(params[0]);
+        protected Void doInBackground(Integer... takeoffIds) {
+            ScheduleService.unscheduleFlight(takeoffIds[0]);
             return null;
         }
 

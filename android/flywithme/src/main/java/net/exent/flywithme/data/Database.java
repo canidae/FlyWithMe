@@ -14,6 +14,7 @@ import java.util.TreeMap;
 
 import net.exent.flywithme.FlyWithMe;
 import net.exent.flywithme.R;
+import net.exent.flywithme.bean.Pilot;
 import net.exent.flywithme.bean.Takeoff;
 
 import android.content.ContentValues;
@@ -47,20 +48,21 @@ public class Database extends SQLiteOpenHelper {
         }
     }
 
-    public synchronized static Map<Date, Set<String>> getTakeoffSchedule(Takeoff takeoff) {
-        Map<Date, Set<String>> schedule = new TreeMap<>();
+    public synchronized static Map<Date, Set<Pilot>> getTakeoffSchedule(Takeoff takeoff) {
+        Map<Date, Set<Pilot>> schedule = new TreeMap<>();
         SQLiteDatabase db = getDatabase();
         try {
-            Cursor cursor = db.query("schedule", new String[]{"timestamp", "pilot"}, "takeoff_id = " + takeoff.getId(), null, null, null, "timestamp");
+            Cursor cursor = db.query("schedule", new String[]{"timestamp", "pilot_name", "pilot_phone"}, "takeoff_id = " + takeoff.getId(), null, null, null, "timestamp");
             while (cursor.moveToNext()) {
                 Date timestamp = new Date((long) cursor.getInt(0) * 1000);
-                String pilot = cursor.getString(1);
-                Set<String> pilots = schedule.get(timestamp);
+                String pilotName = cursor.getString(1);
+                String pilotPhone = cursor.getString(1);
+                Set<Pilot> pilots = schedule.get(timestamp);
                 if (pilots == null) {
                     pilots = new HashSet<>();
                     schedule.put(timestamp, pilots);
                 }
-                pilots.add(pilot);
+                pilots.add(new Pilot(pilotName, pilotPhone));
             }
             return schedule;
         } finally {
@@ -82,10 +84,12 @@ public class Database extends SQLiteOpenHelper {
     }
 
     public static synchronized List<String> getTakeoffsWithScheduledFlightsToday(String ignorePilot) {
+        // ignorePilot is mainly used to ignore our own registrations
+        // and yes, it will fail when the user change name
         List<String> takeoffs = new ArrayList<>();
         SQLiteDatabase db = getDatabase();
         try {
-            Cursor cursor = db.rawQuery("select distinct takeoff.name from takeoff join schedule on takeoff.takeoff_id = schedule.takeoff_id where date(schedule.timestamp, 'unixepoch') = date('now') and schedule.pilot != ?", new String[]{ignorePilot});
+            Cursor cursor = db.rawQuery("select distinct takeoff.name from takeoff join schedule on takeoff.takeoff_id = schedule.takeoff_id where date(schedule.timestamp, 'unixepoch') = date('now') and schedule.pilot_name != ?", new String[]{ignorePilot});
             while (cursor.moveToNext())
                 takeoffs.add(cursor.getString(0));
             return takeoffs;
@@ -94,18 +98,19 @@ public class Database extends SQLiteOpenHelper {
         }
     }
 
-    public synchronized static void updateTakeoffSchedule(int takeoffId, Map<Date, List<String>> schedule) {
+    public synchronized static void updateTakeoffSchedule(int takeoffId, Map<Date, List<Pilot>> schedule) {
         SQLiteDatabase db = getDatabase();
         try {
             // we'll fully replace the entries for this takeoff
             // we'll also delete old entries to clean up the database
             db.execSQL("delete from schedule where takeoff_id = " + takeoffId + " or date(timestamp, 'unixepoch', '+7 days') < date('now')");
-            for (Map.Entry<Date, List<String>> entry : schedule.entrySet()) {
-                for (String pilot : entry.getValue()) {
+            for (Map.Entry<Date, List<Pilot>> entry : schedule.entrySet()) {
+                for (Pilot pilot : entry.getValue()) {
                     ContentValues values = new ContentValues();
                     values.put("takeoff_id", takeoffId);
                     values.put("timestamp", entry.getKey().getTime() / 1000);
-                    values.put("pilot", pilot);
+                    values.put("pilot_name", pilot.getName());
+                    values.put("pilot_phone", pilot.getPhone());
                     db.insert("schedule", null, values);
                 }
             }
@@ -168,7 +173,7 @@ public class Database extends SQLiteOpenHelper {
     }
 
     private synchronized void createDatabaseV2(SQLiteDatabase db) {
-        db.execSQL("create table schedule(takeoff_id integer not null, timestamp integer not null, pilot text not null)");
+        db.execSQL("create table schedule(takeoff_id integer not null, timestamp integer not null, pilot_name text not null, pilot_phone text not null)");
         db.execSQL("create table takeoff(takeoff_id integer primary key, name text not null default '', description text not null default '', asl integer not null default 0, height integer not null default 0, latitude real not null default 0.0, latitude_cos real not null default 0.0, latitude_sin real not null default 0.0, longitude real not null default 0.0, longitude_cos real not null default 0.0, longitude_sin real not null default 0.0, exits integer not null default 0, favourite integer not null default 0)");
     }
 

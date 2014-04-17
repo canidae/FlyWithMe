@@ -1,6 +1,7 @@
 package net.exent.flywithme.layout;
 
 import net.exent.flywithme.R;
+import net.exent.flywithme.bean.Pilot;
 import net.exent.flywithme.bean.Takeoff;
 import net.exent.flywithme.data.Database;
 import net.exent.flywithme.task.NoaaForecastTask;
@@ -195,24 +196,24 @@ public class TakeoffDetails extends Fragment {
         canvas.drawText(getActivity().getString(R.string.time), 4, bitmap.getHeight() - 4, paint);
 
         // TODO: temporary to add some flights to the schedule
-        Map<Date, List<String>> tmpSchedule = new HashMap<>();
+        Map<Date, List<Pilot>> tmpSchedule = new HashMap<>();
         for (int a = 0; a < 10; ++a) {
             Date date = new Date(System.currentTimeMillis() + a * 1000 * 60 * 60 * 7);
-            List<String> list = new ArrayList<>();
+            List<Pilot> list = new ArrayList<>();
             for (int b = 0; b < Math.random() * 10; ++b)
-                list.add("Vidar Wahlberg,+4795728262");
+                list.add(new Pilot("Vidar Wahlberg", "+4795728262"));
             tmpSchedule.put(date, list);
         }
         Database.updateTakeoffSchedule(takeoff.getId(), tmpSchedule);
         // TODO: END
 
         // fetch flight schedule for takeoff
-        Map<Date, Set<String>> schedule = Database.getTakeoffSchedule(takeoff);
+        Map<Date, Set<Pilot>> schedule = Database.getTakeoffSchedule(takeoff);
 
         String prevDate = "";
         int xPos = Y_AXIS_WIDTH - SCHEDULE_BAR_SPACE;
         Calendar today = GregorianCalendar.getInstance();
-        for (Map.Entry<Date, Set<String>> entry : schedule.entrySet()) {
+        for (Map.Entry<Date, Set<Pilot>> entry : schedule.entrySet()) {
             Calendar cal = GregorianCalendar.getInstance();
             cal.setTime(entry.getKey());
             String text;
