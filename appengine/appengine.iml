@@ -16,6 +16,7 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="appengine-api-1.0-sdk-1.8.9" level="project" />
   </component>
 </module>
 
