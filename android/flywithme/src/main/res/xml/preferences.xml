@@ -18,6 +18,8 @@
         <EditTextPreference
             android:key="pref_schedule_pilot_name"
             android:maxLength="20"
+            android:inputType="textCapWords"
+            android:selectAllOnFocus="true"
             android:title="@string/pref_schedule_pilot_name"
             android:dialogTitle="@string/pref_schedule_pilot_name"
             android:dialogMessage="@string/pref_schedule_pilot_name_description" />
@@ -25,6 +27,7 @@
             android:key="pref_schedule_pilot_phone"
             android:maxLength="20"
             android:inputType="phone"
+            android:selectAllOnFocus="true"
             android:title="@string/pref_schedule_pilot_phone"
             android:dialogTitle="@string/pref_schedule_pilot_phone"
             android:dialogMessage="@string/pref_schedule_pilot_phone_description" />
