@@ -51,7 +51,7 @@ public class Database extends SQLiteOpenHelper {
         Map<Date, Set<Pilot>> schedule = new TreeMap<>();
         SQLiteDatabase db = getDatabase();
         try {
-            Cursor cursor = db.query("schedule", new String[]{"timestamp", "pilot_name", "pilot_phone"}, "takeoff_id = " + takeoff.getId(), null, null, null, "timestamp");
+            Cursor cursor = db.query("schedule", new String[]{"timestamp", "pilot_name", "pilot_phone"}, "takeoff_id = " + takeoff.getId() + " and date(schedule.timestamp, 'unixepoch') = date('now')", null, null, null, "timestamp");
             while (cursor.moveToNext()) {
                 Date timestamp = new Date((long) cursor.getInt(0) * 1000);
                 String pilotName = cursor.getString(1);
@@ -69,19 +69,6 @@ public class Database extends SQLiteOpenHelper {
         }
     }
 
-    public static synchronized Set<Integer> getTakeoffIdsWithScheduledFlightsToday() {
-        Set<Integer> takeoffIds = new HashSet<>();
-        SQLiteDatabase db = getDatabase();
-        try {
-            Cursor cursor = db.rawQuery("select distinct takeoff_id from schedule where date(timestamp, 'unixepoch') = date('now')", null);
-            while (cursor.moveToNext())
-                takeoffIds.add(cursor.getInt(0));
-            return takeoffIds;
-        } finally {
-            db.close();
-        }
-    }
-
     public static synchronized List<String> getTakeoffsWithScheduledFlightsToday(String ignorePilot) {
         // ignorePilot is mainly used to ignore our own registrations
         // and yes, it will fail when the user change name
@@ -89,9 +76,8 @@ public class Database extends SQLiteOpenHelper {
         SQLiteDatabase db = getDatabase();
         try {
             Cursor cursor = db.rawQuery("select distinct takeoff.name from takeoff join schedule on takeoff.takeoff_id = schedule.takeoff_id where date(schedule.timestamp, 'unixepoch') = date('now') and schedule.pilot_name != ?", new String[]{ignorePilot});
-            while (cursor.moveToNext()) {
+            while (cursor.moveToNext())
                 takeoffs.add(cursor.getString(0));
-            }
             return takeoffs;
         } finally {
             db.close();
@@ -146,7 +132,8 @@ public class Database extends SQLiteOpenHelper {
         SQLiteDatabase db = getDatabase();
         try {
             List<Takeoff> takeoffs = new ArrayList<>();
-            Cursor cursor = db.query("takeoff", Takeoff.COLUMNS, null, null, null, null, orderBy, "" + maxResult);
+            Cursor cursor = db.rawQuery("select *, (select count(*) from schedule where schedule.takeoff_id = takeoff.takeoff_id and date(schedule.timestamp, 'unixepoch') = date('now')) as pilots_today from takeoff order by " + orderBy + " limit " + maxResult, null);
+            //Cursor cursor = db.query("takeoff", Takeoff.COLUMNS, null, null, null, null, orderBy, "" + maxResult);
             while (cursor.moveToNext())
                 takeoffs.add(Takeoff.create(new ImprovedCursor(cursor)));
             return takeoffs;

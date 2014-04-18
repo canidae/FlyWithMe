@@ -147,7 +147,7 @@ public class ScheduleService extends IntentService {
             con.setDoOutput(true);
             DataOutputStream outputStream = new DataOutputStream(con.getOutputStream());
             outputStream.writeByte(1);
-            outputStream.writeShort((int) takeoffId);
+            outputStream.writeShort(takeoffId);
             outputStream.writeLong(timestamp);
             outputStream.writeLong(pilotId);
             outputStream.writeUTF(name);

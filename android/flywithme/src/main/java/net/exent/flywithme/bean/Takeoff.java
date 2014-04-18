@@ -6,6 +6,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import net.exent.flywithme.data.Database;
 
@@ -39,6 +40,7 @@ public class Takeoff implements Parcelable {
     private double longitude;
     private int exits;
     private boolean favourite;
+    private int pilotsToday;
     private Bitmap noaaForecast;
     private long noaaUpdated;
 
@@ -98,10 +100,14 @@ public class Takeoff implements Parcelable {
 
     public static Takeoff create(Database.ImprovedCursor cursor) {
         int takeoffId = cursor.getIntOrThrow("takeoff_id");
+        int pilotsToday = cursor.getInt("pilots_today");
         Takeoff takeoff = takeoffCache.get(takeoffId);
-        if (takeoff != null)
+        if (takeoff != null) {
+            takeoff.setPilotsToday(pilotsToday);
             return takeoff;
+        }
         takeoff = new Takeoff(cursor);
+        takeoff.setPilotsToday(pilotsToday);
         takeoffCache.put(takeoffId, takeoff);
         return takeoff;
     }
@@ -179,6 +185,14 @@ public class Takeoff implements Parcelable {
 
     public boolean isFavourite() {
         return favourite;
+    }
+
+    public int getPilotsToday() {
+        return pilotsToday;
+    }
+
+    public void setPilotsToday(int pilotsToday) {
+        this.pilotsToday = pilotsToday;
     }
 
     public Bitmap getNoaaforecast() {

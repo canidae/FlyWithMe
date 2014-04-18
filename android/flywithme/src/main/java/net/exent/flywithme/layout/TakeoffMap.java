@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import net.exent.flywithme.FlyWithMe;
 import net.exent.flywithme.R;
 import net.exent.flywithme.bean.Takeoff;
 import net.exent.flywithme.data.Airspace;
@@ -248,8 +249,10 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
                             canvas.drawBitmap(markerWestBitmap, 0, 0, paint);
                         if (takeoff.hasNorthwestExit())
                             canvas.drawBitmap(markerNorthwestBitmap, 0, 0, paint);
-                        // TODO: set markerExclamation if scheduled flights here
-                        MarkerOptions markerOptions = new MarkerOptions().position(new LatLng(takeoff.getLocation().getLatitude(), takeoff.getLocation().getLongitude())).title(takeoff.getName()).snippet("Height: " + takeoff.getHeight()).icon(BitmapDescriptorFactory.fromBitmap(bitmap)).anchor(0.5f, 0.875f);
+                        if (takeoff.getPilotsToday() > 0)
+                            canvas.drawBitmap(markerExclamation, 0, 0, paint);
+                        String snippet = getString(R.string.height) + ": " + takeoff.getHeight() + ", " + getString(R.string.distance) + ": " + (int) FlyWithMe.getInstance().getLocation().distanceTo(takeoff.getLocation()) / 1000 + "km";
+                        MarkerOptions markerOptions = new MarkerOptions().position(new LatLng(takeoff.getLocation().getLatitude(), takeoff.getLocation().getLongitude())).title(takeoff.getName()).snippet(snippet).icon(BitmapDescriptorFactory.fromBitmap(bitmap)).anchor(0.5f, 0.875f);
                         publishProgress(takeoff, markerOptions);
                     }
                 }

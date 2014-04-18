@@ -257,6 +257,7 @@ public class ScheduleServlet extends HttpServlet {
         if (takeoffCount > 200)
             takeoffCount = 200; // don't allow asking for more than 200 takeoffs
 
+        StringBuilder sb = new StringBuilder("Get schedule: ");
         for (int i = 0; i < takeoffCount; ++i) {
             int takeoffId = inputStream.readUnsignedShort();
             TakeoffSchedule takeoffSchedule = schedules.get(takeoffId);
@@ -267,17 +268,25 @@ public class ScheduleServlet extends HttpServlet {
                 continue;
             outputStream.writeShort(takeoffId);
             outputStream.writeShort(schedule.size());
+            sb.append(takeoffId);
+            sb.append(',').append(schedule.size());
             for (Map.Entry<Long, Set<Pilot>> scheduleEntry : schedule.entrySet()) {
                 outputStream.writeLong(scheduleEntry.getKey());
+                sb.append(',').append(scheduleEntry.getKey());
                 Set<Pilot> pilots = scheduleEntry.getValue();
                 outputStream.writeShort(pilots.size());
+                sb.append(',').append(pilots.size());
                 for (Pilot pilot : pilots) {
                     outputStream.writeUTF(pilot.getName());
                     outputStream.writeUTF(pilot.getPhone());
+                    sb.append(',').append(pilot.getName());
+                    sb.append(',').append(pilot.getPhone());
                 }
             }
+            sb.append(" | ");
         }
         outputStream.writeShort(0);
+        log.info(sb.toString());
     }
 
     /* register a flight at a takeoff */
@@ -287,6 +296,7 @@ public class ScheduleServlet extends HttpServlet {
         long pilotId = inputStream.readLong();
         String pilotName = inputStream.readUTF();
         String pilotPhone = inputStream.readUTF();
+        log.info("Scheduling, takeoff ID: " + takeoffId + ", timestamp: " + timestamp + ", pilot ID: " + pilotId + ", name: " + pilotName + ", phone: " + pilotPhone);
         TakeoffSchedule takeoffSchedule = schedules.get(takeoffId);
         if (takeoffSchedule == null) {
             takeoffSchedule = new TakeoffSchedule();
@@ -301,6 +311,7 @@ public class ScheduleServlet extends HttpServlet {
         int takeoffId = inputStream.readUnsignedShort();
         long timestamp = inputStream.readLong();
         long pilotId = inputStream.readLong();
+        log.info("Unscheduling, takeoff ID: " + takeoffId + ", timestamp: " + timestamp + ", pilot ID: " + pilotId);
         TakeoffSchedule takeoffSchedule = schedules.get(takeoffId);
         if (takeoffSchedule != null)
             takeoffSchedule.removePilotFromSchedule(timestamp, pilotId);

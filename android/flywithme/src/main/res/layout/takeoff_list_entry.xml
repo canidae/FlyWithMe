@@ -10,13 +10,13 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:layout_alignRight="@+id/takeoffListEntryDistance"
+        android:layout_alignRight="@+id/takeoffListEntryInfo"
         android:maxLines="1"
         android:text="@string/app_name"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <TextView
-        android:id="@+id/takeoffListEntryDistance"
+        android:id="@+id/takeoffListEntryInfo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"

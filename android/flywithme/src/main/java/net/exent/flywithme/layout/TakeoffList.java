@@ -58,10 +58,6 @@ public class TakeoffList extends Fragment {
         final Location location = FlyWithMe.getInstance().getLocation();
         takeoffs = Database.getTakeoffs(location.getLatitude(), location.getLongitude(), 100, true);
 
-        // TODO: need to store scheduled flights in takeoff if we want to mark takeoff in list/map
-        // TODO: then we don't need to fetch it here as we've done below
-        final Set<Integer> takeoffIdsScheduled = Database.getTakeoffIdsWithScheduledFlightsToday();
-
         Collections.sort(takeoffs, new Comparator<Takeoff>() {
             public int compare(Takeoff lhs, Takeoff rhs) {
                 if (!lhs.isFavourite() && rhs.isFavourite())
@@ -69,9 +65,9 @@ public class TakeoffList extends Fragment {
                 else if (lhs.isFavourite() && !rhs.isFavourite())
                     return -1;
                 // both or neither are favourites, sort those with scheduled flights first
-                if (!takeoffIdsScheduled.contains(lhs.getId()) && takeoffIdsScheduled.contains(rhs.getId()))
+                if (lhs.getPilotsToday() < rhs.getPilotsToday())
                     return 1;
-                else if (takeoffIdsScheduled.contains(lhs.getId()) && !takeoffIdsScheduled.contains(rhs.getId()))
+                else if (lhs.getPilotsToday() > rhs.getPilotsToday())
                     return -1;
                 // both or neither have scheduled flights, sort by distance from user
                 if (location.distanceTo(lhs.getLocation()) > location.distanceTo(rhs.getLocation()))
@@ -121,11 +117,14 @@ public class TakeoffList extends Fragment {
             LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             View rowView = inflater.inflate(R.layout.takeoff_list_entry, parent, false);
             TextView takeoffName = (TextView) rowView.findViewById(R.id.takeoffListEntryName);
-            TextView takeoffDistance = (TextView) rowView.findViewById(R.id.takeoffListEntryDistance);
+            TextView takeoffInfo = (TextView) rowView.findViewById(R.id.takeoffListEntryInfo);
             takeoffName.setText(takeoff.toString());
             if (takeoff.isFavourite())
                 takeoffName.setTextColor(Color.CYAN);
-            takeoffDistance.setText(getContext().getString(R.string.distance) + ": " + (int) location.distanceTo(takeoff.getLocation()) / 1000 + "km");
+            String takeoffIntoText = getContext().getString(R.string.distance) + ": " + (int) location.distanceTo(takeoff.getLocation()) / 1000 + "km";
+            if (takeoff.getPilotsToday() > 0)
+                takeoffIntoText += ", " + getContext().getString(R.string.pilots_today) + ": " + takeoff.getPilotsToday();
+            takeoffInfo.setText(takeoffIntoText);
             /* windpai */
             ImageView windroseNorth = (ImageView) rowView.findViewById(R.id.takeoffListEntryWindroseNorth);
             ImageView windroseNorthwest = (ImageView) rowView.findViewById(R.id.takeoffListEntryWindroseNorthwest);
