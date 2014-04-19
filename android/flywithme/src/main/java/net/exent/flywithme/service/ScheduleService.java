@@ -103,7 +103,7 @@ public class ScheduleService extends IntentService {
 
     public static void updateSchedule() {
         Location location = FlyWithMe.getInstance().getLocation();
-        List<Takeoff> takeoffs = Database.getTakeoffs(location.getLatitude(), location.getLongitude(), fetchTakeoffs, false);
+        List<Takeoff> takeoffs = Database.getTakeoffs(location.getLatitude(), location.getLongitude(), fetchTakeoffs, true);
         try {
             Log.i(ScheduleService.class.getName(), "Fetching schedule from server");
             HttpURLConnection con = (HttpURLConnection) new URL(SERVER_URL).openConnection();

@@ -204,6 +204,12 @@ public class TakeoffSchedule extends Fragment {
         Button scheduleFlight = (Button) getActivity().findViewById(R.id.scheduleFlightButton);
         scheduleFlight.setText(getString(R.string.scheduling_flight));
         scheduleFlight.setEnabled(false);
+
+        // TODO: currently we need to make every takeoff we schedule for as favourites
+        // TODO: this is because that's the only way we can fetch schedule if that takeoff is far away
+        takeoff.setFavourite(true);
+        Database.updateFavourite(takeoff);
+
         new ScheduleFlightTask(false).execute((long) takeoff.getId(), timestamp);
     }
 
