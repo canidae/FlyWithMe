@@ -2,7 +2,5 @@ FlyWithMe.apk
 flywithme.keystore
 flywithme.txt
 .gradle
-/local.properties
-.DS_Store
 appengine/www
-.idea/workspace.xml
+workspace.xml
