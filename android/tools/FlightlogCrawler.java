@@ -1,5 +1,8 @@
 import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.EOFException;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -163,5 +166,23 @@ public class FlightlogCrawler {
         crawl(outputStream, kmlWriter);
         outputStream.close();
         kmlWriter.close();
+
+        /* test flywithme.dat by reading it (had some unexplainable issues where the file somehow got corrupted) */
+        DataInputStream inputStream = new DataInputStream(new FileInputStream("flywithme.dat"));
+        try {
+            while (true) {
+                /* loop breaks once we get an EOFException */
+                int takeoffId = inputStream.readShort();
+                String name = inputStream.readUTF();
+                String description = inputStream.readUTF();
+                int asl = inputStream.readShort();
+                int height = inputStream.readShort();
+                float latitude = inputStream.readFloat();
+                float longitude = inputStream.readFloat();
+                String windpai = inputStream.readUTF();
+            }
+        } catch (EOFException e) {
+            // expected
+        }
     }
 }
