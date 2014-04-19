@@ -33,14 +33,14 @@ public class Database extends SQLiteOpenHelper {
 
     @Override
     public synchronized void onCreate(SQLiteDatabase db) {
-        Log.i(getClass().getName(), "onCreate()");
+        Log.d(getClass().getName(), "onCreate()");
         createDatabaseV2(db);
         importTakeoffs(db);
     }
 
     @Override
     public synchronized void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        Log.i(getClass().getName(), "onUpgrade(" + oldVersion + ", " + newVersion + ")");
+        Log.d(getClass().getName(), "onUpgrade(" + oldVersion + ", " + newVersion + ")");
         if (oldVersion == 1) {
             createDatabaseV2(db);
             upgradeDatabaseToV2(db);

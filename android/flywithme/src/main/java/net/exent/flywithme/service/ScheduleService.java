@@ -52,8 +52,6 @@ public class ScheduleService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        Log.d(getClass().getName(), "onHandleIntent(" + intent.toString() + ")");
-
         // setup notification builder
         List<String> notificationTakeoffs = new ArrayList<>();
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
