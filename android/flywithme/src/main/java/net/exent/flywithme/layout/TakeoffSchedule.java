@@ -375,6 +375,7 @@ public class TakeoffSchedule extends Fragment {
     private class ScheduleFlightTask extends AsyncTask<Long, Void, Void> {
         private final boolean unschedule;
 
+        // TODO: "new ScheduleFlightTask(false)" seems weird for scheduling
         public ScheduleFlightTask(boolean unschedule) {
             this.unschedule = unschedule;
         }
