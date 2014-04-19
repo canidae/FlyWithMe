@@ -68,19 +68,6 @@
     <string name="schedule_settings">Fetch schedule settings</string>
 
     <string name="pref_schedule_notification">Notifications</string>
-    <string name="pref_schedule_notification_default_value">3</string>
-    <string-array name="pref_schedule_notification_keys">
-        <item>Disabled</item>
-        <item>Only for favourites</item>
-        <item>Only for nearby takeoffs</item>
-        <item>Both favourites and nearby</item>
-    </string-array>
-    <string-array name="pref_schedule_notification_values">
-        <item>-1</item>
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-    </string-array>
 
     <string name="pref_schedule_update_interval">Update interval</string>
     <string name="pref_schedule_update_interval_default_value">3600</string>

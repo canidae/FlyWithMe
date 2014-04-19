@@ -193,7 +193,7 @@ public class NoaaForecastTask extends AsyncTask<Takeoff, String, Boolean> {
     }
 
     private HttpResponse fetchPage(String uri) {
-        Log.i(getClass().getName(), "Fetching page: " + uri);
+        Log.d(getClass().getName(), "Fetching page: " + uri);
         try {
             URI website = new URI(uri);
             HttpGet request = new HttpGet();

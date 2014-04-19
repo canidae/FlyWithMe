@@ -36,6 +36,14 @@ public class ScheduleService extends IntentService {
     private static final String SERVER_URL = "http://flywithme-server.appspot.com/fwm";
     private static final int NOTIFICATION_ID = 42;
     private static final long MS_IN_DAY = 86400000;
+    private static long pilotId = 0;
+    private static String pilotName = null;
+    private static String pilotPhone = null;
+    private static int fetchTakeoffs = 0;
+    private static int startTime = 0;
+    private static int stopTime = 0;
+    private static long updateInterval = 0;
+    private static boolean showNotification = false;
     private long lastUpdate = 0;
 
     public ScheduleService() {
@@ -57,14 +65,12 @@ public class ScheduleService extends IntentService {
         notificationBuilder.setContentIntent(notificationIntent);
 
         while (true) {
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-            int fetchTakeoffs = Integer.parseInt(prefs.getString("pref_schedule_fetch_takeoffs", "-1"));
-            int startTime = Integer.parseInt(prefs.getString("pref_schedule_start_fetch_time", "28800")) * 1000;
-            int stopTime = Integer.parseInt(prefs.getString("pref_schedule_stop_fetch_time", "72000")) * 1000;
-            long updateInterval = Integer.parseInt(prefs.getString("pref_schedule_update_interval", "3600")) * 1000;
 
             long now = System.currentTimeMillis();
             long localHour = (now + TimeZone.getDefault().getOffset(now)) % MS_IN_DAY;
+
+            // check for changes to settings
+            updatePreferenceValues();
 
             // these two values tells us whether we're between start time and stop time
             // if startTime == stopTime then we always want to update (setting maxValue to 24 hours)
@@ -78,43 +84,11 @@ public class ScheduleService extends IntentService {
             }
             lastUpdate = now;
 
-            Location location = FlyWithMe.getInstance().getLocation();
-            List<Takeoff> takeoffs = Database.getTakeoffs(location.getLatitude(), location.getLongitude(), fetchTakeoffs, false);
-            try {
-                Log.i(getClass().getName(), "Fetching schedule from server");
-                HttpURLConnection con = (HttpURLConnection) new URL(SERVER_URL).openConnection();
-                con.setRequestMethod("POST");
-                con.setDoOutput(true);
-                DataOutputStream outputStream = new DataOutputStream(con.getOutputStream());
-                outputStream.writeByte(0);
-                outputStream.writeShort(takeoffs.size());
-                for (Takeoff takeoff : takeoffs)
-                    outputStream.writeShort(takeoff.getId());
-                outputStream.close();
-                int responseCode = con.getResponseCode();
-                Log.d(getClass().getName(), "Response code: " + responseCode);
-                DataInputStream inputStream = new DataInputStream(con.getInputStream());
+            updateSchedule();
 
-                while (true) {
-                    int takeoffId = inputStream.readUnsignedShort();
-                    if (takeoffId == 0)
-                        break; // no more data to be read
-                    int timestamps = inputStream.readUnsignedShort();
-                    Map<Long, List<Pilot>> schedule = new HashMap<>();
-                    for (int b = 0; b < timestamps; ++b) {
-                        long timestamp = inputStream.readLong();
-                        List<Pilot> pilotList = new ArrayList<>();
-                        int pilots = inputStream.readUnsignedShort();
-                        for (int c = 0; c < pilots; ++c) {
-                            String pilotName = inputStream.readUTF();
-                            String pilotPhone = inputStream.readUTF();
-                            pilotList.add(new Pilot(pilotName, pilotPhone));
-                        }
-                        schedule.put(timestamp, pilotList);
-                        Database.updateTakeoffSchedule(takeoffId, schedule);
-                    }
-                }
-                List<String> takeoffsWithScheduledFlightsToday = Database.getTakeoffsWithScheduledFlightsToday(prefs.getString("pref_schedule_pilot_name", ""));
+            // show/update notification
+            if (showNotification) {
+                List<String> takeoffsWithScheduledFlightsToday = Database.getTakeoffsWithScheduledFlightsToday(pilotName);
                 if (!notificationTakeoffs.containsAll(takeoffsWithScheduledFlightsToday)) {
                     // notify the user that people are planning to fly today
                     notificationTakeoffs = takeoffsWithScheduledFlightsToday;
@@ -125,22 +99,33 @@ public class ScheduleService extends IntentService {
                     notificationBuilder.setWhen(System.currentTimeMillis());
                     notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build());
                 }
-            } catch (IOException e) {
-                Log.w(getClass().getName(), "Fetching flight schedule failed unexpectedly", e);
             }
         }
     }
 
-    public static void scheduleFlight(int takeoffId, long timestamp) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(FlyWithMe.getInstance());
-        String name = prefs.getString("pref_schedule_pilot_name", null);
-        String phone = prefs.getString("pref_schedule_pilot_phone", null);
-        long pilotId = prefs.getLong("pref_schedule_pilot_id", 0);
-        while (pilotId == 0) {
-            // generate a random ID for identifying the pilot's registrations
-            pilotId = (new Random()).nextLong();
-            prefs.edit().putLong("pref_schedule_pilot_id", pilotId).commit();
+    public static void updateSchedule() {
+        Location location = FlyWithMe.getInstance().getLocation();
+        List<Takeoff> takeoffs = Database.getTakeoffs(location.getLatitude(), location.getLongitude(), fetchTakeoffs, false);
+        try {
+            Log.i(ScheduleService.class.getName(), "Fetching schedule from server");
+            HttpURLConnection con = (HttpURLConnection) new URL(SERVER_URL).openConnection();
+            con.setRequestMethod("POST");
+            con.setDoOutput(true);
+            DataOutputStream outputStream = new DataOutputStream(con.getOutputStream());
+            outputStream.writeByte(0);
+            outputStream.writeShort(takeoffs.size());
+            for (Takeoff takeoff : takeoffs)
+                outputStream.writeShort(takeoff.getId());
+            outputStream.close();
+            int responseCode = con.getResponseCode();
+            Log.d(ScheduleService.class.getName(), "Response code: " + responseCode);
+            parseScheduleResponse(new DataInputStream(con.getInputStream()));
+        } catch (IOException e) {
+            Log.w(ScheduleService.class.getName(), "Fetching flight schedule failed unexpectedly", e);
         }
+    }
+
+    public static void scheduleFlight(int takeoffId, long timestamp) {
         try {
             HttpURLConnection con = (HttpURLConnection) new URL(SERVER_URL).openConnection();
             con.setRequestMethod("POST");
@@ -148,10 +133,10 @@ public class ScheduleService extends IntentService {
             DataOutputStream outputStream = new DataOutputStream(con.getOutputStream());
             outputStream.writeByte(1);
             outputStream.writeShort(takeoffId);
-            outputStream.writeLong(timestamp);
+            outputStream.writeInt((int) (timestamp / 1000)); // timestamp is sent as seconds since epoch, not ms
             outputStream.writeLong(pilotId);
-            outputStream.writeUTF(name);
-            outputStream.writeUTF(phone);
+            outputStream.writeUTF(pilotName);
+            outputStream.writeUTF(pilotPhone);
             outputStream.close();
             int responseCode = con.getResponseCode();
             Log.d(ScheduleService.class.getName(), "Response code: " + responseCode);
@@ -161,8 +146,6 @@ public class ScheduleService extends IntentService {
     }
 
     public static void unscheduleFlight(int takeoffId, long timestamp) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(FlyWithMe.getInstance());
-        long pilotId = prefs.getLong("pref_schedule_pilot_id", 0);
         try {
             HttpURLConnection con = (HttpURLConnection) new URL(SERVER_URL).openConnection();
             con.setRequestMethod("POST");
@@ -170,7 +153,7 @@ public class ScheduleService extends IntentService {
             DataOutputStream outputStream = new DataOutputStream(con.getOutputStream());
             outputStream.writeByte(2);
             outputStream.writeShort(takeoffId);
-            outputStream.writeLong(timestamp);
+            outputStream.writeInt((int) (timestamp / 1000)); // timestamp is sent as seconds since epoch, not ms
             outputStream.writeLong(pilotId);
             outputStream.close();
             int responseCode = con.getResponseCode();
@@ -178,5 +161,48 @@ public class ScheduleService extends IntentService {
         } catch (IOException e) {
             Log.w(ScheduleService.class.getName(), "Unscheduling flight failed unexpectedly", e);
         }
+    }
+
+    private static void parseScheduleResponse(DataInputStream inputStream) {
+        try {
+            while (true) {
+                int takeoffId = inputStream.readUnsignedShort();
+                if (takeoffId == 0)
+                    break; // no more data to be read
+                int timestamps = inputStream.readUnsignedShort();
+                Map<Long, List<Pilot>> schedule = new HashMap<>();
+                for (int b = 0; b < timestamps; ++b) {
+                    long timestamp = (long) inputStream.readInt() * 1000L; // timestamp is received as seconds since epoch, not ms
+                    List<Pilot> pilotList = new ArrayList<>();
+                    int pilots = inputStream.readUnsignedShort();
+                    for (int c = 0; c < pilots; ++c) {
+                        String pilotName = inputStream.readUTF();
+                        String pilotPhone = inputStream.readUTF();
+                        pilotList.add(new Pilot(pilotName, pilotPhone));
+                    }
+                    schedule.put(timestamp, pilotList);
+                }
+                Database.updateTakeoffSchedule(takeoffId, schedule);
+            }
+        } catch (IOException e) {
+            Log.w(ScheduleService.class.getName(), "Fetching flight schedule failed unexpectedly", e);
+        }
+    }
+
+    private void updatePreferenceValues() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        pilotId = prefs.getLong("pref_schedule_pilot_id", 0);
+        while (pilotId == 0) {
+            // generate a random ID for identifying the pilot's registrations
+            pilotId = (new Random()).nextLong();
+            prefs.edit().putLong("pref_schedule_pilot_id", pilotId).commit();
+        }
+        pilotName = prefs.getString("pref_schedule_pilot_name", "");
+        pilotPhone = prefs.getString("pref_schedule_pilot_phone", "");
+        fetchTakeoffs = Integer.parseInt(prefs.getString("pref_schedule_fetch_takeoffs", "-1"));
+        startTime = Integer.parseInt(prefs.getString("pref_schedule_start_fetch_time", "28800")) * 1000;
+        stopTime = Integer.parseInt(prefs.getString("pref_schedule_stop_fetch_time", "72000")) * 1000;
+        updateInterval = Integer.parseInt(prefs.getString("pref_schedule_update_interval", "3600")) * 1000;
+        showNotification = prefs.getBoolean("pref_schedule_notification", true);
     }
 }

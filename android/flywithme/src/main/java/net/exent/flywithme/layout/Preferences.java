@@ -10,6 +10,7 @@ import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceCategory;
+import android.preference.SwitchPreference;
 import android.support.v4.preference.PreferenceFragment;
 import android.util.Log;
 import android.widget.ImageButton;
@@ -17,7 +18,6 @@ import android.widget.ImageButton;
 import net.exent.flywithme.R;
 import net.exent.flywithme.data.Airspace;
 
-// TODO: screen rotation throws the user out of preference screen
 public class Preferences extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
     private Preference.OnPreferenceChangeListener preferenceChangeListener = new Preference.OnPreferenceChangeListener() {
         @Override
@@ -92,9 +92,8 @@ public class Preferences extends PreferenceFragment implements SharedPreferences
         schedulePilotName.setSummary(schedulePilotName.getText());
         EditTextPreference schedulePilotPhone = (EditTextPreference) findPreference("pref_schedule_pilot_phone");
         schedulePilotPhone.setSummary(schedulePilotPhone.getText());
-        ListPreference scheduleNotification = (ListPreference) findPreference("pref_schedule_notification");
+        SwitchPreference scheduleNotification = (SwitchPreference) findPreference("pref_schedule_notification");
         scheduleNotification.setOnPreferenceChangeListener(preferenceChangeListener);
-        scheduleNotification.setSummary(scheduleNotification.getEntry());
         ListPreference scheduleFetchInterval = (ListPreference) findPreference("pref_schedule_update_interval");
         scheduleFetchInterval.setOnPreferenceChangeListener(preferenceChangeListener);
         scheduleFetchInterval.setSummary(scheduleFetchInterval.getEntry());

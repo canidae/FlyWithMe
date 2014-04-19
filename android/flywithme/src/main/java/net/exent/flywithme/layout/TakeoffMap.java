@@ -54,7 +54,6 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
         Location getLocation();
     }
 
-    private static final int DEFAULT_MAX_AIRSPACE_DISTANCE = 100;
     private static View view;
     /* we can't use Map<Marker, Takeoff> below, because the Marker may be recreated, invalidating the reference we got to the previous instantiation.
      * instead we'll have to keep the id (String) as a reference to the marker */
@@ -302,19 +301,13 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
                         location.setLongitude(latLng.longitude);
                     }
                     Location tmpLocation = new Location(location);
-                    int maxAirspaceDistance = DEFAULT_MAX_AIRSPACE_DISTANCE;
-                    try {
-                        maxAirspaceDistance = Integer.parseInt(prefs.getString("pref_max_airspace_distance", "" + DEFAULT_MAX_AIRSPACE_DISTANCE));
-                    } catch (NumberFormatException e) {
-                        Log.w(getClass().getName(), "Unable to parse max airspace distance setting as integer", e);
-                    }
-                    maxAirspaceDistance *= 1000;
 
                     for (Map.Entry<String, List<PolygonOptions>> entry : Airspace.getAirspaceMap().entrySet()) {
                         if (entry.getKey() == null || !prefs.getBoolean("pref_airspace_enabled_" + entry.getKey().trim(), true))
                             continue;
                         for (PolygonOptions polygon : entry.getValue()) {
-                            if (showPolygon(polygon, location, tmpLocation, maxAirspaceDistance))
+                            // show polygons within (sort of) 100km
+                            if (showPolygon(polygon, location, tmpLocation, 100000))
                                 showPolygons.add(polygon);
                         }
                     }

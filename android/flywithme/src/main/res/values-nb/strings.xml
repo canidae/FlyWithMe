@@ -53,12 +53,6 @@
     <string name="schedule_settings">Innstillinger, henting av flyprogram</string>
 
     <string name="pref_schedule_notification">Notifikasjoner</string>
-    <string-array name="pref_schedule_notification_keys">
-        <item>Avslått</item>
-        <item>Kun favoritter</item>
-        <item>Kun nærliggende flysteder</item>
-        <item>Både favoritter og nærliggende</item>
-    </string-array>
 
     <string name="pref_schedule_update_interval">Oppdateringsfrekvens</string>
     <string-array name="pref_schedule_update_interval_keys">

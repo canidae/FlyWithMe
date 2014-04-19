@@ -31,13 +31,10 @@
             android:title="@string/pref_schedule_pilot_phone"
             android:dialogTitle="@string/pref_schedule_pilot_phone"
             android:dialogMessage="@string/pref_schedule_pilot_phone_description" />
-        <ListPreference
+        <SwitchPreference
+            android:defaultValue="true"
             android:key="pref_schedule_notification"
-            android:title="@string/pref_schedule_notification"
-            android:defaultValue="@string/pref_schedule_notification_default_value"
-            android:dialogTitle="@string/pref_schedule_notification"
-            android:entries="@array/pref_schedule_notification_keys"
-            android:entryValues="@array/pref_schedule_notification_values" />
+            android:title="@string/pref_schedule_notification" />
         <ListPreference
             android:key="pref_schedule_update_interval"
             android:title="@string/pref_schedule_update_interval"

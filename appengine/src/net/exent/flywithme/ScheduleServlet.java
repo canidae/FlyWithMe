@@ -50,7 +50,7 @@ public class ScheduleServlet extends HttpServlet {
         // TODO: remove, just for testing
         // first test registering some flights
         System.out.println("=== TESTING REGISTERING FLIGHT ===");
-        long registerTime = System.currentTimeMillis();
+        int registerTime = (int) (System.currentTimeMillis() / 1000);
         long pilotId = (new Random()).nextLong();
         HttpURLConnection con = (HttpURLConnection) new URL("http://localhost:8080/fwm").openConnection();
         con.setRequestMethod("POST");
@@ -58,7 +58,7 @@ public class ScheduleServlet extends HttpServlet {
         DataOutputStream outputStream = new DataOutputStream(con.getOutputStream());
         outputStream.writeByte(1);
         outputStream.writeShort(4);
-        outputStream.writeLong(registerTime);
+        outputStream.writeInt(registerTime);
         outputStream.writeLong(pilotId);
         outputStream.writeUTF("Vidar Wahlberg");
         outputStream.writeUTF("+4795728262");
@@ -74,7 +74,7 @@ public class ScheduleServlet extends HttpServlet {
         outputStream = new DataOutputStream(con.getOutputStream());
         outputStream.writeByte(1);
         outputStream.writeShort(4);
-        outputStream.writeLong(registerTime);
+        outputStream.writeInt(registerTime);
         outputStream.writeLong((new Random()).nextLong());
         outputStream.writeUTF("Unknown Pilot");
         outputStream.writeUTF("88888888");
@@ -90,7 +90,7 @@ public class ScheduleServlet extends HttpServlet {
         outputStream = new DataOutputStream(con.getOutputStream());
         outputStream.writeByte(1);
         outputStream.writeShort(67);
-        outputStream.writeLong(registerTime);
+        outputStream.writeInt(registerTime);
         outputStream.writeLong(pilotId);
         outputStream.writeUTF("Vidar Wahlberg");
         outputStream.writeUTF("95728262");
@@ -123,7 +123,7 @@ public class ScheduleServlet extends HttpServlet {
             int timestamps = inputStream.readUnsignedShort();
             System.out.println("Timestamps: " + timestamps);
             for (int b = 0; b < timestamps; ++b) {
-                System.out.println("Timestamp: " + inputStream.readLong());
+                System.out.println("Timestamp: " + inputStream.readInt());
                 int pilots = inputStream.readUnsignedShort();
                 System.out.println("Pilots: " + pilots);
                 for (int c = 0; c < pilots; ++c) {
@@ -142,7 +142,7 @@ public class ScheduleServlet extends HttpServlet {
         outputStream = new DataOutputStream(con.getOutputStream());
         outputStream.writeByte(2);
         outputStream.writeShort(4);
-        outputStream.writeLong(registerTime);
+        outputStream.writeInt(registerTime);
         outputStream.writeLong(pilotId);
         outputStream.close();
         responseCode = con.getResponseCode();
@@ -173,7 +173,7 @@ public class ScheduleServlet extends HttpServlet {
             int timestamps = inputStream.readUnsignedShort();
             System.out.println("Timestamps: " + timestamps);
             for (int b = 0; b < timestamps; ++b) {
-                System.out.println("Timestamp: " + inputStream.readLong());
+                System.out.println("Timestamp: " + inputStream.readInt());
                 int pilots = inputStream.readUnsignedShort();
                 System.out.println("Pilots: " + pilots);
                 for (int c = 0; c < pilots; ++c) {
@@ -200,7 +200,7 @@ public class ScheduleServlet extends HttpServlet {
                     // <loop>
                     //   ushort: takeoffId (if this value is 0, then the end of the list is reached and no more data should be attempted read)
                     //   ushort: timestamps
-                    //     long: timestamp
+                    //     int: timestamp
                     //     ushort: pilots
                     //       string: pilot name
                     //       string: pilot phone
@@ -209,7 +209,7 @@ public class ScheduleServlet extends HttpServlet {
                 case 1:
                     // input:
                     // ushort: takeoffId
-                    // long: timestamp
+                    // int: timestamp
                     // long: pilotId
                     // string: name
                     // string: phone
@@ -221,6 +221,7 @@ public class ScheduleServlet extends HttpServlet {
                 case 2:
                     // input:
                     // ushort: takeoffId
+                    // int: timestamp
                     // long: pilotId
                     unregisterScheduleEntryV1(inputStream);
                     // output:
@@ -235,7 +236,7 @@ public class ScheduleServlet extends HttpServlet {
             long currentTime = System.currentTimeMillis();
             if (currentTime < lastScheduleClean + 1000 * 60 * 60 * 6)
                 return; // less than 6 hours since last cleanup, no rush
-            long expireTime = currentTime - 1000 * 60 * 60 * 24; // remove all entries that are older than 24 hours
+            int expireTime = (int) ((currentTime - 1000 * 60 * 60 * 24) / 1000); // remove all entries that are older than 24 hours
             Iterator<Map.Entry<Integer, TakeoffSchedule>> scheduleIterator = schedules.entrySet().iterator();
             while (scheduleIterator.hasNext()) {
                 Map.Entry<Integer, TakeoffSchedule> scheduleIteratorEntry = scheduleIterator.next();
@@ -261,24 +262,27 @@ public class ScheduleServlet extends HttpServlet {
         for (int i = 0; i < takeoffCount; ++i) {
             int takeoffId = inputStream.readUnsignedShort();
             TakeoffSchedule takeoffSchedule = schedules.get(takeoffId);
-            if (takeoffSchedule == null)
+            Map<Integer, Set<Pilot>> schedule;
+            if (takeoffSchedule == null || (schedule = takeoffSchedule.getEntries()).isEmpty()) {
+                // no schedule for this takeoff, but in case we've removed a single entry we need to tell the client that it's empty (or the client won't remove that entry)
+                outputStream.writeShort(takeoffId);
+                outputStream.writeShort(0);
                 continue;
-            Map<Long, Set<Pilot>> schedule = takeoffSchedule.getEntries();
-            if (schedule.isEmpty())
-                continue;
+            }
             outputStream.writeShort(takeoffId);
             outputStream.writeShort(schedule.size());
             sb.append(takeoffId);
             sb.append(',').append(schedule.size());
-            for (Map.Entry<Long, Set<Pilot>> scheduleEntry : schedule.entrySet()) {
-                outputStream.writeLong(scheduleEntry.getKey());
+            for (Map.Entry<Integer, Set<Pilot>> scheduleEntry : schedule.entrySet()) {
+                outputStream.writeInt(scheduleEntry.getKey());
                 sb.append(',').append(scheduleEntry.getKey());
                 Set<Pilot> pilots = scheduleEntry.getValue();
                 outputStream.writeShort(pilots.size());
                 sb.append(',').append(pilots.size());
                 for (Pilot pilot : pilots) {
-                    outputStream.writeUTF(pilot.getName());
-                    outputStream.writeUTF(pilot.getPhone());
+                    // make sure we don't send long strings by capping them to 20 characters
+                    outputStream.writeUTF(pilot.getName().length() > 20 ? pilot.getName().substring(0, 20) : pilot.getName());
+                    outputStream.writeUTF(pilot.getPhone().length() > 20 ? pilot.getPhone().substring(0, 20) : pilot.getPhone());
                     sb.append(',').append(pilot.getName());
                     sb.append(',').append(pilot.getPhone());
                 }
@@ -292,7 +296,7 @@ public class ScheduleServlet extends HttpServlet {
     /* register a flight at a takeoff */
     private static synchronized void registerScheduleEntryV1(final DataInputStream inputStream) throws IOException {
         int takeoffId = inputStream.readUnsignedShort();
-        long timestamp = inputStream.readLong();
+        int timestamp = inputStream.readInt() / 60 * 60; // "/ 60 * 60" sets seconds to 0
         long pilotId = inputStream.readLong();
         String pilotName = inputStream.readUTF();
         String pilotPhone = inputStream.readUTF();
@@ -309,7 +313,7 @@ public class ScheduleServlet extends HttpServlet {
     /* unregister a flight at a takeoff */
     private static synchronized void unregisterScheduleEntryV1(final DataInputStream inputStream) throws IOException {
         int takeoffId = inputStream.readUnsignedShort();
-        long timestamp = inputStream.readLong();
+        int timestamp = inputStream.readInt() / 60 * 60; // "/ 60 * 60" sets seconds to 0
         long pilotId = inputStream.readLong();
         log.info("Unscheduling, takeoff ID: " + takeoffId + ", timestamp: " + timestamp + ", pilot ID: " + pilotId);
         TakeoffSchedule takeoffSchedule = schedules.get(takeoffId);
@@ -386,9 +390,9 @@ public class ScheduleServlet extends HttpServlet {
     // NOTE! even though it may appear like the setters and getters are not in use, they are!
     // deserializing from datastore use the default constructor and the setters to rebuild the object!
     public static class TakeoffSchedule {
-        private Map<Long, Set<Pilot>> entries = new HashMap<>();
+        private Map<Integer, Set<Pilot>> entries = new HashMap<>();
 
-        public void addPilotToSchedule(long timestamp, Pilot pilot) {
+        public void addPilotToSchedule(int timestamp, Pilot pilot) {
             Set<Pilot> schedule = entries.get(timestamp);
             if (schedule == null) {
                 schedule = new HashSet<>();
@@ -397,7 +401,7 @@ public class ScheduleServlet extends HttpServlet {
             schedule.add(pilot);
         }
 
-        public void removePilotFromSchedule(long timestamp, long pilotId) {
+        public void removePilotFromSchedule(int timestamp, long pilotId) {
             Set<Pilot> schedule = entries.get(timestamp);
             if (schedule != null) {
                 schedule.remove(new Pilot(pilotId, "doesn't matter", "neither does this"));
@@ -406,12 +410,12 @@ public class ScheduleServlet extends HttpServlet {
             }
         }
 
-        public void removeExpired(long expireTime) {
-            Iterator<Map.Entry<Long, Set<Pilot>>> timestampIterator = entries.entrySet().iterator();
+        public void removeExpired(int expireTime) {
+            Iterator<Map.Entry<Integer, Set<Pilot>>> timestampIterator = entries.entrySet().iterator();
             while (timestampIterator.hasNext()) {
-                Map.Entry<Long, Set<Pilot>> timestampEntry = timestampIterator.next();
+                Map.Entry<Integer, Set<Pilot>> timestampEntry = timestampIterator.next();
                 if (timestampEntry.getKey() < expireTime)
-                    timestampIterator.remove(); // yes, remove timestamp from takeoff schedules
+                    timestampIterator.remove();
             }
         }
 
@@ -419,11 +423,11 @@ public class ScheduleServlet extends HttpServlet {
             return entries.isEmpty();
         }
 
-        public Map<Long, Set<Pilot>> getEntries() {
+        public Map<Integer, Set<Pilot>> getEntries() {
             return entries;
         }
 
-        public void setEntries(Map<Long, Set<Pilot>> entries) {
+        public void setEntries(Map<Integer, Set<Pilot>> entries) {
             this.entries = entries;
         }
     }

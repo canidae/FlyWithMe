@@ -53,7 +53,7 @@ public class Database extends SQLiteOpenHelper {
         try {
             Cursor cursor = db.query("schedule", new String[]{"timestamp", "pilot_name", "pilot_phone"}, "takeoff_id = " + takeoff.getId() + " and date(schedule.timestamp, 'unixepoch') = date('now')", null, null, null, "timestamp");
             while (cursor.moveToNext()) {
-                Date timestamp = new Date((long) cursor.getInt(0) * 1000);
+                Date timestamp = new Date(cursor.getLong(0) * 1000); // we store timestamps in SQLite as seconds since epoch, not milliseconds (which Date use)
                 String pilotName = cursor.getString(1);
                 String pilotPhone = cursor.getString(2);
                 Set<Pilot> pilots = schedule.get(timestamp);
@@ -94,7 +94,7 @@ public class Database extends SQLiteOpenHelper {
                 for (Pilot pilot : entry.getValue()) {
                     ContentValues values = new ContentValues();
                     values.put("takeoff_id", takeoffId);
-                    values.put("timestamp", entry.getKey() / 1000); // SQLite doesn't support 64bit values, need to store value as seconds since epoch, not milliseconds
+                    values.put("timestamp", entry.getKey() / 1000); // date/time-functions in SQLite use seconds since epoch, not milliseconds
                     values.put("pilot_name", pilot.getName());
                     values.put("pilot_phone", pilot.getPhone());
                     db.insert("schedule", null, values);
@@ -133,7 +133,6 @@ public class Database extends SQLiteOpenHelper {
         try {
             List<Takeoff> takeoffs = new ArrayList<>();
             Cursor cursor = db.rawQuery("select *, (select count(*) from schedule where schedule.takeoff_id = takeoff.takeoff_id and date(schedule.timestamp, 'unixepoch') = date('now')) as pilots_today from takeoff order by " + orderBy + " limit " + maxResult, null);
-            //Cursor cursor = db.query("takeoff", Takeoff.COLUMNS, null, null, null, null, orderBy, "" + maxResult);
             while (cursor.moveToNext())
                 takeoffs.add(Takeoff.create(new ImprovedCursor(cursor)));
             return takeoffs;
@@ -162,6 +161,7 @@ public class Database extends SQLiteOpenHelper {
     private synchronized void createDatabaseV2(SQLiteDatabase db) {
         db.execSQL("create table schedule(takeoff_id integer not null, timestamp integer not null, pilot_name text not null, pilot_phone text not null)");
         db.execSQL("create table takeoff(takeoff_id integer primary key, name text not null default '', description text not null default '', asl integer not null default 0, height integer not null default 0, latitude real not null default 0.0, latitude_cos real not null default 0.0, latitude_sin real not null default 0.0, longitude real not null default 0.0, longitude_cos real not null default 0.0, longitude_sin real not null default 0.0, exits integer not null default 0, favourite integer not null default 0)");
+        db.execSQL("create table pilot(pilot_id integer primary key, name text not null, phone text not null default '')");
     }
 
     private synchronized void upgradeDatabaseToV2(SQLiteDatabase db) {

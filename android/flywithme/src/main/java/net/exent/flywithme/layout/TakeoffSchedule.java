@@ -31,6 +31,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -38,6 +39,7 @@ public class TakeoffSchedule extends Fragment {
     public static final String ARG_TAKEOFF = "takeoff";
     private Takeoff takeoff;
     private Calendar calendar = GregorianCalendar.getInstance();
+    private TakeoffScheduleAdapter scheduleAdapter;
 
     public void showTakeoffSchedule(Takeoff takeoff) {
         try {
@@ -113,6 +115,9 @@ public class TakeoffSchedule extends Fragment {
             // then round up travel time and current time to nearest 15 minute
             travelTime = Math.ceil(travelTime / 900.0) * 900.0;
             calendar.set(Calendar.MINUTE, (int) Math.ceil(calendar.get(Calendar.MINUTE) / 15.0) * 15);
+            // set seconds and milliseconds to 0
+            calendar.set(Calendar.SECOND, 0);
+            calendar.set(Calendar.MILLISECOND, 0);
             // update calendar
             updateCalendar(Calendar.SECOND, (int) travelTime);
         } catch (Exception e) {
@@ -156,10 +161,10 @@ public class TakeoffSchedule extends Fragment {
         }
 
         ExpandableListView scheduleList = (ExpandableListView) getActivity().findViewById(R.id.scheduleRegisteredFlights);
-        TakeoffScheduleAdapter adapter = new TakeoffScheduleAdapter();
-        scheduleList.setAdapter(adapter);
+        scheduleAdapter = new TakeoffScheduleAdapter();
+        scheduleList.setAdapter(scheduleAdapter);
         // expand all groups by default
-        for (int i = 0; i < adapter.getGroupCount(); ++i)
+        for (int i = 0; i < scheduleAdapter.getGroupCount(); ++i)
             scheduleList.expandGroup(i);
     }
 
@@ -214,7 +219,12 @@ public class TakeoffSchedule extends Fragment {
         private SimpleDateFormat dateFormatter = new SimpleDateFormat("EEE dd. MMM, HH:mm");
 
         public TakeoffScheduleAdapter() {
+            updateData();
+        }
+
+        public void updateData() {
             schedule = Database.getTakeoffSchedule(takeoff);
+            notifyDataSetChanged();
         }
 
         @Override
@@ -271,15 +281,37 @@ public class TakeoffSchedule extends Fragment {
             });
             /* END AAH! */
             TextView groupTime = (TextView) convertView.findViewById(R.id.scheduleGroupTime);
-            final Date date = getEntryGroup(groupPosition).getKey();
+            Map.Entry<Date, Set<Pilot>> entryGroup = getEntryGroup(groupPosition);
+            final Date date = entryGroup.getKey();
             groupTime.setText(dateFormatter.format(date));
             TextView groupPilots = (TextView) convertView.findViewById(R.id.scheduleGroupPilots);
-            groupPilots.setText(getString(R.string.pilots) + ": " + getEntryGroup(groupPosition).getValue().size());
-            ImageButton joinOrLeave = (ImageButton) convertView.findViewById(R.id.joinOrLeaveButton);
+            groupPilots.setText(getString(R.string.pilots) + ": " + entryGroup.getValue().size());
+            final ImageButton joinOrLeave = (ImageButton) convertView.findViewById(R.id.joinOrLeaveButton);
+
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(FlyWithMe.getInstance());
+            String name = prefs.getString("pref_schedule_pilot_name", "");
+            boolean foundPilot = false;
+            for (Pilot pilot : entryGroup.getValue()) {
+                if (name.equals(pilot.getName())) {
+                    foundPilot = true;
+                    break;
+                }
+            }
+            if (foundPilot) {
+                joinOrLeave.setTag(Boolean.TRUE); // used in onClick below to call unschedule instead of schedule
+                joinOrLeave.setImageResource(android.R.drawable.ic_delete);
+            } else {
+                joinOrLeave.setTag(null); // used in onClick below to call schedule instead of unschedule
+                joinOrLeave.setImageResource(android.R.drawable.ic_input_add);
+            }
+
             joinOrLeave.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
-                    scheduleFlight(date.getTime());
-                    // TODO: remove if already registered
+                    if (joinOrLeave.getTag() != null) {
+                        unscheduleFlight(date.getTime());
+                    } else {
+                        scheduleFlight(date.getTime());
+                    }
                 }
             });
             return convertView;
@@ -347,6 +379,7 @@ public class TakeoffSchedule extends Fragment {
                 ScheduleService.unscheduleFlight(params[0].intValue(), params[1]);
             else
                 ScheduleService.scheduleFlight(params[0].intValue(), params[1]);
+            ScheduleService.updateSchedule();
             return null;
         }
 
@@ -355,7 +388,15 @@ public class TakeoffSchedule extends Fragment {
             Button scheduleFlight = (Button) getActivity().findViewById(R.id.scheduleFlightButton);
             scheduleFlight.setText(getString(R.string.schedule_flight));
             scheduleFlight.setEnabled(true);
-            // TODO: update database & expandablelistview adapter
+            ExpandableListView scheduleList = (ExpandableListView) getActivity().findViewById(R.id.scheduleRegisteredFlights);
+            /* AAH! only calling updateData() which signals that data is changed leaves deleted children of groups hanging, but if we collapse group first, then the children disappear */
+            for (int i = 0; i < scheduleAdapter.getGroupCount(); ++i)
+                scheduleList.collapseGroup(i);
+            /* END AAH! */
+            scheduleAdapter.updateData();
+            // expand groups by default
+            for (int i = 0; i < scheduleAdapter.getGroupCount(); ++i)
+                scheduleList.expandGroup(i);
         }
     }
 }
