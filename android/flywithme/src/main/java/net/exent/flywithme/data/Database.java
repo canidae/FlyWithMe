@@ -51,7 +51,7 @@ public class Database extends SQLiteOpenHelper {
         Map<Date, Set<Pilot>> schedule = new TreeMap<>();
         SQLiteDatabase db = getDatabase();
         try {
-            Cursor cursor = db.query("schedule", new String[]{"timestamp", "pilot_name", "pilot_phone"}, "takeoff_id = " + takeoff.getId() + " and date(schedule.timestamp, 'unixepoch') = date('now')", null, null, null, "timestamp");
+            Cursor cursor = db.query("schedule", new String[]{"timestamp", "pilot_name", "pilot_phone"}, "takeoff_id = " + takeoff.getId() + " and date(schedule.timestamp, 'unixepoch') >= date('now')", null, null, null, "timestamp");
             while (cursor.moveToNext()) {
                 Date timestamp = new Date(cursor.getLong(0) * 1000); // we store timestamps in SQLite as seconds since epoch, not milliseconds (which Date use)
                 String pilotName = cursor.getString(1);
@@ -118,6 +118,9 @@ public class Database extends SQLiteOpenHelper {
     }
 
     public synchronized static List<Takeoff> getTakeoffs(double latitude, double longitude, int maxResult, boolean includeFavourites) {
+        List<Takeoff> takeoffs = new ArrayList<>();
+        if (maxResult <= 0)
+            return takeoffs;
         // order result by approximate distance
         double latitudeRadians = latitude * Math.PI / 180.0;
         double latitudeCos = Math.cos(latitudeRadians);
@@ -131,7 +134,6 @@ public class Database extends SQLiteOpenHelper {
         // execute the query
         SQLiteDatabase db = getDatabase();
         try {
-            List<Takeoff> takeoffs = new ArrayList<>();
             Cursor cursor = db.rawQuery("select *, (select count(*) from schedule where schedule.takeoff_id = takeoff.takeoff_id and date(schedule.timestamp, 'unixepoch') = date('now')) as pilots_today from takeoff order by " + orderBy + " limit " + maxResult, null);
             while (cursor.moveToNext())
                 takeoffs.add(Takeoff.create(new ImprovedCursor(cursor)));
