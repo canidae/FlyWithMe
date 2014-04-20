@@ -146,11 +146,11 @@ public class TakeoffSchedule extends Fragment {
 
         // don't show buttons for registering flight if user haven't set a name
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        String pilotName = prefs.getString("pref_schedule_pilot_name", null);
+        String pilotName = prefs.getString("pref_schedule_pilot_name", "").trim();
         TextView mayNotRegister = (TextView) getActivity().findViewById(R.id.scheduleMayNotRegister);
         TableLayout flightTime = (TableLayout) getActivity().findViewById(R.id.scheduleFlightTime);
         Button scheduleFlight = (Button) getActivity().findViewById(R.id.scheduleFlightButton);
-        if (pilotName == null || "".equals(pilotName.trim())) {
+        if ("".equals(pilotName)) {
             mayNotRegister.setVisibility(View.VISIBLE);
             flightTime.setVisibility(View.GONE);
             scheduleFlight.setVisibility(View.GONE);
@@ -205,19 +205,19 @@ public class TakeoffSchedule extends Fragment {
         scheduleFlight.setText(getString(R.string.scheduling_flight));
         scheduleFlight.setEnabled(false);
 
-        // TODO: currently we need to make every takeoff we schedule for as favourites
-        // TODO: this is because that's the only way we can fetch schedule if that takeoff is far away
+        // TODO: currently we need to mark every takeoff we schedule for as favourites
+        // TODO: this is because that's the only way we can fetch schedule for that takeoff if it's far away
         takeoff.setFavourite(true);
         Database.updateFavourite(takeoff);
 
-        new ScheduleFlightTask(false).execute((long) takeoff.getId(), timestamp);
+        new ScheduleFlightTask(ScheduleType.SCHEDULE).execute((long) takeoff.getId(), timestamp);
     }
 
     private void unscheduleFlight(long timestamp) {
         Button scheduleFlight = (Button) getActivity().findViewById(R.id.scheduleFlightButton);
         scheduleFlight.setText(getString(R.string.scheduling_flight));
         scheduleFlight.setEnabled(false);
-        new ScheduleFlightTask(true).execute((long) takeoff.getId(), timestamp);
+        new ScheduleFlightTask(ScheduleType.UNSCHEDULE).execute((long) takeoff.getId(), timestamp);
     }
 
     private class TakeoffScheduleAdapter extends BaseExpandableListAdapter {
@@ -295,31 +295,36 @@ public class TakeoffSchedule extends Fragment {
             final ImageButton joinOrLeave = (ImageButton) convertView.findViewById(R.id.joinOrLeaveButton);
 
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(FlyWithMe.getInstance());
-            String name = prefs.getString("pref_schedule_pilot_name", "");
+            String pilotName = prefs.getString("pref_schedule_pilot_name", "").trim();
             boolean foundPilot = false;
             for (Pilot pilot : entryGroup.getValue()) {
-                if (name.equals(pilot.getName())) {
+                if (pilotName.equals(pilot.getName())) {
                     foundPilot = true;
                     break;
                 }
             }
-            if (foundPilot) {
-                joinOrLeave.setTag(Boolean.TRUE); // used in onClick below to call unschedule instead of schedule
-                joinOrLeave.setImageResource(android.R.drawable.ic_delete);
+            if ("".equals(pilotName)) {
+                joinOrLeave.setVisibility(View.GONE);
             } else {
-                joinOrLeave.setTag(null); // used in onClick below to call schedule instead of unschedule
-                joinOrLeave.setImageResource(android.R.drawable.ic_input_add);
-            }
-
-            joinOrLeave.setOnClickListener(new OnClickListener() {
-                public void onClick(View v) {
-                    if (joinOrLeave.getTag() != null) {
-                        unscheduleFlight(date.getTime());
-                    } else {
-                        scheduleFlight(date.getTime());
-                    }
+                joinOrLeave.setVisibility(View.VISIBLE);
+                if (foundPilot) {
+                    joinOrLeave.setTag(Boolean.TRUE); // used in onClick below to call unschedule instead of schedule
+                    joinOrLeave.setImageResource(android.R.drawable.ic_delete);
+                } else {
+                    joinOrLeave.setTag(null); // used in onClick below to call schedule instead of unschedule
+                    joinOrLeave.setImageResource(android.R.drawable.ic_input_add);
                 }
-            });
+
+                joinOrLeave.setOnClickListener(new OnClickListener() {
+                    public void onClick(View v) {
+                        if (joinOrLeave.getTag() != null) {
+                            unscheduleFlight(date.getTime());
+                        } else {
+                            scheduleFlight(date.getTime());
+                        }
+                    }
+                });
+            }
             return convertView;
         }
 
@@ -372,20 +377,23 @@ public class TakeoffSchedule extends Fragment {
         }
     }
 
-    private class ScheduleFlightTask extends AsyncTask<Long, Void, Void> {
-        private final boolean unschedule;
+    private enum ScheduleType {
+        SCHEDULE, UNSCHEDULE
+    }
 
-        // TODO: "new ScheduleFlightTask(false)" seems weird for scheduling
-        public ScheduleFlightTask(boolean unschedule) {
-            this.unschedule = unschedule;
+    private class ScheduleFlightTask extends AsyncTask<Long, Void, Void> {
+        private ScheduleType scheduleType;
+
+        public ScheduleFlightTask(ScheduleType scheduleType) {
+            this.scheduleType = scheduleType;
         }
 
         @Override
         protected Void doInBackground(Long... params) {
-            if (unschedule)
-                ScheduleService.unscheduleFlight(params[0].intValue(), params[1]);
-            else
+            if (scheduleType == ScheduleType.SCHEDULE)
                 ScheduleService.scheduleFlight(params[0].intValue(), params[1]);
+            else
+                ScheduleService.unscheduleFlight(params[0].intValue(), params[1]);
             ScheduleService.updateSchedule();
             return null;
         }

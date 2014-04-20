@@ -36,14 +36,6 @@ public class ScheduleService extends IntentService {
     private static final String SERVER_URL = "http://flywithme-server.appspot.com/fwm";
     private static final int NOTIFICATION_ID = 42;
     private static final long MS_IN_DAY = 86400000;
-    private static long pilotId = 0;
-    private static String pilotName = null;
-    private static String pilotPhone = null;
-    private static int fetchTakeoffs = 0;
-    private static int startTime = 0;
-    private static int stopTime = 0;
-    private static long updateInterval = 0;
-    private static boolean showNotification = false;
     private long lastUpdate = 0;
 
     public ScheduleService() {
@@ -67,8 +59,11 @@ public class ScheduleService extends IntentService {
             long now = System.currentTimeMillis();
             long localHour = (now + TimeZone.getDefault().getOffset(now)) % MS_IN_DAY;
 
-            // check for changes to settings
-            updatePreferenceValues();
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+            int fetchTakeoffs = Integer.parseInt(prefs.getString("pref_schedule_fetch_takeoffs", "-1"));
+            int startTime = Integer.parseInt(prefs.getString("pref_schedule_start_fetch_time", "28800")) * 1000;
+            int stopTime = Integer.parseInt(prefs.getString("pref_schedule_stop_fetch_time", "72000")) * 1000;
+            int updateInterval = Integer.parseInt(prefs.getString("pref_schedule_update_interval", "3600")) * 1000;
 
             // these two values tells us whether we're between start time and stop time
             // if startTime == stopTime then we always want to update (setting maxValue to 24 hours)
@@ -85,7 +80,9 @@ public class ScheduleService extends IntentService {
             updateSchedule();
 
             // show/update notification
+            boolean showNotification = prefs.getBoolean("pref_schedule_notification", true);
             if (showNotification) {
+                String pilotName = prefs.getString("pref_schedule_pilot_name", "").trim();
                 List<String> takeoffsWithScheduledFlightsToday = Database.getTakeoffsWithScheduledFlightsToday(pilotName);
                 if (!notificationTakeoffs.containsAll(takeoffsWithScheduledFlightsToday)) {
                     // notify the user that people are planning to fly today
@@ -103,6 +100,8 @@ public class ScheduleService extends IntentService {
 
     public static void updateSchedule() {
         Location location = FlyWithMe.getInstance().getLocation();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(FlyWithMe.getInstance());
+        int fetchTakeoffs = Integer.parseInt(prefs.getString("pref_schedule_fetch_takeoffs", "-1"));
         List<Takeoff> takeoffs = Database.getTakeoffs(location.getLatitude(), location.getLongitude(), fetchTakeoffs, true);
         try {
             Log.i(ScheduleService.class.getName(), "Fetching schedule from server");
@@ -125,6 +124,15 @@ public class ScheduleService extends IntentService {
 
     public static void scheduleFlight(int takeoffId, long timestamp) {
         try {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(FlyWithMe.getInstance());
+            long pilotId = prefs.getLong("pref_schedule_pilot_id", 0);
+            while (pilotId == 0) {
+                // generate a random ID for identifying the pilot's registrations
+                pilotId = (new Random()).nextLong();
+                prefs.edit().putLong("pref_schedule_pilot_id", pilotId).commit();
+            }
+            String pilotName = prefs.getString("pref_schedule_pilot_name", "").trim();
+            String pilotPhone = prefs.getString("pref_schedule_pilot_phone", "").trim();
             HttpURLConnection con = (HttpURLConnection) new URL(SERVER_URL).openConnection();
             con.setRequestMethod("POST");
             con.setDoOutput(true);
@@ -145,6 +153,8 @@ public class ScheduleService extends IntentService {
 
     public static void unscheduleFlight(int takeoffId, long timestamp) {
         try {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(FlyWithMe.getInstance());
+            long pilotId = prefs.getLong("pref_schedule_pilot_id", 0);
             HttpURLConnection con = (HttpURLConnection) new URL(SERVER_URL).openConnection();
             con.setRequestMethod("POST");
             con.setDoOutput(true);
@@ -185,22 +195,5 @@ public class ScheduleService extends IntentService {
         } catch (IOException e) {
             Log.w(ScheduleService.class.getName(), "Fetching flight schedule failed unexpectedly", e);
         }
-    }
-
-    private void updatePreferenceValues() {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        pilotId = prefs.getLong("pref_schedule_pilot_id", 0);
-        while (pilotId == 0) {
-            // generate a random ID for identifying the pilot's registrations
-            pilotId = (new Random()).nextLong();
-            prefs.edit().putLong("pref_schedule_pilot_id", pilotId).commit();
-        }
-        pilotName = prefs.getString("pref_schedule_pilot_name", "");
-        pilotPhone = prefs.getString("pref_schedule_pilot_phone", "");
-        fetchTakeoffs = Integer.parseInt(prefs.getString("pref_schedule_fetch_takeoffs", "-1"));
-        startTime = Integer.parseInt(prefs.getString("pref_schedule_start_fetch_time", "28800")) * 1000;
-        stopTime = Integer.parseInt(prefs.getString("pref_schedule_stop_fetch_time", "72000")) * 1000;
-        updateInterval = Integer.parseInt(prefs.getString("pref_schedule_update_interval", "3600")) * 1000;
-        showNotification = prefs.getBoolean("pref_schedule_notification", true);
     }
 }
