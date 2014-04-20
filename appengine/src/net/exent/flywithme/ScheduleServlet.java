@@ -291,7 +291,7 @@ public class ScheduleServlet extends HttpServlet {
                 int pilotCounter = 0;
                 for (Pilot pilot : pilots) {
                     if (++pilotCounter > 10)
-                        break; // max 20 pilots per timestamp
+                        break; // max 10 pilots per timestamp
                     // make sure we don't send long strings by capping them to 20 characters
                     outputStream.writeUTF(pilot.getName().length() > 20 ? pilot.getName().substring(0, 20) : pilot.getName());
                     outputStream.writeUTF(pilot.getPhone().length() > 20 ? pilot.getPhone().substring(0, 20) : pilot.getPhone());
