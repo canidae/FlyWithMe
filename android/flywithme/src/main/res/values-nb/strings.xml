@@ -31,7 +31,7 @@
     <string name="pilots">Piloter</string>
     <string name="time">Tid</string>
     <string name="no_scheduled_flights">Ingen registrerte flyplaner</string>
-    <string name="may_not_register">Du har ikke satt navn/tlf i innstillingene. Du må gjøre dette for å registrere en planlagt flytur.</string>
+    <string name="may_not_register">Du har ikke satt navn/tlf i innstillingene. Du må gjøre dette for å registrere en flyplan.</string>
     <string name="schedule_flight">Registrer flyplan</string>
     <string name="scheduling_flight">Registrerer flyplan</string>
     <string name="unscheduling_flight">Avregistrerer flyplan</string>
@@ -65,10 +65,10 @@
     </string-array>
 
     <string name="pref_schedule_pilot_name">Navnet mitt</string>
-    <string name="pref_schedule_pilot_name_description">Ved registrering av planlagt flytur vil dette navnet bli vist til andre piloter. Dette feltet må settes (ellers får du ikke lov til å registrere planlagt flytur).</string>
+    <string name="pref_schedule_pilot_name_description">Ved registrering av flyplan vil dette navnet bli vist til andre piloter. Dette feltet må settes (ellers får du ikke lov til å registrere flyplan).</string>
 
     <string name="pref_schedule_pilot_phone">Telefonnummeret mitt</string>
-    <string name="pref_schedule_pilot_phone_description">Ved registrering av planlagt flytur vil dette telefonnummeret bli vist til andre piloter. Du må ikke fylle ut dette, men det er anbefalt slik at andre piloter kan kontakte deg.</string>
+    <string name="pref_schedule_pilot_phone_description">Ved registrering av flyplan vil dette telefonnummeret bli vist til andre piloter. Du må ikke fylle ut dette, men det er anbefalt slik at andre piloter kan kontakte deg.</string>
 
     <string name="pref_schedule_start_fetch_time">Oppdater flyprogram fra</string>
     <string name="pref_schedule_stop_fetch_time">Oppdater flyprogram til</string>

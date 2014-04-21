@@ -41,7 +41,7 @@
 
     <!-- Schedule preferences -->
     <string name="pref_schedule_fetch_takeoffs">Fetch takeoff schedules</string>
-    <string name="pref_schedule_fetch_takeoffs_default_value">50</string>
+    <string name="pref_schedule_fetch_takeoffs_default_value" translatable="false">50</string>
     <string-array name="pref_schedule_fetch_takeoffs_keys">
         <item>Disabled</item>
         <item>10 takeoffs</item>
@@ -50,7 +50,7 @@
         <item>100 takeoffs</item>
         <item>200 takeoffs</item>
     </string-array>
-    <string-array name="pref_schedule_fetch_takeoffs_values">
+    <string-array name="pref_schedule_fetch_takeoffs_values" translatable="false">
         <item>-1</item>
         <item>10</item>
         <item>25</item>
@@ -70,7 +70,7 @@
     <string name="pref_schedule_notification">Notifications</string>
 
     <string name="pref_schedule_update_interval">Update interval</string>
-    <string name="pref_schedule_update_interval_default_value">3600</string>
+    <string name="pref_schedule_update_interval_default_value" translatable="false">3600</string>
     <string-array name="pref_schedule_update_interval_keys">
         <item>Every 15 min</item>
         <item>Every 30 min</item>
@@ -79,7 +79,7 @@
         <item>Every 4 hour</item>
         <item>Every 8 hour</item>
     </string-array>
-    <string-array name="pref_schedule_update_interval_values">
+    <string-array name="pref_schedule_update_interval_values" translatable="false">
         <item>900</item>
         <item>1800</item>
         <item>3600</item>
@@ -89,10 +89,10 @@
     </string-array>
 
     <string name="pref_schedule_start_fetch_time">Start fetching at</string>
-    <string name="pref_schedule_start_fetch_time_default_value">25200</string>
+    <string name="pref_schedule_start_fetch_time_default_value" translatable="false">25200</string>
     <string name="pref_schedule_stop_fetch_time">Stop fetching at</string>
-    <string name="pref_schedule_stop_fetch_time_default_value">68400</string>
-    <string-array name="pref_schedule_fetch_time_keys">
+    <string name="pref_schedule_stop_fetch_time_default_value" translatable="false">68400</string>
+    <string-array name="pref_schedule_fetch_time_keys" translatable="false">
         <item>00.00</item>
         <item>01.00</item>
         <item>02.00</item>
@@ -118,7 +118,7 @@
         <item>22.00</item>
         <item>23.00</item>
     </string-array>
-    <string-array name="pref_schedule_fetch_time_values">
+    <string-array name="pref_schedule_fetch_time_values" translatable="false">
         <item>0</item>
         <item>3600</item>
         <item>7200</item>

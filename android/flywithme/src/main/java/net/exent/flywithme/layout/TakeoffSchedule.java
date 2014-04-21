@@ -31,7 +31,6 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -44,6 +43,9 @@ public class TakeoffSchedule extends Fragment {
     public void showTakeoffSchedule(Takeoff takeoff) {
         try {
             this.takeoff = takeoff;
+
+            TextView takeoffName = (TextView) getActivity().findViewById(R.id.scheduleTakeoffName);
+            takeoffName.setText(takeoff.getName());
 
             // setup day buttons
             Button dayPlus = (Button) getActivity().findViewById(R.id.scheduleDayPlus);
