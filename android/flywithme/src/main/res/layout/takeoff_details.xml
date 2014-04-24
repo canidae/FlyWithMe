@@ -25,7 +25,8 @@
         android:layout_below="@+id/takeoffDetailsName"
         android:maxLines="1"
         android:text="@string/app_name"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:layout_alignBottom="@+id/takeoffDetailsWindroseNorth" />
 
     <TextView
         android:id="@+id/takeoffDetailsDescription"
@@ -33,11 +34,11 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
-        android:layout_below="@+id/takeoffDetailsWindroseNorth"
         android:scrollbars="vertical"
         android:autoLink="web"
         android:text="@string/app_name"
-        android:layout_above="@+id/scheduleTimeLabel" />
+        android:layout_above="@+id/scheduleTimeLabel"
+        android:layout_below="@+id/takeoffDetailsCoordAslHeight" />
 
     <ImageView
         android:id="@+id/takeoffDetailsWindroseNorth"
