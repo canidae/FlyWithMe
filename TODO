@@ -1,7 +1,6 @@
 - Search after takeoffs (text in name or description)
 - Push messages for schedule registrations
 - Crawl flightlog (and possibly other sites with takeoff database), clients can download updates (or push messages)
-- Increase characters in name
 - Web page for those without Android to register/view schedule?
 - Height limits with airspace polygons
 - Notification x hours before flight start, instead of "flying today"?

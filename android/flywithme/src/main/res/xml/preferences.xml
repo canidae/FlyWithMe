@@ -25,7 +25,7 @@
             android:dialogMessage="@string/pref_schedule_pilot_name_description" />
         <EditTextPreference
             android:key="pref_schedule_pilot_phone"
-            android:maxLength="20"
+            android:maxLength="40"
             android:inputType="phone"
             android:selectAllOnFocus="true"
             android:title="@string/pref_schedule_pilot_phone"
