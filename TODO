@@ -1,3 +1,7 @@
+Bugs:
+- Currently ~impossible to update takeoff data, we only read that file when database is created/upgraded
+
+Features:
 - Search after takeoffs (text in name or description)
 - Push messages for schedule registrations
 - Crawl flightlog (and possibly other sites with takeoff database), clients can download updates (or push messages)
