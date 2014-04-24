@@ -31,7 +31,7 @@
             android:title="@string/pref_schedule_pilot_phone"
             android:dialogTitle="@string/pref_schedule_pilot_phone"
             android:dialogMessage="@string/pref_schedule_pilot_phone_description" />
-        <SwitchPreference
+        <CheckBoxPreference
             android:defaultValue="true"
             android:key="pref_schedule_notification"
             android:title="@string/pref_schedule_notification" />

@@ -82,6 +82,12 @@ public class Preferences extends PreferenceFragment implements SharedPreferences
 
     private void updateDynamicPreferenceScreen() {
         ListPreference scheduleFetchTakeoffs = (ListPreference) findPreference("pref_schedule_fetch_takeoffs");
+        if (scheduleFetchTakeoffs == null) {
+            // this shouldn't really happen, but apparently it does
+            // for now, just return and hope that the method will be called again soon enough
+            Log.w(getClass().getName(), "Unable to find preference widgets, can't update preference screen");
+            return;
+        }
         scheduleFetchTakeoffs.setOnPreferenceChangeListener(preferenceChangeListener);
         scheduleFetchTakeoffs.setSummary(scheduleFetchTakeoffs.getEntry());
 
@@ -92,7 +98,7 @@ public class Preferences extends PreferenceFragment implements SharedPreferences
         schedulePilotName.setSummary(schedulePilotName.getText());
         EditTextPreference schedulePilotPhone = (EditTextPreference) findPreference("pref_schedule_pilot_phone");
         schedulePilotPhone.setSummary(schedulePilotPhone.getText());
-        SwitchPreference scheduleNotification = (SwitchPreference) findPreference("pref_schedule_notification");
+        CheckBoxPreference scheduleNotification = (CheckBoxPreference) findPreference("pref_schedule_notification");
         scheduleNotification.setOnPreferenceChangeListener(preferenceChangeListener);
         ListPreference scheduleFetchInterval = (ListPreference) findPreference("pref_schedule_update_interval");
         scheduleFetchInterval.setOnPreferenceChangeListener(preferenceChangeListener);
