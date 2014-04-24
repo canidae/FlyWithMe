@@ -15,6 +15,7 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.location.Location;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.method.LinkMovementMethod;
@@ -133,7 +134,12 @@ public class TakeoffDetails extends Fragment {
             flyScheduleButton.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                 @Override
                 public void onGlobalLayout() {
-                    flyScheduleButton.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+                        // we need these for pre API 16 Androids. AAH! you get no warning that app will be incompatible if you only use the non-deprecated method!
+                        flyScheduleButton.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                    } else {
+                        flyScheduleButton.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                    }
                     drawFlySchedule(flyScheduleButton);
                 }
             });
