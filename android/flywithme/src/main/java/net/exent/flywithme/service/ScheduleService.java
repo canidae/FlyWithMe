@@ -83,7 +83,7 @@ public class ScheduleService extends IntentService {
             boolean showNotification = prefs.getBoolean("pref_schedule_notification", true);
             if (showNotification) {
                 String pilotName = prefs.getString("pref_schedule_pilot_name", "").trim();
-                List<String> takeoffsWithScheduledFlightsToday = Database.getTakeoffsWithScheduledFlightsToday(pilotName);
+                List<String> takeoffsWithScheduledFlightsToday = Database.getTakeoffsWithUpcomingFlights(pilotName);
                 if (!notificationTakeoffs.containsAll(takeoffsWithScheduledFlightsToday)) {
                     // notify the user that people are planning to fly today
                     notificationTakeoffs = takeoffsWithScheduledFlightsToday;

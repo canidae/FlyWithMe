@@ -69,13 +69,13 @@ public class Database extends SQLiteOpenHelper {
         }
     }
 
-    public static synchronized List<String> getTakeoffsWithScheduledFlightsToday(String ignorePilot) {
+    public static synchronized List<String> getTakeoffsWithUpcomingFlights(String ignorePilot) {
         // ignorePilot is mainly used to ignore our own registrations
         // and yes, it will fail when the user change name
         List<String> takeoffs = new ArrayList<>();
         SQLiteDatabase db = getDatabase();
         try {
-            Cursor cursor = db.rawQuery("select distinct takeoff.name from takeoff join schedule on takeoff.takeoff_id = schedule.takeoff_id where date(schedule.timestamp, 'unixepoch') = date('now') and schedule.pilot_name != ?", new String[]{ignorePilot});
+            Cursor cursor = db.rawQuery("select distinct takeoff.name from takeoff join schedule on takeoff.takeoff_id = schedule.takeoff_id where datetime(schedule.timestamp, 'unixepoch') >= datetime('now') and datetime(schedule.timestamp, 'unixepoch') <= datetime('now', '+2 days') and schedule.pilot_name != ?", new String[]{ignorePilot});
             while (cursor.moveToNext())
                 takeoffs.add(cursor.getString(0));
             return takeoffs;
