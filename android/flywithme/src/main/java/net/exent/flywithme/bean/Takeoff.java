@@ -41,6 +41,7 @@ public class Takeoff implements Parcelable {
     private int exits;
     private boolean favourite;
     private int pilotsToday;
+    private int pilotsLater;
     private Bitmap noaaForecast;
     private long noaaUpdated;
 
@@ -101,9 +102,11 @@ public class Takeoff implements Parcelable {
     public static Takeoff create(Database.ImprovedCursor cursor) {
         int takeoffId = cursor.getIntOrThrow("takeoff_id");
         int pilotsToday = cursor.getInt("pilots_today");
+        int pilotsLater = cursor.getInt("pilots_later");
         Takeoff takeoff = takeoffCache.get(takeoffId);
         if (takeoff != null) {
             takeoff.setPilotsToday(pilotsToday);
+            takeoff.setPilotsLater(pilotsLater);
             return takeoff;
         }
         takeoff = new Takeoff(cursor);
@@ -193,6 +196,14 @@ public class Takeoff implements Parcelable {
 
     public void setPilotsToday(int pilotsToday) {
         this.pilotsToday = pilotsToday;
+    }
+
+    public int getPilotsLater() {
+        return pilotsLater;
+    }
+
+    public void setPilotsLater(int pilotsLater) {
+        this.pilotsLater = pilotsLater;
     }
 
     public Bitmap getNoaaforecast() {

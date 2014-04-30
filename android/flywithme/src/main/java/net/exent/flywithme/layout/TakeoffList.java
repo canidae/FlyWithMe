@@ -68,6 +68,11 @@ public class TakeoffList extends Fragment {
                     return 1;
                 else if (lhs.getPilotsToday() > rhs.getPilotsToday())
                     return -1;
+                // both or neither have scheduled flights today, sort by those who have flights later
+                if (lhs.getPilotsLater() < rhs.getPilotsLater())
+                    return 1;
+                else if (lhs.getPilotsLater() > rhs.getPilotsLater())
+                    return -1;
                 // both or neither have scheduled flights, sort by distance from user
                 if (location.distanceTo(lhs.getLocation()) > location.distanceTo(rhs.getLocation()))
                     return 1;
@@ -121,8 +126,13 @@ public class TakeoffList extends Fragment {
             if (takeoff.isFavourite())
                 takeoffName.setTextColor(Color.CYAN);
             String takeoffIntoText = getContext().getString(R.string.distance) + ": " + (int) location.distanceTo(takeoff.getLocation()) / 1000 + "km";
-            if (takeoff.getPilotsToday() > 0)
-                takeoffIntoText += ", " + getContext().getString(R.string.pilots_today) + ": " + takeoff.getPilotsToday();
+            if (takeoff.getPilotsToday() > 0 || takeoff.getPilotsLater() > 0) {
+                takeoffIntoText += ", " + getContext().getString(R.string.pilots) + ": ";
+                if (takeoff.getPilotsToday() > 0)
+                    takeoffIntoText += takeoff.getPilotsToday() + " " + getContext().getString(R.string.today);
+                if (takeoff.getPilotsLater() > 0)
+                    takeoffIntoText += (takeoff.getPilotsToday() > 0 ? ", " : "") + takeoff.getPilotsLater() + " " + getContext().getString(R.string.later);
+            }
             takeoffInfo.setText(takeoffIntoText);
             /* windpai */
             ImageView windroseNorth = (ImageView) rowView.findViewById(R.id.takeoffListEntryWindroseNorth);

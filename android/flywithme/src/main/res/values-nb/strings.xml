@@ -10,7 +10,9 @@
     <!-- General -->
     <string name="app_name">Fly With Me!</string>
     <string name="distance">Luftavstand</string>
-    <string name="pilots_today">Piloter i dag</string>
+    <string name="pilots">Piloter</string>
+    <string name="today">I dag</string>
+    <string name="later">Senere</string>
     <string name="asl">moh.</string>
     <string name="height">Høyde</string>
     <string name="cancel">Avbryt</string>
@@ -26,9 +28,7 @@
 
     <!-- Flight schedule graph -->
     <string name="graph_text">Flyplan (klikk for detaljer)</string>
-    <string name="today">I dag</string>
     <string name="date">Dato</string>
-    <string name="pilots">Piloter</string>
     <string name="time">Tid</string>
     <string name="no_scheduled_flights">Ingen registrerte flyplaner</string>
     <string name="may_not_register">Du har ikke satt navn/tlf i innstillingene. Du må gjøre dette for å registrere en flyplan.</string>

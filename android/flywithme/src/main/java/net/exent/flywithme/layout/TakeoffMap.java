@@ -69,6 +69,7 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
     private static Bitmap markerWestBitmap;
     private static Bitmap markerNorthwestBitmap;
     private static Bitmap markerExclamation;
+    private static Bitmap markerExclamationYellow;
     private TakeoffMapListener callback;
 
     public void drawMap() {
@@ -153,6 +154,7 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
             markerWestBitmap = BitmapFactory.decodeResource(getResources(), R.raw.mapmarker_octant_w);
             markerNorthwestBitmap = BitmapFactory.decodeResource(getResources(), R.raw.mapmarker_octant_nw);
             markerExclamation = BitmapFactory.decodeResource(getResources(), R.raw.mapmarker_exclamation);
+            markerExclamationYellow = BitmapFactory.decodeResource(getResources(), R.raw.mapmarker_exclamation_yellow);
         }
     }
 
@@ -250,6 +252,8 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
                             canvas.drawBitmap(markerNorthwestBitmap, 0, 0, paint);
                         if (takeoff.getPilotsToday() > 0)
                             canvas.drawBitmap(markerExclamation, 0, 0, paint);
+                        else if (takeoff.getPilotsLater() > 0)
+                            canvas.drawBitmap(markerExclamationYellow, 0, 0, paint);
                         String snippet = getString(R.string.height) + ": " + takeoff.getHeight() + ", " + getString(R.string.distance) + ": " + (int) FlyWithMe.getInstance().getLocation().distanceTo(takeoff.getLocation()) / 1000 + "km";
                         MarkerOptions markerOptions = new MarkerOptions().position(new LatLng(takeoff.getLocation().getLatitude(), takeoff.getLocation().getLongitude())).title(takeoff.getName()).snippet(snippet).icon(BitmapDescriptorFactory.fromBitmap(bitmap)).anchor(0.5f, 0.875f);
                         publishProgress(takeoff, markerOptions);
