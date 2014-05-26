@@ -242,11 +242,11 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
             } else if (lastFragment.equals("takeoffList")) {
                 showTakeoffList();
             } else if (lastFragment.startsWith("takeoffDetails")) {
-                showTakeoffDetails(Database.getTakeoff(Integer.parseInt(lastFragment.substring(lastFragment.indexOf(',') + 1))));
+                showTakeoffDetails(new Database(getInstance()).getTakeoff(Integer.parseInt(lastFragment.substring(lastFragment.indexOf(',') + 1))));
             } else if (lastFragment.startsWith("noaaForecast")) {
-                showNoaaForecast(Database.getTakeoff(Integer.parseInt(lastFragment.substring(lastFragment.indexOf(',') + 1))));
+                showNoaaForecast(new Database(getInstance()).getTakeoff(Integer.parseInt(lastFragment.substring(lastFragment.indexOf(',') + 1))));
             } else if (lastFragment.startsWith("takeoffSchedule")) {
-                showTakeoffSchedule(Database.getTakeoff(Integer.parseInt(lastFragment.substring(lastFragment.indexOf(',') + 1))));
+                showTakeoffSchedule(new Database(getInstance()).getTakeoff(Integer.parseInt(lastFragment.substring(lastFragment.indexOf(',') + 1))));
             }
         }
     }

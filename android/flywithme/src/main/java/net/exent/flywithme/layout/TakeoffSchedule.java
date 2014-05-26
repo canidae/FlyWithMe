@@ -211,7 +211,7 @@ public class TakeoffSchedule extends Fragment {
         // TODO: currently we need to mark every takeoff we schedule for as favourites
         // TODO: this is because that's the only way we can fetch schedule for that takeoff if it's far away
         takeoff.setFavourite(true);
-        Database.updateFavourite(takeoff);
+        new Database(getActivity()).updateFavourite(takeoff);
 
         new ScheduleFlightTask(ScheduleType.SCHEDULE).execute((long) takeoff.getId(), timestamp);
     }
@@ -232,7 +232,7 @@ public class TakeoffSchedule extends Fragment {
         }
 
         public void updateData() {
-            schedule = Database.getTakeoffSchedule(takeoff);
+            schedule = new Database(getActivity()).getTakeoffSchedule(takeoff);
             notifyDataSetChanged();
         }
 
@@ -398,7 +398,7 @@ public class TakeoffSchedule extends Fragment {
                 ScheduleService.scheduleFlight(params[0].intValue(), params[1]);
             else
                 ScheduleService.unscheduleFlight(params[0].intValue(), params[1]);
-            ScheduleService.updateSchedule();
+            ScheduleService.updateSchedule(getActivity());
             return null;
         }
 

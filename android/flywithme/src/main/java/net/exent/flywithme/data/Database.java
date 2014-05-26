@@ -24,10 +24,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 public class Database extends SQLiteOpenHelper {
-    /* NOTE: Do not use this directly, use it through getInstance() */
-    private static Database databaseInstance;
-
-    private Database(Context context) {
+    public Database(Context context) {
         super(context, "flywithme", null, 2);
     }
 
@@ -47,9 +44,11 @@ public class Database extends SQLiteOpenHelper {
         }
     }
 
-    public synchronized static Map<Date, Set<Pilot>> getTakeoffSchedule(Takeoff takeoff) {
+    public synchronized Map<Date, Set<Pilot>> getTakeoffSchedule(Takeoff takeoff) {
         Map<Date, Set<Pilot>> schedule = new TreeMap<>();
-        SQLiteDatabase db = getDatabase();
+        SQLiteDatabase db = getReadableDatabase();
+        if (db == null)
+            throw new IllegalArgumentException("Unable to get database object");
         try {
             Cursor cursor = db.query("schedule", new String[]{"timestamp", "pilot_name", "pilot_phone"}, "takeoff_id = " + takeoff.getId() + " and date(schedule.timestamp, 'unixepoch') >= date('now')", null, null, null, "timestamp");
             while (cursor.moveToNext()) {
@@ -69,11 +68,13 @@ public class Database extends SQLiteOpenHelper {
         }
     }
 
-    public static synchronized List<String> getTakeoffsWithUpcomingFlights(String ignorePilot) {
+    public synchronized List<String> getTakeoffsWithUpcomingFlights(String ignorePilot) {
         // ignorePilot is mainly used to ignore our own registrations
         // and yes, it will fail when the user change name
         List<String> takeoffs = new ArrayList<>();
-        SQLiteDatabase db = getDatabase();
+        SQLiteDatabase db = getReadableDatabase();
+        if (db == null)
+            throw new IllegalArgumentException("Unable to get database object");
         try {
             Cursor cursor = db.rawQuery("select distinct takeoff.name from takeoff join schedule on takeoff.takeoff_id = schedule.takeoff_id where datetime(schedule.timestamp, 'unixepoch') >= datetime('now') and datetime(schedule.timestamp, 'unixepoch') <= datetime('now', '+2 days') and schedule.pilot_name != ?", new String[]{ignorePilot});
             while (cursor.moveToNext())
@@ -84,8 +85,10 @@ public class Database extends SQLiteOpenHelper {
         }
     }
 
-    public synchronized static void updateTakeoffSchedule(int takeoffId, Map<Long, List<Pilot>> schedule) {
-        SQLiteDatabase db = getDatabase();
+    public synchronized void updateTakeoffSchedule(int takeoffId, Map<Long, List<Pilot>> schedule) {
+        SQLiteDatabase db = getWritableDatabase();
+        if (db == null)
+            throw new IllegalArgumentException("Unable to get database object");
         try {
             // we'll fully replace the entries for this takeoff
             // we'll also delete old entries to clean up the database
@@ -105,8 +108,10 @@ public class Database extends SQLiteOpenHelper {
         }
     }
 
-    public synchronized static Takeoff getTakeoff(int takeoffId) {
-        SQLiteDatabase db = getDatabase();
+    public synchronized Takeoff getTakeoff(int takeoffId) {
+        SQLiteDatabase db = getReadableDatabase();
+        if (db == null)
+            throw new IllegalArgumentException("Unable to get database object");
         try {
             Cursor cursor = db.query("takeoff", Takeoff.COLUMNS, "takeoff_id = " + takeoffId, null, null, null, null);
             if (cursor.moveToNext())
@@ -117,10 +122,13 @@ public class Database extends SQLiteOpenHelper {
         }
     }
 
-    public synchronized static List<Takeoff> getTakeoffs(double latitude, double longitude, int maxResult, boolean includeFavourites) {
+    public synchronized List<Takeoff> getTakeoffs(double latitude, double longitude, int maxResult, boolean includeFavourites) {
         List<Takeoff> takeoffs = new ArrayList<>();
         if (maxResult <= 0)
             return takeoffs;
+        SQLiteDatabase db = getReadableDatabase();
+        if (db == null)
+            throw new IllegalArgumentException("Unable to get database object");
         // order result by approximate distance
         double latitudeRadians = latitude * Math.PI / 180.0;
         double latitudeCos = Math.cos(latitudeRadians);
@@ -132,7 +140,6 @@ public class Database extends SQLiteOpenHelper {
         orderBy += "(" + latitudeCos + " * latitude_cos * (longitude_cos * " + longitudeCos + " + longitude_sin * " + longitudeSin + ") + " + latitudeSin + " * latitude_sin) desc";
 
         // execute the query
-        SQLiteDatabase db = getDatabase();
         try {
             Cursor cursor = db.rawQuery("select *, (select count(*) from schedule where schedule.takeoff_id = takeoff.takeoff_id and date(schedule.timestamp, 'unixepoch') = date('now')) as pilots_today, (select count(*) from schedule where schedule.takeoff_id = takeoff.takeoff_id and date(schedule.timestamp, 'unixepoch') > date('now')) as pilots_later from takeoff order by " + orderBy + " limit " + maxResult, null);
             while (cursor.moveToNext())
@@ -143,21 +150,17 @@ public class Database extends SQLiteOpenHelper {
         }
     }
 
-    public synchronized static void updateFavourite(Takeoff takeoff) {
+    public synchronized void updateFavourite(Takeoff takeoff) {
         ContentValues contentValues = new ContentValues();
         contentValues.put("favourite", takeoff.isFavourite() ? 1 : 0);
-        SQLiteDatabase db = getDatabase();
+        SQLiteDatabase db = getWritableDatabase();
+        if (db == null)
+            throw new IllegalArgumentException("Unable to get database object");
         try {
             db.update("takeoff", contentValues, "takeoff_id = " + takeoff.getId(), null);
         } finally {
             db.close();
         }
-    }
-
-    private synchronized static SQLiteDatabase getDatabase() {
-        if (databaseInstance == null)
-            databaseInstance = new Database(FlyWithMe.getInstance());
-        return databaseInstance.getWritableDatabase();
     }
 
     private synchronized void createDatabaseV2(SQLiteDatabase db) {

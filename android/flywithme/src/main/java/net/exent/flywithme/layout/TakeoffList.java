@@ -55,7 +55,7 @@ public class TakeoffList extends Fragment {
         super.onStart();
 
         final Location location = FlyWithMe.getInstance().getLocation();
-        takeoffs = Database.getTakeoffs(location.getLatitude(), location.getLongitude(), 100, true);
+        takeoffs = new Database(getActivity()).getTakeoffs(location.getLatitude(), location.getLongitude(), 100, true);
 
         Collections.sort(takeoffs, new Comparator<Takeoff>() {
             public int compare(Takeoff lhs, Takeoff rhs) {

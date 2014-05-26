@@ -3,6 +3,7 @@ package net.exent.flywithme.service;
 import android.app.IntentService;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Location;
@@ -77,13 +78,13 @@ public class ScheduleService extends IntentService {
             }
             lastUpdate = now;
 
-            updateSchedule();
+            updateSchedule(getApplicationContext());
 
             // show/update notification
             boolean showNotification = prefs.getBoolean("pref_schedule_notification", true);
             if (showNotification) {
                 String pilotName = prefs.getString("pref_schedule_pilot_name", "").trim();
-                List<String> takeoffsWithScheduledFlightsToday = Database.getTakeoffsWithUpcomingFlights(pilotName);
+                List<String> takeoffsWithScheduledFlightsToday = new Database(getApplicationContext()).getTakeoffsWithUpcomingFlights(pilotName);
                 if (!notificationTakeoffs.containsAll(takeoffsWithScheduledFlightsToday)) {
                     // notify the user that people are planning to fly today
                     notificationTakeoffs = takeoffsWithScheduledFlightsToday;
@@ -98,11 +99,11 @@ public class ScheduleService extends IntentService {
         }
     }
 
-    public static void updateSchedule() {
+    public static void updateSchedule(Context context) {
         Location location = FlyWithMe.getInstance().getLocation();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(FlyWithMe.getInstance());
         int fetchTakeoffs = Integer.parseInt(prefs.getString("pref_schedule_fetch_takeoffs", "-1"));
-        List<Takeoff> takeoffs = Database.getTakeoffs(location.getLatitude(), location.getLongitude(), fetchTakeoffs, true);
+        List<Takeoff> takeoffs = new Database(context).getTakeoffs(location.getLatitude(), location.getLongitude(), fetchTakeoffs, true);
         try {
             Log.i(ScheduleService.class.getName(), "Fetching schedule from server");
             HttpURLConnection con = (HttpURLConnection) new URL(SERVER_URL).openConnection();
@@ -116,7 +117,7 @@ public class ScheduleService extends IntentService {
             outputStream.close();
             int responseCode = con.getResponseCode();
             Log.d(ScheduleService.class.getName(), "Response code: " + responseCode);
-            parseScheduleResponse(new DataInputStream(con.getInputStream()));
+            parseScheduleResponse(context, new DataInputStream(con.getInputStream()));
         } catch (IOException e) {
             Log.w(ScheduleService.class.getName(), "Fetching flight schedule failed unexpectedly", e);
         }
@@ -171,7 +172,7 @@ public class ScheduleService extends IntentService {
         }
     }
 
-    private static void parseScheduleResponse(DataInputStream inputStream) {
+    private static void parseScheduleResponse(Context context, DataInputStream inputStream) {
         try {
             while (true) {
                 int takeoffId = inputStream.readUnsignedShort();
@@ -190,7 +191,7 @@ public class ScheduleService extends IntentService {
                     }
                     schedule.put(timestamp, pilotList);
                 }
-                Database.updateTakeoffSchedule(takeoffId, schedule);
+                new Database(context).updateTakeoffSchedule(takeoffId, schedule);
             }
         } catch (IOException e) {
             Log.w(ScheduleService.class.getName(), "Fetching flight schedule failed unexpectedly", e);
