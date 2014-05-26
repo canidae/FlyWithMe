@@ -45,18 +45,7 @@ public class ScheduleService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        // setup notification builder
-        List<String> notificationTakeoffs = new ArrayList<>();
-        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this);
-        notificationBuilder.setSmallIcon(R.drawable.ic_launcher);
-        notificationBuilder.setContentTitle(getString(R.string.get_your_wing));
-        notificationBuilder.setAutoCancel(true);
-        PendingIntent notificationIntent = PendingIntent.getActivity(this, 0, new Intent(this, FlyWithMe.class), PendingIntent.FLAG_UPDATE_CURRENT);
-        notificationBuilder.setContentIntent(notificationIntent);
-
         while (true) {
-
             long now = System.currentTimeMillis();
             long localHour = (now + TimeZone.getDefault().getOffset(now)) % MS_IN_DAY;
 
@@ -83,6 +72,16 @@ public class ScheduleService extends IntentService {
             // show/update notification
             boolean showNotification = prefs.getBoolean("pref_schedule_notification", true);
             if (showNotification) {
+                // setup notification builder
+                List<String> notificationTakeoffs = new ArrayList<>();
+                NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this);
+                notificationBuilder.setSmallIcon(R.drawable.ic_launcher);
+                notificationBuilder.setContentTitle(getString(R.string.get_your_wing));
+                notificationBuilder.setAutoCancel(true);
+                PendingIntent notificationIntent = PendingIntent.getActivity(this, 0, new Intent(this, FlyWithMe.class), PendingIntent.FLAG_UPDATE_CURRENT);
+                notificationBuilder.setContentIntent(notificationIntent);
+
                 String pilotName = prefs.getString("pref_schedule_pilot_name", "").trim();
                 List<String> takeoffsWithScheduledFlightsToday = new Database(getApplicationContext()).getTakeoffsWithUpcomingFlights(pilotName);
                 if (!notificationTakeoffs.containsAll(takeoffsWithScheduledFlightsToday)) {
