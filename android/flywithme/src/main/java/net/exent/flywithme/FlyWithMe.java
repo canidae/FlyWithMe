@@ -15,16 +15,22 @@ import net.exent.flywithme.service.ScheduleService;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
 
+import java.io.DataInputStream;
+import java.io.EOFException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -256,4 +262,45 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
         backstack.add(name);
         getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, fragment, name).commit();
     }
+
+
+    private void importTakeoffs() {
+        DataInputStream inputStream = null;
+        try {
+            Database database = new Database(getApplicationContext());
+            inputStream = new DataInputStream(getInstance().getResources().openRawResource(R.raw.flywithme));
+            long importTimestamp = inputStream.readLong();
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+            long previousImportTimestamp = prefs.getLong("pref_import_timestamp", 0);
+            if (importTimestamp <= previousImportTimestamp)
+                return; // no need to import, already updated
+            // TODO: show message in fwmStatusText that we're importing takeoffs
+            while (true) {
+                /* loop breaks once we get an EOFException */
+                int takeoffId = inputStream.readShort();
+                String name = inputStream.readUTF();
+                String description = inputStream.readUTF();
+                int asl = inputStream.readShort();
+                int height = inputStream.readShort();
+                float latitude = inputStream.readFloat();
+                float longitude = inputStream.readFloat();
+                String windpai = inputStream.readUTF();
+                Takeoff takeoff = new Takeoff(takeoffId, name, description, asl, height, latitude, longitude, windpai, false);
+                database.updateTakeoff(takeoff);
+            }
+        } catch (EOFException e) {
+            /* expected to happen */
+        } catch (IOException e) {
+            Log.e(getClass().getName(), "Error when reading file with takeoffs", e);
+        } finally {
+            // TODO: hide fwmStatusText
+            try {
+                if (inputStream != null)
+                    inputStream.close();
+            } catch (IOException e) {
+                Log.w(getClass().getName(), "Unable to close file with takeoffs");
+            }
+        }
+    }
+
 }

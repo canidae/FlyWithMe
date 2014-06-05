@@ -1,8 +1,5 @@
 package net.exent.flywithme.data;
 
-import java.io.DataInputStream;
-import java.io.EOFException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -11,8 +8,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import net.exent.flywithme.FlyWithMe;
-import net.exent.flywithme.R;
 import net.exent.flywithme.bean.Pilot;
 import net.exent.flywithme.bean.Takeoff;
 
@@ -32,7 +27,6 @@ public class Database extends SQLiteOpenHelper {
     public synchronized void onCreate(SQLiteDatabase db) {
         Log.d(getClass().getName(), "onCreate()");
         createDatabaseV2(db);
-        importTakeoffs(db);
     }
 
     @Override
@@ -122,6 +116,17 @@ public class Database extends SQLiteOpenHelper {
         }
     }
 
+    public synchronized void updateTakeoff(Takeoff takeoff) {
+        SQLiteDatabase db = getWritableDatabase();
+        if (db == null)
+            throw new IllegalArgumentException("Unable to get database object");
+        ContentValues contentValues = takeoff.getContentValues();
+        if (db.update("takeoff", contentValues, "takeoff_id = " + takeoff.getId(), null) <= 0) {
+            // no rows updated, insert instead
+            db.insert("takeoff", null, contentValues);
+        }
+    }
+
     public synchronized List<Takeoff> getTakeoffs(double latitude, double longitude, int maxResult, boolean includeFavourites) {
         List<Takeoff> takeoffs = new ArrayList<>();
         if (maxResult <= 0)
@@ -170,47 +175,10 @@ public class Database extends SQLiteOpenHelper {
     }
 
     private synchronized void upgradeDatabaseToV2(SQLiteDatabase db) {
-        importTakeoffs(db);
         // move favourites
         db.execSQL("update takeoff set favourite = 1 where takeoff_id in (select takeoff_id from favourite)");
         // drop favourites table
         db.execSQL("drop table favourite");
-    }
-
-    private synchronized void importTakeoffs(SQLiteDatabase db) {
-        DataInputStream inputStream = null;
-        try {
-            inputStream = new DataInputStream(FlyWithMe.getInstance().getResources().openRawResource(R.raw.flywithme));
-            while (true) {
-                /* loop breaks once we get an EOFException */
-                int takeoffId = inputStream.readShort();
-                String name = inputStream.readUTF();
-                String description = inputStream.readUTF();
-                int asl = inputStream.readShort();
-                int height = inputStream.readShort();
-                float latitude = inputStream.readFloat();
-                float longitude = inputStream.readFloat();
-                String windpai = inputStream.readUTF();
-                Takeoff takeoff = new Takeoff(takeoffId, name, description, asl, height, latitude, longitude, windpai, false);
-                // NOTE: can not call updateTakeoff() here, that will cause a recursion
-                ContentValues contentValues = takeoff.getContentValues();
-                if (db.update("takeoff", contentValues, "takeoff_id = " + takeoff.getId(), null) <= 0) {
-                    // no rows updated, insert instead
-                    db.insert("takeoff", null, contentValues);
-                }
-            }
-        } catch (EOFException e) {
-            /* expected to happen */
-        } catch (IOException e) {
-            Log.e(getClass().getName(), "Error when reading file with takeoffs", e);
-        } finally {
-            try {
-                if (inputStream != null)
-                    inputStream.close();
-            } catch (IOException e) {
-                Log.w(getClass().getName(), "Unable to close file with takeoffs");
-            }
-        }
     }
 
     public static class ImprovedCursor {
