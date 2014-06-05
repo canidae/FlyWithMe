@@ -229,6 +229,20 @@ public class ScheduleServlet extends HttpServlet {
                     // <none>
                     break;
 
+                case 3:
+                    // input:
+                    // <none>
+                    responseCode = getScheduleV2(outputStream);
+                    // output:
+                    // <loop>
+                    //   ushort: takeoffId (if this value is 0, then the end of the list is reached and no more data should be attempted read)
+                    //   ushort: timestamps
+                    //     int: timestamp
+                    //     ushort: pilots
+                    //       string: pilot name
+                    //       string: pilot phone
+                    break;
+
                 default:
                     responseCode = HttpServletResponse.SC_NOT_FOUND;
                     break;
@@ -292,6 +306,37 @@ public class ScheduleServlet extends HttpServlet {
                 for (Pilot pilot : pilots) {
                     if (++pilotCounter > 10)
                         break; // max 10 pilots per timestamp
+                    // make sure we don't send long strings by capping name to 40 and phone to 20 characters
+                    outputStream.writeUTF(pilot.getName().length() > 40 ? pilot.getName().substring(0, 40) : pilot.getName());
+                    outputStream.writeUTF(pilot.getPhone().length() > 20 ? pilot.getPhone().substring(0, 20) : pilot.getPhone());
+                    sb.append(',').append(pilot.getName());
+                    sb.append(',').append(pilot.getPhone());
+                }
+            }
+            sb.append(" | ");
+        }
+        outputStream.writeShort(0);
+        log.info(sb.toString());
+        return HttpServletResponse.SC_OK;
+    }
+
+    /* fetch schedule for all takeoffs */
+    private static synchronized int getScheduleV2(final DataOutputStream outputStream) throws IOException {
+        StringBuilder sb = new StringBuilder("Get full schedule: ");
+        for (Map.Entry<Integer, TakeoffSchedule> takeoffSchedule : schedules.entrySet()) {
+            int takeoffId = takeoffSchedule.getKey();
+            SortedMap<Integer, Set<Pilot>> schedule = takeoffSchedule.getValue().getEntries();
+            outputStream.writeShort(takeoffId);
+            outputStream.writeShort(schedule.size());
+            sb.append(takeoffId);
+            sb.append(',').append(schedule.size());
+            for (Map.Entry<Integer, Set<Pilot>> scheduleEntry : schedule.entrySet()) {
+                outputStream.writeInt(scheduleEntry.getKey());
+                sb.append(',').append(scheduleEntry.getKey());
+                Set<Pilot> pilots = scheduleEntry.getValue();
+                outputStream.writeShort(pilots.size());
+                sb.append(',').append(pilots.size());
+                for (Pilot pilot : pilots) {
                     // make sure we don't send long strings by capping name to 40 and phone to 20 characters
                     outputStream.writeUTF(pilot.getName().length() > 40 ? pilot.getName().substring(0, 40) : pilot.getName());
                     outputStream.writeUTF(pilot.getPhone().length() > 20 ? pilot.getPhone().substring(0, 20) : pilot.getPhone());
