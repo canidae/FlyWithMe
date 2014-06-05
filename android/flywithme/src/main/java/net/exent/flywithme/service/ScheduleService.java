@@ -7,10 +7,19 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Location;
+import android.location.LocationManager;
+import android.os.Bundle;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesClient.ConnectionCallbacks;
+import com.google.android.gms.common.GooglePlayServicesClient.OnConnectionFailedListener;
+import com.google.android.gms.location.LocationClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
 
 import net.exent.flywithme.FlyWithMe;
 import net.exent.flywithme.R;
@@ -33,7 +42,7 @@ import java.util.TimeZone;
 /**
  * Created by canidae on 3/10/14.
  */
-public class ScheduleService extends IntentService {
+public class ScheduleService extends IntentService implements ConnectionCallbacks, OnConnectionFailedListener, LocationListener {
     private static final String SERVER_URL = "http://flywithme-server.appspot.com/fwm";
     private static final int NOTIFICATION_ID = 42;
     private static final long MS_IN_DAY = 86400000;
@@ -45,6 +54,12 @@ public class ScheduleService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
+        Location location;
+        // set location to Rikssenteret as default (in case we can't get location fix)
+        location = new Location(LocationManager.PASSIVE_PROVIDER);
+        location.setLongitude(61.874655);
+        location.setLatitude(9.154848);
+        LocationClient locationClient = new LocationClient(this, this, this);
         while (true) {
             long now = System.currentTimeMillis();
             long localHour = (now + TimeZone.getDefault().getOffset(now)) % MS_IN_DAY;
@@ -54,6 +69,8 @@ public class ScheduleService extends IntentService {
             int startTime = Integer.parseInt(prefs.getString("pref_schedule_start_fetch_time", "28800")) * 1000;
             int stopTime = Integer.parseInt(prefs.getString("pref_schedule_stop_fetch_time", "72000")) * 1000;
             int updateInterval = Integer.parseInt(prefs.getString("pref_schedule_update_interval", "3600")) * 1000;
+            LocationRequest request = LocationRequest.create().setInterval(updateInterval).setFastestInterval(updateInterval).setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+
 
             // these two values tells us whether we're between start time and stop time
             // if startTime == stopTime then we always want to update (setting maxValue to 24 hours)
@@ -67,7 +84,7 @@ public class ScheduleService extends IntentService {
             }
             lastUpdate = now;
 
-            updateSchedule(getApplicationContext());
+            updateSchedule(getApplicationContext(), location);
 
             // show/update notification
             boolean showNotification = prefs.getBoolean("pref_schedule_notification", true);
@@ -98,9 +115,8 @@ public class ScheduleService extends IntentService {
         }
     }
 
-    public static void updateSchedule(Context context) {
-        Location location = FlyWithMe.getInstance().getLocation();
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(FlyWithMe.getInstance());
+    public static void updateSchedule(Context context, Location location) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         int fetchTakeoffs = Integer.parseInt(prefs.getString("pref_schedule_fetch_takeoffs", "-1"));
         List<Takeoff> takeoffs = new Database(context).getTakeoffs(location.getLatitude(), location.getLongitude(), fetchTakeoffs, true);
         try {
@@ -122,9 +138,9 @@ public class ScheduleService extends IntentService {
         }
     }
 
-    public static void scheduleFlight(int takeoffId, long timestamp) {
+    public static void scheduleFlight(Context context, int takeoffId, long timestamp) {
         try {
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(FlyWithMe.getInstance());
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
             long pilotId = prefs.getLong("pref_schedule_pilot_id", 0);
             while (pilotId == 0) {
                 // generate a random ID for identifying the pilot's registrations
@@ -151,9 +167,9 @@ public class ScheduleService extends IntentService {
         }
     }
 
-    public static void unscheduleFlight(int takeoffId, long timestamp) {
+    public static void unscheduleFlight(Context context, int takeoffId, long timestamp) {
         try {
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(FlyWithMe.getInstance());
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
             long pilotId = prefs.getLong("pref_schedule_pilot_id", 0);
             HttpURLConnection con = (HttpURLConnection) new URL(SERVER_URL).openConnection();
             con.setRequestMethod("POST");
@@ -195,5 +211,25 @@ public class ScheduleService extends IntentService {
         } catch (IOException e) {
             Log.w(ScheduleService.class.getName(), "Fetching flight schedule failed unexpectedly", e);
         }
+    }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+        Log.d(getClass().getName(), "Location client connected");
+    }
+
+    @Override
+    public void onDisconnected() {
+        Log.d(getClass().getName(), "Location client disconnected");
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        Log.w(getClass().getName(), "Location client connection failed: " + connectionResult);
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        Log.d(getClass().getName(), "onLocationChanged");
     }
 }

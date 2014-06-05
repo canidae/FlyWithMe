@@ -395,10 +395,10 @@ public class TakeoffSchedule extends Fragment {
         @Override
         protected Void doInBackground(Long... params) {
             if (scheduleType == ScheduleType.SCHEDULE)
-                ScheduleService.scheduleFlight(params[0].intValue(), params[1]);
+                ScheduleService.scheduleFlight(getActivity(), params[0].intValue(), params[1]);
             else
-                ScheduleService.unscheduleFlight(params[0].intValue(), params[1]);
-            ScheduleService.updateSchedule(getActivity());
+                ScheduleService.unscheduleFlight(getActivity(), params[0].intValue(), params[1]);
+            ScheduleService.updateSchedule(getActivity(), FlyWithMe.getInstance().getLocation());
             return null;
         }
 
