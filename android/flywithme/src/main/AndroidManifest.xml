@@ -2,9 +2,10 @@
     package="net.exent.flywithme" >
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /> <!-- TODO: remove when we fix location fetching? see http://stackoverflow.com/questions/17089141/google-maps-api-android-v2-access-fine-location-permission-required-with-my -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
@@ -27,12 +28,19 @@
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyDxop_2QoIHu-zgof2EhWMC6f5gxAZQOpI" />
 
+        <receiver android:name=".service.FlyWithMeBroadcastReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <category android:name="android.intent.category.HOME" />
+            </intent-filter>
+        </receiver>
+
         <service
             android:name=".service.ScheduleService"
             android:exported="false"/>
 
         <activity
-            android:name="FlyWithMe"
+            android:name=".FlyWithMe"
             android:label="@string/app_name"
             android:theme="@android:style/Theme.NoTitleBar" >
             <intent-filter>
@@ -42,5 +50,4 @@
             </intent-filter>
         </activity>
     </application>
-
 </manifest>

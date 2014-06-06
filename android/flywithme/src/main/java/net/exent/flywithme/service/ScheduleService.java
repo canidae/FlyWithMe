@@ -7,7 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Location;
-import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
@@ -46,7 +46,9 @@ public class ScheduleService extends IntentService implements ConnectionCallback
     private static final String SERVER_URL = "http://flywithme-server.appspot.com/fwm";
     private static final int NOTIFICATION_ID = 42;
     private static final long MS_IN_DAY = 86400000;
-    private long lastUpdate = 0;
+
+    private LocationClient locationClient;
+    private long updateInterval;
 
     public ScheduleService() {
         super("ScheduleService");
@@ -54,65 +56,20 @@ public class ScheduleService extends IntentService implements ConnectionCallback
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        Location location;
-        // set location to Rikssenteret as default (in case we can't get location fix)
-        location = new Location(LocationManager.PASSIVE_PROVIDER);
-        location.setLongitude(61.874655);
-        location.setLatitude(9.154848);
-        LocationClient locationClient = new LocationClient(this, this, this);
-        while (true) {
-            long now = System.currentTimeMillis();
-            long localHour = (now + TimeZone.getDefault().getOffset(now)) % MS_IN_DAY;
-
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-            int fetchTakeoffs = Integer.parseInt(prefs.getString("pref_schedule_fetch_takeoffs", "-1"));
-            int startTime = Integer.parseInt(prefs.getString("pref_schedule_start_fetch_time", "28800")) * 1000;
-            int stopTime = Integer.parseInt(prefs.getString("pref_schedule_stop_fetch_time", "72000")) * 1000;
-            int updateInterval = Integer.parseInt(prefs.getString("pref_schedule_update_interval", "3600")) * 1000;
-            LocationRequest request = LocationRequest.create().setInterval(updateInterval).setFastestInterval(updateInterval).setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
-
-
-            // these two values tells us whether we're between start time and stop time
-            // if startTime == stopTime then we always want to update (setting maxValue to 24 hours)
-            long timeValue = (localHour - startTime + MS_IN_DAY) % MS_IN_DAY;
-            long maxValue = startTime == stopTime ? MS_IN_DAY : (stopTime - startTime + MS_IN_DAY) % MS_IN_DAY;
-
-            if (fetchTakeoffs == -1 || now < lastUpdate + updateInterval || timeValue > maxValue) {
-                // no update at this time, wait a minute and check again
-                SystemClock.sleep(60000);
-                continue;
-            }
-            lastUpdate = now;
-
-            updateSchedule(getApplicationContext(), location);
-
-            // show/update notification
-            boolean showNotification = prefs.getBoolean("pref_schedule_notification", true);
-            if (showNotification) {
-                // setup notification builder
-                List<String> notificationTakeoffs = new ArrayList<>();
-                NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-                NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this);
-                notificationBuilder.setSmallIcon(R.drawable.ic_launcher);
-                notificationBuilder.setContentTitle(getString(R.string.get_your_wing));
-                notificationBuilder.setAutoCancel(true);
-                PendingIntent notificationIntent = PendingIntent.getActivity(this, 0, new Intent(this, FlyWithMe.class), PendingIntent.FLAG_UPDATE_CURRENT);
-                notificationBuilder.setContentIntent(notificationIntent);
-
-                String pilotName = prefs.getString("pref_schedule_pilot_name", "").trim();
-                List<String> takeoffsWithScheduledFlightsToday = new Database(getApplicationContext()).getTakeoffsWithUpcomingFlights(pilotName);
-                if (!notificationTakeoffs.containsAll(takeoffsWithScheduledFlightsToday)) {
-                    // notify the user that people are planning to fly today
-                    notificationTakeoffs = takeoffsWithScheduledFlightsToday;
-                    String notificationText = "";
-                    for (String takeoff : notificationTakeoffs)
-                        notificationText += "".equals(notificationText) ? takeoff : " | " + takeoff;
-                    notificationBuilder.setContentText(notificationText);
-                    notificationBuilder.setWhen(System.currentTimeMillis());
-                    notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build());
-                }
-            }
+        Log.d(getClass().getName(), "onHandleIntent(" + intent + ")");
+        locationClient = new LocationClient(this, this, this);
+        locationClient.connect();
+        // loop to prevent the thread from exiting
+        while (locationClient != null) {
+            // "locationClient != null" is essentially always "true", but just "true" makes Android Studio complain about endless loop (which is intended)
+            SystemClock.sleep(MS_IN_DAY);
         }
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        super.onStartCommand(intent, flags, startId);
+        return START_STICKY;
     }
 
     public static void updateSchedule(Context context, Location location) {
@@ -187,6 +144,75 @@ public class ScheduleService extends IntentService implements ConnectionCallback
         }
     }
 
+    @Override
+    public void onConnected(Bundle bundle) {
+        Log.d(getClass().getName(), "onConnected(" + bundle + ")");
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        updateInterval = Integer.parseInt(prefs.getString("pref_schedule_update_interval", "3600")) * 1000;
+        LocationRequest locationRequest = LocationRequest.create().setInterval(updateInterval).setFastestInterval(3000).setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+        locationClient.requestLocationUpdates(locationRequest, this);
+    }
+
+    @Override
+    public void onDisconnected() {
+        Log.d(getClass().getName(), "onDisconnected()");
+        // restart service on disconnect
+        locationClient = new LocationClient(this, this, this);
+        locationClient.connect();
+
+        /* TODO: in case the code above doesn't work (which someone claim: http://stackoverflow.com/questions/19373972/locationclient-auto-reconnect-at-ondisconnect)
+        final ScheduleService scheduleService = this;
+        new Handler().post(new Runnable() {
+            @Override
+            public void run() {
+                locationClient = new LocationClient(scheduleService, scheduleService, scheduleService);
+                locationClient.connect();
+            }
+        });
+        */
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        Log.w(getClass().getName(), "onConnectionFailed(" + connectionResult + ")");
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        Log.d(getClass().getName(), "onLocationChanged(" + location + ")");
+
+        long now = System.currentTimeMillis();
+        long localHour = (now + TimeZone.getDefault().getOffset(now)) % MS_IN_DAY;
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        int fetchTakeoffs = Integer.parseInt(prefs.getString("pref_schedule_fetch_takeoffs", "-1"));
+        int startTime = Integer.parseInt(prefs.getString("pref_schedule_start_fetch_time", "28800")) * 1000;
+        int stopTime = Integer.parseInt(prefs.getString("pref_schedule_stop_fetch_time", "72000")) * 1000;
+
+        int tmpUpdateInterval = Integer.parseInt(prefs.getString("pref_schedule_update_interval", "3600")) * 1000;
+        if (tmpUpdateInterval != updateInterval) {
+            // a new interval has been set, update locationRequest
+            updateInterval = tmpUpdateInterval;
+            LocationRequest locationRequest = LocationRequest.create().setInterval(updateInterval).setFastestInterval(300000).setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+            locationClient.requestLocationUpdates(locationRequest, this);
+        }
+
+        // these two values tells us whether we're between start time and stop time
+        // if startTime == stopTime then we always want to update (setting maxValue to 24 hours)
+        long timeValue = (localHour - startTime + MS_IN_DAY) % MS_IN_DAY;
+        long maxValue = startTime == stopTime ? MS_IN_DAY : (stopTime - startTime + MS_IN_DAY) % MS_IN_DAY;
+
+        long lastUpdate = prefs.getLong("pref_schedule_last_update", 0);
+        if (fetchTakeoffs == -1 || now < lastUpdate + updateInterval || timeValue > maxValue) {
+            // no update at this time
+            return;
+        }
+        prefs.edit().putLong("pref_schedule_last_update", now).commit();
+
+        // update schedule in background
+        (new UpdateScheduleTask(getApplicationContext(), location)).execute();
+    }
+
     private static void parseScheduleResponse(Context context, DataInputStream inputStream) {
         try {
             while (true) {
@@ -213,23 +239,50 @@ public class ScheduleService extends IntentService implements ConnectionCallback
         }
     }
 
-    @Override
-    public void onConnected(Bundle bundle) {
-        Log.d(getClass().getName(), "Location client connected");
-    }
+    private static class UpdateScheduleTask extends AsyncTask<Void, Void, Void> {
+        private Context context;
+        private Location location;
 
-    @Override
-    public void onDisconnected() {
-        Log.d(getClass().getName(), "Location client disconnected");
-    }
+        public UpdateScheduleTask(Context context, Location location) {
+            this.context = context;
+            this.location = location;
+        }
 
-    @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-        Log.w(getClass().getName(), "Location client connection failed: " + connectionResult);
-    }
+        @Override
+        protected Void doInBackground(Void... takeoffs) {
+            updateSchedule(context, location);
+            return null;
+        }
 
-    @Override
-    public void onLocationChanged(Location location) {
-        Log.d(getClass().getName(), "onLocationChanged");
+        @Override
+        protected void onPostExecute(Void param) {
+            // show/update notification
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+            boolean showNotification = prefs.getBoolean("pref_schedule_notification", true);
+            if (showNotification) {
+                // setup notification builder
+                List<String> notificationTakeoffs = new ArrayList<>();
+                NotificationManager notificationManager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
+                NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context);
+                notificationBuilder.setSmallIcon(R.drawable.ic_launcher);
+                notificationBuilder.setContentTitle(context.getString(R.string.get_your_wing));
+                notificationBuilder.setAutoCancel(true);
+                PendingIntent notificationIntent = PendingIntent.getActivity(context, 0, new Intent(context, FlyWithMe.class), PendingIntent.FLAG_UPDATE_CURRENT);
+                notificationBuilder.setContentIntent(notificationIntent);
+
+                String pilotName = prefs.getString("pref_schedule_pilot_name", "").trim();
+                List<String> takeoffsWithScheduledFlightsToday = new Database(context.getApplicationContext()).getTakeoffsWithUpcomingFlights(pilotName);
+                if (!notificationTakeoffs.containsAll(takeoffsWithScheduledFlightsToday)) {
+                    // notify the user that people are planning to fly today
+                    notificationTakeoffs = takeoffsWithScheduledFlightsToday;
+                    String notificationText = "";
+                    for (String takeoff : notificationTakeoffs)
+                        notificationText += "".equals(notificationText) ? takeoff : " | " + takeoff;
+                    notificationBuilder.setContentText(notificationText);
+                    notificationBuilder.setWhen(System.currentTimeMillis());
+                    notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build());
+                }
+            }
+        }
     }
 }
