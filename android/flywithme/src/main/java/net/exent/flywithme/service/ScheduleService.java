@@ -149,7 +149,7 @@ public class ScheduleService extends IntentService implements ConnectionCallback
         Log.d(getClass().getName(), "onConnected(" + bundle + ")");
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         updateInterval = Integer.parseInt(prefs.getString("pref_schedule_update_interval", "3600")) * 1000;
-        LocationRequest locationRequest = LocationRequest.create().setInterval(updateInterval).setFastestInterval(3000).setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+        LocationRequest locationRequest = LocationRequest.create().setInterval(updateInterval).setFastestInterval(300000).setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
         locationClient.requestLocationUpdates(locationRequest, this);
     }
 
