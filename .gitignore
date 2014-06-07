@@ -5,3 +5,4 @@ flywithme.apk
 .gradle
 appengine/www
 workspace.xml
+android/build
