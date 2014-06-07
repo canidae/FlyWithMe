@@ -249,7 +249,7 @@ public class ScheduleService extends IntentService implements ConnectionCallback
         }
 
         @Override
-        protected Void doInBackground(Void... takeoffs) {
+        protected Void doInBackground(Void... params) {
             updateSchedule(context, location);
             return null;
         }
@@ -258,31 +258,29 @@ public class ScheduleService extends IntentService implements ConnectionCallback
         protected void onPostExecute(Void param) {
             // show/update notification
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-            boolean showNotification = prefs.getBoolean("pref_schedule_notification", true);
-            if (showNotification) {
-                // setup notification builder
-                List<String> notificationTakeoffs = new ArrayList<>();
-                NotificationManager notificationManager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
-                NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context);
-                notificationBuilder.setSmallIcon(R.drawable.ic_launcher);
-                notificationBuilder.setContentTitle(context.getString(R.string.get_your_wing));
-                notificationBuilder.setAutoCancel(true);
-                PendingIntent notificationIntent = PendingIntent.getActivity(context, 0, new Intent(context, FlyWithMe.class), PendingIntent.FLAG_UPDATE_CURRENT);
-                notificationBuilder.setContentIntent(notificationIntent);
-
-                String pilotName = prefs.getString("pref_schedule_pilot_name", "").trim();
-                List<String> takeoffsWithScheduledFlightsToday = new Database(context.getApplicationContext()).getTakeoffsWithUpcomingFlights(pilotName);
-                if (!notificationTakeoffs.containsAll(takeoffsWithScheduledFlightsToday)) {
-                    // notify the user that people are planning to fly today
-                    notificationTakeoffs = takeoffsWithScheduledFlightsToday;
-                    String notificationText = "";
-                    for (String takeoff : notificationTakeoffs)
-                        notificationText += "".equals(notificationText) ? takeoff : " | " + takeoff;
-                    notificationBuilder.setContentText(notificationText);
-                    notificationBuilder.setWhen(System.currentTimeMillis());
-                    notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build());
-                }
-            }
+            if (!prefs.getBoolean("pref_schedule_notification", true))
+                return;
+            String pilotName = prefs.getString("pref_schedule_pilot_name", "").trim();
+            List<String> takeoffsWithUpcomingFlights = new Database(context.getApplicationContext()).getTakeoffsWithUpcomingFlights(pilotName);
+            String notificationText = "";
+            for (String takeoff : takeoffsWithUpcomingFlights)
+                notificationText += "".equals(notificationText) ? takeoff : " | " + takeoff;
+            if (notificationText.equals(prefs.getString("pref_schedule_last_notification_text", "")))
+                return; // no changes in upcoming activity
+            prefs.edit().putString("pref_schedule_last_notification_text", notificationText).commit();
+            if ("".equals(notificationText))
+                return; // no upcoming activity
+            // notify the user that people are planning to fly
+            NotificationManager notificationManager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
+            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context);
+            notificationBuilder.setSmallIcon(R.drawable.ic_launcher);
+            notificationBuilder.setContentTitle(context.getString(R.string.get_your_wing));
+            notificationBuilder.setAutoCancel(true);
+            PendingIntent notificationIntent = PendingIntent.getActivity(context, 0, new Intent(context, FlyWithMe.class), PendingIntent.FLAG_UPDATE_CURRENT);
+            notificationBuilder.setContentIntent(notificationIntent);
+            notificationBuilder.setContentText(notificationText);
+            notificationBuilder.setWhen(System.currentTimeMillis());
+            notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build());
         }
     }
 }
