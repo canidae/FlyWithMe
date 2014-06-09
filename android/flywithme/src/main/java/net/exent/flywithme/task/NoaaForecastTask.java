@@ -5,6 +5,9 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
@@ -39,6 +42,7 @@ public class NoaaForecastTask extends AsyncTask<Takeoff, String, Boolean> {
     private static final Pattern NOAA_PROC_PATTERN = Pattern.compile(".*<input type=\"HIDDEN\" name=\"proc\" value=\"(\\d+)\">.*");
     private static final Pattern NOAA_CAPTCHA_URL_PATTERN = Pattern.compile(".*<img src=\"([^\"]+)\" ALT=\"Security Code\".*");
     private static final Pattern NOAA_METEOGRAM_PATTERN = Pattern.compile(".*<img src=\"([^\"]+)\" ALT=\"meteorogram\">.*");
+    private static final Pattern NOAA_SOUNDING_PATTERN = Pattern.compile(".*<IMG SRC=\"([^\"]+)\" ALT=\"Profile\">.*");
     private static String noaaUserId;
     private static String noaaMetcyc;
     private static String noaaMetdir;
@@ -63,6 +67,8 @@ public class NoaaForecastTask extends AsyncTask<Takeoff, String, Boolean> {
                 publishProgress("" + (int) (Math.random() * 20), FlyWithMe.getInstance().getString(R.string.attempting_forecast_shortcut));
                 Bitmap bitmap = fetchMeteogram(loc);
                 if (bitmap != null) {
+                    // TODO: fetch sounding
+                    // TODO: need to update metdate too
                     takeoff.setNoaaForecast(bitmap);
                     return true;
                 }
@@ -83,8 +89,9 @@ public class NoaaForecastTask extends AsyncTask<Takeoff, String, Boolean> {
             content = fetchPageContent(NOAA_URL + "/ready2-bin/metgram1.pl?userid=" + noaaUserId + "&metdata=GFS&mdatacfg=GFS&Lat=" + loc.getLatitude() + "&Lon=" + loc.getLongitude() + "&metext=gfsf&metcyc=" + noaaMetcyc);
             noaaMetdir = getOne(content, NOAA_METDIR_PATTERN);
             noaaMetfil = getOne(content, NOAA_METFIL_PATTERN);
+            List<String> metdates = getAll(content, NOAA_METDATE_PATTERN);
             try {
-                noaaMetdate = URLEncoder.encode(getOne(content, NOAA_METDATE_PATTERN), "UTF-8");
+                noaaMetdate = URLEncoder.encode(metdates.get(0), "UTF-8");
             } catch (UnsupportedEncodingException e) {
                 Log.w(getClass().getName(), "Unable to URLEncode metdate", e);
             }
@@ -109,6 +116,11 @@ public class NoaaForecastTask extends AsyncTask<Takeoff, String, Boolean> {
                 if (isCancelled() || bitmap == null)
                     return false;
             }
+            // TODO: fetch sounding
+            TimeZone tz = TimeZone.getDefault();
+            Log.d(getClass().getName(), "Timezone offset: " + tz.getOffset(System.currentTimeMillis()) / 3600000);
+            // END: TODO
+
             takeoff.setNoaaForecast(bitmap);
         } catch (Exception e) {
             Log.w(getClass().getName(), "doInBackground() failed unexpectedly", e);
@@ -192,6 +204,21 @@ public class NoaaForecastTask extends AsyncTask<Takeoff, String, Boolean> {
         return null;
     }
 
+    private Bitmap fetchSounding(Location loc) {
+        try {
+            String meteogramUrl = getOne(fetchPageContent(NOAA_URL + "/ready2-bin/profile2.pl?userid=" + noaaUserId + "&Lat=" + loc.getLatitude() + "&Lon=" + loc.getLongitude() + "&metdir=" + noaaMetdir + "&metcyc=" + noaaMetcyc + "&metdate=" + noaaMetdate + "&metfil=" + noaaMetfil + "&password1=" + noaaCaptcha + "&proc=" + noaaProc + "&type=0&nhrs=24&hgt=0&textonly=No&skewt=1&gsize=96&pdf=No"), NOAA_SOUNDING_PATTERN);
+            if (meteogramUrl == null)
+                return null;
+            HttpResponse response = fetchPage(NOAA_URL + meteogramUrl);
+            Bitmap bitmap = BitmapFactory.decodeStream(response.getEntity().getContent());
+            response.getEntity().consumeContent();
+            return bitmap;
+        } catch (Exception e) {
+            Log.w(getClass().getName(), "Unable to fetch sounding", e);
+        }
+        return null;
+    }
+
     private HttpResponse fetchPage(String uri) {
         Log.d(getClass().getName(), "Fetching page: " + uri);
         try {
@@ -236,6 +263,16 @@ public class NoaaForecastTask extends AsyncTask<Takeoff, String, Boolean> {
         if (matcher.matches())
             return matcher.group(1);
         return null;
+    }
+
+    private List<String> getAll(String text, Pattern pattern) {
+        List<String> result = new ArrayList<>();
+        if (text == null || pattern == null)
+            return result;
+        Matcher matcher = pattern.matcher(text);
+        while (matcher.find())
+            result.add(matcher.group(1));
+        return result;
     }
 
     private void showProgress(int progress, String text, Bitmap image, Runnable showInput) {
