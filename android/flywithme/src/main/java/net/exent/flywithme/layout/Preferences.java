@@ -2,6 +2,8 @@ package net.exent.flywithme.layout;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
+import java.util.TimeZone;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -10,7 +12,6 @@ import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceCategory;
-import android.preference.SwitchPreference;
 import android.support.v4.preference.PreferenceFragment;
 import android.util.Log;
 import android.widget.ImageButton;
@@ -34,6 +35,18 @@ public class Preferences extends PreferenceFragment implements SharedPreferences
         addPreferencesFromResource(R.xml.preferences);
 
         updateDynamicPreferenceScreen();
+
+        TimeZone tz = TimeZone.getDefault();
+        int tzOffsetIgnoringDst = (tz.getOffset(System.currentTimeMillis()) - (tz.inDaylightTime(new Date()) ? tz.getDSTSavings() : 0)) / 3600000;
+        PreferenceCategory meteogramAndSounding = (PreferenceCategory) findPreference("pref_meteogram_and_sounding");
+        for (int i = 0; i <= 21; i += 3) {
+            CheckBoxPreference checkBoxPreference = new CheckBoxPreference(getActivity());
+            checkBoxPreference.setKey("pref_sounding_at" + (i < 10 ? "0" + i : "" + i));
+            checkBoxPreference.setTitle("Fetch sounding at " + (i < 10 ? "0" + i : "" + i) + " UTC");
+            // default fetch sounding nearest 12 and 15 local time (ignoring DST, which is an idiotic practice)
+            checkBoxPreference.setChecked(Math.abs(12 - tzOffsetIgnoringDst - i) <= 1 || Math.abs(15 - tzOffsetIgnoringDst - i) <= 1);
+            meteogramAndSounding.addPreference(checkBoxPreference);
+        }
 
         PreferenceCategory showAirspaceTypesCategory = (PreferenceCategory) findPreference("pref_show_airspace_types");
         ArrayList<String> airspaceList = new ArrayList<>(Airspace.getAirspaceMap().keySet());
@@ -109,5 +122,9 @@ public class Preferences extends PreferenceFragment implements SharedPreferences
         ListPreference scheduleFetchStopTime = (ListPreference) findPreference("pref_schedule_stop_fetch_time");
         scheduleFetchStopTime.setOnPreferenceChangeListener(preferenceChangeListener);
         scheduleFetchStopTime.setSummary(scheduleFetchStopTime.getEntry());
+
+        ListPreference prefSoundingDays = (ListPreference) findPreference("pref_sounding_days");
+        prefSoundingDays.setOnPreferenceChangeListener(preferenceChangeListener);
+        prefSoundingDays.setSummary(prefSoundingDays.getEntry());
     }
 }

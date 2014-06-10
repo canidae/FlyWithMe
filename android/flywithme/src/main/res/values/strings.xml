@@ -145,6 +145,28 @@
         <item>82800</item>
     </string-array>
 
+    <!-- Meteogram/sounding -->
+    <string name="meteogram_sounding">Meteogram/sounding</string>
+
+    <string name="pref_sounding_days">Fetch sounding</string>
+    <string name="pref_sounding_days_default_value" translatable="false">2</string>
+    <string-array name="pref_sounding_days_keys">
+        <item>Don\'t fetch sounding</item>
+        <item>For today</item>
+        <item>For today and tomorrow</item>
+        <item>For today and 2 more days</item>
+        <item>For today and 3 more days</item>
+        <item>For today and 4 more days</item>
+    </string-array>
+    <string-array name="pref_sounding_days_values" translatable="false">
+        <item>-1</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+    </string-array>
+
     <!-- What airspace to draw -->
     <string name="show_airspace_types">Show airspace types</string>
 </resources>

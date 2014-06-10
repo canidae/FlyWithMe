@@ -73,6 +73,18 @@
     <string name="pref_schedule_start_fetch_time">Oppdater flyprogram fra</string>
     <string name="pref_schedule_stop_fetch_time">Oppdater flyprogram til</string>
 
+    <!-- Meteogram/sounding -->
+    <string name="meteogram_sounding">Meteogram/sounding</string>
+    <string name="pref_sounding_days">Hent sounding</string>
+    <string-array name="pref_sounding_days_keys">
+        <item>Ikke hent sounding</item>
+        <item>For i dag</item>
+        <item>For i dag og i morgen</item>
+        <item>For i dag og 2 dager til</item>
+        <item>For i dag og 3 dager til</item>
+        <item>For i dag og 4 dager til</item>
+    </string-array>
+
     <!-- What airspace to draw (this is mostly set programatically) -->
     <string name="show_airspace_types">Vis luftromstyper</string>
 </resources>
