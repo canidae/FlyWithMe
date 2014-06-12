@@ -6,7 +6,9 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
@@ -25,10 +27,13 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.location.Location;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 public class NoaaForecastTask extends AsyncTask<Takeoff, String, Boolean> {
@@ -38,7 +43,7 @@ public class NoaaForecastTask extends AsyncTask<Takeoff, String, Boolean> {
     private static final Pattern NOAA_USERID_PATTERN = Pattern.compile(".*userid=(\\d+).*");
     private static final Pattern NOAA_METDIR_PATTERN = Pattern.compile(".*<input type=\"HIDDEN\" name=\"metdir\" value=\"([^\"]+)\">.*");
     private static final Pattern NOAA_METFIL_PATTERN = Pattern.compile(".*<input type=\"HIDDEN\" name=\"metfil\" value=\"([^\"]+)\">.*");
-    private static final Pattern NOAA_METDATE_PATTERN = Pattern.compile(".*<option>(.*\\(\\+ 00 Hrs\\)).*");
+    private static final Pattern NOAA_METDATE_PATTERN = Pattern.compile("<option>([^<]*\\(\\+ \\d+ Hrs\\))");
     private static final Pattern NOAA_PROC_PATTERN = Pattern.compile(".*<input type=\"HIDDEN\" name=\"proc\" value=\"(\\d+)\">.*");
     private static final Pattern NOAA_CAPTCHA_URL_PATTERN = Pattern.compile(".*<img src=\"([^\"]+)\" ALT=\"Security Code\".*");
     private static final Pattern NOAA_METEOGRAM_PATTERN = Pattern.compile(".*<img src=\"([^\"]+)\" ALT=\"meteorogram\">.*");
@@ -47,7 +52,7 @@ public class NoaaForecastTask extends AsyncTask<Takeoff, String, Boolean> {
     private static String noaaMetcyc;
     private static String noaaMetdir;
     private static String noaaMetfil;
-    private static String noaaMetdate;
+    private static List<String> noaaMetdates;
     private static String noaaProc;
     private static String noaaCaptcha;
 
@@ -65,11 +70,9 @@ public class NoaaForecastTask extends AsyncTask<Takeoff, String, Boolean> {
             if (noaaCaptcha != null) {
                 /* try fetching using old captcha, proc, etc */
                 publishProgress("" + (int) (Math.random() * 20), FlyWithMe.getInstance().getString(R.string.attempting_forecast_shortcut));
-                Bitmap bitmap = fetchMeteogram(loc);
-                if (bitmap != null) {
-                    // TODO: fetch sounding
-                    // TODO: need to update metdate too
-                    takeoff.setNoaaForecast(bitmap);
+                Bitmap forecasts = fetchForecasts(loc);
+                if (forecasts != null) {
+                    takeoff.setNoaaForecast(forecasts);
                     return true;
                 }
             }
@@ -89,21 +92,16 @@ public class NoaaForecastTask extends AsyncTask<Takeoff, String, Boolean> {
             content = fetchPageContent(NOAA_URL + "/ready2-bin/metgram1.pl?userid=" + noaaUserId + "&metdata=GFS&mdatacfg=GFS&Lat=" + loc.getLatitude() + "&Lon=" + loc.getLongitude() + "&metext=gfsf&metcyc=" + noaaMetcyc);
             noaaMetdir = getOne(content, NOAA_METDIR_PATTERN);
             noaaMetfil = getOne(content, NOAA_METFIL_PATTERN);
-            List<String> metdates = getAll(content, NOAA_METDATE_PATTERN);
-            try {
-                noaaMetdate = URLEncoder.encode(metdates.get(0), "UTF-8");
-            } catch (UnsupportedEncodingException e) {
-                Log.w(getClass().getName(), "Unable to URLEncode metdate", e);
-            }
+            noaaMetdates = getAll(content, NOAA_METDATE_PATTERN);
             noaaProc = getOne(content, NOAA_PROC_PATTERN);
-            if (isCancelled() || noaaMetdir == null || noaaMetfil == null || noaaMetdate == null || noaaProc == null)
+            if (isCancelled() || noaaMetdir == null || noaaMetfil == null || noaaMetdates.isEmpty() || noaaProc == null)
                 return false;
             noaaCaptcha = fetchCaptcha(getOne(content, NOAA_CAPTCHA_URL_PATTERN));
             if (isCancelled() || noaaCaptcha == null)
                 return false;
             publishProgress("80", FlyWithMe.getInstance().getString(R.string.retrieving_noaa_forecast));
-            Bitmap bitmap = fetchMeteogram(loc);
-            if (bitmap == null) {
+            Bitmap forecasts = fetchForecasts(loc);
+            if (forecasts == null) {
                 /* hmm, wrong captcha? give user another try */
                 publishProgress("40", FlyWithMe.getInstance().getString(R.string.fetching_noaa_captcha));
                 content = fetchPageContent(NOAA_URL + "/ready2-bin/metgram1.pl?userid=" + noaaUserId + "&metdata=GFS&mdatacfg=GFS&Lat=" + loc.getLatitude() + "&Lon=" + loc.getLongitude() + "&metext=gfsf&metcyc=" + noaaMetcyc);
@@ -112,16 +110,12 @@ public class NoaaForecastTask extends AsyncTask<Takeoff, String, Boolean> {
                 if (isCancelled() || noaaProc == null || noaaCaptcha == null)
                     return false;
                 publishProgress("80", FlyWithMe.getInstance().getString(R.string.retrieving_noaa_forecast));
-                bitmap = fetchMeteogram(loc);
-                if (isCancelled() || bitmap == null)
+                forecasts = fetchForecasts(loc);
+                if (isCancelled() || forecasts == null)
                     return false;
             }
-            // TODO: fetch sounding
-            TimeZone tz = TimeZone.getDefault();
-            Log.d(getClass().getName(), "Timezone offset: " + tz.getOffset(System.currentTimeMillis()) / 3600000);
-            // END: TODO
 
-            takeoff.setNoaaForecast(bitmap);
+            takeoff.setNoaaForecast(forecasts);
         } catch (Exception e) {
             Log.w(getClass().getName(), "doInBackground() failed unexpectedly", e);
         }
@@ -189,30 +183,75 @@ public class NoaaForecastTask extends AsyncTask<Takeoff, String, Boolean> {
         return null;
     }
 
+    private Bitmap fetchForecasts(Location loc) {
+        List<Bitmap> bitmaps = new ArrayList<>();
+        bitmaps.add(fetchMeteogram(loc));
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(FlyWithMe.getInstance());
+        int soundingDays = Integer.parseInt(prefs.getString("pref_sounding_days", "2"));
+        int metdateIndex = -1;
+        int soundingCount = 0;
+        for (int day = 0; day < soundingDays; ++day) {
+            for (int i = 0; i <= 21; i += 3) {
+                String hour = (i < 10 ? "0" + i : "" + i);
+                if (!prefs.getBoolean("pref_sounding_at_" + hour, false))
+                    continue;
+
+                while (++metdateIndex < noaaMetdates.size()) {
+                    String metdate = noaaMetdates.get(metdateIndex);
+                    if (metdate.contains(hour + " UTC")) {
+                        // TODO: proper progress, just hacking it in for the time being
+                        publishProgress("" + (100 - 20 / (++soundingCount + 1)), FlyWithMe.getInstance().getString(R.string.retrieving_noaa_sounding) + " " + soundingCount);
+                        bitmaps.add(fetchSounding(loc, noaaMetdates.get(metdateIndex)));
+                        break;
+                    }
+                }
+            }
+        }
+        int width = 0;
+        int height = 0;
+        for (Bitmap bitmap : bitmaps) {
+            width += bitmap.getWidth();
+            if (bitmap.getHeight() > height)
+                height = bitmap.getHeight();
+        }
+        Bitmap forecasts = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(forecasts);
+        width = 0;
+        for (Bitmap bitmap : bitmaps) {
+            canvas.drawBitmap(bitmap, width, (height - bitmap.getHeight()) / 2, null);
+            width += bitmap.getWidth();
+        }
+        return forecasts;
+    }
+
     private Bitmap fetchMeteogram(Location loc) {
         try {
-            String meteogramUrl = getOne(fetchPageContent(NOAA_URL + "/ready2-bin/metgram2.pl?userid=" + noaaUserId + "&Lat=" + loc.getLatitude() + "&Lon=" + loc.getLongitude() + "&metdir=" + noaaMetdir + "&metcyc=" + noaaMetcyc + "&metdate=" + noaaMetdate + "&metfil=" + noaaMetfil + "&password1=" + noaaCaptcha + "&proc=" + noaaProc + NOAA_METGRAM_CONF), NOAA_METEOGRAM_PATTERN);
+            String meteogramUrl = getOne(fetchPageContent(NOAA_URL + "/ready2-bin/metgram2.pl?userid=" + noaaUserId + "&Lat=" + loc.getLatitude() + "&Lon=" + loc.getLongitude() + "&metdir=" + noaaMetdir + "&metcyc=" + noaaMetcyc + "&metdate=" + URLEncoder.encode(noaaMetdates.get(0), "UTF-8") + "&metfil=" + noaaMetfil + "&password1=" + noaaCaptcha + "&proc=" + noaaProc + NOAA_METGRAM_CONF), NOAA_METEOGRAM_PATTERN);
             if (meteogramUrl == null)
                 return null;
             HttpResponse response = fetchPage(NOAA_URL + meteogramUrl);
             Bitmap bitmap = BitmapFactory.decodeStream(response.getEntity().getContent());
             response.getEntity().consumeContent();
             return bitmap;
+        } catch (UnsupportedEncodingException e) {
+            Log.w(getClass().getName(), "Unable to URLEncode metdate", e);
         } catch (Exception e) {
             Log.w(getClass().getName(), "Unable to fetch meteogram", e);
         }
         return null;
     }
 
-    private Bitmap fetchSounding(Location loc) {
+    private Bitmap fetchSounding(Location loc, String metdate) {
         try {
-            String meteogramUrl = getOne(fetchPageContent(NOAA_URL + "/ready2-bin/profile2.pl?userid=" + noaaUserId + "&Lat=" + loc.getLatitude() + "&Lon=" + loc.getLongitude() + "&metdir=" + noaaMetdir + "&metcyc=" + noaaMetcyc + "&metdate=" + noaaMetdate + "&metfil=" + noaaMetfil + "&password1=" + noaaCaptcha + "&proc=" + noaaProc + "&type=0&nhrs=24&hgt=0&textonly=No&skewt=1&gsize=96&pdf=No"), NOAA_SOUNDING_PATTERN);
-            if (meteogramUrl == null)
+            String soundingUrl = getOne(fetchPageContent(NOAA_URL + "/ready2-bin/profile2.pl?userid=" + noaaUserId + "&Lat=" + loc.getLatitude() + "&Lon=" + loc.getLongitude() + "&metdir=" + noaaMetdir + "&metcyc=" + noaaMetcyc + "&metdate=" + URLEncoder.encode(metdate, "UTF-8") + "&metfil=" + noaaMetfil + "&password1=" + noaaCaptcha + "&proc=" + noaaProc + "&type=0&nhrs=24&hgt=0&textonly=No&skewt=1&gsize=96&pdf=No"), NOAA_SOUNDING_PATTERN);
+            if (soundingUrl == null)
                 return null;
-            HttpResponse response = fetchPage(NOAA_URL + meteogramUrl);
+            HttpResponse response = fetchPage(NOAA_URL + soundingUrl);
             Bitmap bitmap = BitmapFactory.decodeStream(response.getEntity().getContent());
             response.getEntity().consumeContent();
             return bitmap;
+        } catch (UnsupportedEncodingException e) {
+            Log.w(getClass().getName(), "Unable to URLEncode metdate", e);
         } catch (Exception e) {
             Log.w(getClass().getName(), "Unable to fetch sounding", e);
         }

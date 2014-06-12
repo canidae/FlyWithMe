@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.TimeZone;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
@@ -12,6 +13,7 @@ import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceCategory;
+import android.preference.PreferenceManager;
 import android.support.v4.preference.PreferenceFragment;
 import android.util.Log;
 import android.widget.ImageButton;
@@ -28,6 +30,27 @@ public class Preferences extends PreferenceFragment implements SharedPreferences
         }
     };
 
+    public static void setupDefaultPreferences(Context context) {
+        // setup default sounding, two days in advantage, sounding nearest 12 local time (ignoring DST, which is an idiotic practice)
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        TimeZone tz = TimeZone.getDefault();
+        int tzOffsetIgnoringDst = (tz.getOffset(System.currentTimeMillis()) - (tz.inDaylightTime(new Date()) ? tz.getDSTSavings() : 0)) / 3600000;
+        for (int i = 0; i <= 21; i += 3) {
+            String hour = (i < 10 ? "0" + i : "" + i);
+            if (!prefs.contains("pref_sounding_at_" + hour))
+                prefs.edit().putBoolean("pref_sounding_at_" + hour, Math.abs(12 - tzOffsetIgnoringDst - i) <= 1).commit();
+        }
+
+        // setup default airspace map polygons (all shown)
+        ArrayList<String> airspaceList = new ArrayList<>(Airspace.getAirspaceMap().keySet());
+        for (String key : airspaceList) {
+            if (key == null || "".equals(key.trim()))
+                continue;
+            if (!prefs.contains("pref_airspace_enabled_" + key))
+                prefs.edit().putBoolean("pref_airspace_enabled_" + key, true).commit();
+        }
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,15 +59,12 @@ public class Preferences extends PreferenceFragment implements SharedPreferences
 
         updateDynamicPreferenceScreen();
 
-        TimeZone tz = TimeZone.getDefault();
-        int tzOffsetIgnoringDst = (tz.getOffset(System.currentTimeMillis()) - (tz.inDaylightTime(new Date()) ? tz.getDSTSavings() : 0)) / 3600000;
         PreferenceCategory meteogramAndSounding = (PreferenceCategory) findPreference("pref_meteogram_and_sounding");
         for (int i = 0; i <= 21; i += 3) {
+            String hour = (i < 10 ? "0" + i : "" + i);
             CheckBoxPreference checkBoxPreference = new CheckBoxPreference(getActivity());
-            checkBoxPreference.setKey("pref_sounding_at" + (i < 10 ? "0" + i : "" + i));
-            checkBoxPreference.setTitle("Fetch sounding at " + (i < 10 ? "0" + i : "" + i) + " UTC");
-            // default fetch sounding nearest 12 and 15 local time (ignoring DST, which is an idiotic practice)
-            checkBoxPreference.setChecked(Math.abs(12 - tzOffsetIgnoringDst - i) <= 1 || Math.abs(15 - tzOffsetIgnoringDst - i) <= 1);
+            checkBoxPreference.setKey("pref_sounding_at_" + hour);
+            checkBoxPreference.setTitle("Fetch sounding at " + hour + " UTC");
             meteogramAndSounding.addPreference(checkBoxPreference);
         }
 
@@ -57,7 +77,6 @@ public class Preferences extends PreferenceFragment implements SharedPreferences
             CheckBoxPreference checkBoxPreference = new CheckBoxPreference(getActivity());
             checkBoxPreference.setKey("pref_airspace_enabled_" + key);
             checkBoxPreference.setTitle(key);
-            checkBoxPreference.setChecked(true);
             showAirspaceTypesCategory.addPreference(checkBoxPreference);
         }
     }

@@ -24,6 +24,7 @@
     <string name="fetching_noaa_captcha">Fetching CAPTCHA…</string>
     <string name="type_noaa_captcha">Type in CAPTCHA:</string>
     <string name="retrieving_noaa_forecast">Retrieving meteogram…</string>
+    <string name="retrieving_noaa_sounding">Retrieving sounding</string>
     <string name="fetching_noaa_failed">Fetching meteogram failed</string>
 
     <!-- Flight schedule -->
@@ -152,11 +153,11 @@
     <string name="pref_sounding_days_default_value" translatable="false">2</string>
     <string-array name="pref_sounding_days_keys">
         <item>Don\'t fetch sounding</item>
-        <item>For today</item>
-        <item>For today and tomorrow</item>
-        <item>For today and 2 more days</item>
-        <item>For today and 3 more days</item>
-        <item>For today and 4 more days</item>
+        <item>For one day</item>
+        <item>For two days</item>
+        <item>For three days</item>
+        <item>For four days</item>
+        <item>For five days</item>
     </string-array>
     <string-array name="pref_sounding_days_values" translatable="false">
         <item>-1</item>

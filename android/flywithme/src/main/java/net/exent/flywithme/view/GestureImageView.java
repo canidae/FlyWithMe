@@ -51,10 +51,10 @@ public class GestureImageView extends View {
         // set max/min scale factor
         float heightScaleFactor = (float) canvas.getHeight() / (float) bitmap.getHeight();
         float widthScaleFactor = (float) canvas.getWidth() / (float) bitmap.getWidth();
-        scaleFactor = Math.max(Math.min(widthScaleFactor, heightScaleFactor), Math.min((float) Math.E, scaleFactor));
+        scaleFactor = Math.max(heightScaleFactor, Math.min((float) Math.E, scaleFactor));
         // set current scale factor, connecting to edge if close enough
         float tmpScaleFactor = scaleFactor;
-        if (Math.abs(tmpScaleFactor * bitmap.getHeight()- canvas.getHeight()) < EDGE_CONNECT_PIXELS * canvas.getHeight())
+        if (Math.abs(tmpScaleFactor * bitmap.getHeight() - canvas.getHeight()) < EDGE_CONNECT_PIXELS * canvas.getHeight())
             tmpScaleFactor = heightScaleFactor;
         if (Math.abs(tmpScaleFactor * bitmap.getWidth() - canvas.getWidth()) < EDGE_CONNECT_PIXELS * canvas.getWidth())
             tmpScaleFactor = widthScaleFactor;

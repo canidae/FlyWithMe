@@ -188,6 +188,9 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
         /* set instance/context, our fragments are using this a lot */
         instance = this;
 
+        /* setup any preferences that needs to be done programmatically */
+        Preferences.setupDefaultPreferences(this);
+
         /* start background task */
         Intent scheduleService = new Intent(this, ScheduleService.class);
         startService(scheduleService);
