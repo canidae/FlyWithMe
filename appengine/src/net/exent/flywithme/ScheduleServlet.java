@@ -193,6 +193,7 @@ public class ScheduleServlet extends HttpServlet {
             int responseCode;
             switch (operation) {
                 case 0:
+                    // fetch schedule for supplied takeoffs
                     // input:
                     // ushort: takeoffIdCount
                     //   ushort: takeoffId
@@ -208,6 +209,7 @@ public class ScheduleServlet extends HttpServlet {
                     break;
 
                 case 1:
+                    // register flight at takeoff
                     // input:
                     // ushort: takeoffId
                     // int: timestamp
@@ -220,6 +222,7 @@ public class ScheduleServlet extends HttpServlet {
                     break;
 
                 case 2:
+                    // unregister flight at takeoff
                     // input:
                     // ushort: takeoffId
                     // int: timestamp
@@ -230,6 +233,24 @@ public class ScheduleServlet extends HttpServlet {
                     break;
 
                 case 3:
+                    // fetch meteogram/sounding for location
+                    // input:
+                    // float: latitude
+                    // float: longitude
+                    // boolean: fetchMeteogram
+                    // ubyte: soundings
+                    //   int: timestamp
+                    // TODO: responseCode = getMeteogramAndSounding(inputStream, outputStream);
+                    // output:
+                    // ubyte: responsetype (0 = captcha, 1 = meteogram/sounding)
+                    // int: meteogramSize/captchaSize
+                    // <bytes>: meteogram/captcha
+                    // ubyte: soundings
+                    //   int: soundingSize
+                    //   <bytes>: sounding
+
+                /*
+                case 4:
                     // input:
                     // <none>
                     responseCode = getScheduleV2(outputStream);
@@ -242,6 +263,7 @@ public class ScheduleServlet extends HttpServlet {
                     //       string: pilot name
                     //       string: pilot phone
                     break;
+                 */
 
                 default:
                     responseCode = HttpServletResponse.SC_NOT_FOUND;
@@ -383,6 +405,13 @@ public class ScheduleServlet extends HttpServlet {
         if (takeoffSchedule != null)
             takeoffSchedule.removePilotFromSchedule(timestamp, pilotId);
         storeSchedules();
+        return HttpServletResponse.SC_OK;
+    }
+
+    private static synchronized int getMeteogramAndSounding(final DataInputStream inputStream, final DataOutputStream outputStream) throws IOException {
+        // TODO
+        //noaaUserId = getOne(fetchPageContent(NOAA_URL + "/ready2-bin/main.pl?Lat=" + loc.getLatitude() + "&Lon=" + loc.getLongitude()), NOAA_USERID_PATTERN);
+
         return HttpServletResponse.SC_OK;
     }
 
