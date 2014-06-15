@@ -185,7 +185,10 @@ public class NoaaForecastTask extends AsyncTask<Takeoff, String, Boolean> {
 
     private Bitmap fetchForecasts(Location loc) {
         List<Bitmap> bitmaps = new ArrayList<>();
-        bitmaps.add(fetchMeteogram(loc));
+        Bitmap meteogram = fetchMeteogram(loc);
+        if (meteogram == null)
+            return null; // TODO: this may happen if captcha is expired. i need to clean up this code someday
+        bitmaps.add(meteogram);
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(FlyWithMe.getInstance());
         int soundingDays = Integer.parseInt(prefs.getString("pref_sounding_days", "2"));
         int metdateIndex = -1;
