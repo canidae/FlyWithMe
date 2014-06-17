@@ -1,5 +1,6 @@
 Bugs:
 - Currently ~impossible to update takeoff data, we only read that file when database is created/upgraded
+- Sharing doesn't work on all phones: http://stackoverflow.com/questions/12230942/why-images-media-insertimage-return-null
 
 Features:
 - Search after takeoffs (text in name or description)
