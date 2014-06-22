@@ -179,8 +179,6 @@ public class ScheduleService extends IntentService implements ConnectionCallback
 
     @Override
     public void onLocationChanged(Location location) {
-        Log.d(getClass().getName(), "onLocationChanged(" + location + ")");
-
         long now = System.currentTimeMillis();
         long localHour = (now + TimeZone.getDefault().getOffset(now)) % MS_IN_DAY;
 
