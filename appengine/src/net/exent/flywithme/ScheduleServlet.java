@@ -240,14 +240,24 @@ public class ScheduleServlet extends HttpServlet {
                     // boolean: fetchMeteogram
                     // ubyte: soundings
                     //   int: timestamp
-                    // TODO: responseCode = getMeteogramAndSounding(inputStream, outputStream);
+                    // short: userId [optional]
+                    // short: proc [optional]
+                    // string: captcha [optional]
+                    responseCode = NoaaProxy.getMeteogramAndSounding(inputStream, outputStream);
                     // output:
-                    // ubyte: responsetype (0 = captcha, 1 = meteogram/sounding)
-                    // int: meteogramSize/captchaSize
-                    // <bytes>: meteogram/captcha
-                    // ubyte: soundings
-                    //   int: soundingSize
-                    //   <bytes>: sounding
+                    // ubyte: 0 [captcha]
+                    // ushort: userId
+                    // ushort: proc
+                    // int: captchaSize
+                    // <bytes>: captchaImage
+                    //
+                    // OR
+                    //
+                    // ubyte: 1 [meteogram/sounding]
+                    // ubyte: images
+                    //   int: imageSize
+                    //   <bytes>: image
+                    break;
 
                 /*
                 case 4:
@@ -405,13 +415,6 @@ public class ScheduleServlet extends HttpServlet {
         if (takeoffSchedule != null)
             takeoffSchedule.removePilotFromSchedule(timestamp, pilotId);
         storeSchedules();
-        return HttpServletResponse.SC_OK;
-    }
-
-    private static synchronized int getMeteogramAndSounding(final DataInputStream inputStream, final DataOutputStream outputStream) throws IOException {
-        // TODO
-        //noaaUserId = getOne(fetchPageContent(NOAA_URL + "/ready2-bin/main.pl?Lat=" + loc.getLatitude() + "&Lon=" + loc.getLongitude()), NOAA_USERID_PATTERN);
-
         return HttpServletResponse.SC_OK;
     }
 

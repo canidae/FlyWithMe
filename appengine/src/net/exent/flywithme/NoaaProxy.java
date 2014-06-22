@@ -4,7 +4,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -30,6 +33,8 @@ public class NoaaProxy {
     private static final Pattern NOAA_METEOGRAM_PATTERN = Pattern.compile(".*<img src=\"([^\"]+)\" ALT=\"meteorogram\">.*");
     private static final Pattern NOAA_SOUNDING_PATTERN = Pattern.compile(".*<IMG SRC=\"([^\"]+)\" ALT=\"Profile\">.*");
 
+    private static SimpleDateFormat metdateFormatter = new SimpleDateFormat("MMMM dd, yyyy 'at' HH 'UTC'");
+
     private static String noaaUserId;
     private static String noaaMetcyc;
     private static String noaaMetdir;
@@ -45,35 +50,99 @@ public class NoaaProxy {
         float longitude = inputStream.readFloat();
         boolean fetchMeteogram = inputStream.readBoolean();
         int soundings = inputStream.readUnsignedByte();
-        int[] timestamps = new int[soundings];
+        long[] soundingTimestamps = new long[soundings];
         for (int i = 0; i < soundings; ++i)
-            timestamps[i] = inputStream.readInt();
+            soundingTimestamps[i] = inputStream.readInt() * 1000L; // timestamps are sent as seconds since epoch, we need milliseconds
 
-        if (noaaCaptcha != null) {
-            // we got an old captcha, let's try to reuse it
-            // TODO
+        // let's try to read in captcha data from request
+        try {
+            int userId = inputStream.readShort();
+            int proc = inputStream.readShort();
+            String captcha = inputStream.readUTF();
+
+            List<byte[]> images = fetchForecasts("" + userId, "" + proc, captcha, latitude, longitude, fetchMeteogram, soundingTimestamps);
+            if (images == null)
+                throw new RuntimeException("Unable to fetch meteogram/sounding, wrong captcha?");
+            noaaUserId = "" + userId;
+            noaaProc = "" + proc;
+            noaaCaptcha = captcha;
+            return writeSuccessResponse(outputStream, images);
+        } catch (RuntimeException e) {
+            log.log(Level.WARNING, "Something not right with supplied captcha data", e);
+        } catch (UnsupportedEncodingException e) {
+            log.log(Level.WARNING, "Unexpected exception", e);
+        } catch (IOException e) {
+            // user did likely not send captcha data (this will happen for most of the requests), continue using cached data
+            log.log(Level.INFO, "Meteogram/sounding requested, likely without sending captcha data (using cached data instead)", e);
         }
 
-        // we'll need to fetch some data and captcha
-        noaaUserId = getOne(fetchPageContent(NOAA_URL + "/ready2-bin/main.pl?Lat=" + latitude + "&Lon=" + longitude), NOAA_USERID_PATTERN);
-        String content = fetchPageContent(NOAA_URL + "/ready2-bin/metcycle.pl?product=metgram1&userid=" + noaaUserId + "&metdata=GFS&mdatacfg=GFS&Lat=" + latitude + "&Lon=" + longitude);
+        List<byte[]> images = fetchForecasts(noaaUserId, noaaProc, noaaCaptcha, latitude, longitude, fetchMeteogram, soundingTimestamps);
+        if (images != null)
+            return writeSuccessResponse(outputStream, images);
+
+        // if we've come this far, then captcha is likely expired
+        // update noaa data and send captcha for user to solve (along with userId and proc, which user must return)
+        String userId = getOne(fetchPageContent(NOAA_URL + "/ready2-bin/main.pl?Lat=" + latitude + "&Lon=" + longitude), NOAA_USERID_PATTERN);
+        String content = fetchPageContent(NOAA_URL + "/ready2-bin/metcycle.pl?product=metgram1&userid=" + userId + "&metdata=GFS&mdatacfg=GFS&Lat=" + latitude + "&Lon=" + longitude);
         noaaMetcyc = getOne(content, NOAA_METCYC_PATTERN);
         noaaMetcyc = noaaMetcyc.replace(' ', '+');
-        content = fetchPageContent(NOAA_URL + "/ready2-bin/metgram1.pl?userid=" + noaaUserId + "&metdata=GFS&mdatacfg=GFS&Lat=" + latitude + "&Lon=" + longitude + "&metext=gfsf&metcyc=" + noaaMetcyc);
+        content = fetchPageContent(NOAA_URL + "/ready2-bin/metgram1.pl?userid=" + userId + "&metdata=GFS&mdatacfg=GFS&Lat=" + latitude + "&Lon=" + longitude + "&metext=gfsf&metcyc=" + noaaMetcyc);
         noaaMetdir = getOne(content, NOAA_METDIR_PATTERN);
         noaaMetfil = getOne(content, NOAA_METFIL_PATTERN);
         noaaMetdates = getAll(content, NOAA_METDATE_PATTERN);
-        noaaProc = getOne(content, NOAA_PROC_PATTERN);
+        String proc = getOne(content, NOAA_PROC_PATTERN);
         byte[] captchaImage = fetchImage(NOAA_URL + getOne(content, NOAA_CAPTCHA_URL_PATTERN));
-
-        // ubyte: responsetype (0 = captcha, 1 = meteogram/sounding)
-        // int: meteogramSize/captchaSize
-        // <bytes>: meteogram/captcha
-        // ubyte: soundings
-        //   int: soundingSize
-        //   <bytes>: sounding
+        outputStream.writeByte(0);
+        outputStream.writeShort(Integer.parseInt(userId));
+        outputStream.writeShort(Integer.parseInt(proc));
+        outputStream.writeInt(captchaImage.length);
+        outputStream.write(captchaImage);
 
         return HttpServletResponse.SC_OK;
+    }
+
+    private static int writeSuccessResponse(final DataOutputStream outputStream, List<byte[]> images) {
+        try {
+            outputStream.writeByte(1);
+            outputStream.writeByte(images.size());
+            for (byte[] image : images) {
+                outputStream.writeInt(image.length);
+                outputStream.write(image);
+            }
+            return HttpServletResponse.SC_OK;
+        } catch (IOException e) {
+            log.log(Level.WARNING, "Unable to write response", e);
+            return HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
+        }
+    }
+
+    private static List<byte[]> fetchForecasts(String userId, String proc, String captcha, float latitude, float longitude, boolean fetchMeteogram, long[] soundingTimestamps) throws UnsupportedEncodingException {
+        // TODO: cache meteogram/sounding images
+        List<byte[]> forecasts = new ArrayList<>();
+        if (fetchMeteogram) {
+            String meteogramUrl = getOne(fetchPageContent(NOAA_URL + "/ready2-bin/metgram2.pl?userid=" + userId + "&Lat=" + latitude + "&Lon=" + longitude + "&metdir=" + noaaMetdir + "&metcyc=" + noaaMetcyc + "&metdate=" + URLEncoder.encode(noaaMetdates.get(0), "UTF-8") + "&metfil=" + noaaMetfil + "&password1=" + captcha + "&proc=" + proc + NOAA_METGRAM_CONF), NOAA_METEOGRAM_PATTERN);
+            if (meteogramUrl == null)
+                return null;
+            byte[] meteogram = fetchImage(NOAA_URL + meteogramUrl);
+            if (meteogram == null)
+                return null;
+            forecasts.add(meteogram);
+        }
+        for (long soundingTimestamp : soundingTimestamps) {
+            String metdate = metdateFormatter.format(new Date(soundingTimestamp));
+            for (String noaaMetdate : noaaMetdates) {
+                if (noaaMetdate.startsWith(metdate)) {
+                    String soundingUrl = getOne(fetchPageContent(NOAA_URL + "/ready2-bin/profile2.pl?userid=" + userId + "&Lat=" + latitude + "&Lon=" + longitude + "&metdir=" + noaaMetdir + "&metcyc=" + noaaMetcyc + "&metdate=" + URLEncoder.encode(metdate, "UTF-8") + "&metfil=" + noaaMetfil + "&password1=" + captcha + "&proc=" + proc + "&type=0&nhrs=24&hgt=1&textonly=No&skewt=1&gsize=96&pdf=No"), NOAA_SOUNDING_PATTERN);
+                    if (soundingUrl == null)
+                        return null;
+                    byte[] sounding = fetchImage(NOAA_URL + soundingUrl);
+                    if (sounding == null)
+                        return null;
+                    forecasts.add(sounding);
+                }
+            }
+        }
+        return forecasts;
     }
 
     private static URLConnection fetchPage(String url) {
@@ -129,9 +198,9 @@ public class NoaaProxy {
         return result;
     }
 
-    private static byte[] fetchImage(String captchaUrl) {
+    private static byte[] fetchImage(String url) {
         try {
-            URLConnection response = fetchPage(captchaUrl);
+            URLConnection response = fetchPage(url);
             InputStream in = response.getInputStream();
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             byte[] buffer = new byte[8192];
@@ -140,7 +209,7 @@ public class NoaaProxy {
                 baos.write(buffer, 0, read);
             return baos.toByteArray();
         } catch (Exception e) {
-            log.log(Level.WARNING, "Unable to fetch CAPTCHA", e);
+            log.log(Level.WARNING, "Unable to fetch image", e);
         }
         return null;
     }

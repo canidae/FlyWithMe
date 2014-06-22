@@ -135,7 +135,7 @@ public class TakeoffDetails extends Fragment {
                 @Override
                 public void onGlobalLayout() {
                     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
-                        // we need these for pre API 16 Androids. AAH! you get no warning that app will be incompatible if you only use the non-deprecated method!
+                        // AAH! we need this for pre API 16 Androids. you get no warning that app will be incompatible if you only use the non-deprecated method!
                         flyScheduleButton.getViewTreeObserver().removeGlobalOnLayoutListener(this);
                     } else {
                         flyScheduleButton.getViewTreeObserver().removeOnGlobalLayoutListener(this);
