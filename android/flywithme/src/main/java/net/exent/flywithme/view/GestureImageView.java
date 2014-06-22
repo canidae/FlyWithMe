@@ -17,6 +17,7 @@ public class GestureImageView extends View {
     private float downPosX;
     private float downPosY;
     private float scaleFactor;
+    private boolean allowPan; // prevents image from jumping around when zooming
 
     public GestureImageView(Context context) {
         this(context, null, 0);
@@ -30,7 +31,18 @@ public class GestureImageView extends View {
         super(context, attrs, defStyle);
         gestureDetector = new ScaleGestureDetector(context, new ScaleGestureDetector.SimpleOnScaleGestureListener() {
             public boolean onScale(ScaleGestureDetector detector) {
-                scaleFactor *= detector.getScaleFactor();
+                float scale = detector.getScaleFactor();
+                scaleFactor *= scale;
+                allowPan = false;
+
+                // we need to move posX and posY to center our zooming
+                float diffX = detector.getFocusX() - posX;
+                float diffY = detector.getFocusY() - posY;
+                diffX = diffX * scale - diffX;
+                diffY = diffY * scale - diffY;
+                posX -= diffX;
+                posY -= diffY;
+
                 invalidate();
                 return true;
             }
@@ -51,7 +63,7 @@ public class GestureImageView extends View {
         // set max/min scale factor
         float heightScaleFactor = (float) canvas.getHeight() / (float) bitmap.getHeight();
         float widthScaleFactor = (float) canvas.getWidth() / (float) bitmap.getWidth();
-        scaleFactor = Math.max(heightScaleFactor, Math.min((float) Math.E, scaleFactor));
+        scaleFactor = Math.max(heightScaleFactor, Math.min(scaleFactor, (float) Math.E));
         // set current scale factor, connecting to edge if close enough
         float tmpScaleFactor = scaleFactor;
         if (Math.abs(tmpScaleFactor * bitmap.getHeight() - canvas.getHeight()) < EDGE_CONNECT_PIXELS * canvas.getHeight())
@@ -85,14 +97,17 @@ public class GestureImageView extends View {
         case MotionEvent.ACTION_DOWN:
             downPosX = event.getX();
             downPosY = event.getY();
+            allowPan = true;
             break;
 
         case MotionEvent.ACTION_MOVE:
-            posX += event.getX() - downPosX;
-            posY += event.getY() - downPosY;
-            downPosX = event.getX();
-            downPosY = event.getY();
-            invalidate();
+            if (allowPan) {
+                posX += event.getX() - downPosX;
+                posY += event.getY() - downPosY;
+                downPosX = event.getX();
+                downPosY = event.getY();
+                invalidate();
+            }
             break;
 
         default:
