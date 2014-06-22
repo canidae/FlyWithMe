@@ -106,7 +106,6 @@ public class NoaaProxy {
             outputStream.writeByte(1);
             outputStream.writeByte(images.size());
             for (byte[] image : images) {
-                log.info("Image size: " + image.length);
                 outputStream.writeInt(image.length);
                 outputStream.write(image);
             }
