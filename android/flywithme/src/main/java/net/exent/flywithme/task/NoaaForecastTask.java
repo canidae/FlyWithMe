@@ -1,12 +1,19 @@
 package net.exent.flywithme.task;
 
 import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
 import java.net.URI;
+import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
@@ -59,13 +66,130 @@ public class NoaaForecastTask extends AsyncTask<Takeoff, String, Boolean> {
     private Bitmap captchaBitmap;
     private HttpClient httpClient = new DefaultHttpClient();
 
+    private void fetchMeteogramAndSoundingFromProxy(Location loc, int userId, int proc, String captcha) throws IOException {
+        publishProgress("30", FlyWithMe.getInstance().getString(R.string.retrieving_noaa_forecast));
+        HttpURLConnection con = (HttpURLConnection) new URL("http://192.168.1.200:8080/fwm").openConnection();
+        con.setRequestMethod("POST");
+        con.setDoOutput(true);
+        DataOutputStream outputStream = new DataOutputStream(con.getOutputStream());
+        outputStream.writeByte(3);
+        outputStream.writeFloat((float) loc.getLatitude());
+        outputStream.writeFloat((float) loc.getLongitude());
+        outputStream.writeBoolean(true); // TODO: option to disable meteogram in settings view?
+
+        // figure out how many soundings we want
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(FlyWithMe.getInstance());
+        int soundingDays = Integer.parseInt(prefs.getString("pref_sounding_days", "2"));
+        List<Integer> soundingTimestamps = new ArrayList<>();
+        Calendar calendar = Calendar.getInstance();
+        // just setting some fields to 0, shouldn't really matter, though
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        for (int day = 0; day < soundingDays; ++day) {
+            for (int i = 0; i <= 21; i += 3) {
+                String hour = (i < 10 ? "0" + i : "" + i);
+                if (!prefs.getBoolean("pref_sounding_at_" + hour, false))
+                    continue;
+                calendar.set(Calendar.HOUR_OF_DAY, i);
+                soundingTimestamps.add((int) (calendar.getTimeInMillis() / 1000));
+            }
+            calendar.add(Calendar.DAY_OF_YEAR, 1);
+        }
+        outputStream.writeByte(soundingTimestamps.size());
+        for (Integer timestamp : soundingTimestamps)
+            outputStream.writeInt(timestamp);
+
+        // if we got an userId, proc and captcha, add that to request
+        if (userId > 0 && proc > 0 && captcha != null) {
+            outputStream.writeShort(userId);
+            outputStream.writeShort(proc);
+            outputStream.writeUTF(captcha);
+        }
+        outputStream.close();
+
+        // read response
+        int responseCode = con.getResponseCode();
+        DataInputStream inputStream = new DataInputStream(con.getInputStream());
+        int responseType = inputStream.readUnsignedByte();
+        if (responseType == 0) {
+            // ask user to fill inn captcha
+            // ushort: userId
+            // ushort: proc
+            // int: captchaSize
+            // <bytes>: captchaImage
+            int tmpUserId = inputStream.readUnsignedShort();
+            int tmpProc = inputStream.readUnsignedShort();
+            int captchaSize = inputStream.readInt();
+            byte[] captchaImage = new byte[captchaSize];
+            int readBytes;
+            int totalRead = 0;
+            while ((readBytes = inputStream.read(captchaImage, totalRead, captchaSize - totalRead)) != -1 && totalRead < captchaSize)
+                totalRead += readBytes;
+
+            captchaBitmap = BitmapFactory.decodeByteArray(captchaImage, 0, totalRead);
+            publishProgress("50", FlyWithMe.getInstance().getString(R.string.type_noaa_captcha));
+            lock.lock();
+            try {
+                condition.await(120000, TimeUnit.MILLISECONDS);
+            } catch (InterruptedException e) {
+                Log.w(getClass().getName(), "Failed sleeping", e);
+            } finally {
+                lock.unlock();
+            }
+            String tmpCaptcha = ProgressDialog.getInstance().getInputText();
+            // recurse
+            fetchMeteogramAndSoundingFromProxy(loc, tmpUserId, tmpProc, tmpCaptcha);
+        } else if (responseType == 1) {
+            // we got meteogram/sounding, create bitmap and display it
+            // ubyte: images
+            //   int: imageSize
+            //   <bytes>: image
+            int imageCount = inputStream.readUnsignedByte();
+            List<Bitmap> images = new ArrayList<>();
+            for (int i = 0; i < imageCount; ++i) {
+                int imageSize = inputStream.readInt();
+                Log.d(getClass().getName(), "Image size: " + imageSize);
+                byte[] image = new byte[imageSize];
+                int readBytes;
+                int totalRead = 0;
+                while ((readBytes = inputStream.read(image, totalRead, imageSize - totalRead)) != -1 && totalRead < imageSize)
+                    totalRead += readBytes;
+                images.add(BitmapFactory.decodeByteArray(image, 0, totalRead));
+            }
+            int width = 0;
+            int height = 0;
+            for (Bitmap image : images) {
+                width += image.getWidth();
+                if (image.getHeight() > height)
+                    height = image.getHeight();
+            }
+            Bitmap forecasts = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(forecasts);
+            width = 0;
+            for (Bitmap image : images) {
+                canvas.drawBitmap(image, width, (height - image.getHeight()) / 2, null);
+                width += image.getWidth();
+            }
+            takeoff.setNoaaForecast(forecasts);
+        } else {
+            // TODO: what do? shouldn't happen, though
+        }
+    }
+
     @Override
     protected Boolean doInBackground(Takeoff... takeoffs) {
         try {
             takeoff = takeoffs[0];
             Location loc = takeoff.getLocation();
+
+            fetchMeteogramAndSoundingFromProxy(loc, 0, 0, null);
+            if (true)
+                return true;
+
+            // TODO: OLD, remove
             if (noaaCaptcha != null) {
-                /* try fetching using old captcha, proc, etc */
+                // try fetching using old captcha, proc, etc
                 publishProgress("" + (int) (Math.random() * 20), FlyWithMe.getInstance().getString(R.string.attempting_forecast_shortcut));
                 Bitmap forecasts = fetchForecasts(loc);
                 if (forecasts != null) {
@@ -99,7 +223,7 @@ public class NoaaForecastTask extends AsyncTask<Takeoff, String, Boolean> {
             publishProgress("80", FlyWithMe.getInstance().getString(R.string.retrieving_noaa_forecast));
             Bitmap forecasts = fetchForecasts(loc);
             if (forecasts == null) {
-                /* hmm, wrong captcha? give user another try */
+                // hmm, wrong captcha? give user another try
                 publishProgress("40", FlyWithMe.getInstance().getString(R.string.fetching_noaa_captcha));
                 content = fetchPageContent(NOAA_URL + "/ready2-bin/metgram1.pl?userid=" + noaaUserId + "&metdata=GFS&mdatacfg=GFS&Lat=" + loc.getLatitude() + "&Lon=" + loc.getLongitude() + "&metext=gfsf&metcyc=" + noaaMetcyc);
                 noaaProc = getOne(content, NOAA_PROC_PATTERN);

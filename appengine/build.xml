@@ -90,7 +90,7 @@
 
   <target name="runserver" depends="war"
           description="Run the dev_appserver">
-    <dev_appserver war="${war.dir}" port="${http.port}"/>
+    <dev_appserver war="${war.dir}" address="0.0.0.0" port="${http.port}"/>
   </target>
 
   <target name="dev_appserver" depends="runserver"/>

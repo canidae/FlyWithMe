@@ -245,7 +245,7 @@ public class ScheduleServlet extends HttpServlet {
                     // string: captcha [optional]
                     responseCode = NoaaProxy.getMeteogramAndSounding(inputStream, outputStream);
                     // output:
-                    // ubyte: 0 [captcha]
+                    // ubyte: 0 [responsetype: captcha]
                     // ushort: userId
                     // ushort: proc
                     // int: captchaSize
@@ -253,7 +253,7 @@ public class ScheduleServlet extends HttpServlet {
                     //
                     // OR
                     //
-                    // ubyte: 1 [meteogram/sounding]
+                    // ubyte: 1 [responsetype: meteogram/sounding]
                     // ubyte: images
                     //   int: imageSize
                     //   <bytes>: image

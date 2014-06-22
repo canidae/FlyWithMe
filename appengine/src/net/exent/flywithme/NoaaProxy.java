@@ -35,13 +35,13 @@ public class NoaaProxy {
 
     private static SimpleDateFormat metdateFormatter = new SimpleDateFormat("MMMM dd, yyyy 'at' HH 'UTC'");
 
-    private static String noaaUserId;
-    private static String noaaMetcyc;
-    private static String noaaMetdir;
-    private static String noaaMetfil;
-    private static List<String> noaaMetdates;
-    private static String noaaProc;
-    private static String noaaCaptcha;
+    private static String noaaUserId = "";
+    private static String noaaMetcyc = "";
+    private static String noaaMetdir = "";
+    private static String noaaMetfil = "";
+    private static List<String> noaaMetdates = new ArrayList<>();
+    private static String noaaProc = "";
+    private static String noaaCaptcha = "";
 
 
     public static synchronized int getMeteogramAndSounding(final DataInputStream inputStream, final DataOutputStream outputStream) throws IOException {
@@ -106,6 +106,7 @@ public class NoaaProxy {
             outputStream.writeByte(1);
             outputStream.writeByte(images.size());
             for (byte[] image : images) {
+                log.info("Image size: " + image.length);
                 outputStream.writeInt(image.length);
                 outputStream.write(image);
             }
@@ -118,6 +119,8 @@ public class NoaaProxy {
 
     private static List<byte[]> fetchForecasts(String userId, String proc, String captcha, float latitude, float longitude, boolean fetchMeteogram, long[] soundingTimestamps) throws UnsupportedEncodingException {
         // TODO: cache meteogram/sounding images
+        if (noaaMetdates.isEmpty())
+            return null;
         List<byte[]> forecasts = new ArrayList<>();
         if (fetchMeteogram) {
             String meteogramUrl = getOne(fetchPageContent(NOAA_URL + "/ready2-bin/metgram2.pl?userid=" + userId + "&Lat=" + latitude + "&Lon=" + longitude + "&metdir=" + noaaMetdir + "&metcyc=" + noaaMetcyc + "&metdate=" + URLEncoder.encode(noaaMetdates.get(0), "UTF-8") + "&metfil=" + noaaMetfil + "&password1=" + captcha + "&proc=" + proc + NOAA_METGRAM_CONF), NOAA_METEOGRAM_PATTERN);
@@ -132,7 +135,7 @@ public class NoaaProxy {
             String metdate = metdateFormatter.format(new Date(soundingTimestamp));
             for (String noaaMetdate : noaaMetdates) {
                 if (noaaMetdate.startsWith(metdate)) {
-                    String soundingUrl = getOne(fetchPageContent(NOAA_URL + "/ready2-bin/profile2.pl?userid=" + userId + "&Lat=" + latitude + "&Lon=" + longitude + "&metdir=" + noaaMetdir + "&metcyc=" + noaaMetcyc + "&metdate=" + URLEncoder.encode(metdate, "UTF-8") + "&metfil=" + noaaMetfil + "&password1=" + captcha + "&proc=" + proc + "&type=0&nhrs=24&hgt=1&textonly=No&skewt=1&gsize=96&pdf=No"), NOAA_SOUNDING_PATTERN);
+                    String soundingUrl = getOne(fetchPageContent(NOAA_URL + "/ready2-bin/profile2.pl?userid=" + userId + "&Lat=" + latitude + "&Lon=" + longitude + "&metdir=" + noaaMetdir + "&metcyc=" + noaaMetcyc + "&metdate=" + URLEncoder.encode(metdate, "UTF-8") + "&metfil=" + noaaMetfil + "&password1=" + captcha + "&proc=" + proc + NOAA_SOUNDING_CONF), NOAA_SOUNDING_PATTERN);
                     if (soundingUrl == null)
                         return null;
                     byte[] sounding = fetchImage(NOAA_URL + soundingUrl);
@@ -149,6 +152,7 @@ public class NoaaProxy {
         log.info("Fetching page: " + url);
         try {
             URLConnection urlConnection = new URL(url).openConnection();
+            urlConnection.setConnectTimeout(60000);
             urlConnection.connect();
             return urlConnection;
         } catch (Exception e) {
