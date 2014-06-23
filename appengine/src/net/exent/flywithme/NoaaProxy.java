@@ -1,5 +1,7 @@
 package net.exent.flywithme;
 
+import com.google.appengine.api.datastore.*;
+
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URL;
@@ -19,6 +21,11 @@ import java.util.regex.Pattern;
  */
 public class NoaaProxy {
     private static final Logger log = Logger.getLogger(NoaaProxy.class.getName());
+
+    private static final Key DATASTORE_METEOGRAMS_KEY = KeyFactory.createKey("FlyWithMe", "Meteograms");
+    private static final Key DATASTORE_SOUNDINGS_KEY = KeyFactory.createKey("FlyWithMe", "Soundings");
+
+    private static final long FORECAST_CACHE_LIFETIME = 21600000;
 
     private static final String NOAA_URL = "http://www.ready.noaa.gov";
     private static final String NOAA_METGRAM_CONF = "&metdata=GFS&mdatacfg=GFS&metext=gfsf&nhrs=96&type=user&wndtxt=2&Field1=FLAG&Level1=0&Field2=FLAG&Level2=5&Field3=FLAG&Level3=7&Field4=FLAG&Level4=9&Field5=TCLD&Level5=0&Field6=MSLP&Level6=0&Field7=T02M&Level7=0&Field8=TPP6&Level8=0&Field9=%20&Level9=0&Field10=%20&Level10=0&textonly=No&gsize=96&pdf=No";
@@ -98,6 +105,8 @@ public class NoaaProxy {
         outputStream.writeInt(captchaImage.length);
         outputStream.write(captchaImage);
 
+        // TODO: remove old cached data from datastore
+
         return HttpServletResponse.SC_OK;
     }
 
@@ -117,29 +126,90 @@ public class NoaaProxy {
     }
 
     private static List<byte[]> fetchForecasts(String userId, String proc, String captcha, float latitude, float longitude, boolean fetchMeteogram, long[] soundingTimestamps) throws UnsupportedEncodingException {
-        // TODO: cache meteogram/sounding images
         if (noaaMetdates.isEmpty())
             return null;
         List<byte[]> forecasts = new ArrayList<>();
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        // fetch meteogram
         if (fetchMeteogram) {
-            String meteogramUrl = getOne(fetchPageContent(NOAA_URL + "/ready2-bin/metgram2.pl?userid=" + userId + "&Lat=" + latitude + "&Lon=" + longitude + "&metdir=" + noaaMetdir + "&metcyc=" + noaaMetcyc + "&metdate=" + URLEncoder.encode(noaaMetdates.get(0), "UTF-8") + "&metfil=" + noaaMetfil + "&password1=" + captcha + "&proc=" + proc + NOAA_METGRAM_CONF), NOAA_METEOGRAM_PATTERN);
-            if (meteogramUrl == null)
-                return null;
-            byte[] meteogram = fetchImage(NOAA_URL + meteogramUrl);
-            if (meteogram == null)
-                return null;
+            // check if we got a recent cached version first
+            Entity meteogramsEntity;
+            try {
+                meteogramsEntity = datastore.get(DATASTORE_METEOGRAMS_KEY);
+            } catch (EntityNotFoundException e) {
+                // seems like our datastore doesn't have any cached meteograms
+                log.log(Level.INFO, "No meteograms entity found in datastore, creating one");
+                meteogramsEntity = new Entity(DATASTORE_METEOGRAMS_KEY);
+            }
+            String cacheKey = latitude + "," + longitude;
+            byte[] meteogram = null;
+            EmbeddedEntity meteogramEmbeddedEntity = (EmbeddedEntity) meteogramsEntity.getProperty(cacheKey);
+            if (meteogramEmbeddedEntity != null) {
+                long retrievedTimestamp = (long) meteogramEmbeddedEntity.getProperty("retrieved");
+                if (retrievedTimestamp + FORECAST_CACHE_LIFETIME > System.currentTimeMillis()) {
+                    // cached version isn't too old, use it
+                    log.info("Using cached meteogram for [" + latitude + "," + longitude + "]");
+                    meteogram = ((Blob) meteogramEmbeddedEntity.getProperty("image")).getBytes();
+                }
+            }
+            // if we couldn't retrieve meteogram from cache, then we'll need to fetch a new one from NOAA
+            if (meteogram == null) {
+                String meteogramUrl = getOne(fetchPageContent(NOAA_URL + "/ready2-bin/metgram2.pl?userid=" + userId + "&Lat=" + latitude + "&Lon=" + longitude + "&metdir=" + noaaMetdir + "&metcyc=" + noaaMetcyc + "&metdate=" + URLEncoder.encode(noaaMetdates.get(0), "UTF-8") + "&metfil=" + noaaMetfil + "&password1=" + captcha + "&proc=" + proc + NOAA_METGRAM_CONF), NOAA_METEOGRAM_PATTERN);
+                if (meteogramUrl == null)
+                    return null;
+                meteogram = fetchImage(NOAA_URL + meteogramUrl);
+                if (meteogram == null)
+                    return null;
+                meteogramEmbeddedEntity = new EmbeddedEntity();
+                meteogramEmbeddedEntity.setProperty("retrieved", System.currentTimeMillis());
+                meteogramEmbeddedEntity.setProperty("image", new Blob(meteogram));
+                meteogramsEntity.setProperty(cacheKey, meteogramEmbeddedEntity);
+                log.info("Storing meteogram for [" + latitude + "," + longitude + "] in datastore");
+                datastore.put(meteogramsEntity);
+            }
             forecasts.add(meteogram);
+        }
+
+        // fetch soundings
+        Entity soundingsEntity;
+        try {
+            soundingsEntity = datastore.get(DATASTORE_SOUNDINGS_KEY);
+        } catch (EntityNotFoundException e) {
+            // seems like our datastore doesn't have any cached soundings
+            log.log(Level.INFO, "No soundings entity found in datastore, creating one");
+            soundingsEntity = new Entity(DATASTORE_SOUNDINGS_KEY);
         }
         for (long soundingTimestamp : soundingTimestamps) {
             String metdate = metdateFormatter.format(new Date(soundingTimestamp));
             for (String noaaMetdate : noaaMetdates) {
                 if (noaaMetdate.startsWith(metdate)) {
-                    String soundingUrl = getOne(fetchPageContent(NOAA_URL + "/ready2-bin/profile2.pl?userid=" + userId + "&Lat=" + latitude + "&Lon=" + longitude + "&metdir=" + noaaMetdir + "&metcyc=" + noaaMetcyc + "&metdate=" + URLEncoder.encode(metdate, "UTF-8") + "&metfil=" + noaaMetfil + "&password1=" + captcha + "&proc=" + proc + NOAA_SOUNDING_CONF), NOAA_SOUNDING_PATTERN);
-                    if (soundingUrl == null)
-                        return null;
-                    byte[] sounding = fetchImage(NOAA_URL + soundingUrl);
-                    if (sounding == null)
-                        return null;
+                    // check cache first
+                    String cacheKey = latitude + "," + longitude + "-" + noaaMetdate;
+                    byte[] sounding = null;
+                    EmbeddedEntity soundingEmbeddedEntity = (EmbeddedEntity) soundingsEntity.getProperty(cacheKey);
+                    if (soundingEmbeddedEntity != null) {
+                        long retrievedTimestamp = (long) soundingEmbeddedEntity.getProperty("retrieved");
+                        if (retrievedTimestamp + FORECAST_CACHE_LIFETIME > System.currentTimeMillis()) {
+                            // cached version isn't too old, use it
+                            log.info("Using cached sounding for [" + latitude + "," + longitude + "] at " + noaaMetdate);
+                            sounding = ((Blob) soundingEmbeddedEntity.getProperty("image")).getBytes();
+                        }
+                    }
+                    // if we couldn't retrieve sounding from cache, then we'll need to fetch a new one from NOAA
+                    if (sounding == null) {
+                        String soundingUrl = getOne(fetchPageContent(NOAA_URL + "/ready2-bin/profile2.pl?userid=" + userId + "&Lat=" + latitude + "&Lon=" + longitude + "&metdir=" + noaaMetdir + "&metcyc=" + noaaMetcyc + "&metdate=" + URLEncoder.encode(metdate, "UTF-8") + "&metfil=" + noaaMetfil + "&password1=" + captcha + "&proc=" + proc + NOAA_SOUNDING_CONF), NOAA_SOUNDING_PATTERN);
+                        if (soundingUrl == null)
+                            return null;
+                        sounding = fetchImage(NOAA_URL + soundingUrl);
+                        if (sounding == null)
+                            return null;
+                        soundingEmbeddedEntity = new EmbeddedEntity();
+                        soundingEmbeddedEntity.setProperty("retrieved", System.currentTimeMillis());
+                        soundingEmbeddedEntity.setProperty("image", new Blob(sounding));
+                        soundingsEntity.setProperty(cacheKey, soundingEmbeddedEntity);
+                        log.info("Storing sounding for [" + latitude + "," + longitude + "] at " + noaaMetdate + " in datastore");
+                        datastore.put(soundingsEntity);
+                    }
                     forecasts.add(sounding);
                 }
             }
