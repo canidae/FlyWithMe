@@ -28,9 +28,6 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 public class NoaaForecastTask extends AsyncTask<Takeoff, String, Boolean> {
-    //private static final String SERVER_URL = "http://flywithme-server.appspot.com/fwm";
-    private static final String SERVER_URL = "http://192.168.1.200:8080/fwm";
-
     private final Lock lock = new ReentrantLock();
     private final Condition condition = lock.newCondition();
     private Takeoff takeoff;
@@ -88,7 +85,7 @@ public class NoaaForecastTask extends AsyncTask<Takeoff, String, Boolean> {
 
     private void fetchMeteogramAndSoundingFromProxy(Location loc, int userId, int proc, String captcha) throws IOException {
         publishProgress("30", FlyWithMe.getInstance().getString(R.string.retrieving_noaa_forecast));
-        HttpURLConnection con = (HttpURLConnection) new URL(SERVER_URL).openConnection();
+        HttpURLConnection con = (HttpURLConnection) new URL(FlyWithMe.SERVER_URL).openConnection();
         con.setRequestMethod("POST");
         con.setDoOutput(true);
         DataOutputStream outputStream = new DataOutputStream(con.getOutputStream());

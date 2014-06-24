@@ -35,6 +35,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FlyWithMe extends FragmentActivity implements TakeoffListListener, TakeoffMapListener, TakeoffDetailsListener {
+    public static final String SERVER_URL = "http://flywithme-server.appspot.com/fwm";
+    //public static final String SERVER_URL = "http://192.168.1.200:8080/fwm";
+
     private static final int LOCATION_UPDATE_TIME = 60000; // update location every LOCATION_UPDATE_TIME millisecond
     private static final int LOCATION_UPDATE_DISTANCE = 100; // or when we've moved more than LOCATION_UPDATE_DISTANCE meters
     private static Location location = new Location(LocationManager.PASSIVE_PROVIDER);

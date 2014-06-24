@@ -43,7 +43,6 @@ import java.util.TimeZone;
  * Created by canidae on 3/10/14.
  */
 public class ScheduleService extends IntentService implements ConnectionCallbacks, OnConnectionFailedListener, LocationListener {
-    private static final String SERVER_URL = "http://flywithme-server.appspot.com/fwm";
     private static final int NOTIFICATION_ID = 42;
     private static final long MS_IN_DAY = 86400000;
 
@@ -78,7 +77,7 @@ public class ScheduleService extends IntentService implements ConnectionCallback
         List<Takeoff> takeoffs = new Database(context).getTakeoffs(location.getLatitude(), location.getLongitude(), fetchTakeoffs, true);
         try {
             Log.i(ScheduleService.class.getName(), "Fetching schedule from server");
-            HttpURLConnection con = (HttpURLConnection) new URL(SERVER_URL).openConnection();
+            HttpURLConnection con = (HttpURLConnection) new URL(FlyWithMe.SERVER_URL).openConnection();
             con.setRequestMethod("POST");
             con.setDoOutput(true);
             DataOutputStream outputStream = new DataOutputStream(con.getOutputStream());
@@ -106,7 +105,7 @@ public class ScheduleService extends IntentService implements ConnectionCallback
             }
             String pilotName = prefs.getString("pref_schedule_pilot_name", "").trim();
             String pilotPhone = prefs.getString("pref_schedule_pilot_phone", "").trim();
-            HttpURLConnection con = (HttpURLConnection) new URL(SERVER_URL).openConnection();
+            HttpURLConnection con = (HttpURLConnection) new URL(FlyWithMe.SERVER_URL).openConnection();
             con.setRequestMethod("POST");
             con.setDoOutput(true);
             DataOutputStream outputStream = new DataOutputStream(con.getOutputStream());
@@ -128,7 +127,7 @@ public class ScheduleService extends IntentService implements ConnectionCallback
         try {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
             long pilotId = prefs.getLong("pref_schedule_pilot_id", 0);
-            HttpURLConnection con = (HttpURLConnection) new URL(SERVER_URL).openConnection();
+            HttpURLConnection con = (HttpURLConnection) new URL(FlyWithMe.SERVER_URL).openConnection();
             con.setRequestMethod("POST");
             con.setDoOutput(true);
             DataOutputStream outputStream = new DataOutputStream(con.getOutputStream());
