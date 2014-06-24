@@ -2,7 +2,7 @@
   <!-- Replace this with your application id from http://appengine.google.com -->
   <application>flywithme-server</application>
 
-  <version>2</version>
+  <version>3</version>
 
   <!-- Change to false if your code is not threadsafe.
        See https://developers.google.com/appengine/docs/java/config/appconfig#Using_Concurrent_Requests -->
