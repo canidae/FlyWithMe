@@ -8,8 +8,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.beans.XMLDecoder;
 import java.beans.XMLEncoder;
 import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -20,7 +18,7 @@ public class ScheduleServlet extends HttpServlet {
     // TODO: store registration time, store unregistered, have client ask for a time frame (registrations/unregistrations for the last x seconds)
     private static final Key DATASTORE_SCHEDULES_KEY = KeyFactory.createKey("FlyWithMe", "Schedules");
     private static final Map<Integer, TakeoffSchedule> schedules = new HashMap<>();
-    private static long lastScheduleClean = System.currentTimeMillis();
+    private static long lastScheduleClean = 0;
 
     public ScheduleServlet() {
         // read in schedule from datastore
@@ -43,148 +41,6 @@ public class ScheduleServlet extends HttpServlet {
             log.log(Level.INFO, "No data found in datastore");
         }
     }
-
-    /* Used for testing, this code should not be uploaded to google app engine
-    @Override
-    protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws IOException {
-        // TODO: remove, just for testing
-        // first test registering some flights
-        System.out.println("=== TESTING REGISTERING FLIGHT ===");
-        int registerTime = (int) (System.currentTimeMillis() / 1000);
-        long pilotId = (new Random()).nextLong();
-        HttpURLConnection con = (HttpURLConnection) new URL("http://localhost:8080/fwm").openConnection();
-        con.setRequestMethod("POST");
-        con.setDoOutput(true);
-        DataOutputStream outputStream = new DataOutputStream(con.getOutputStream());
-        outputStream.writeByte(1);
-        outputStream.writeShort(4);
-        outputStream.writeInt(registerTime);
-        outputStream.writeLong(pilotId);
-        outputStream.writeUTF("Vidar Wahlberg");
-        outputStream.writeUTF("+4795728262");
-        outputStream.close();
-        int responseCode = con.getResponseCode();
-        System.out.println("Response code: " + responseCode);
-        DataInputStream inputStream = new DataInputStream(con.getInputStream());
-        inputStream.close();
-        // another one
-        con = (HttpURLConnection) new URL("http://localhost:8080/fwm").openConnection();
-        con.setRequestMethod("POST");
-        con.setDoOutput(true);
-        outputStream = new DataOutputStream(con.getOutputStream());
-        outputStream.writeByte(1);
-        outputStream.writeShort(4);
-        outputStream.writeInt(registerTime);
-        outputStream.writeLong((new Random()).nextLong());
-        outputStream.writeUTF("Unknown Pilot");
-        outputStream.writeUTF("88888888");
-        outputStream.close();
-        responseCode = con.getResponseCode();
-        System.out.println("Response code: " + responseCode);
-        inputStream = new DataInputStream(con.getInputStream());
-        inputStream.close();
-        // and one more
-        con = (HttpURLConnection) new URL("http://localhost:8080/fwm").openConnection();
-        con.setRequestMethod("POST");
-        con.setDoOutput(true);
-        outputStream = new DataOutputStream(con.getOutputStream());
-        outputStream.writeByte(1);
-        outputStream.writeShort(67);
-        outputStream.writeInt(registerTime);
-        outputStream.writeLong(pilotId);
-        outputStream.writeUTF("Vidar Wahlberg");
-        outputStream.writeUTF("95728262");
-        outputStream.close();
-        responseCode = con.getResponseCode();
-        System.out.println("Response code: " + responseCode);
-        inputStream = new DataInputStream(con.getInputStream());
-        inputStream.close();
-
-        // then test fetching scheduled flights
-        System.out.println("=== TESTING FETCHING SCHEDULE ===");
-        con = (HttpURLConnection) new URL("http://localhost:8080/fwm").openConnection();
-        con.setRequestMethod("POST");
-        con.setDoOutput(true);
-        outputStream = new DataOutputStream(con.getOutputStream());
-        outputStream.writeByte(0);
-        outputStream.writeShort(3);
-        outputStream.writeShort(4);
-        outputStream.writeShort(67);
-        outputStream.writeShort(1337);
-        outputStream.close();
-        responseCode = con.getResponseCode();
-        System.out.println("Response code: " + responseCode);
-        inputStream = new DataInputStream(con.getInputStream());
-        while (true) {
-            int takeoffId = inputStream.readUnsignedShort();
-            if (takeoffId == 0)
-                break; // no more takeoffs
-            System.out.println("Takeoff ID: " + takeoffId);
-            int timestamps = inputStream.readUnsignedShort();
-            System.out.println("Timestamps: " + timestamps);
-            for (int b = 0; b < timestamps; ++b) {
-                System.out.println("Timestamp: " + inputStream.readInt());
-                int pilots = inputStream.readUnsignedShort();
-                System.out.println("Pilots: " + pilots);
-                for (int c = 0; c < pilots; ++c) {
-                    System.out.println("Pilot: " + inputStream.readUTF());
-                    System.out.println("Phone: " + inputStream.readUTF());
-                }
-            }
-        }
-        inputStream.close();
-
-        // then test unregistering
-        System.out.println("=== TESTING UNREGISTERING FLIGHT ===");
-        con = (HttpURLConnection) new URL("http://localhost:8080/fwm").openConnection();
-        con.setRequestMethod("POST");
-        con.setDoOutput(true);
-        outputStream = new DataOutputStream(con.getOutputStream());
-        outputStream.writeByte(2);
-        outputStream.writeShort(4);
-        outputStream.writeInt(registerTime);
-        outputStream.writeLong(pilotId);
-        outputStream.close();
-        responseCode = con.getResponseCode();
-        System.out.println("Response code: " + responseCode);
-        inputStream = new DataInputStream(con.getInputStream());
-        inputStream.close();
-
-        // then test fetching scheduled flights again
-        System.out.println("=== TESTING FETCHING SCHEDULE ===");
-        con = (HttpURLConnection) new URL("http://localhost:8080/fwm").openConnection();
-        con.setRequestMethod("POST");
-        con.setDoOutput(true);
-        outputStream = new DataOutputStream(con.getOutputStream());
-        outputStream.writeByte(0);
-        outputStream.writeShort(3);
-        outputStream.writeShort(4);
-        outputStream.writeShort(67);
-        outputStream.writeShort(1337);
-        outputStream.close();
-        responseCode = con.getResponseCode();
-        System.out.println("Response code: " + responseCode);
-        inputStream = new DataInputStream(con.getInputStream());
-        while (true) {
-            int takeoffId = inputStream.readUnsignedShort();
-            if (takeoffId == 0)
-                break; // no more takeoffs
-            System.out.println("Takeoff ID: " + takeoffId);
-            int timestamps = inputStream.readUnsignedShort();
-            System.out.println("Timestamps: " + timestamps);
-            for (int b = 0; b < timestamps; ++b) {
-                System.out.println("Timestamp: " + inputStream.readInt());
-                int pilots = inputStream.readUnsignedShort();
-                System.out.println("Pilots: " + pilots);
-                for (int c = 0; c < pilots; ++c) {
-                    System.out.println("Pilot: " + inputStream.readUTF());
-                    System.out.println("Phone: " + inputStream.readUTF());
-                }
-            }
-        }
-        inputStream.close();
-    }
-    */
 
     @Override
     protected void doPost(final HttpServletRequest request, final HttpServletResponse response) throws IOException {
@@ -283,7 +139,7 @@ public class ScheduleServlet extends HttpServlet {
             if (responseCode != HttpServletResponse.SC_OK)
                 response.sendError(responseCode);
 
-            /* clean up if it's been some time since we last cleaned */
+            // clean up schedule if it's been some time since we last cleaned
             long currentTime = System.currentTimeMillis();
             if (currentTime < lastScheduleClean + 1000 * 60 * 60 * 6)
                 return; // less than 6 hours since last cleanup, no rush
@@ -297,6 +153,10 @@ public class ScheduleServlet extends HttpServlet {
                     scheduleIterator.remove();
             }
             storeSchedules();
+
+            // clean up cached forecast images as well
+            NoaaProxy.cleanCache();
+
             lastScheduleClean = currentTime;
         } catch (Exception e) {
             log.log(Level.WARNING, "Exception handling request", e);

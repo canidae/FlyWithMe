@@ -8,9 +8,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -49,7 +47,6 @@ public class NoaaProxy {
     private static List<String> noaaMetdates = new ArrayList<>();
     private static String noaaProc = "";
     private static String noaaCaptcha = "";
-
 
     public static synchronized int getMeteogramAndSounding(final DataInputStream inputStream, final DataOutputStream outputStream) throws IOException {
         // read in request parameters
@@ -105,9 +102,43 @@ public class NoaaProxy {
         outputStream.writeInt(captchaImage.length);
         outputStream.write(captchaImage);
 
-        // TODO: remove old cached data from datastore
-
         return HttpServletResponse.SC_OK;
+    }
+
+    public static void cleanCache() {
+        log.info("Cleaning NOAA forecast cache");
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        // remove expired meteogram images
+        try {
+            Entity meteograms = datastore.get(DATASTORE_METEOGRAMS_KEY);
+            for (String remove : removeKeys(meteograms))
+                meteograms.removeProperty(remove);
+            datastore.put(meteograms);
+        } catch (EntityNotFoundException e) {
+            log.info("Not cleaning meteogram cache, key not found in datastore: " + e);
+        }
+
+        // remove expired sounding images
+        try {
+            Entity soundings = datastore.get(DATASTORE_SOUNDINGS_KEY);
+            for (String remove : removeKeys(soundings))
+                soundings.removeProperty(remove);
+            datastore.put(soundings);
+        } catch (EntityNotFoundException e) {
+            log.info("Not cleaning sounding cache, key not found in datastore: " + e);
+        }
+    }
+
+    private static Set<String> removeKeys(Entity entity) {
+        Set<String> removes = new HashSet<>();
+        long now = System.currentTimeMillis();
+        for (Map.Entry<String, Object> meteogram : entity.getProperties().entrySet()) {
+            EmbeddedEntity meteogramEmbeddedEntity = (EmbeddedEntity) meteogram.getValue();
+            long retrievedTimestamp = (long) meteogramEmbeddedEntity.getProperty("retrieved");
+            if (retrievedTimestamp + FORECAST_CACHE_LIFETIME > now)
+                removes.add(meteogram.getKey());
+        }
+        return removes;
     }
 
     private static int writeSuccessResponse(final DataOutputStream outputStream, List<byte[]> images) {
@@ -142,32 +173,32 @@ public class NoaaProxy {
                 meteogramsEntity = new Entity(DATASTORE_METEOGRAMS_KEY);
             }
             String cacheKey = latitude + "," + longitude;
-            byte[] meteogram = null;
+            byte[] meteogramImage = null;
             EmbeddedEntity meteogramEmbeddedEntity = (EmbeddedEntity) meteogramsEntity.getProperty(cacheKey);
             if (meteogramEmbeddedEntity != null) {
                 long retrievedTimestamp = (long) meteogramEmbeddedEntity.getProperty("retrieved");
                 if (retrievedTimestamp + FORECAST_CACHE_LIFETIME > System.currentTimeMillis()) {
                     // cached version isn't too old, use it
                     log.info("Using cached meteogram for [" + latitude + "," + longitude + "]");
-                    meteogram = ((Blob) meteogramEmbeddedEntity.getProperty("image")).getBytes();
+                    meteogramImage = ((Blob) meteogramEmbeddedEntity.getProperty("image")).getBytes();
                 }
             }
             // if we couldn't retrieve meteogram from cache, then we'll need to fetch a new one from NOAA
-            if (meteogram == null) {
+            if (meteogramImage == null) {
                 String meteogramUrl = getOne(fetchPageContent(NOAA_URL + "/ready2-bin/metgram2.pl?userid=" + userId + "&Lat=" + latitude + "&Lon=" + longitude + "&metdir=" + noaaMetdir + "&metcyc=" + noaaMetcyc + "&metdate=" + URLEncoder.encode(noaaMetdates.get(0), "UTF-8") + "&metfil=" + noaaMetfil + "&password1=" + captcha + "&proc=" + proc + NOAA_METGRAM_CONF), NOAA_METEOGRAM_PATTERN);
                 if (meteogramUrl == null)
                     return null;
-                meteogram = fetchImage(NOAA_URL + meteogramUrl);
-                if (meteogram == null)
+                meteogramImage = fetchImage(NOAA_URL + meteogramUrl);
+                if (meteogramImage == null)
                     return null;
                 meteogramEmbeddedEntity = new EmbeddedEntity();
                 meteogramEmbeddedEntity.setProperty("retrieved", System.currentTimeMillis());
-                meteogramEmbeddedEntity.setProperty("image", new Blob(meteogram));
+                meteogramEmbeddedEntity.setProperty("image", new Blob(meteogramImage));
                 meteogramsEntity.setProperty(cacheKey, meteogramEmbeddedEntity);
                 log.info("Storing meteogram for [" + latitude + "," + longitude + "] in datastore");
                 datastore.put(meteogramsEntity);
             }
-            forecasts.add(meteogram);
+            forecasts.add(meteogramImage);
         }
 
         // fetch soundings
@@ -185,32 +216,32 @@ public class NoaaProxy {
                 if (noaaMetdate.startsWith(metdate)) {
                     // check cache first
                     String cacheKey = latitude + "," + longitude + "-" + noaaMetdate;
-                    byte[] sounding = null;
+                    byte[] soundingImage = null;
                     EmbeddedEntity soundingEmbeddedEntity = (EmbeddedEntity) soundingsEntity.getProperty(cacheKey);
                     if (soundingEmbeddedEntity != null) {
                         long retrievedTimestamp = (long) soundingEmbeddedEntity.getProperty("retrieved");
                         if (retrievedTimestamp + FORECAST_CACHE_LIFETIME > System.currentTimeMillis()) {
                             // cached version isn't too old, use it
                             log.info("Using cached sounding for [" + latitude + "," + longitude + "] at " + noaaMetdate);
-                            sounding = ((Blob) soundingEmbeddedEntity.getProperty("image")).getBytes();
+                            soundingImage = ((Blob) soundingEmbeddedEntity.getProperty("image")).getBytes();
                         }
                     }
                     // if we couldn't retrieve sounding from cache, then we'll need to fetch a new one from NOAA
-                    if (sounding == null) {
+                    if (soundingImage == null) {
                         String soundingUrl = getOne(fetchPageContent(NOAA_URL + "/ready2-bin/profile2.pl?userid=" + userId + "&Lat=" + latitude + "&Lon=" + longitude + "&metdir=" + noaaMetdir + "&metcyc=" + noaaMetcyc + "&metdate=" + URLEncoder.encode(metdate, "UTF-8") + "&metfil=" + noaaMetfil + "&password1=" + captcha + "&proc=" + proc + NOAA_SOUNDING_CONF), NOAA_SOUNDING_PATTERN);
                         if (soundingUrl == null)
                             return null;
-                        sounding = fetchImage(NOAA_URL + soundingUrl);
-                        if (sounding == null)
+                        soundingImage = fetchImage(NOAA_URL + soundingUrl);
+                        if (soundingImage == null)
                             return null;
                         soundingEmbeddedEntity = new EmbeddedEntity();
                         soundingEmbeddedEntity.setProperty("retrieved", System.currentTimeMillis());
-                        soundingEmbeddedEntity.setProperty("image", new Blob(sounding));
+                        soundingEmbeddedEntity.setProperty("image", new Blob(soundingImage));
                         soundingsEntity.setProperty(cacheKey, soundingEmbeddedEntity);
                         log.info("Storing sounding for [" + latitude + "," + longitude + "] at " + noaaMetdate + " in datastore");
                         datastore.put(soundingsEntity);
                     }
-                    forecasts.add(sounding);
+                    forecasts.add(soundingImage);
                 }
             }
         }
