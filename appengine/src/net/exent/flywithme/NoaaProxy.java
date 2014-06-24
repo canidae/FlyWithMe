@@ -39,6 +39,10 @@ public class NoaaProxy {
     private static final Pattern NOAA_SOUNDING_PATTERN = Pattern.compile(".*<IMG SRC=\"([^\"]+)\" ALT=\"Profile\">.*");
 
     private static SimpleDateFormat metdateFormatter = new SimpleDateFormat("MMMM dd, yyyy 'at' HH 'UTC'");
+    static {
+        // strange that this isn't possible in constructor. oh well
+        metdateFormatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+    }
 
     private static String noaaUserId = "";
     private static String noaaMetcyc = "";
@@ -77,7 +81,7 @@ public class NoaaProxy {
             log.log(Level.WARNING, "Unexpected exception", e);
         } catch (IOException e) {
             // user did likely not send captcha data (this will happen for most of the requests), continue using cached data
-            log.log(Level.INFO, "Meteogram/sounding requested, likely without sending captcha data (using cached data instead)", e);
+            log.info("Meteogram/sounding requested, likely without sending captcha data (using cached data instead): " + e);
         }
 
         List<byte[]> images = fetchForecasts(noaaUserId, noaaProc, noaaCaptcha, latitude, longitude, fetchMeteogram, soundingTimestamps);
@@ -212,6 +216,7 @@ public class NoaaProxy {
         }
         for (long soundingTimestamp : soundingTimestamps) {
             String metdate = metdateFormatter.format(new Date(soundingTimestamp));
+            log.info("Asked for sounding at timestamp: " + metdate);
             for (String noaaMetdate : noaaMetdates) {
                 if (noaaMetdate.startsWith(metdate)) {
                     // check cache first

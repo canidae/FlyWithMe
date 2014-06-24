@@ -8,6 +8,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
@@ -38,11 +39,11 @@ public class NoaaForecastTask extends AsyncTask<Takeoff, String, Boolean> {
         try {
             takeoff = takeoffs[0];
             Location loc = takeoff.getLocation();
-            fetchMeteogramAndSoundingFromProxy(loc, 0, 0, null);
+            return fetchMeteogramAndSoundingFromProxy(loc, 0, 0, null);
         } catch (Exception e) {
             Log.w(getClass().getName(), "doInBackground() failed unexpectedly", e);
         }
-        return true;
+        return false;
     }
 
     @Override
@@ -83,7 +84,7 @@ public class NoaaForecastTask extends AsyncTask<Takeoff, String, Boolean> {
         }
     }
 
-    private void fetchMeteogramAndSoundingFromProxy(Location loc, int userId, int proc, String captcha) throws IOException {
+    private boolean fetchMeteogramAndSoundingFromProxy(Location loc, int userId, int proc, String captcha) throws IOException {
         publishProgress("30", FlyWithMe.getInstance().getString(R.string.retrieving_noaa_forecast));
         HttpURLConnection con = (HttpURLConnection) new URL(FlyWithMe.SERVER_URL).openConnection();
         con.setRequestMethod("POST");
@@ -98,7 +99,7 @@ public class NoaaForecastTask extends AsyncTask<Takeoff, String, Boolean> {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(FlyWithMe.getInstance());
         int soundingDays = Integer.parseInt(prefs.getString("pref_sounding_days", "2"));
         List<Integer> soundingTimestamps = new ArrayList<>();
-        Calendar calendar = Calendar.getInstance();
+        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
         // just setting some fields to 0, shouldn't really matter, though
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
@@ -156,7 +157,7 @@ public class NoaaForecastTask extends AsyncTask<Takeoff, String, Boolean> {
             }
             String tmpCaptcha = ProgressDialog.getInstance().getInputText();
             // recurse
-            fetchMeteogramAndSoundingFromProxy(loc, tmpUserId, tmpProc, tmpCaptcha);
+            return fetchMeteogramAndSoundingFromProxy(loc, tmpUserId, tmpProc, tmpCaptcha);
         } else if (responseType == 1) {
             // we got meteogram/sounding, create bitmap and display it
             // ubyte: images
@@ -188,9 +189,9 @@ public class NoaaForecastTask extends AsyncTask<Takeoff, String, Boolean> {
                 width += image.getWidth();
             }
             takeoff.setNoaaForecast(forecasts);
-        } else {
-            // TODO: what do? shouldn't happen, though
+            return true;
         }
+        return false;
     }
 
     private void showProgress(int progress, String text, Bitmap image, Runnable showInput) {

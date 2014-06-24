@@ -19,12 +19,8 @@
     <string name="get_your_wing">Upcoming activity</string>
 
     <!-- Status messages -->
-    <string name="attempting_forecast_shortcut">Attempting shortcut…</string>
-    <string name="initiating_noaa_forecast">Initiating meteogram…</string>
-    <string name="fetching_noaa_captcha">Fetching CAPTCHA…</string>
     <string name="type_noaa_captcha">Type in CAPTCHA:</string>
-    <string name="retrieving_noaa_forecast">Retrieving meteogram…</string>
-    <string name="retrieving_noaa_sounding">Retrieving sounding</string>
+    <string name="retrieving_noaa_forecast">Retrieving forecast…</string>
     <string name="fetching_noaa_failed">Fetching meteogram failed</string>
 
     <!-- Flight schedule -->

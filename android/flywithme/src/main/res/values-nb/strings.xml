@@ -19,13 +19,9 @@
     <string name="get_your_wing">Kommende flyaktivitet</string>
 
     <!-- Startup messages -->
-    <string name="attempting_forecast_shortcut">Prøver snarvei…</string>
-    <string name="initiating_noaa_forecast">Forbereder meteogram…</string>
-    <string name="fetching_noaa_captcha">Henter CAPTCHA…</string>
     <string name="type_noaa_captcha">Skriv inn CAPTCHA:</string>
-    <string name="retrieving_noaa_forecast">Laster ned meteogram…</string>
-    <string name="retrieving_noaa_sounding">Laster ned sounding</string>
-    <string name="fetching_noaa_failed">Hente meteogram feilet</string>
+    <string name="retrieving_noaa_forecast">Laster ned værvarsel…</string>
+    <string name="fetching_noaa_failed">Hente værvarsel feilet</string>
 
     <!-- Flight schedule graph -->
     <string name="graph_text">Flyplan (klikk for detaljer)</string>
