@@ -21,7 +21,7 @@
     <!-- Status messages -->
     <string name="type_noaa_captcha">Type in CAPTCHA:</string>
     <string name="retrieving_noaa_forecast">Retrieving forecast…</string>
-    <string name="fetching_noaa_failed">Fetching meteogram failed</string>
+    <string name="fetching_noaa_failed">Fetching forecast failed</string>
 
     <!-- Flight schedule -->
     <string name="graph_text">Flight schedule (click for details)</string>
