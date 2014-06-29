@@ -20,13 +20,14 @@ import android.util.Log;
 
 public class Database extends SQLiteOpenHelper {
     public Database(Context context) {
-        super(context, "flywithme", null, 2);
+        super(context, "flywithme", null, 3);
     }
 
     @Override
     public synchronized void onCreate(SQLiteDatabase db) {
         Log.d(getClass().getName(), "onCreate()");
         createDatabaseV2(db);
+        upgradeDatabaseToV3(db);
     }
 
     @Override
@@ -35,6 +36,8 @@ public class Database extends SQLiteOpenHelper {
         if (oldVersion == 1) {
             createDatabaseV2(db);
             upgradeDatabaseToV2(db);
+        } else if (oldVersion == 2) {
+            upgradeDatabaseToV3(db);
         }
     }
 
@@ -120,10 +123,14 @@ public class Database extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
         if (db == null)
             throw new IllegalArgumentException("Unable to get database object");
-        ContentValues contentValues = takeoff.getContentValues();
-        if (db.update("takeoff", contentValues, "takeoff_id = " + takeoff.getId(), null) <= 0) {
-            // no rows updated, insert instead
-            db.insert("takeoff", null, contentValues);
+        try {
+            ContentValues contentValues = takeoff.getContentValues();
+            if (db.update("takeoff", contentValues, "takeoff_id = " + takeoff.getId(), null) <= 0) {
+                // no rows updated, insert instead
+                db.insert("takeoff", null, contentValues);
+            }
+        } finally {
+            db.close();
         }
     }
 
@@ -131,9 +138,6 @@ public class Database extends SQLiteOpenHelper {
         List<Takeoff> takeoffs = new ArrayList<>();
         if (maxResult <= 0)
             return takeoffs;
-        SQLiteDatabase db = getReadableDatabase();
-        if (db == null)
-            throw new IllegalArgumentException("Unable to get database object");
         // order result by approximate distance
         double latitudeRadians = latitude * Math.PI / 180.0;
         double latitudeCos = Math.cos(latitudeRadians);
@@ -145,6 +149,9 @@ public class Database extends SQLiteOpenHelper {
         orderBy += "(" + latitudeCos + " * latitude_cos * (longitude_cos * " + longitudeCos + " + longitude_sin * " + longitudeSin + ") + " + latitudeSin + " * latitude_sin) desc";
 
         // execute the query
+        SQLiteDatabase db = getReadableDatabase();
+        if (db == null)
+            throw new IllegalArgumentException("Unable to get database object");
         try {
             Cursor cursor = db.rawQuery("select *, (select count(*) from schedule where schedule.takeoff_id = takeoff.takeoff_id and date(schedule.timestamp, 'unixepoch') = date('now')) as pilots_today, (select count(*) from schedule where schedule.takeoff_id = takeoff.takeoff_id and date(schedule.timestamp, 'unixepoch') > date('now')) as pilots_later from takeoff order by " + orderBy + " limit " + maxResult, null);
             while (cursor.moveToNext())
@@ -179,6 +186,14 @@ public class Database extends SQLiteOpenHelper {
         db.execSQL("update takeoff set favourite = 1 where takeoff_id in (select takeoff_id from favourite)");
         // drop favourites table
         db.execSQL("drop table favourite");
+    }
+
+    private synchronized void upgradeDatabaseToV3(SQLiteDatabase db) {
+        // add "last_updated" column to takeoff table
+        db.execSQL("create table takeofftmp(takeoff_id integer primary key, last_updated integer not null default current_timestamp, name text not null default '', description text not null default '', asl integer not null default 0, height integer not null default 0, latitude real not null default 0.0, latitude_cos real not null default 0.0, latitude_sin real not null default 0.0, longitude real not null default 0.0, longitude_cos real not null default 0.0, longitude_sin real not null default 0.0, exits integer not null default 0, favourite integer not null default 0)");
+        db.execSQL("insert into takeofftmp select takeoff_id, current_timestamp, name, description, asl, height, latitude, latitude_cos, latitude_sin, longitude, longitude_cos, longitude_sin, exits, favourite from takeoff");
+        db.execSQL("drop table takeoff");
+        db.execSQL("alter table takeofftmp rename to takeoff");
     }
 
     public static class ImprovedCursor {

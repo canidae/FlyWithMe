@@ -5,6 +5,7 @@ import java.io.EOFException;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStreamReader;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -20,7 +21,7 @@ public class FlightlogCrawler {
      * http://flightlog.org/fl.html?l=1&a=22&country_id=160&start_id=4
      * we can set "country_id" to a fixed value, it only means that wrong country will be displayed (which we don't care about)
      */
-    public static void crawl(DataOutputStream outputStream, PrintWriter kmlWriter) {
+    public static void crawl(DataOutputStream outputStream, PrintWriter kmlWriter) throws IOException {
         System.out.println("Crawling...");
         Pattern namePattern = Pattern.compile(".*<title>.* - .* - .* - (.*)</title>.*", Pattern.DOTALL);
         Pattern descriptionPattern = Pattern.compile(".*Description</td>.*('right'>|'left'></a>)(.*)</td></tr>.*Coordinates</td>.*", Pattern.DOTALL);
@@ -33,6 +34,7 @@ public class FlightlogCrawler {
         kmlWriter.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
         kmlWriter.println("<kml xmlns=\"http://www.opengis.net/kml/2.2\">");
         kmlWriter.println("<Document>");
+        outputStream.writeLong(System.currentTimeMillis());
         while (takeoff++ < lastValidTakeoff + 50) { // when we haven't found a takeoff within the last 50 fetches from flightlog, assume all is found
             try {
                 URL url = new URL("http://flightlog.org/fl.html?l=1&a=22&country_id=160&start_id=" + takeoff);
@@ -170,6 +172,7 @@ public class FlightlogCrawler {
         /* test flywithme.dat by reading it (had some unexplainable issues where the file somehow got corrupted) */
         DataInputStream inputStream = new DataInputStream(new FileInputStream("flywithme.dat"));
         try {
+            long imported = inputStream.readLong();
             while (true) {
                 /* loop breaks once we get an EOFException */
                 int takeoffId = inputStream.readShort();

@@ -19,6 +19,7 @@
     <string name="get_your_wing">Upcoming activity</string>
 
     <!-- Status messages -->
+    <string name="importing_takeoffs">Importing takeoffs…</string>
     <string name="type_noaa_captcha">Type in CAPTCHA:</string>
     <string name="retrieving_noaa_forecast">Retrieving forecast…</string>
     <string name="fetching_noaa_failed">Fetching forecast failed</string>

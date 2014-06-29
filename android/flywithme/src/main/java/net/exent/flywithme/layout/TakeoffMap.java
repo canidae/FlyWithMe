@@ -194,8 +194,8 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
 
     private void drawOverlay(CameraPosition cameraPosition) {
         try {
-            new DrawPolygonsTask().execute(cameraPosition);
-            new DrawMarkersTask().execute(cameraPosition);
+            new DrawPolygonsTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, cameraPosition);
+            new DrawMarkersTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, cameraPosition);
         } catch (Exception e) {
             Log.w(getClass().getName(), "redrawMap() failed unexpectedly", e);
         }

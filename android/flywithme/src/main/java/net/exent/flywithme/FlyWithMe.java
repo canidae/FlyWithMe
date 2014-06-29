@@ -19,6 +19,7 @@ import android.content.SharedPreferences;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
@@ -27,6 +28,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import java.io.DataInputStream;
 import java.io.EOFException;
@@ -198,6 +200,9 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
         Intent scheduleService = new Intent(this, ScheduleService.class);
         startService(scheduleService);
 
+        /* start importing takeoffs from files */
+        (new ImportTakeoffTask()).execute();
+
         /* show takeoff list */
         if (savedInstanceState == null)
             showTakeoffList();
@@ -269,18 +274,21 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
         getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, fragment, name).commit();
     }
 
-
     private void importTakeoffs() {
+        Log.d(getClass().getName(), "Importing takeoffs from file");
         DataInputStream inputStream = null;
         try {
-            Database database = new Database(getApplicationContext());
-            inputStream = new DataInputStream(getInstance().getResources().openRawResource(R.raw.flywithme));
+            Context context = getApplicationContext();
+            Database database = new Database(context);
+            inputStream = new DataInputStream(context.getResources().openRawResource(R.raw.flywithme));
             long importTimestamp = inputStream.readLong();
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
             long previousImportTimestamp = prefs.getLong("pref_import_timestamp", 0);
-            if (importTimestamp <= previousImportTimestamp)
+            if (importTimestamp <= previousImportTimestamp) {
+                Log.d(getClass().getName(), "No need to import, already up to date");
                 return; // no need to import, already updated
-            // TODO: show message in fwmStatusText that we're importing takeoffs
+            }
+            prefs.edit().putLong("pref_import_timestamp", importTimestamp).commit();
             while (true) {
                 /* loop breaks once we get an EOFException */
                 int takeoffId = inputStream.readShort();
@@ -291,15 +299,14 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
                 float latitude = inputStream.readFloat();
                 float longitude = inputStream.readFloat();
                 String windpai = inputStream.readUTF();
-                Takeoff takeoff = new Takeoff(takeoffId, name, description, asl, height, latitude, longitude, windpai, false);
+                Takeoff takeoff = new Takeoff(takeoffId, importTimestamp, name, description, asl, height, latitude, longitude, windpai, false);
                 database.updateTakeoff(takeoff);
             }
         } catch (EOFException e) {
-            /* expected to happen */
+            /* expected to happen when reaching end of file */
         } catch (IOException e) {
             Log.e(getClass().getName(), "Error when reading file with takeoffs", e);
         } finally {
-            // TODO: hide fwmStatusText
             try {
                 if (inputStream != null)
                     inputStream.close();
@@ -307,6 +314,41 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
                 Log.w(getClass().getName(), "Unable to close file with takeoffs");
             }
         }
+        Log.d(getClass().getName(), "Done importing takeoffs from file");
     }
 
+    private class ImportTakeoffTask extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... params) {
+            importTakeoffs();
+            return null;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            TextView statusText = (TextView) findViewById(R.id.fwmStatusText);
+            statusText.setText(getString(R.string.importing_takeoffs));
+            statusText.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            TextView statusText = (TextView) findViewById(R.id.fwmStatusText);
+            statusText.setVisibility(View.GONE);
+
+            // update list/map if user is looking at either
+            Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragmentContainer);
+            if (fragment != null) {
+                if (fragment instanceof TakeoffList) {
+                    TakeoffList takeoffList = (TakeoffList) fragment;
+                    takeoffList.onStart();
+                } else if (fragment instanceof TakeoffMap) {
+                    TakeoffMap takeoffMap = (TakeoffMap) fragment;
+                    takeoffMap.drawMap();
+                }
+            }
+        }
+    }
 }

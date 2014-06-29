@@ -16,7 +16,7 @@ import java.util.Map;
 public class Takeoff implements Parcelable {
     public static final Parcelable.Creator<Takeoff> CREATOR = new Parcelable.Creator<Takeoff>() {
         public Takeoff createFromParcel(Parcel in) {
-            return new Takeoff(in.readInt(), in.readString(), in.readString(), in.readInt(), in.readInt(), in.readDouble(), in.readDouble(), in.readInt(), in.readByte() == 1);
+            return new Takeoff(in.readInt(), in.readLong(), in.readString(), in.readString(), in.readInt(), in.readInt(), in.readDouble(), in.readDouble(), in.readInt(), in.readByte() == 1);
         }
 
         public Takeoff[] newArray(int size) {
@@ -25,13 +25,14 @@ public class Takeoff implements Parcelable {
     };
 
     public static final String[] COLUMNS = {
-            "takeoff_id", "name", "description", "asl", "height", "latitude", "longitude", "exits", "favourite"
+            "takeoff_id", "last_updated", "name", "description", "asl", "height", "latitude", "longitude", "exits", "favourite"
     };
 
     // used to prevent excessive memory allocations. it means more memory used, but also that the garbage collector won't run so aggressively.
     private static Map<Integer, Takeoff> takeoffCache = new HashMap<>();
 
     private int id;
+    private long lastUpdated;
     private String name;
     private String description;
     private int asl;
@@ -45,9 +46,10 @@ public class Takeoff implements Parcelable {
     private Bitmap noaaForecast;
     private long noaaUpdated;
 
-    /* Should only be used by Database for importing takeoffs from file */
-    public Takeoff(int id, String name, String description, int asl, int height, double latitude, double longitude, String exitDirections, boolean favourite) {
+    /* Should only be used for importing takeoffs from file */
+    public Takeoff(int id, long lastUpdated, String name, String description, int asl, int height, double latitude, double longitude, String exitDirections, boolean favourite) {
         this.id = id;
+        this.lastUpdated = lastUpdated;
         this.name = name;
         this.description = description;
         this.asl = asl;
@@ -77,6 +79,7 @@ public class Takeoff implements Parcelable {
 
     private Takeoff(Database.ImprovedCursor cursor) {
         id = cursor.getIntOrThrow("takeoff_id");
+        lastUpdated = cursor.getLong("last_updated") * 1000;
         name = cursor.getString("name");
         description = cursor.getString("description");
         asl = cursor.getInt("asl");
@@ -87,8 +90,9 @@ public class Takeoff implements Parcelable {
         favourite = cursor.getInt("favourite") == 1;
     }
 
-    private Takeoff(int id, String name, String description, int asl, int height, double latitude, double longitude, int exits, boolean favourite) {
+    private Takeoff(int id, long lastUpdated, String name, String description, int asl, int height, double latitude, double longitude, int exits, boolean favourite) {
         this.id = id;
+        this.lastUpdated = lastUpdated;
         this.name = name;
         this.description = description;
         this.asl = asl;
@@ -117,6 +121,14 @@ public class Takeoff implements Parcelable {
 
     public int getId() {
         return id;
+    }
+
+    public void setLastUpdated(long lastUpdated) {
+        this.lastUpdated = lastUpdated;
+    }
+
+    public long getLastUpdated() {
+        return lastUpdated;
     }
 
     public String getName() {
@@ -222,6 +234,7 @@ public class Takeoff implements Parcelable {
     public ContentValues getContentValues() {
         ContentValues contentValues = new ContentValues();
         contentValues.put("takeoff_id", id);
+        contentValues.put("last_updated", lastUpdated);
         contentValues.put("name", name);
         contentValues.put("description", description);
         contentValues.put("asl", asl);
@@ -235,7 +248,7 @@ public class Takeoff implements Parcelable {
         contentValues.put("longitude_cos", Math.cos(longitudeRadians));
         contentValues.put("longitude_sin", Math.sin(longitudeRadians));
         contentValues.put("exits", exits);
-        contentValues.put("favourite", favourite);
+        // NOTE! Don't add user set data (such as "favourite"). otherwise, when importing takeoffs, this information will be lost
         return contentValues;
     }
 

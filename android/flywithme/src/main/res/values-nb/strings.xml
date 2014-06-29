@@ -18,7 +18,8 @@
     <string name="cancel">Avbryt</string>
     <string name="get_your_wing">Kommende flyaktivitet</string>
 
-    <!-- Startup messages -->
+    <!-- Status messages -->
+    <string name="importing_takeoffs">Importerer flysteder…</string>
     <string name="type_noaa_captcha">Skriv inn CAPTCHA:</string>
     <string name="retrieving_noaa_forecast">Laster ned værvarsel…</string>
     <string name="fetching_noaa_failed">Hente værvarsel feilet</string>
