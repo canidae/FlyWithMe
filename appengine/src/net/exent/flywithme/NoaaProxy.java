@@ -1,6 +1,7 @@
 package net.exent.flywithme;
 
 import com.google.appengine.api.datastore.*;
+import com.google.apphosting.api.ApiProxy;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
@@ -199,8 +200,13 @@ public class NoaaProxy {
                 meteogramEmbeddedEntity.setProperty("retrieved", System.currentTimeMillis());
                 meteogramEmbeddedEntity.setProperty("image", new Blob(meteogramImage));
                 meteogramsEntity.setProperty(cacheKey, meteogramEmbeddedEntity);
-                log.info("Storing meteogram for [" + latitude + "," + longitude + "] in datastore");
-                datastore.put(meteogramsEntity);
+                log.info("Storing meteogram for [" + latitude + "," + longitude + "] (size: " + meteogramImage.length + ") in datastore");
+                try {
+                    // TODO: entity will grow beyond 1mb after a while and cause this exception. need to fix this somehow
+                    datastore.put(meteogramsEntity);
+                } catch (ApiProxy.RequestTooLargeException e) {
+                    log.warning("Unable to cache meteogram, peculiar 'RequestTooLargeException' exception caught");
+                }
             }
             forecasts.add(meteogramImage);
         }
@@ -243,8 +249,13 @@ public class NoaaProxy {
                         soundingEmbeddedEntity.setProperty("retrieved", System.currentTimeMillis());
                         soundingEmbeddedEntity.setProperty("image", new Blob(soundingImage));
                         soundingsEntity.setProperty(cacheKey, soundingEmbeddedEntity);
-                        log.info("Storing sounding for [" + latitude + "," + longitude + "] at " + noaaMetdate + " in datastore");
-                        datastore.put(soundingsEntity);
+                        log.info("Storing sounding for [" + latitude + "," + longitude + "] at " + noaaMetdate + " (size: " + soundingImage.length + ") in datastore");
+                        try {
+                            // TODO: entity will grow beyond 1mb after a while and cause this exception. need to fix this somehow
+                            datastore.put(soundingsEntity);
+                        } catch (ApiProxy.RequestTooLargeException e) {
+                            log.warning("Unable to cache sounding, peculiar 'RequestTooLargeException' exception caught");
+                        }
                     }
                     forecasts.add(soundingImage);
                 }
