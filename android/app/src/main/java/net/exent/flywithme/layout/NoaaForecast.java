@@ -30,7 +30,7 @@ public class NoaaForecast extends Fragment {
             noaaForecastImage.setBitmap(takeoff.getNoaaforecast());
 
             ImageButton navigationButton = (ImageButton) getActivity().findViewById(R.id.fragmentButton1);
-            navigationButton.setImageResource(R.drawable.share);
+            navigationButton.setImageResource(R.mipmap.share);
             navigationButton.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     String title = takeoff.getName() + " (" + takeoff.getLocation().getLatitude() + ", " + takeoff.getLocation().getLongitude() + ")";

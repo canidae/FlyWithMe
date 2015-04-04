@@ -15,11 +15,12 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesClient.ConnectionCallbacks;
+import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import com.google.android.gms.common.GooglePlayServicesClient.OnConnectionFailedListener;
-import com.google.android.gms.location.LocationClient;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 
 import net.exent.flywithme.FlyWithMe;
 import net.exent.flywithme.R;
@@ -46,7 +47,7 @@ public class ScheduleService extends IntentService implements ConnectionCallback
     private static final int NOTIFICATION_ID = 42;
     private static final long MS_IN_DAY = 86400000;
 
-    private LocationClient locationClient;
+    private GoogleApiClient locationClient;
     private long updateInterval;
 
     public ScheduleService() {
@@ -56,7 +57,7 @@ public class ScheduleService extends IntentService implements ConnectionCallback
     @Override
     protected void onHandleIntent(Intent intent) {
         Log.d(getClass().getName(), "onHandleIntent(" + intent + ")");
-        locationClient = new LocationClient(this, this, this);
+        locationClient = new GoogleApiClient.Builder(this).addApi(LocationServices.API).addConnectionCallbacks(this).build();
         locationClient.connect();
         // loop to prevent the thread from exiting
         while (locationClient != null) {
@@ -148,16 +149,21 @@ public class ScheduleService extends IntentService implements ConnectionCallback
         Log.d(getClass().getName(), "onConnected(" + bundle + ")");
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         updateInterval = Integer.parseInt(prefs.getString("pref_schedule_update_interval", "3600")) * 1000;
-        LocationRequest locationRequest = LocationRequest.create().setInterval(updateInterval).setFastestInterval(300000).setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
-        locationClient.requestLocationUpdates(locationRequest, this);
+        LocationRequest locationRequest = LocationRequest.create().setInterval(updateInterval).setFastestInterval(300000).setPriority(LocationRequest.PRIORITY_NO_POWER);
+        LocationServices.FusedLocationApi.requestLocationUpdates(locationClient, locationRequest, this);
     }
 
     @Override
-    public void onDisconnected() {
-        Log.d(getClass().getName(), "onDisconnected()");
+    public void onConnectionSuspended(int i) {
+        Log.d(getClass().getName(), "onConnectionSuspended(" + i + ")");
+    }
+
+//    @Override
+//    public void onDisconnected() {
+//        Log.d(getClass().getName(), "onDisconnected()");
         // restart service on disconnect
-        locationClient = new LocationClient(this, this, this);
-        locationClient.connect();
+        //locationClient = new LocationClient(this, this, this);
+        //locationClient.connect();
 
         /* TODO: in case the code above doesn't work (which someone claim: http://stackoverflow.com/questions/19373972/locationclient-auto-reconnect-at-ondisconnect)
         final ScheduleService scheduleService = this;
@@ -169,7 +175,7 @@ public class ScheduleService extends IntentService implements ConnectionCallback
             }
         });
         */
-    }
+//    }
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
@@ -191,7 +197,7 @@ public class ScheduleService extends IntentService implements ConnectionCallback
             // a new interval has been set, update locationRequest
             updateInterval = tmpUpdateInterval;
             LocationRequest locationRequest = LocationRequest.create().setInterval(updateInterval).setFastestInterval(300000).setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
-            locationClient.requestLocationUpdates(locationRequest, this);
+            LocationServices.FusedLocationApi.requestLocationUpdates(locationClient, locationRequest, this);
         }
 
         // these two values tells us whether we're between start time and stop time
@@ -270,7 +276,7 @@ public class ScheduleService extends IntentService implements ConnectionCallback
             // notify the user that people are planning to fly
             NotificationManager notificationManager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
             NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context);
-            notificationBuilder.setSmallIcon(R.drawable.ic_launcher);
+            notificationBuilder.setSmallIcon(R.mipmap.ic_launcher);
             notificationBuilder.setContentTitle(context.getString(R.string.get_your_wing));
             notificationBuilder.setAutoCancel(true);
             PendingIntent notificationIntent = PendingIntent.getActivity(context, 0, new Intent(context, FlyWithMe.class), PendingIntent.FLAG_UPDATE_CURRENT);

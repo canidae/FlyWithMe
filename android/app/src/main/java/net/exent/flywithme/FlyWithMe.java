@@ -52,7 +52,7 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
 
     /**
      * Get approximate location of user.
-     * 
+     *
      * @return Approximate location of user.
      */
     public Location getLocation() {
@@ -186,8 +186,8 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
         if (location == null) {
             // no location set, let's pretend we're at the Rikssenter :)
             location = new Location(LocationManager.PASSIVE_PROVIDER);
-            location.setLongitude(61.874655);
-            location.setLatitude(9.154848);
+            location.setLatitude(61.874655);
+            location.setLongitude(9.154848);
         }
 
         /* set instance/context, our fragments are using this a lot */

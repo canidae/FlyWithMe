@@ -6,3 +6,4 @@ flywithme.apk
 appengine/www
 workspace.xml
 android/build
+appengine/out

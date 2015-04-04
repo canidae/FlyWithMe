@@ -78,7 +78,7 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
             return;
         }
         try {
-            final GoogleMap map = ((SupportMapFragment) getFragmentManager().findFragmentById(R.id.takeoffMapFragment)).getMap();
+            final GoogleMap map = ((SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.takeoffMapFragment)).getMap();
             /* need to do this here or it'll end up with a reference to an old instance of "this", somehow */
             map.setOnInfoWindowClickListener(this);
             map.setOnCameraChangeListener(this);
@@ -90,27 +90,27 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
             final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
             boolean showTakeoffs = prefs.getBoolean("pref_map_show_takeoffs", true);
             final ImageButton markerButton = (ImageButton) getActivity().findViewById(R.id.fragmentButton1);
-            markerButton.setImageResource(showTakeoffs ? R.drawable.takeoffs_enabled : R.drawable.takeoffs_disabled);
+            markerButton.setImageResource(showTakeoffs ? R.mipmap.takeoffs_enabled : R.mipmap.takeoffs_disabled);
             markerButton.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
                     boolean markersEnabled = !prefs.getBoolean("pref_map_show_takeoffs", true);
                     SharedPreferences.Editor editor = prefs.edit();
                     editor.putBoolean("pref_map_show_takeoffs", markersEnabled);
                     editor.commit();
-                    markerButton.setImageResource(markersEnabled ? R.drawable.takeoffs_enabled : R.drawable.takeoffs_disabled);
+                    markerButton.setImageResource(markersEnabled ? R.mipmap.takeoffs_enabled : R.mipmap.takeoffs_disabled);
                     drawOverlay(map.getCameraPosition());
                 }
             });
             boolean showAirspace = prefs.getBoolean("pref_map_show_airspaces", true);
             final ImageButton polygonButton = (ImageButton) getActivity().findViewById(R.id.fragmentButton2);
-            polygonButton.setImageResource(showAirspace ? R.drawable.airspace_enabled : R.drawable.airspace_disabled);
+            polygonButton.setImageResource(showAirspace ? R.mipmap.airspace_enabled : R.mipmap.airspace_disabled);
             polygonButton.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
                     boolean polygonsEnabled = !prefs.getBoolean("pref_map_show_airspace", true);
                     SharedPreferences.Editor editor = prefs.edit();
                     editor.putBoolean("pref_map_show_airspace", polygonsEnabled);
                     editor.commit();
-                    polygonButton.setImageResource(polygonsEnabled ? R.drawable.airspace_enabled : R.drawable.airspace_disabled);
+                    polygonButton.setImageResource(polygonsEnabled ? R.mipmap.airspace_enabled : R.mipmap.airspace_disabled);
                     drawOverlay(map.getCameraPosition());
                 }
             });
@@ -168,10 +168,11 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
                 parent.removeView(view);
         }
         try {
-            FragmentManager manager = getFragmentManager();
+            FragmentManager manager = getChildFragmentManager();
             boolean zoom = (manager == null || manager.findFragmentById(R.id.takeoffMapFragment) == null);
             view = inflater.inflate(R.layout.takeoff_map, container, false);
             GoogleMap map = ((SupportMapFragment) manager.findFragmentById(R.id.takeoffMapFragment)).getMap();
+            //GoogleMap map = ((SupportMapFragment) manager.findFragmentById(R.id.takeoffMapFragment)).getMap();
             map.setMyLocationEnabled(true);
             map.getUiSettings().setZoomControlsEnabled(false);
             if (zoom) {
@@ -276,7 +277,7 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
                     /* add marker */
                     Takeoff takeoff = (Takeoff) objects[0];
                     MarkerOptions markerOptions = (MarkerOptions) objects[1];
-                    GoogleMap map = ((SupportMapFragment) getFragmentManager().findFragmentById(R.id.takeoffMapFragment)).getMap();
+                    GoogleMap map = ((SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.takeoffMapFragment)).getMap();
                     Marker marker = map.addMarker(markerOptions);
                     Pair<Marker, Takeoff> pair = new Pair<>(marker, takeoff);
                     markers.put(marker.getId(), pair);
@@ -340,7 +341,7 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
 
         /**
          * Figure out whether to draw polygon or not. The parameters "myLocation" and "tmpLocation" are only used to prevent excessive allocations.
-         * 
+         *
          * @param polygon The polygon we want to figure out whether to draw or not.
          * @param myLocation Users current location.
          * @param tmpLocation Location object only used for determining distance from polygon points to user location.
@@ -383,7 +384,7 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
                     it.remove();
                 }
                 /* draw polygons that should be visible */
-                GoogleMap map = ((SupportMapFragment) getFragmentManager().findFragmentById(R.id.takeoffMapFragment)).getMap();
+                GoogleMap map = ((SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.takeoffMapFragment)).getMap();
                 for (PolygonOptions polygon : showPolygons)
                     polygons.put(map.addPolygon(polygon), polygon);
             } catch (Exception e) {

@@ -9,7 +9,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@null"
-        android:src="@drawable/ic_launcher" />
+        android:src="@mipmap/ic_launcher" />
 
     <ImageButton
         android:id="@+id/mapButton"
@@ -18,7 +18,7 @@
         android:layout_alignParentTop="true"
         android:layout_toRightOf="@+id/fwmButton"
         android:background="@null"
-        android:src="@drawable/google_maps" />
+        android:src="@mipmap/google_maps" />
 
     <ImageButton
         android:id="@+id/settingsButton"
@@ -27,7 +27,7 @@
         android:layout_alignParentTop="true"
         android:layout_toRightOf="@+id/mapButton"
         android:background="@null"
-        android:src="@drawable/hammer" />
+        android:src="@mipmap/hammer" />
 
     <ImageButton
         android:id="@+id/fragmentButton1"
@@ -70,7 +70,7 @@
         android:layout_alignParentEnd="true"
         android:singleLine="true"
         android:textStyle="bold|italic"
-        android:textColor="@android:color/holo_orange_dark"
+        android:textColor="#ff8800"
         android:maxLines="1"
         android:visibility="gone" />
 
