@@ -18,7 +18,8 @@ public class Takeoff {
     @Id private long takeoffId;
 
     // takeoff data
-    @Index private int lastUpdated;
+    @Index private long lastUpdated;
+    private long lastChecked;
     private String name;
     private String description;
     private int asl;
@@ -39,12 +40,21 @@ public class Takeoff {
         return this;
     }
 
-    public int getLastUpdated() {
+    public long getLastUpdated() {
         return lastUpdated;
     }
 
-    public Takeoff setLastUpdated(int lastUpdated) {
+    public Takeoff setLastUpdated(long lastUpdated) {
         this.lastUpdated = lastUpdated;
+        return this;
+    }
+
+    public long getLastChecked() {
+        return lastChecked;
+    }
+
+    public Takeoff setLastChecked(long lastChecked) {
+        this.lastChecked = lastChecked;
         return this;
     }
 

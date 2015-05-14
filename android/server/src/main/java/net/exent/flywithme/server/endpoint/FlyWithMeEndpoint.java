@@ -12,6 +12,7 @@ import com.googlecode.objectify.ObjectifyService;
 
 import net.exent.flywithme.server.bean.Pilot;
 import net.exent.flywithme.server.bean.Takeoff;
+import net.exent.flywithme.server.utils.FlightlogCrawler;
 
 import java.io.IOException;
 import java.util.List;
@@ -29,7 +30,7 @@ public class FlyWithMeEndpoint {
     private static final Logger log = Logger.getLogger(FlyWithMeEndpoint.class.getName());
 
     /**
-     * Api Keys can be obtained from the google cloud console
+     * Api Keys can be obtained from the google cloud console.
      */
     private static final String API_KEY = System.getProperty("gcm.api.key");
 
@@ -40,7 +41,7 @@ public class FlyWithMeEndpoint {
 
     // TODO: remove
     /**
-     * Send to the first 10 devices (You can modify this to send to any number of devices or a specific device)
+     * Send to the first 10 devices (You can modify this to send to any number of devices or a specific device).
      *
      * @param message The message to send
      */
@@ -82,7 +83,7 @@ public class FlyWithMeEndpoint {
 
     // TODO: remove
     /**
-     * Return a collection of registered devices
+     * Return a collection of registered devices.
      *
      * @param count The number of devices to list
      * @return a list of Google Cloud Messaging registration Ids
@@ -94,7 +95,7 @@ public class FlyWithMeEndpoint {
     }
 
     /**
-     * Register a pilot to the backend
+     * Register a pilot to the backend.
      *
      * @param pilotId The Pilot ID to add
      */
@@ -112,7 +113,7 @@ public class FlyWithMeEndpoint {
     }
 
     /**
-     * Unregister a pilot from the backend
+     * Unregister a pilot from the backend.
      *
      * @param pilotId The Pilot ID to remove
      */
@@ -127,7 +128,7 @@ public class FlyWithMeEndpoint {
     }
 
     /**
-     * Schedule flight at a takeoff
+     * Schedule flight at a takeoff.
      *
      * @param pilotId The Pilot ID
      * @param takeoffId The Takeoff ID
@@ -148,7 +149,7 @@ public class FlyWithMeEndpoint {
     }
 
     /**
-     * Unschedule flight at a takeoff
+     * Unschedule flight at a takeoff.
      *
      * @param pilotId The Pilot ID
      * @param takeoffId The Takeoff ID
@@ -162,6 +163,18 @@ public class FlyWithMeEndpoint {
         if (takeoff == null)
             return; // takeoff not registered, can't unschedule
         takeoff.removeFromSchedule(timestamp, pilotId);
+    }
+
+    /**
+     * Query flightlog.org for updates for the given takeoff.
+     *
+     * @param takeoffId The Takeoff ID
+     */
+    @ApiMethod(name = "updateTakeoffData", path = "task/updateTakeoffData")
+    public void updateTakeoffData(@Named("takeoffId") Long takeoffId) {
+        Takeoff takeoff = FlightlogCrawler.fetchTakeoff(takeoffId);
+        // TODO: compare with takeoff in database, if not equal then update clients
+        // TODO: Takeoff class needs a "lastChecked" timestamp
     }
 
     private Pilot fetchPilot(String pilotId) {
