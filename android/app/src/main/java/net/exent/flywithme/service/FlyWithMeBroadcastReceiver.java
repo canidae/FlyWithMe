@@ -15,5 +15,15 @@ public class FlyWithMeBroadcastReceiver extends BroadcastReceiver {
         // start schedule fetching service
         Intent scheduleService = new Intent(context, ScheduleService.class);
         context.startService(scheduleService);
+
+        /* new way? */
+        /*
+        // Explicitly specify that GcmIntentService will handle the intent.
+        ComponentName comp = new ComponentName(context.getPackageName(),
+                GcmIntentService.class.getName());
+        // Start the service, keeping the device awake while it is launching.
+        startWakefulService(context, (intent.setComponent(comp)));
+        setResultCode(Activity.RESULT_OK);
+        */
     }
 }

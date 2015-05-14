@@ -9,15 +9,19 @@ import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
-import com.google.android.gms.common.GooglePlayServicesClient.OnConnectionFailedListener;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
+import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
+import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
@@ -39,6 +43,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.TimeZone;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Created by canidae on 3/10/14.
@@ -57,12 +63,33 @@ public class ScheduleService extends IntentService implements ConnectionCallback
     @Override
     protected void onHandleIntent(Intent intent) {
         Log.d(getClass().getName(), "onHandleIntent(" + intent + ")");
-        locationClient = new GoogleApiClient.Builder(this).addApi(LocationServices.API).addConnectionCallbacks(this).build();
-        locationClient.connect();
-        // loop to prevent the thread from exiting
-        while (locationClient != null) {
-            // "locationClient != null" is essentially always "true", but just "true" makes Android Studio complain about endless loop (which is intended)
-            SystemClock.sleep(MS_IN_DAY);
+        final Bundle extras = intent.getExtras();
+        GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(this);
+        String messageType = gcm.getMessageType(intent);
+        if (messageType == null) {
+            // not a GCM message
+            locationClient = new GoogleApiClient.Builder(this).addApi(LocationServices.API).addConnectionCallbacks(this).build();
+            locationClient.connect();
+            // loop to prevent the thread from exiting
+            while (locationClient != null) {
+                // "locationClient != null" is essentially always "true", but just "true" makes Android Studio complain about endless loop (which is intended)
+                SystemClock.sleep(MS_IN_DAY);
+            }
+        } else {
+            if (extras != null && !extras.isEmpty()) {  // has effect of unparcelling Bundle
+                // Since we're not using two way messaging, this is all we really to check for
+                if (GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE.equals(messageType)) {
+                    Logger.getLogger("GCM_RECEIVED").log(Level.INFO, extras.toString());
+
+                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getApplicationContext(), extras.getString("message"), Toast.LENGTH_LONG).show();
+                        }
+                    });
+                }
+            }
+            //FlyWithMeBroadcastReceiver.completeWakefulIntent(intent);
         }
     }
 
