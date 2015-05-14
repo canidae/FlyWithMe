@@ -1,9 +1,8 @@
-FlyWithMe.apk
+*.apk
 flywithme.keystore
 flywithme.txt
-flywithme.apk
 .gradle
-appengine/www
-workspace.xml
-android/build
-appengine/out
+gradle
+.idea
+build
+*.iml
