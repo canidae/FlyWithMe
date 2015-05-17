@@ -2,6 +2,7 @@ package net.exent.flywithme.server.endpoint;
 
 import com.google.android.gcm.server.Constants;
 import com.google.android.gcm.server.Message;
+import com.google.android.gcm.server.MulticastResult;
 import com.google.android.gcm.server.Result;
 import com.google.android.gcm.server.Sender;
 import com.google.api.server.spi.config.Api;
@@ -15,6 +16,7 @@ import net.exent.flywithme.server.bean.Takeoff;
 import net.exent.flywithme.server.utils.FlightlogCrawler;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -33,6 +35,7 @@ public class FlyWithMeEndpoint {
      * Api Keys can be obtained from the google cloud console.
      */
     private static final String API_KEY = System.getProperty("gcm.api.key");
+    private static final int MAX_MULTICAST_RECIPIENTS = 1000;
 
     static {
         ObjectifyService.register(Pilot.class);
@@ -146,6 +149,7 @@ public class FlyWithMeEndpoint {
             return;
         }
         takeoff.addToSchedule(timestamp, pilotId);
+        // TODO: broadcast to pilots in vicinity or pilots who've favourited takeoff
     }
 
     /**
@@ -173,8 +177,60 @@ public class FlyWithMeEndpoint {
     @ApiMethod(name = "updateTakeoffData", path = "task/updateTakeoffData")
     public void updateTakeoffData(@Named("takeoffId") Long takeoffId) {
         Takeoff takeoff = FlightlogCrawler.fetchTakeoff(takeoffId);
-        // TODO: compare with takeoff in database, if not equal then update clients
-        // TODO: Takeoff class needs a "lastChecked" timestamp
+        if (takeoff == null)
+            return;
+        Takeoff existing = fetchTakeoff(takeoffId);
+        if (existing != null && takeoff.equals(existing))
+            return; // no changes
+        ofy().save().entity(takeoff).now();
+        // TODO: update clients
+    }
+
+    private void sendStatusUpdate() {
+        List<Pilot> pilots = ofy().load().type(Pilot.class).list();
+        List<String> sendTo = new ArrayList<>();
+        for (Pilot pilot : pilots)
+                sendTo.add(pilot.getPilotId());
+
+        // send update to clients
+        Sender sender = new Sender(API_KEY);
+        Message msg = new Message.Builder()
+                .collapseKey("flywithme-status")
+                .delayWhileIdle(true)
+                .addData("activity", "TODO: list of takeoffs with activity (scheduled flights in the near future or pilots present in the near past)")
+                .build();
+
+        List<Result> results = new ArrayList<>();
+        for (int start = 0; start < sendTo.size(); start += MAX_MULTICAST_RECIPIENTS) {
+            int stop = Math.min(sendTo.size() - start, MAX_MULTICAST_RECIPIENTS);
+            MulticastResult result = sender.send(msg, sendTo.subList(start, stop), 5);
+            results.addAll(result.getResults());
+        }
+
+        for (int i = 0; i < results.size(); ++i) {
+            Result result = results.get(i);
+            Pilot pilot = pilots.get(i);
+            if (result.getMessageId() != null) {
+                log.info("Message sent to " + pilot.getPilotId());
+                String canonicalRegId = result.getCanonicalRegistrationId();
+                if (canonicalRegId != null) {
+                    // if the regId changed, we have to update the datastore
+                    log.info("Registration Id changed for " + pilot.getPilotId() + " updating to " + canonicalRegId);
+                    pilot.setPilotId(canonicalRegId);
+                    ofy().save().entity(pilot).now();
+                }
+            } else {
+                String error = result.getErrorCodeName();
+                if (error.equals(Constants.ERROR_NOT_REGISTERED)) {
+                    log.warning("Registration Id " + pilot.getPilotId() + " no longer registered with GCM, removing from datastore");
+                    // if the device is no longer registered with Gcm, remove it from the datastore
+                    ofy().delete().entity(pilot).now();
+                } else {
+                    log.warning("Error when sending message : " + error);
+                }
+            }
+        }
+
     }
 
     private Pilot fetchPilot(String pilotId) {

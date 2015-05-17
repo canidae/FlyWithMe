@@ -106,6 +106,28 @@ public class FlightlogCrawler {
         return null;
     }
 
+    private static String getCharsetFromHeaderValue(String text) {
+        int start = text.indexOf("charset=");
+        if (start >= 0) {
+            start += 8;
+            int end = text.indexOf(";", start);
+            int pos = text.indexOf(" ", start);
+            if (end == -1 || (pos != -1 && pos < end))
+                end = pos;
+            pos = text.indexOf("\n", start);
+            if (end == -1 || (pos != -1 && pos < end))
+                end = pos;
+            if (end == -1)
+                end = text.length();
+            if (text.charAt(start) == '"' && text.charAt(end - 1) == '"') {
+                ++start;
+                --end;
+            }
+            return text.substring(start, end);
+        }
+        return "iso-8859-1";
+    }
+
     /*
      * http://flightlog.org/fl.html?l=1&a=22&country_id=160&start_id=4
      * we can set "country_id" to a fixed value, it only means that wrong country will be displayed (which we don't care about)
@@ -154,28 +176,6 @@ public class FlightlogCrawler {
         kmlWriter.println("</Document>");
         kmlWriter.println("</kml>");
         System.out.println("Done crawling");
-    }
-
-    private static String getCharsetFromHeaderValue(String text) {
-        int start = text.indexOf("charset=");
-        if (start >= 0) {
-            start += 8;
-            int end = text.indexOf(";", start);
-            int pos = text.indexOf(" ", start);
-            if (end == -1 || (pos != -1 && pos < end))
-                end = pos;
-            pos = text.indexOf("\n", start);
-            if (end == -1 || (pos != -1 && pos < end))
-                end = pos;
-            if (end == -1)
-                end = text.length();
-            if (text.charAt(start) == '"' && text.charAt(end - 1) == '"') {
-                ++start;
-                --end;
-            }
-            return text.substring(start, end);
-        }
-        return "iso-8859-1";
     }
 
     public static void main(String... args) throws Exception {

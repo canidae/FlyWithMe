@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * The Objectify object model for device registrations we are persisting
+ * Information about a Takeoff.
  */
 @Entity
 public class Takeoff {
@@ -28,7 +28,6 @@ public class Takeoff {
     private float longitude;
     private String windpai;
 
-    // TODO: schedule
     private Map<Integer, Set<String>> schedule; // Map<timestamp, Set<pilot ID>>
 
     public Long getTakeoffId() {
@@ -121,6 +120,10 @@ public class Takeoff {
         return this;
     }
 
+    public Map<Integer, Set<String>> getSchedule() {
+        return schedule;
+    }
+
     public void addToSchedule(int timestamp, String pilotId) {
         if (schedule == null)
             schedule = new HashMap<>();
@@ -144,5 +147,15 @@ public class Takeoff {
             if (schedule.isEmpty())
                 schedule = null;
         }
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (!(object instanceof Takeoff))
+            return false;
+        Takeoff takeoff = (Takeoff) object;
+        return getTakeoffId().equals(takeoff.getTakeoffId()) && getAsl() == takeoff.getAsl() && getHeight() == takeoff.getHeight()
+                && getLatitude() == takeoff.getLatitude() && getLongitude() == takeoff.getLongitude()
+                && getWindpai().equals(takeoff.getWindpai()) && getName().equals(takeoff.getName()) && getDescription().equals(takeoff.getDescription());
     }
 }
