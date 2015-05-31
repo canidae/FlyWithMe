@@ -4,17 +4,11 @@ import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Index;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
 /**
  * Information about a Takeoff.
  */
 @Entity
 public class Takeoff {
-
     @Id private long takeoffId;
 
     // takeoff data
@@ -28,13 +22,11 @@ public class Takeoff {
     private float longitude;
     private String windpai;
 
-    private Map<Integer, Set<String>> schedule; // Map<timestamp, Set<pilot ID>>
-
-    public Long getTakeoffId() {
+    public long getTakeoffId() {
         return takeoffId;
     }
 
-    public Takeoff setTakeoffId(Long takeoffId) {
+    public Takeoff setTakeoffId(long takeoffId) {
         this.takeoffId = takeoffId;
         return this;
     }
@@ -120,41 +112,12 @@ public class Takeoff {
         return this;
     }
 
-    public Map<Integer, Set<String>> getSchedule() {
-        return schedule;
-    }
-
-    public void addToSchedule(int timestamp, String pilotId) {
-        if (schedule == null)
-            schedule = new HashMap<>();
-        Set<String> pilots = schedule.get(timestamp);
-        if (pilots == null) {
-            pilots = new HashSet<>();
-            schedule.put(timestamp, pilots);
-        }
-        pilots.add(pilotId);
-    }
-
-    public void removeFromSchedule(int timestamp, String pilotId) {
-        if (schedule == null)
-            return; // no schedule for this takeoff
-        Set<String> pilots = schedule.get(timestamp);
-        if (pilots == null)
-            return; // nothing registered at given timestamp
-        pilots.remove(pilotId);
-        if (pilots.isEmpty()) {
-            schedule.remove(timestamp);
-            if (schedule.isEmpty())
-                schedule = null;
-        }
-    }
-
     @Override
     public boolean equals(Object object) {
         if (!(object instanceof Takeoff))
             return false;
         Takeoff takeoff = (Takeoff) object;
-        return getTakeoffId().equals(takeoff.getTakeoffId()) && getAsl() == takeoff.getAsl() && getHeight() == takeoff.getHeight()
+        return getTakeoffId() == takeoff.getTakeoffId() && getAsl() == takeoff.getAsl() && getHeight() == takeoff.getHeight()
                 && getLatitude() == takeoff.getLatitude() && getLongitude() == takeoff.getLongitude()
                 && getWindpai().equals(takeoff.getWindpai()) && getName().equals(takeoff.getName()) && getDescription().equals(takeoff.getDescription());
     }

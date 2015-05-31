@@ -8,8 +8,7 @@ import com.googlecode.objectify.annotation.Id;
  */
 @Entity
 public class Pilot {
-    @Id
-    private String pilotId;
+    @Id private String pilotId;
 
     public String getPilotId() {
         return pilotId;
