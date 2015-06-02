@@ -13,9 +13,15 @@ import java.net.URLEncoder;
 import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -29,6 +35,9 @@ import javax.imageio.ImageIO;
  */
 public class NoaaProxy {
     private static final Logger log = Logger.getLogger(NoaaProxy.class.getName());
+
+    private static final int CAPTCHA_Y_OFFSET = 38;
+    private static final int BLACK = -16777216;
 
     private static final String NOAA_URL = "http://www.ready.noaa.gov";
     private static final String NOAA_METGRAM_CONF = "&metdata=GFS&mdatacfg=GFS&metext=gfsf&nhrs=96&type=user&wndtxt=2&Field1=FLAG&Level1=0&Field2=FLAG&Level2=5&Field3=FLAG&Level3=7&Field4=FLAG&Level4=9&Field5=TCLD&Level5=0&Field6=MSLP&Level6=0&Field7=T02M&Level7=0&Field8=TPP6&Level8=0&Field9=%20&Level9=0&Field10=%20&Level10=0&textonly=No&gsize=96&pdf=No";
@@ -55,6 +64,30 @@ public class NoaaProxy {
     private static List<String> noaaMetDates = new ArrayList<>();
     private static String noaaProc = "";
     private static String noaaCaptcha = "";
+
+    private static Map<Character, byte[]> captchaCharacters;
+    static {
+        try {
+            captchaCharacters = new HashMap<>();
+            File directory = new File("server/src/main/webapp/captcha_bitmaps");
+            //File directory = new File("captcha_bitmaps");
+            for (File file : directory.listFiles()) {
+                BufferedImage image = ImageIO.read(file);
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                for (int y = 0; y < image.getHeight(); ++y) {
+                    for (int x = 0; x < image.getWidth(); ++x) {
+                        if (image.getRGB(x, y) == BLACK) {
+                            baos.write(x);
+                            baos.write(y);
+                        }
+                    }
+                }
+                captchaCharacters.put(file.getName().toLowerCase().charAt(0), baos.toByteArray());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     /**
      * Fetch CAPTCHA image to solve before fetching meteogram and sounding.
@@ -206,13 +239,31 @@ public class NoaaProxy {
 
     // TODO: remove, used for testing
     public static void main(String... argS) throws Exception {
+
+        int correct = 0;
+        int wrong = 0;
+        File directory = new File("captchas");
+        for (File file : directory.listFiles()) {
+            if (file.isDirectory())
+                continue;
+            String captcha = solveCaptcha(Files.readAllBytes(file.toPath()));
+            if (file.getName().equals(captcha)) {
+                ++correct;
+            } else {
+                System.out.println("Wrong CAPTCHA, found '" + captcha + "', expected '" + file.getName() + "'");
+                ++wrong;
+            }
+        }
+        System.out.println("Found correct CAPTCHA in " + correct + " out of " + (correct + wrong) + " images");
+
+
         //solveCaptcha(Files.readAllBytes(new File("captcha.gif").toPath()));
 
         float latitude = (float) 10.8;
         float longitude = (float) 63.0;
-        //for (int a = 0; a < 100; ++a) {
-            byte[] captchaImage = fetchCaptchaImage(latitude, longitude);
         /*
+        for (int a = 0; a < 100; ++a) {
+            byte[] captchaImage = fetchCaptchaImage(latitude, longitude);
             Files.write(new File("captchas", "" + System.currentTimeMillis()).toPath(), captchaImage);
             Thread.sleep(100);
         }
@@ -228,35 +279,122 @@ public class NoaaProxy {
         */
     }
 
-    private static void solveCaptcha(byte[] captchaImage) throws Exception { // TODO: fix exception handling
+    private static String solveCaptcha(byte[] captchaImage) throws Exception { // TODO: fix exception handling
+        long startTime = System.currentTimeMillis();
+
         BufferedImage image = ImageIO.read(new ByteArrayInputStream(captchaImage));
-        BufferedImage image2 = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
-        System.out.println(image.getHeight() + ", " + image.getWidth());
-        for (int y = 1; y < image.getHeight() - 1; ++y) {
-            for (int x = 1; x < image.getWidth() - 1; ++x) {
-                int v1 = image.getRGB(x, y);
-                image2.setRGB(x, y, Integer.MAX_VALUE);
-                if (v1 == -16777216) {
-                    int v2 = image.getRGB(x - 1, y);
-                    int v3 = image.getRGB(x, y - 1);
-                    int v4 = image.getRGB(x + 1, y);
-                    int v5 = image.getRGB(x, y + 1);
-                    if (v1 == v2 && v2 == v3 && v3 == v4 && v4 == v5)
-                        image2.setRGB(x, y, v1);
+        int startX = 0;
+        int stopX = image.getWidth() / 4;
+        int goBackXOffset = 6;
+        int goForwardXOffset = 12;
+        List<CaptchaStringMatch> possibleMatches = new ArrayList<>();
+        for (CaptchaCharacterMatch c1 : findNextPossibleCaptchaCharacters(image, startX, stopX)) {
+            startX = c1.xOffset + c1.width - goBackXOffset;
+            stopX = c1.xOffset + c1.width + goForwardXOffset;
+            for (CaptchaCharacterMatch c2 : findNextPossibleCaptchaCharacters(image, startX, stopX)) {
+                startX = c2.xOffset + c2.width - goBackXOffset;
+                stopX = c2.xOffset + c2.width + goForwardXOffset;
+                for (CaptchaCharacterMatch c3 : findNextPossibleCaptchaCharacters(image, startX, stopX)) {
+                    startX = c3.xOffset + c3.width - goBackXOffset;
+                    stopX = c3.xOffset + c3.width + goForwardXOffset;
+                    for (CaptchaCharacterMatch c4 : findNextPossibleCaptchaCharacters(image, startX, stopX)) {
+                        startX = c4.xOffset + c4.width - goBackXOffset;
+                        stopX = c4.xOffset + c4.width + goForwardXOffset;
+                        for (CaptchaCharacterMatch c5 : findNextPossibleCaptchaCharacters(image, startX, stopX)) {
+                            startX = c5.xOffset + c5.width - goBackXOffset;
+                            stopX = c5.xOffset + c5.width + goForwardXOffset;
+                            for (CaptchaCharacterMatch c6 : findNextPossibleCaptchaCharacters(image, startX, stopX)) {
+                                CaptchaStringMatch match = new CaptchaStringMatch();
+                                match.captcha = c1.character + "" + c2.character + "" + c3.character + "" + c4.character + "" + c5.character + "" + c6.character;
+                                match.matchingPixels = c1.matchingPixels + c2.matchingPixels + c3.matchingPixels + c4.matchingPixels + c5.matchingPixels + c6.matchingPixels;
+                                match.totalPixels = c1.totalPixels + c2.totalPixels + c3.totalPixels + c4.totalPixels + c5.totalPixels + c6.totalPixels;
+                                possibleMatches.add(match);
+                            }
+                        }
+                    }
                 }
-                /*
-                int rgb = image.getRGB(x, y);
-                int red = (rgb >> 16) & 0xff;
-                int green = (rgb >> 8) & 0xff;
-                int blue = rgb & 0xff;
-                if (red == 0 && green == 0 && blue == 0) {
-                    image2.setRGB(x, y, rgb);
-                } else {
-                    image2.setRGB(x, y, Integer.MAX_VALUE);
-                }
-                */
             }
         }
-        ImageIO.write(image2, "bmp", new File("captcha.bmp"));
+        Collections.sort(possibleMatches, new Comparator<CaptchaStringMatch>() {
+            @Override
+            public int compare(CaptchaStringMatch c1, CaptchaStringMatch c2) {
+                //return c2.matchingPixels - c1.matchingPixels;
+                //return (c2.matchingPixels * 100000 / c2.totalPixels) - (c1.matchingPixels * 100000 / c1.totalPixels);
+                return (c2.matchingPixels + c2.matchingPixels * 10000 / c2.totalPixels) - (c1.matchingPixels + c1.matchingPixels * 10000 / c1.totalPixels);
+            }
+        });
+        System.out.println("Possible matches: " + possibleMatches.size() + " | Best: " + (possibleMatches.size() >= 1 ? possibleMatches.get(0) : null) + " | Then: "  + (possibleMatches.size() >= 2 ? possibleMatches.get(1) : null));
+        System.out.println("Crack time: " + (System.currentTimeMillis() - startTime));
+        //for (int charCounter = 0; charCounter < 6; ++charCounter) {
+            //System.out.println(findNextPossibleCaptchaCharacters(image, startX, stopX));
+        //}
+        //ImageIO.write(image2, "bmp", new File("captcha.bmp"));
+        return (possibleMatches.size() >= 1 ? possibleMatches.get(0).captcha : "");
+    }
+
+    private static List<CaptchaCharacterMatch> findNextPossibleCaptchaCharacters(BufferedImage image, int startX, int stopX) {
+        List<CaptchaCharacterMatch> possibleCharacters = new ArrayList<>();
+        int minXOffset = stopX;
+        for (Map.Entry<Character, byte[]> entry : captchaCharacters.entrySet()) {
+            byte[] blackPixels = entry.getValue();
+            CaptchaCharacterMatch bestMatch = new CaptchaCharacterMatch();
+            bestMatch.totalPixels = blackPixels.length / 2;
+            for (int xOffset = startX; xOffset < stopX; ++xOffset) {
+                int matching = 0;
+                for (int index = 0; index < blackPixels.length; index += 2) {
+                    int x = blackPixels[index];
+                    int y = blackPixels[index + 1];
+                    if (x + xOffset < image.getWidth() && image.getRGB(x + xOffset, y + CAPTCHA_Y_OFFSET) == BLACK)
+                        ++matching;
+                }
+                if (matching > bestMatch.matchingPixels) {
+                    bestMatch.matchingPixels = matching;
+                    bestMatch.xOffset = xOffset;
+                }
+            }
+            int percent = (bestMatch.matchingPixels * 100 / bestMatch.totalPixels);
+            if (percent < 85)
+                continue; // 88.4% should be the theoretical worst valid match, giving some more leeway just in case character bitmap sources have errors
+            bestMatch.character = entry.getKey();
+            // TODO: precalculate character width?
+            for (int index = 0; index < blackPixels.length; index += 2) {
+                if (blackPixels[index] > bestMatch.width)
+                    bestMatch.width = blackPixels[index];
+            }
+            possibleCharacters.add(bestMatch);
+            if (bestMatch.xOffset < minXOffset)
+                minXOffset = bestMatch.xOffset;
+        }
+        // remove entries with too high xOffset
+        for (Iterator<CaptchaCharacterMatch> iterator = possibleCharacters.iterator(); iterator.hasNext();) {
+            CaptchaCharacterMatch possibleCharacter = iterator.next();
+            if (possibleCharacter.xOffset > minXOffset + 6)
+                iterator.remove();
+        }
+        return possibleCharacters;
+    }
+
+    private static class CaptchaStringMatch {
+        private String captcha;
+        private int matchingPixels;
+        private int totalPixels;
+
+        @Override
+        public String toString() {
+            return captcha + " | matching: [" + matchingPixels + "/" + totalPixels + "] (" + (matchingPixels * 100.0 / totalPixels) + "%)";
+        }
+    }
+
+    private static class CaptchaCharacterMatch {
+        private Character character;
+        private int xOffset;
+        private int matchingPixels;
+        private int totalPixels;
+        private int width;
+
+        @Override
+        public String toString() {
+            return character + " | xOffset: " + xOffset + ", width: " + width + ", matching: [" + matchingPixels + "/" + totalPixels + "] (" + (matchingPixels * 100.0 / totalPixels) + "%)";
+        }
     }
 }
