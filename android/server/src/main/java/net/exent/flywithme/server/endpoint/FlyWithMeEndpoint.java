@@ -133,11 +133,7 @@ public class FlyWithMeEndpoint {
         // need to fetch forecast
         Takeoff takeoff = fetchTakeoff(takeoffId);
         byte[] meteogram = NoaaProxy.fetchMeteogram(takeoff.getLatitude(), takeoff.getLongitude());
-        if (meteogram == null) {
-            // probably need to fetch CAPTCHA
-            byte[] captcha = NoaaProxy.fetchCaptchaImage(takeoff.getLatitude(), takeoff.getLongitude());
-            // TODO: solve CAPTCHA
-        }
+        // TODO
     }
 
     /**

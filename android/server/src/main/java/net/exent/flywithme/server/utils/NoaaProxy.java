@@ -13,7 +13,6 @@ import java.net.URLEncoder;
 import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -63,7 +62,7 @@ public class NoaaProxy {
     private static String noaaMetFil = "";
     private static List<String> noaaMetDates = new ArrayList<>();
     private static String noaaProc = "";
-    private static String noaaCaptcha = "";
+    private static String noaaCaptcha;
 
     private static Map<Character, byte[]> captchaCharacters;
     static {
@@ -96,7 +95,7 @@ public class NoaaProxy {
      * @param longitude The longitude of the location we want forecast for.
      * @return The CAPTCHA image to be solved.
      */
-    public static byte[] fetchCaptchaImage(float latitude, float longitude) {
+    public static void updateFieldsAndCaptcha(float latitude, float longitude) {
         try {
             noaaUserId = getOne(fetchPageContent(NOAA_URL + "/ready2-bin/main.pl?Lat=" + latitude + "&Lon=" + longitude), NOAA_USERID_PATTERN);
             String content = fetchPageContent(NOAA_URL + "/ready2-bin/metcycle.pl?product=metgram1&userid=" + noaaUserId + "&metdata=GFS&mdatacfg=GFS&Lat=" + latitude + "&Lon=" + longitude);
@@ -106,21 +105,10 @@ public class NoaaProxy {
             noaaMetFil = getOne(content, NOAA_METFIL_PATTERN);
             noaaMetDates = getAll(content, NOAA_METDATE_PATTERN);
             noaaProc = getOne(content, NOAA_PROC_PATTERN);
-            return fetchImage(NOAA_URL + getOne(content, NOAA_CAPTCHA_URL_PATTERN));
+            noaaCaptcha = solveCaptcha(fetchImage(NOAA_URL + getOne(content, NOAA_CAPTCHA_URL_PATTERN)));
         } catch (Exception e) {
-            log.log(Level.WARNING, "Failed fetching CAPTCHA", e);
+            log.log(Level.WARNING, "Failed fetching CAPTCHA image", e);
         }
-        return null;
-    }
-
-    /**
-     * Set the CAPTCHA text, value will be cached and used when fetching meteogram & sounding.
-     *
-     * @param captcha The CAPTCHA text.
-     */
-    public static void setCaptchaText(String captcha) {
-        // TODO: CAPTCHA solver so we possibly don't need this method any more.
-        NoaaProxy.noaaCaptcha = captcha;
     }
 
     /**
@@ -132,12 +120,23 @@ public class NoaaProxy {
      */
     public static byte[] fetchMeteogram(float latitude, float longitude) {
         try {
+            if (noaaCaptcha == null)
+                updateFieldsAndCaptcha(latitude, longitude);
             String meteogramUrl = getOne(fetchPageContent(NOAA_URL + "/ready2-bin/metgram2.pl?userid=" + noaaUserId + "&Lat=" + latitude + "&Lon=" + longitude
                     + "&metdir=" + noaaMetDir + "&metcyc=" + noaaMetCyc + "&metdate=" + URLEncoder.encode(noaaMetDates.get(0), "UTF-8") + "&metfil=" + noaaMetFil
                     + "&password1=" + noaaCaptcha + "&proc=" + noaaProc + NOAA_METGRAM_CONF), NOAA_METEOGRAM_PATTERN);
-            return fetchImage(NOAA_URL + meteogramUrl);
+            for (int a = 0; a < 3; ++a) {
+                byte[] meteogramImage = fetchImage(NOAA_URL + meteogramUrl);
+                if (meteogramImage == null) {
+                    log.info("No meteogram image returned, updating cached data and trying to solve new captcha");
+                    updateFieldsAndCaptcha(latitude, longitude);
+                } else {
+                    return meteogramImage;
+                }
+            }
+            return null;
         } catch (Exception e) {
-            log.log(Level.WARNING, "Failed fetching meteogram", e);
+            log.log(Level.WARNING, "Failed fetching meteogram image", e);
         }
         return null;
     }
@@ -152,6 +151,8 @@ public class NoaaProxy {
      */
     public static byte[] fetchSounding(float latitude, float longitude, long soundingTimestamp) {
         try {
+            if (noaaCaptcha == null)
+                updateFieldsAndCaptcha(latitude, longitude);
             String metDate = metdateFormatter.format(new Date(soundingTimestamp));
             for (String noaaMetdate : noaaMetDates) {
                 if (!noaaMetdate.startsWith(metDate))
@@ -159,10 +160,19 @@ public class NoaaProxy {
                 String soundingUrl = getOne(fetchPageContent(NOAA_URL + "/ready2-bin/profile2.pl?userid=" + noaaUserId + "&Lat=" + latitude + "&Lon=" + longitude
                         + "&metdir=" + noaaMetDir + "&metcyc=" + noaaMetCyc + "&metdate=" + URLEncoder.encode(noaaMetdate, "UTF-8") + "&metfil=" + noaaMetFil
                         + "&password1=" + noaaCaptcha + "&proc=" + noaaProc + NOAA_SOUNDING_CONF), NOAA_SOUNDING_PATTERN);
-                return fetchImage(NOAA_URL + soundingUrl);
+                for (int a = 0; a < 3; ++a) {
+                    byte[] soundingImage = fetchImage(NOAA_URL + soundingUrl);
+                    if (soundingImage == null) {
+                        log.info("No sounding image returned, updating cached data and trying to solve new captcha");
+                        updateFieldsAndCaptcha(latitude, longitude);
+                    } else {
+                        return soundingImage;
+                    }
+                }
+                return null;
             }
         } catch (Exception e) {
-            log.log(Level.WARNING, "Failed fetching sounding", e);
+            log.log(Level.WARNING, "Failed fetching sounding image", e);
         }
         return null;
     }
@@ -239,7 +249,7 @@ public class NoaaProxy {
 
     // TODO: remove, used for testing
     public static void main(String... argS) throws Exception {
-
+        /*
         int correct = 0;
         int wrong = 0;
         File directory = new File("captchas");
@@ -255,33 +265,25 @@ public class NoaaProxy {
             }
         }
         System.out.println("Found correct CAPTCHA in " + correct + " out of " + (correct + wrong) + " images");
-
-
-        //solveCaptcha(Files.readAllBytes(new File("captcha.gif").toPath()));
+        */
 
         float latitude = (float) 10.8;
         float longitude = (float) 63.0;
         /*
         for (int a = 0; a < 100; ++a) {
-            byte[] captchaImage = fetchCaptchaImage(latitude, longitude);
+            byte[] captchaImage = updateFieldsAndCaptcha(latitude, longitude);
             Files.write(new File("captchas", "" + System.currentTimeMillis()).toPath(), captchaImage);
             Thread.sleep(100);
         }
         */
 
-        // TODO: solve CAPTCHA
-
-        /*
-        BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
-        setCaptchaText(bufferRead.readLine());
         byte[] meteogram = fetchMeteogram(latitude, longitude);
-        byte[] sounding = fetchSounding(latitude, longitude, 1433160000000L);
-        */
+        Files.write(new File("meteogram." + System.currentTimeMillis()).toPath(), meteogram);
+        byte[] sounding = fetchSounding(latitude, longitude, 1433678400000L);
+        Files.write(new File("sounding." + System.currentTimeMillis()).toPath(), sounding);
     }
 
     private static String solveCaptcha(byte[] captchaImage) throws Exception { // TODO: fix exception handling
-        long startTime = System.currentTimeMillis();
-
         BufferedImage image = ImageIO.read(new ByteArrayInputStream(captchaImage));
         int startX = 0;
         int stopX = image.getWidth() / 4;
@@ -323,11 +325,7 @@ public class NoaaProxy {
                 return (c2.matchingPixels + c2.matchingPixels * 10000 / c2.totalPixels) - (c1.matchingPixels + c1.matchingPixels * 10000 / c1.totalPixels);
             }
         });
-        System.out.println("Possible matches: " + possibleMatches.size() + " | Best: " + (possibleMatches.size() >= 1 ? possibleMatches.get(0) : null) + " | Then: "  + (possibleMatches.size() >= 2 ? possibleMatches.get(1) : null));
-        System.out.println("Crack time: " + (System.currentTimeMillis() - startTime));
-        //for (int charCounter = 0; charCounter < 6; ++charCounter) {
-            //System.out.println(findNextPossibleCaptchaCharacters(image, startX, stopX));
-        //}
+        //System.out.println("Possible matches: " + possibleMatches.size() + " | Best: " + (possibleMatches.size() >= 1 ? possibleMatches.get(0) : null) + " | Then: "  + (possibleMatches.size() >= 2 ? possibleMatches.get(1) : null));
         //ImageIO.write(image2, "bmp", new File("captcha.bmp"));
         return (possibleMatches.size() >= 1 ? possibleMatches.get(0).captcha : "");
     }
@@ -347,14 +345,14 @@ public class NoaaProxy {
                     if (x + xOffset < image.getWidth() && image.getRGB(x + xOffset, y + CAPTCHA_Y_OFFSET) == BLACK)
                         ++matching;
                 }
-                if (matching > bestMatch.matchingPixels) {
+                int curPercent = matching * 100 / bestMatch.totalPixels;
+                if (curPercent >= 85 && curPercent > (bestMatch.matchingPixels * 100 / bestMatch.totalPixels) && (bestMatch.xOffset <= 0 || xOffset - bestMatch.xOffset < 6)) {
                     bestMatch.matchingPixels = matching;
                     bestMatch.xOffset = xOffset;
                 }
             }
-            int percent = (bestMatch.matchingPixels * 100 / bestMatch.totalPixels);
-            if (percent < 85)
-                continue; // 88.4% should be the theoretical worst valid match, giving some more leeway just in case character bitmap sources have errors
+            if (bestMatch.xOffset <= 0)
+                continue;
             bestMatch.character = entry.getKey();
             // TODO: precalculate character width?
             for (int index = 0; index < blackPixels.length; index += 2) {
@@ -365,6 +363,7 @@ public class NoaaProxy {
             if (bestMatch.xOffset < minXOffset)
                 minXOffset = bestMatch.xOffset;
         }
+        //System.out.println(possibleCharacters);
         // remove entries with too high xOffset
         for (Iterator<CaptchaCharacterMatch> iterator = possibleCharacters.iterator(); iterator.hasNext();) {
             CaptchaCharacterMatch possibleCharacter = iterator.next();
