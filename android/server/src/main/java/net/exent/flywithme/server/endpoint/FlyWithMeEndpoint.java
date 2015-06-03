@@ -121,6 +121,7 @@ public class FlyWithMeEndpoint {
      *
      * @param takeoffId The Takeoff ID.
      */
+    @ApiMethod(name = "getMeteogram")
     public void getMeteogram(@Named("takeoffId") Long takeoffId) {
         Forecast forecast = ofy().load().type(Forecast.class)
                 .filter("takeoffId", takeoffId)
@@ -132,8 +133,14 @@ public class FlyWithMeEndpoint {
         }
         // need to fetch forecast
         Takeoff takeoff = fetchTakeoff(takeoffId);
-        byte[] meteogram = NoaaProxy.fetchMeteogram(takeoff.getLatitude(), takeoff.getLongitude());
-        // TODO
+        if (takeoff == null) {
+            updateTakeoffData(takeoffId);
+            takeoff = fetchTakeoff(takeoffId);
+        }
+        if (takeoff != null) {
+            byte[] meteogram = NoaaProxy.fetchMeteogram(takeoff.getLatitude(), takeoff.getLongitude());
+            // TODO
+        }
     }
 
     /**

@@ -68,8 +68,8 @@ public class NoaaProxy {
     static {
         try {
             captchaCharacters = new HashMap<>();
-            File directory = new File("server/src/main/webapp/captcha_bitmaps");
-            //File directory = new File("captcha_bitmaps");
+            //File directory = new File("server/src/main/webapp/captcha_bitmaps");
+            File directory = new File("captcha_bitmaps");
             for (File file : directory.listFiles()) {
                 BufferedImage image = ImageIO.read(file);
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -278,9 +278,9 @@ public class NoaaProxy {
         */
 
         byte[] meteogram = fetchMeteogram(latitude, longitude);
-        Files.write(new File("meteogram." + System.currentTimeMillis()).toPath(), meteogram);
+        //Files.write(new File("meteogram." + System.currentTimeMillis()).toPath(), meteogram);
         byte[] sounding = fetchSounding(latitude, longitude, 1433678400000L);
-        Files.write(new File("sounding." + System.currentTimeMillis()).toPath(), sounding);
+        //Files.write(new File("sounding." + System.currentTimeMillis()).toPath(), sounding);
     }
 
     private static String solveCaptcha(byte[] captchaImage) throws Exception { // TODO: fix exception handling
