@@ -122,14 +122,15 @@ public class FlyWithMeEndpoint {
      * @param takeoffId The Takeoff ID.
      */
     @ApiMethod(name = "getMeteogram")
-    public void getMeteogram(@Named("takeoffId") Long takeoffId) {
+    public Forecast getMeteogram(@Named("takeoffId") long takeoffId) {
         Forecast forecast = ofy().load().type(Forecast.class)
                 .filter("takeoffId", takeoffId)
                 .filter("type", Forecast.ForecastType.METEOGRAM)
-                .filter("lastUpdated <", System.currentTimeMillis() + 21600000).first().now();
+                .filter("lastUpdated <", System.currentTimeMillis() + 21600000)
+                .first().now();
         if (forecast != null) {
             // return forecast to client
-            return;
+            return forecast;
         }
         // need to fetch forecast
         Takeoff takeoff = fetchTakeoff(takeoffId);
@@ -138,9 +139,54 @@ public class FlyWithMeEndpoint {
             takeoff = fetchTakeoff(takeoffId);
         }
         if (takeoff != null) {
-            byte[] meteogram = NoaaProxy.fetchMeteogram(takeoff.getLatitude(), takeoff.getLongitude());
-            // TODO
+            forecast = new Forecast();
+            forecast.setTakeoffId(takeoffId);
+            forecast.setType(Forecast.ForecastType.METEOGRAM);
+            forecast.setLastUpdated(System.currentTimeMillis());
+            forecast.setImage(NoaaProxy.fetchMeteogram(takeoff.getLatitude(), takeoff.getLongitude()));
+            ofy().save().entity(forecast).now();
         }
+        return forecast;
+    }
+
+    /**
+     * Fetch sounding for the given takeoff and time.
+     *
+     * @param takeoffId The Takeoff ID.
+     * @param timestamp The timestamp we want sounding for, in milliseconds since epoch.
+     */
+    @ApiMethod(name = "getSounding")
+    public Forecast getSounding(@Named("takeoffId") long takeoffId, @Named("timestamp") long timestamp) {
+        timestamp = (timestamp / 10800000) * 10800000; // aligns timestamp with valid values for sounding (sounding every 3rd hour)
+        if (timestamp < System.currentTimeMillis() - 86400000) {
+            log.info("Client tried to retrieve sounding for takeoff '" + takeoffId + "' with timestamp '" + timestamp + "', but that timestamp was a long time ago");
+            return null;
+        }
+        Forecast forecast = ofy().load().type(Forecast.class)
+                .filter("takeoffId", takeoffId)
+                .filter("type", Forecast.ForecastType.SOUNDING)
+                .filter("validFor", timestamp)
+                .filter("lastUpdated <", System.currentTimeMillis() + 21600000).first().now();
+        if (forecast != null) {
+            // return forecast to client
+            return forecast;
+        }
+        // need to fetch forecast
+        Takeoff takeoff = fetchTakeoff(takeoffId);
+        if (takeoff == null) {
+            updateTakeoffData(takeoffId);
+            takeoff = fetchTakeoff(takeoffId);
+        }
+        if (takeoff != null) {
+            forecast = new Forecast();
+            forecast.setTakeoffId(takeoffId);
+            forecast.setType(Forecast.ForecastType.SOUNDING);
+            forecast.setLastUpdated(System.currentTimeMillis());
+            forecast.setValidFor(timestamp);
+            forecast.setImage(NoaaProxy.fetchMeteogram(takeoff.getLatitude(), takeoff.getLongitude()));
+            ofy().save().entity(forecast).now();
+        }
+        return forecast;
     }
 
     /**
@@ -149,7 +195,7 @@ public class FlyWithMeEndpoint {
      * @param takeoffId The Takeoff ID
      */
     @ApiMethod(name = "updateTakeoffData", path = "task/updateTakeoffData")
-    public void updateTakeoffData(@Named("takeoffId") Long takeoffId) {
+    public void updateTakeoffData(@Named("takeoffId") long takeoffId) {
         Takeoff takeoff = FlightlogCrawler.fetchTakeoff(takeoffId);
         if (takeoff == null)
             return;
@@ -160,7 +206,7 @@ public class FlyWithMeEndpoint {
     }
 
     private void sendActivityUpdate() {
-        // find takeoffs with activity since 2 hours ago and until 12 hours into the future
+        // find takeoffs with activity from 2 hours ago until 12 hours into the future
         long currentTimeSeconds = System.currentTimeMillis();
         List<Schedule> schedules = ofy().load().type(Schedule.class)
                 .filter("timestamp >=", currentTimeSeconds - 7200000)
@@ -228,7 +274,7 @@ public class FlyWithMeEndpoint {
         return ofy().load().type(Pilot.class).filter("pilotId", pilotId).first().now();
     }
 
-    private Takeoff fetchTakeoff(Long takeoffId) {
+    private Takeoff fetchTakeoff(long takeoffId) {
         return ofy().load().type(Takeoff.class).filter("takeoffId", takeoffId).first().now();
     }
 }
