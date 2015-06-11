@@ -32,7 +32,7 @@ public class FlightlogCrawler {
 
     private static final String TAKEOFF_URL = "http://flightlog.org/fl.html?l=1&a=22&country_id=160&start_id=";
 
-    public static Takeoff fetchTakeoff(Long takeoffId) {
+    public static Takeoff fetchTakeoff(long takeoffId) {
         try {
             URL url = new URL(TAKEOFF_URL + takeoffId);
             HttpURLConnection httpUrlConnection = (HttpURLConnection) url.openConnection();

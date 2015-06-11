@@ -20,6 +20,14 @@
         <servlet-name>SystemServiceServlet</servlet-name>
         <url-pattern>/_ah/spi/*</url-pattern>
     </servlet-mapping>
+    <servlet>
+        <servlet-name>TaskServlet</servlet-name>
+        <servlet-class>net.exent.flywithme.server.servlet.TaskServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>TaskServlet</servlet-name>
+        <url-pattern>/task/*</url-pattern>
+    </servlet-mapping>
 
     <security-constraint>
         <web-resource-collection>

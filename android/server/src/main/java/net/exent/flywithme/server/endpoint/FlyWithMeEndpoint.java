@@ -7,6 +7,10 @@ import com.google.android.gcm.server.Sender;
 import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiNamespace;
+import com.google.appengine.api.taskqueue.Queue;
+import com.google.appengine.api.taskqueue.QueueFactory;
+import com.google.appengine.api.taskqueue.TaskHandle;
+import com.google.appengine.api.taskqueue.TaskOptions;
 import com.googlecode.objectify.ObjectifyService;
 
 import net.exent.flywithme.server.bean.Forecast;
@@ -135,7 +139,7 @@ public class FlyWithMeEndpoint {
         // need to fetch forecast
         Takeoff takeoff = fetchTakeoff(takeoffId);
         if (takeoff == null) {
-            updateTakeoffData(takeoffId);
+            updateTakeoff(takeoffId);
             takeoff = fetchTakeoff(takeoffId);
         }
         if (takeoff != null) {
@@ -174,7 +178,7 @@ public class FlyWithMeEndpoint {
         // need to fetch forecast
         Takeoff takeoff = fetchTakeoff(takeoffId);
         if (takeoff == null) {
-            updateTakeoffData(takeoffId);
+            updateTakeoff(takeoffId);
             takeoff = fetchTakeoff(takeoffId);
         }
         if (takeoff != null) {
@@ -194,15 +198,23 @@ public class FlyWithMeEndpoint {
      *
      * @param takeoffId The Takeoff ID
      */
-    @ApiMethod(name = "updateTakeoffData", path = "task/updateTakeoffData")
-    public void updateTakeoffData(@Named("takeoffId") long takeoffId) {
+    // TODO: remove? how will we start the task loop thingy?
+    @ApiMethod(name = "updateTakeoff") //, path = "task/updateTakeoff")
+    public void updateTakeoff(@Named("takeoffId") long takeoffId) {
         Takeoff takeoff = FlightlogCrawler.fetchTakeoff(takeoffId);
-        if (takeoff == null)
-            return;
-        Takeoff existing = fetchTakeoff(takeoffId);
-        if (existing != null && takeoff.equals(existing))
-            return; // no changes
-        ofy().save().entity(takeoff).now();
+        if (takeoff != null) {
+            Takeoff existing = fetchTakeoff(takeoffId);
+            if (existing == null || !takeoff.equals(existing))
+                ofy().save().entity(takeoff).now();
+        }
+
+        // TODO: possible problem: http://stackoverflow.com/questions/27113634/google-app-engine-task-queue-gets-a-404-when-invoking-google-cloud-endpoints-api
+
+        ++takeoffId; // TODO: wrap around when we haven't found a valid takeoff ID in a while
+        Queue queue = QueueFactory.getDefaultQueue(); // http://localhost:8080/_ah/api/flyWithMeServer/v1/forecast/4
+        TaskOptions task = TaskOptions.Builder.withTaskName("Takeoff-" + takeoffId).countdownMillis(1000).url("/task/updateTakeoff").param("takeoffId", "" + takeoffId).param("takeoffNotFoundCounter", "0").method(TaskOptions.Method.POST);
+        TaskHandle taskHandle = queue.add(task);
+        log.info("Added task: " + taskHandle);
     }
 
     private void sendActivityUpdate() {
