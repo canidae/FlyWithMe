@@ -74,7 +74,7 @@ public class TaskServlet extends HttpServlet {
             ++takeoffId;
         Queue queue = QueueFactory.getDefaultQueue();
         TaskOptions task = TaskOptions.Builder.withTaskName("Takeoff-" + takeoffId)
-                .countdownMillis(1000)
+                .countdownMillis(60000)
                 .url("/task/updateTakeoff")
                 .param("takeoffId", "" + takeoffId)
                 .param("takeoffNotFoundCounter", "" + takeoffNotFoundCounter)

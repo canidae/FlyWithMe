@@ -3,7 +3,6 @@ package net.exent.flywithme.server.utils;
 import net.exent.flywithme.server.utils.gif.GifDecoder;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -259,31 +258,6 @@ public class NoaaProxy {
             }
         }
         System.out.println("Found correct CAPTCHA in " + correct + " out of " + (correct + wrong) + " images");
-
-        float latitude = (float) 10.8;
-        float longitude = (float) 63.0;
-        /*
-        for (int a = 0; a < 100; ++a) {
-            byte[] captchaImage = updateFieldsAndCaptcha(latitude, longitude);
-            Files.write(new File("captchas", "" + System.currentTimeMillis()).toPath(), captchaImage);
-            Thread.sleep(100);
-        }
-        */
-
-        //net.exent.flywithme.server.utils.gif2.GifDecoder.GifImage gi = net.exent.flywithme.server.utils.gif2.GifDecoder.read(Files.readAllBytes(new File("captcha.gif").toPath()));
-        //ImageIO.write(gi.getFrame(0), "gif", new File("test.gif"));
-
-        /*
-        net.exent.flywithme.server.utils.gif.GifDecoder.GifImage gi = net.exent.flywithme.server.utils.gif.GifDecoder.read(Files.readAllBytes(new File("captcha.gif").toPath()));
-        BufferedImage bi = new BufferedImage(gi.getWidth(), gi.getHeight(), BufferedImage.TYPE_INT_ARGB);
-        System.arraycopy(gi.getFrame(0), 0, ((DataBufferInt) bi.getRaster().getDataBuffer()).getData(), 0, gi.getFrame(0).length);
-        ImageIO.write(bi, "gif", new File("test.gif"));
-        */
-
-        //byte[] meteogram = fetchMeteogram(latitude, longitude);
-        //Files.write(new File("meteogram." + System.currentTimeMillis()).toPath(), meteogram);
-        //byte[] sounding = fetchSounding(latitude, longitude, 1433678400000L);
-        //Files.write(new File("sounding." + System.currentTimeMillis()).toPath(), sounding);
     }
 
     private static String solveCaptcha(byte[] captchaImage) throws Exception { // TODO: fix exception handling
@@ -324,13 +298,10 @@ public class NoaaProxy {
         Collections.sort(possibleMatches, new Comparator<CaptchaStringMatch>() {
             @Override
             public int compare(CaptchaStringMatch c1, CaptchaStringMatch c2) {
-                //return c2.matchingPixels - c1.matchingPixels;
-                //return (c2.matchingPixels * 100000 / c2.totalPixels) - (c1.matchingPixels * 100000 / c1.totalPixels);
+                // weight both amount and percentage of matching pixels, this weighting seems to produce very good results
                 return (c2.matchingPixels + c2.matchingPixels * 10000 / c2.totalPixels) - (c1.matchingPixels + c1.matchingPixels * 10000 / c1.totalPixels);
             }
         });
-        //System.out.println("Possible matches: " + possibleMatches.size() + " | Best: " + (possibleMatches.size() >= 1 ? possibleMatches.get(0) : null) + " | Then: "  + (possibleMatches.size() >= 2 ? possibleMatches.get(1) : null));
-        //ImageIO.write(image2, "bmp", new File("captcha.bmp"));
         if (possibleMatches.size() > 0) {
             String captcha = possibleMatches.get(0).captcha;
             log.info("Found " + possibleMatches.size() + " possible CAPTCHA matches, I think this is correct: " + captcha);

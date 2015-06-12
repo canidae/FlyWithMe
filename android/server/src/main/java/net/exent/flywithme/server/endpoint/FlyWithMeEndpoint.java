@@ -187,7 +187,7 @@ public class FlyWithMeEndpoint {
             forecast.setType(Forecast.ForecastType.SOUNDING);
             forecast.setLastUpdated(System.currentTimeMillis());
             forecast.setValidFor(timestamp);
-            forecast.setImage(NoaaProxy.fetchMeteogram(takeoff.getLatitude(), takeoff.getLongitude()));
+            forecast.setImage(NoaaProxy.fetchSounding(takeoff.getLatitude(), takeoff.getLongitude(), timestamp));
             ofy().save().entity(forecast).now();
         }
         return forecast;
