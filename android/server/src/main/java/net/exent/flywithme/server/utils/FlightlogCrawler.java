@@ -36,69 +36,65 @@ public class FlightlogCrawler {
         try {
             URL url = new URL(TAKEOFF_URL + takeoffId);
             HttpURLConnection httpUrlConnection = (HttpURLConnection) url.openConnection();
-            switch (httpUrlConnection.getResponseCode()) {
-                case HttpURLConnection.HTTP_OK:
-                    String charset = getCharsetFromHeaderValue(httpUrlConnection.getContentType());
-                    StringBuilder sb = new StringBuilder();
-                    BufferedReader br = new BufferedReader(new InputStreamReader(httpUrlConnection.getInputStream(), charset), 32768);
-                    char[] buffer = new char[32768];
-                    int read;
-                    while ((read = br.read(buffer)) != -1)
-                        sb.append(buffer, 0, read);
-                    br.close();
+            if (httpUrlConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                String charset = getCharsetFromHeaderValue(httpUrlConnection.getContentType());
+                StringBuilder sb = new StringBuilder();
+                BufferedReader br = new BufferedReader(new InputStreamReader(httpUrlConnection.getInputStream(), charset), 32768);
+                char[] buffer = new char[32768];
+                int read;
+                while ((read = br.read(buffer)) != -1)
+                    sb.append(buffer, 0, read);
+                br.close();
 
-                    String text = sb.toString();
-                    Matcher nameMatcher = NAME_PATTERN.matcher(text);
-                    Matcher descriptionMatcher = DESCRIPTION_PATTERN.matcher(text);
-                    Matcher altitudeMatcher = ALTITUDE_PATTERN.matcher(text);
-                    Matcher coordMatcher = COORD_PATTERN.matcher(text);
-                    Matcher windpaiMatcher = WINDPAI_PATTERN.matcher(text);
+                String text = sb.toString();
+                Matcher nameMatcher = NAME_PATTERN.matcher(text);
+                Matcher descriptionMatcher = DESCRIPTION_PATTERN.matcher(text);
+                Matcher altitudeMatcher = ALTITUDE_PATTERN.matcher(text);
+                Matcher coordMatcher = COORD_PATTERN.matcher(text);
+                Matcher windpaiMatcher = WINDPAI_PATTERN.matcher(text);
 
-                    if (nameMatcher.matches() && coordMatcher.matches()) {
-                        String takeoffName = nameMatcher.group(1).trim();
-                        String description = "";
-                        if (descriptionMatcher.matches())
-                            description = descriptionMatcher.group(2).replace("<br />", "").trim();
-                        int aboveSeaLevel = 0;
-                        int height = 0;
-                        if (altitudeMatcher.matches()) {
-                            aboveSeaLevel = Integer.parseInt(altitudeMatcher.group(1).trim());
-                            height = Integer.parseInt(altitudeMatcher.group(2).trim());
-                        }
-
-                        String northOrSouth = coordMatcher.group(1);
-                        int latDeg = Integer.parseInt(coordMatcher.group(2));
-                        int latMin = Integer.parseInt(coordMatcher.group(3));
-                        int latSec = Integer.parseInt(coordMatcher.group(4));
-                        float latitude;
-                        latitude = (float) latDeg + (float) (latMin * 60 + latSec) / (float) 3600;
-                        if ("S".equals(northOrSouth))
-                            latitude *= -1.0;
-
-                        String eastOrWest = coordMatcher.group(5);
-                        int lonDeg = Integer.parseInt(coordMatcher.group(6));
-                        int lonMin = Integer.parseInt(coordMatcher.group(7));
-                        int lonSec = Integer.parseInt(coordMatcher.group(8));
-                        float longitude;
-                        longitude = (float) lonDeg + (float) (lonMin * 60 + lonSec) / (float) 3600;
-                        if ("W".equals(eastOrWest))
-                            longitude *= -1.0;
-
-                        String windpai = "";
-                        if (windpaiMatcher.matches())
-                            windpai = windpaiMatcher.group(1).trim();
-
-                        long currentTime = System.currentTimeMillis();
-                        Takeoff takeoff = new Takeoff();
-                        takeoff.setTakeoffId(takeoffId).setName(takeoffName).setAsl(aboveSeaLevel).setHeight(height).setLatitude(latitude).setLongitude(longitude);
-                        takeoff.setDescription(description).setWindpai(windpai).setLastUpdated(currentTime).setLastChecked(currentTime);
-                        return takeoff;
+                if (nameMatcher.matches() && coordMatcher.matches()) {
+                    String takeoffName = nameMatcher.group(1).trim();
+                    String description = "";
+                    if (descriptionMatcher.matches())
+                        description = descriptionMatcher.group(2).replace("<br />", "").trim();
+                    int aboveSeaLevel = 0;
+                    int height = 0;
+                    if (altitudeMatcher.matches()) {
+                        aboveSeaLevel = Integer.parseInt(altitudeMatcher.group(1).trim());
+                        height = Integer.parseInt(altitudeMatcher.group(2).trim());
                     }
-                    break;
 
-                default:
-                    log.warning("Whoops, not good! Response code " + httpUrlConnection.getResponseCode() + " when fetching takeoff with ID " + takeoffId);
-                    break;
+                    String northOrSouth = coordMatcher.group(1);
+                    int latDeg = Integer.parseInt(coordMatcher.group(2));
+                    int latMin = Integer.parseInt(coordMatcher.group(3));
+                    int latSec = Integer.parseInt(coordMatcher.group(4));
+                    float latitude;
+                    latitude = (float) latDeg + (float) (latMin * 60 + latSec) / (float) 3600;
+                    if ("S".equals(northOrSouth))
+                        latitude *= -1.0;
+
+                    String eastOrWest = coordMatcher.group(5);
+                    int lonDeg = Integer.parseInt(coordMatcher.group(6));
+                    int lonMin = Integer.parseInt(coordMatcher.group(7));
+                    int lonSec = Integer.parseInt(coordMatcher.group(8));
+                    float longitude;
+                    longitude = (float) lonDeg + (float) (lonMin * 60 + lonSec) / (float) 3600;
+                    if ("W".equals(eastOrWest))
+                        longitude *= -1.0;
+
+                    String windpai = "";
+                    if (windpaiMatcher.matches())
+                        windpai = windpaiMatcher.group(1).trim();
+
+                    long currentTime = System.currentTimeMillis();
+                    Takeoff takeoff = new Takeoff();
+                    takeoff.setTakeoffId(takeoffId).setName(takeoffName).setAsl(aboveSeaLevel).setHeight(height).setLatitude(latitude).setLongitude(longitude);
+                    takeoff.setDescription(description).setWindpai(windpai).setLastUpdated(currentTime).setLastChecked(currentTime);
+                    return takeoff;
+                }
+            } else {
+                log.warning("Whoops, not good! Response code " + httpUrlConnection.getResponseCode() + " when fetching takeoff with ID " + takeoffId);
             }
         } catch (Exception e) {
             log.log(Level.WARNING, "Unable to fetch takeoff with ID " + takeoffId, e);
