@@ -20,6 +20,7 @@ import net.exent.flywithme.server.utils.NoaaProxy;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -34,11 +35,9 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
 public class FlyWithMeEndpoint {
     private static final Logger log = Logger.getLogger(FlyWithMeEndpoint.class.getName());
 
-    /**
-     * Api Keys can be obtained from the google cloud console.
-     */
     private static final String API_KEY = System.getProperty("gcm.api.key");
     private static final int MAX_MULTICAST_RECIPIENTS = 1000;
+    private static final long FORECAST_CACHE_LIFETIME = TimeUnit.MILLISECONDS.convert(6, TimeUnit.HOURS);
 
     static {
         ObjectifyService.register(Forecast.class);
@@ -54,7 +53,7 @@ public class FlyWithMeEndpoint {
     /**
      * Register a pilot to the backend.
      *
-     * @param pilotId The Pilot ID to add
+     * @param pilotId The Pilot ID to add.
      */
     @ApiMethod(name = "registerPilot")
     public void registerPilot(@Named("pilotId") String pilotId) {
@@ -69,7 +68,7 @@ public class FlyWithMeEndpoint {
     /**
      * Unregister a pilot from the backend.
      *
-     * @param pilotId The Pilot ID to remove
+     * @param pilotId The Pilot ID to remove.
      */
     @ApiMethod(name = "unregisterPilot")
     public void unregisterPilot(@Named("pilotId") String pilotId) {
@@ -84,15 +83,16 @@ public class FlyWithMeEndpoint {
     /**
      * Schedule flight at a takeoff.
      *
-     * @param pilotId The Pilot ID
-     * @param takeoffId The Takeoff ID
-     * @param timestamp Scheduled time, in seconds since epoch
+     * @param pilotId The Pilot ID.
+     * @param takeoffId The Takeoff ID.
+     * @param timestamp Scheduled time, in seconds since epoch.
      */
     @ApiMethod(name = "scheduleFlight")
     public void scheduleFlight(@Named("pilotId") String pilotId, @Named("takeoffId") int takeoffId, @Named("timestamp") int timestamp) {
         Schedule schedule = ofy().load().type(Schedule.class)
                 .filter("takeoffId", takeoffId)
-                .filter("timestamp", timestamp).first().now();
+                .filter("timestamp", timestamp)
+                .first().now();
         if (schedule == null) {
             schedule = new Schedule();
             schedule.setTimestamp(timestamp);
@@ -106,18 +106,20 @@ public class FlyWithMeEndpoint {
     /**
      * Unschedule flight at a takeoff.
      *
-     * @param pilotId The Pilot ID
-     * @param takeoffId The Takeoff ID
-     * @param timestamp Scheduled time, in seconds since epoch
+     * @param pilotId The Pilot ID.
+     * @param takeoffId The Takeoff ID.
+     * @param timestamp Scheduled time, in seconds since epoch.
      */
     @ApiMethod(name = "unscheduleFlight")
     public void unscheduleFlight(@Named("pilotId") String pilotId, @Named("takeoffId") int takeoffId, @Named("timestamp") int timestamp) {
         Schedule schedule = ofy().load().type(Schedule.class)
                 .filter("takeoffId", takeoffId)
-                .filter("timestamp", timestamp).first().now();
+                .filter("timestamp", timestamp)
+                .first().now();
         if (schedule != null) {
             schedule.removePilot(pilotId);
             ofy().save().entity(schedule).now();
+            sendActivityUpdate();
         }
     }
 
@@ -125,13 +127,14 @@ public class FlyWithMeEndpoint {
      * Fetch meteogram for the given takeoff.
      *
      * @param takeoffId The Takeoff ID.
+     * @return Meteogram for the given takeoff.
      */
     @ApiMethod(name = "getMeteogram")
     public Forecast getMeteogram(@Named("takeoffId") long takeoffId) {
         Forecast forecast = ofy().load().type(Forecast.class)
                 .filter("takeoffId", takeoffId)
                 .filter("type", Forecast.ForecastType.METEOGRAM)
-                .filter("lastUpdated <", System.currentTimeMillis() + 21600000)
+                .filter("lastUpdated <", System.currentTimeMillis() + FORECAST_CACHE_LIFETIME)
                 .first().now();
         if (forecast != null) {
             // return forecast to client
@@ -155,11 +158,12 @@ public class FlyWithMeEndpoint {
      *
      * @param takeoffId The Takeoff ID.
      * @param timestamp The timestamp we want sounding for, in milliseconds since epoch.
+     * @return Sounding for the given takeoff and timestamp.
      */
     @ApiMethod(name = "getSounding")
     public Forecast getSounding(@Named("takeoffId") long takeoffId, @Named("timestamp") long timestamp) {
         timestamp = (timestamp / 10800000) * 10800000; // aligns timestamp with valid values for sounding (sounding every 3rd hour)
-        if (timestamp < System.currentTimeMillis() - 86400000) {
+        if (timestamp < System.currentTimeMillis() - TimeUnit.MILLISECONDS.convert(1, TimeUnit.DAYS)) {
             log.info("Client tried to retrieve sounding for takeoff '" + takeoffId + "' with timestamp '" + timestamp + "', but that timestamp was a long time ago");
             return null;
         }
@@ -167,7 +171,8 @@ public class FlyWithMeEndpoint {
                 .filter("takeoffId", takeoffId)
                 .filter("type", Forecast.ForecastType.SOUNDING)
                 .filter("validFor", timestamp)
-                .filter("lastUpdated <", System.currentTimeMillis() + 21600000).first().now();
+                .filter("lastUpdated <", System.currentTimeMillis() + FORECAST_CACHE_LIFETIME)
+                .first().now();
         if (forecast != null) {
             // return forecast to client
             return forecast;
@@ -186,12 +191,23 @@ public class FlyWithMeEndpoint {
         return forecast;
     }
 
+    /**
+     * Fetch all takeoffs that have been updated after the given timestamp.
+     *
+     * @param updatedAfter The timestamp of the last updated Takeoff cached on client.
+     * @return A list of takeoffs updated after the given timestamp.
+     */
+    @ApiMethod(name = "getUpdatedTakeoffs")
+    public List<Takeoff> getUpdatedTakeoffs(@Named("updatedAfter") long updatedAfter) {
+        return ofy().load().type(Takeoff.class).filter("lastUpdated >=", updatedAfter).list();
+    }
+
     private void sendActivityUpdate() {
-        // find takeoffs with activity from 2 hours ago until 12 hours into the future
+        // find takeoffs with activity
         long currentTimeSeconds = System.currentTimeMillis();
         List<Schedule> schedules = ofy().load().type(Schedule.class)
-                .filter("timestamp >=", currentTimeSeconds - 7200000)
-                .filter("timestamp <", currentTimeSeconds + 43200000).list();
+                .filter("timestamp >=", currentTimeSeconds - TimeUnit.MILLISECONDS.convert(2, TimeUnit.HOURS))
+                .list();
         StringBuilder sb = new StringBuilder();
         for (Schedule schedule : schedules)
             sb.append(schedule.getTakeoff()).append(',');
