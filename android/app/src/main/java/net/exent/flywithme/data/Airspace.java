@@ -14,6 +14,8 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 
+import com.google.android.gms.maps.MapsInitializer;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolygonOptions;
@@ -38,8 +40,9 @@ public class Airspace {
 
     private static void readAirspaceMapFile(Context context) {
         airspaceMap = new HashMap<>();
-        InputStream inputStream = context.getResources().openRawResource(R.raw.airspace_map);
+        InputStream inputStream = context.getResources().openRawResource(R.raw.airspace);
         try {
+            MapsInitializer.initialize(context);
             XmlPullParser parser = XmlPullParserFactory.newInstance().newPullParser();
             parser.setInput(inputStream, null);
             Map<String, PolygonOptions> polygonStyles = new HashMap<>();
@@ -53,10 +56,10 @@ public class Airspace {
                 } else if ("Folder".equals(parser.getName()) && parser.nextTag() == XmlPullParser.START_TAG && "name".equals(parser.getName())) {
                     folder = parser.nextText().trim();
                 } else if ("Placemark".equals(parser.getName())) {
-                    Zone zone = fetchZone(polygonStyles, parser);
+                    Zone zone = fetchZone(polygonStyles, parser, context);
                     if (zone != null) {
                         if (!airspaceMap.containsKey(folder))
-                            airspaceMap.put(folder, new ArrayList<>());
+                            airspaceMap.put(folder, new ArrayList<Zone>());
                         airspaceMap.get(folder).add(zone);
                     }
                 }
@@ -92,8 +95,10 @@ public class Airspace {
         return style;
     }
 
-    private static Zone fetchZone(Map<String, PolygonOptions> polygonStyles, XmlPullParser parser) throws XmlPullParserException, IOException {
+    private static Zone fetchZone(Map<String, PolygonOptions> polygonStyles, XmlPullParser parser, Context context) throws XmlPullParserException, IOException {
         String styleId = null;
+        String zoneName = null;
+        String zoneDescription = null;
         PolygonOptions polygon = null;
         MarkerOptions marker = null;
         while (parser.next() != XmlPullParser.END_DOCUMENT && !"Placemark".equals(parser.getName())) {
@@ -101,6 +106,10 @@ public class Airspace {
                 continue;
             if ("styleUrl".equals(parser.getName())) {
                 styleId = parser.nextText().substring(1);
+            } else if ("name".equals(parser.getName())) {
+                zoneName = parser.nextText();
+            } else if ("description".equals(parser.getName())) {
+                zoneDescription = parser.nextText().replaceAll("(\\r|\\n|<a.*</a>)", "").replaceAll("<br/?>", "\n").trim();
             } else if ("coordinates".equals(parser.getName())) {
                 String coordinates[] = parser.nextText().trim().split("\\r?\\n");
                 if (coordinates.length == 1) {
@@ -112,17 +121,23 @@ public class Airspace {
                     }
                     marker = new MarkerOptions()
                             .position(new LatLng(Double.parseDouble(coordinate.substring(pos + 1)), Double.parseDouble(coordinate.substring(0, pos))))
-                    //TODO: .icon(BitmapDescriptorFactory.fromBitmap(bitmap))
-                            .anchor(0.5f, 0.5f);
-                } else if (coordinates.length < 3) {
-                    continue; // not enough coordinates to draw a polygon
+                            .title(zoneName)
+                            .snippet(zoneDescription)
+                            .anchor(0.5f, 0.875f);
+                    int iconId = context.getResources().getIdentifier("airspace_" + styleId, "drawable", context.getPackageName());
+                    if (iconId > 0)
+                        marker.icon(BitmapDescriptorFactory.fromResource(iconId));
+                    else
+                        Log.w("Airspace", "Unable to find icon for zone: " + styleId);
                 }
+                if (coordinates.length < 3)
+                    continue; // not enough coordinates to draw a polygon
 
                 PolygonOptions style = polygonStyles.get(styleId);
-                polygon = new PolygonOptions();
-                polygon.strokeWidth(style.getStrokeWidth());
-                polygon.strokeColor(style.getStrokeColor());
-                polygon.fillColor(style.getFillColor());
+                polygon = new PolygonOptions()
+                        .strokeWidth(style.getStrokeWidth())
+                        .strokeColor(style.getStrokeColor())
+                        .fillColor(style.getFillColor());
                 for (String coordinate : coordinates) {
                     int pos = coordinate.indexOf(',');
                     if (pos <= 0) {
