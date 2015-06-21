@@ -15,22 +15,29 @@ import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolygonOptions;
 
 import android.content.Context;
 import android.util.Log;
 
-public class Airspace {
-    private static Map<String, List<PolygonOptions>> polygonMap = new HashMap<>();
+/* TODO:
+ * periodically (every month or so) fetch http://grytnes-it.no/pg/luftrom/luftrom.kml
+ * ask hans cato to make this url permanently pointing to the most updated version of the overlay
+ * add marker icons, but we need to figure out how to store these first
+ */
 
-    public static Map<String, List<PolygonOptions>> getAirspaceMap() {
-        if (polygonMap.isEmpty())
+public class Airspace {
+    private static Map<String, List<Zone>> airspaceMap = new HashMap<>();
+
+    public static Map<String, List<Zone>> getAirspaceMap() {
+        if (airspaceMap.isEmpty())
             readAirspaceMapFile(FlyWithMe.getInstance());
-        return polygonMap;
+        return airspaceMap;
     }
 
     private static void readAirspaceMapFile(Context context) {
-        polygonMap = new HashMap<>();
+        airspaceMap = new HashMap<>();
         InputStream inputStream = context.getResources().openRawResource(R.raw.airspace_map);
         try {
             XmlPullParser parser = XmlPullParserFactory.newInstance().newPullParser();
@@ -46,11 +53,11 @@ public class Airspace {
                 } else if ("Folder".equals(parser.getName()) && parser.nextTag() == XmlPullParser.START_TAG && "name".equals(parser.getName())) {
                     folder = parser.nextText().trim();
                 } else if ("Placemark".equals(parser.getName())) {
-                    PolygonOptions polygon = fetchPolygon(polygonStyles, parser);
-                    if (polygon != null) {
-                        if (!polygonMap.containsKey(folder))
-                            polygonMap.put(folder, new ArrayList<PolygonOptions>());
-                        polygonMap.get(folder).add(polygon);
+                    Zone zone = fetchZone(polygonStyles, parser);
+                    if (zone != null) {
+                        if (!airspaceMap.containsKey(folder))
+                            airspaceMap.put(folder, new ArrayList<>());
+                        airspaceMap.get(folder).add(zone);
                     }
                 }
             }
@@ -85,8 +92,10 @@ public class Airspace {
         return style;
     }
 
-    private static PolygonOptions fetchPolygon(Map<String, PolygonOptions> polygonStyles, XmlPullParser parser) throws XmlPullParserException, IOException {
+    private static Zone fetchZone(Map<String, PolygonOptions> polygonStyles, XmlPullParser parser) throws XmlPullParserException, IOException {
         String styleId = null;
+        PolygonOptions polygon = null;
+        MarkerOptions marker = null;
         while (parser.next() != XmlPullParser.END_DOCUMENT && !"Placemark".equals(parser.getName())) {
             if (parser.getEventType() != XmlPullParser.START_TAG)
                 continue;
@@ -94,11 +103,23 @@ public class Airspace {
                 styleId = parser.nextText().substring(1);
             } else if ("coordinates".equals(parser.getName())) {
                 String coordinates[] = parser.nextText().trim().split("\\r?\\n");
-                if (coordinates.length < 3)
+                if (coordinates.length == 1) {
+                    String coordinate = coordinates[0];
+                    int pos = coordinate.indexOf(',');
+                    if (pos <= 0) {
+                        Log.w("Airspace", "Unable to parse marker coordinate: " + coordinate);
+                        continue;
+                    }
+                    marker = new MarkerOptions()
+                            .position(new LatLng(Double.parseDouble(coordinate.substring(pos + 1)), Double.parseDouble(coordinate.substring(0, pos))))
+                    //TODO: .icon(BitmapDescriptorFactory.fromBitmap(bitmap))
+                            .anchor(0.5f, 0.5f);
+                } else if (coordinates.length < 3) {
                     continue; // not enough coordinates to draw a polygon
+                }
 
                 PolygonOptions style = polygonStyles.get(styleId);
-                PolygonOptions polygon = new PolygonOptions();
+                polygon = new PolygonOptions();
                 polygon.strokeWidth(style.getStrokeWidth());
                 polygon.strokeColor(style.getStrokeColor());
                 polygon.fillColor(style.getFillColor());
@@ -110,15 +131,17 @@ public class Airspace {
                     }
                     polygon.add(new LatLng(Double.parseDouble(coordinate.substring(pos + 1)), Double.parseDouble(coordinate.substring(0, pos))));
                 }
-                return polygon;
             }
         }
+
+        if (polygon != null && marker != null)
+            return new Zone(polygon, marker);
         return null;
     }
 
     /**
      * Convert ABGR to ARGB. KML-file use ABGR, but we need ARGB when drawing.
-     * 
+     *
      * @param color
      *            8 character string representing an ABGR color.
      * @return int value for ARGB color.
@@ -130,5 +153,23 @@ public class Airspace {
         long green = (abgr >> 8) & 0xff;
         long blue = (abgr >> 0) & 0xff;
         return (int) ((alpha << 24) | (blue << 16) | (green << 8) | (red << 0));
+    }
+
+    public static class Zone {
+        private PolygonOptions polygon;
+        private MarkerOptions marker;
+
+        public Zone(PolygonOptions polygon, MarkerOptions marker) {
+            this.polygon = polygon;
+            this.marker = marker;
+        }
+
+        public PolygonOptions getPolygon() {
+            return polygon;
+        }
+
+        public MarkerOptions getMarker() {
+            return marker;
+        }
     }
 }

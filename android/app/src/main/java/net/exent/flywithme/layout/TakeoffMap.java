@@ -307,13 +307,13 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
                     }
                     Location tmpLocation = new Location(location);
 
-                    for (Map.Entry<String, List<PolygonOptions>> entry : Airspace.getAirspaceMap().entrySet()) {
+                    for (Map.Entry<String, List<Airspace.Zone>> entry : Airspace.getAirspaceMap().entrySet()) {
                         if (entry.getKey() == null || !prefs.getBoolean("pref_airspace_enabled_" + entry.getKey().trim(), true))
                             continue;
-                        for (PolygonOptions polygon : entry.getValue()) {
+                        for (Airspace.Zone zone : entry.getValue()) {
                             // show polygons within (sort of) 100km
-                            if (showPolygon(polygon, location, tmpLocation, 100000))
-                                showPolygons.add(polygon);
+                            if (showPolygon(zone.getPolygon(), location, tmpLocation, 100000))
+                                showPolygons.add(zone.getPolygon());
                         }
                     }
                 }
