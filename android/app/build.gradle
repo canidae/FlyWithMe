@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "net.exent.flywithme"
-        minSdkVersion 11
+        minSdkVersion 14
         targetSdkVersion 22
         versionCode 400
         versionName "4.0"
@@ -24,9 +24,6 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:support-v4:22.1.1'
-    compile 'com.android.support:gridlayout-v7:22.0.0'
-    compile 'com.android.support:appcompat-v7:22.1.1'
-    compile 'com.google.android.gms:play-services:7.3.0'
+    compile 'com.google.android.gms:play-services:7.5.0'
     compile project(path: ':server', configuration: 'android-endpoints')
 }

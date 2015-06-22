@@ -200,7 +200,7 @@ public class NoaaForecastTask extends AsyncTask<Takeoff, String, Boolean> {
             if (progressDialog == null) {
                 progressDialog = new ProgressDialog();
                 progressDialog.setTask(this);
-                progressDialog.show(FlyWithMe.getInstance().getSupportFragmentManager(), "progressDialog");
+                progressDialog.show(FlyWithMe.getInstance().getFragmentManager(), "progressDialog");
             }
             /* pass arguments */
             progressDialog.setProgress(progress, text, image, showInput);

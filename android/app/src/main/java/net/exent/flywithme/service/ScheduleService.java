@@ -1,6 +1,7 @@
 package net.exent.flywithme.service;
 
 import android.app.IntentService;
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -13,7 +14,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
-import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -302,7 +302,7 @@ public class ScheduleService extends IntentService implements ConnectionCallback
                 return; // no upcoming activity
             // notify the user that people are planning to fly
             NotificationManager notificationManager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
-            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context);
+            Notification.Builder notificationBuilder = new Notification.Builder(context);
             notificationBuilder.setSmallIcon(R.mipmap.ic_launcher);
             notificationBuilder.setContentTitle(context.getString(R.string.get_your_wing));
             notificationBuilder.setAutoCancel(true);

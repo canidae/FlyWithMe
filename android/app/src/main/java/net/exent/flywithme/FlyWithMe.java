@@ -23,8 +23,8 @@ import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
+import android.app.Fragment;
+import android.app.Activity;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -37,7 +37,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FlyWithMe extends FragmentActivity implements TakeoffListListener, TakeoffMapListener, TakeoffDetailsListener {
+public class FlyWithMe extends Activity implements TakeoffListListener, TakeoffMapListener, TakeoffDetailsListener {
     public static final String SERVER_URL = "http://flywithme-server.appspot.com/fwm";
     //public static final String SERVER_URL = "http://192.168.1.200:8080/fwm";
 
@@ -65,7 +65,7 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
      * @param takeoff The takeoff to display details for.
      */
     public void showTakeoffDetails(Takeoff takeoff) {
-        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragmentContainer);
+        Fragment fragment = getFragmentManager().findFragmentById(R.id.fragmentContainer);
         TakeoffDetails takeoffDetails;
         if (fragment != null && fragment instanceof TakeoffDetails) {
             takeoffDetails = (TakeoffDetails) fragment;
@@ -85,7 +85,7 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
      * @param takeoff The takeoff we wish to display the forecast for.
      */
     public void showNoaaForecast(Takeoff takeoff) {
-        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragmentContainer);
+        Fragment fragment = getFragmentManager().findFragmentById(R.id.fragmentContainer);
         NoaaForecast noaaForecast;
         if (fragment != null && fragment instanceof NoaaForecast) {
             noaaForecast = (NoaaForecast) fragment;
@@ -101,7 +101,7 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
     }
 
     public void showTakeoffSchedule(Takeoff takeoff) {
-        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragmentContainer);
+        Fragment fragment = getFragmentManager().findFragmentById(R.id.fragmentContainer);
         TakeoffSchedule takeoffSchedule;
         if (fragment != null && fragment instanceof TakeoffSchedule) {
             takeoffSchedule = (TakeoffSchedule) fragment;
@@ -120,7 +120,7 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
      * Show TakeoffList fragment.
      */
     public void showTakeoffList() {
-        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragmentContainer);
+        Fragment fragment = getFragmentManager().findFragmentById(R.id.fragmentContainer);
         TakeoffList takeoffList = (fragment != null && fragment instanceof TakeoffList) ? (TakeoffList) fragment : new TakeoffList();
         /* show fragment */
         showFragment(takeoffList, "takeoffList");
@@ -130,7 +130,7 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
      * Show TakeoffMap fragment.
      */
     public void showMap() {
-        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragmentContainer);
+        Fragment fragment = getFragmentManager().findFragmentById(R.id.fragmentContainer);
         TakeoffMap takeoffMap = (fragment != null && fragment instanceof TakeoffMap) ? (TakeoffMap) fragment : new TakeoffMap();
         /* show fragment */
         showFragment(takeoffMap, "map");
@@ -140,7 +140,7 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
      * Show settings.
      */
     public void showSettings() {
-        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragmentContainer);
+        Fragment fragment = getFragmentManager().findFragmentById(R.id.fragmentContainer);
         Preferences preferences = (fragment != null && fragment instanceof Preferences) ? (Preferences) fragment : new Preferences();
         /* show fragment */
         showFragment(preferences, "preferences");
@@ -244,7 +244,7 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
             backstack.remove(backstack.size() - 1);
         if (backstack.isEmpty()) {
             // no more entries in backstack, return to takeoff list, or exit application if we're looking at the takeoff list
-            Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragmentContainer);
+            Fragment fragment = getFragmentManager().findFragmentById(R.id.fragmentContainer);
             if (fragment instanceof TakeoffList) {
                 super.onBackPressed();
             } else {
@@ -275,7 +275,7 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
     private void showFragment(Fragment fragment, String name) {
         backstack.remove(name);
         backstack.add(name);
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, fragment, name).commit();
+        getFragmentManager().beginTransaction().replace(R.id.fragmentContainer, fragment, name).commit();
     }
 
     private void importTakeoffs() {
@@ -343,7 +343,7 @@ public class FlyWithMe extends FragmentActivity implements TakeoffListListener, 
             statusText.setVisibility(View.GONE);
 
             // update list/map if user is looking at either
-            Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragmentContainer);
+            Fragment fragment = getFragmentManager().findFragmentById(R.id.fragmentContainer);
             if (fragment != null) {
                 if (fragment instanceof TakeoffList) {
                     TakeoffList takeoffList = (TakeoffList) fragment;
