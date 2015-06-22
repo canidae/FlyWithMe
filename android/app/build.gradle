@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "net.exent.flywithme"
-        minSdkVersion 14
+        minSdkVersion 17
         targetSdkVersion 22
         versionCode 400
         versionName "4.0"

@@ -13,11 +13,12 @@ import net.exent.flywithme.bean.Takeoff;
 import net.exent.flywithme.data.Airspace;
 import net.exent.flywithme.data.Database;
 
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
+import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
@@ -27,6 +28,7 @@ import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.PolygonOptions;
 
 import android.app.Activity;
+import android.app.FragmentTransaction;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -37,24 +39,25 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.app.Fragment;
-import android.app.FragmentManager;
 import android.util.Log;
 import android.util.Pair;
-import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
 
-public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, OnCameraChangeListener {
+public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, OnCameraChangeListener, OnMapReadyCallback {
+
     public interface TakeoffMapListener {
         void showTakeoffDetails(Takeoff takeoff);
 
         Location getLocation();
     }
 
-    private static View view;
+    private static CameraPosition cameraPosition;
+    private GoogleMap map;
+
     /* we can't use Map<Marker, Takeoff> below, because the Marker may be recreated, invalidating the reference we got to the previous instantiation.
      * instead we'll have to keep the id (String) as a reference to the marker */
     private static Map<String, Pair<Marker, Takeoff>> markers = new HashMap<>();
@@ -78,7 +81,7 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
             return;
         }
         try {
-            final GoogleMap map = ((MapFragment) getChildFragmentManager().findFragmentById(R.id.takeoffMapFragment)).getMap();
+            //final GoogleMap map = ((MapFragment) getChildFragmentManager().findFragmentById(R.id.takeoffMapFragment)).getMap();
             /* need to do this here or it'll end up with a reference to an old instance of "this", somehow */
             map.setInfoWindowAdapter(new TakeoffMapMarkerInfo(getActivity().getLayoutInflater()));
             map.setOnInfoWindowClickListener(this);
@@ -123,6 +126,13 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
         }
     }
 
+    @Override
+    public void onMapReady(GoogleMap map) {
+        this.map = map;
+        this.map.setMyLocationEnabled(true);
+        drawMap();
+    }
+
     public void onInfoWindowClick(Marker marker) {
         if (callback == null) {
             Log.w(getClass().getName(), "callback is null, returning");
@@ -137,6 +147,7 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
     }
 
     public void onCameraChange(CameraPosition cameraPosition) {
+        TakeoffMap.cameraPosition = cameraPosition;
         drawOverlay(cameraPosition);
     }
 
@@ -161,36 +172,26 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        /* AAH! (Another Android Hack!): Need this funky code to prevent the map from being recreated and redrawn */
-        /* http://stackoverflow.com/a/14695397/2040995 */
-        if (view != null) {
-            ViewGroup parent = (ViewGroup) view.getParent();
-            if (parent != null)
-                parent.removeView(view);
+        // Inflate the layout for this fragment
+        View view = inflater.inflate(R.layout.takeoff_map, container, false);
+        GoogleMapOptions mapOptions = new GoogleMapOptions();
+        mapOptions.zoomControlsEnabled(false);
+        if (cameraPosition != null) {
+            mapOptions.camera(cameraPosition);
+        } else {
+            Location loc = callback.getLocation();
+            mapOptions.camera(new CameraPosition(new LatLng(loc.getLatitude(), loc.getLongitude()), 10.0f, 0.0f, 0.0f));
         }
-        try {
-            FragmentManager manager = getChildFragmentManager();
-            boolean zoom = (manager == null || manager.findFragmentById(R.id.takeoffMapFragment) == null);
-            view = inflater.inflate(R.layout.takeoff_map, container, false);
-            GoogleMap map = ((MapFragment) manager.findFragmentById(R.id.takeoffMapFragment)).getMap();
-            map.setMyLocationEnabled(true);
-            map.getUiSettings().setZoomControlsEnabled(false);
-            if (zoom) {
-                Location loc = callback.getLocation();
-                map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(loc.getLatitude(), loc.getLongitude()), (float) 10.0));
-            }
-        } catch (InflateException e) {
-            /* map is already there, just return view as it is */
-        } catch (Exception e) {
-            Log.w(getClass().getName(), "onCreateView() failed unexpectedly", e);
-        }
+        MapFragment mapFragment = MapFragment.newInstance(mapOptions);
+        mapFragment.getMapAsync(this);
+        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
+        transaction.replace(R.id.takeoffMapLayout, mapFragment).commit();
         return view;
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        drawMap();
     }
 
     private void drawOverlay(CameraPosition cameraPosition) {
@@ -277,7 +278,7 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
                     /* add marker */
                     Takeoff takeoff = (Takeoff) objects[0];
                     MarkerOptions markerOptions = (MarkerOptions) objects[1];
-                    GoogleMap map = ((MapFragment) getChildFragmentManager().findFragmentById(R.id.takeoffMapFragment)).getMap();
+                    //GoogleMap map = ((MapFragment) getChildFragmentManager().findFragmentById(R.id.takeoffMapLayout)).getMap();
                     Marker marker = map.addMarker(markerOptions);
                     Pair<Marker, Takeoff> pair = new Pair<>(marker, takeoff);
                     markers.put(marker.getId(), pair);
@@ -386,7 +387,7 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
                     it.remove();
                 }
                 /* draw zones that should be visible */
-                GoogleMap map = ((MapFragment) getChildFragmentManager().findFragmentById(R.id.takeoffMapFragment)).getMap();
+                //GoogleMap map = ((MapFragment) getChildFragmentManager().findFragmentById(R.id.takeoffMapLayout)).getMap();
                 for (Airspace.Zone zone : showZones) {
                     Pair<Polygon, Marker> pair = new Pair<>(map.addPolygon(zone.getPolygon()), map.addMarker(zone.getMarker()));
                     zones.put(pair, zone);
