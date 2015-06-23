@@ -81,7 +81,6 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
             return;
         }
         try {
-            //final GoogleMap map = ((MapFragment) getChildFragmentManager().findFragmentById(R.id.takeoffMapFragment)).getMap();
             /* need to do this here or it'll end up with a reference to an old instance of "this", somehow */
             map.setInfoWindowAdapter(new TakeoffMapMarkerInfo(getActivity().getLayoutInflater()));
             map.setOnInfoWindowClickListener(this);
@@ -278,7 +277,6 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
                     /* add marker */
                     Takeoff takeoff = (Takeoff) objects[0];
                     MarkerOptions markerOptions = (MarkerOptions) objects[1];
-                    //GoogleMap map = ((MapFragment) getChildFragmentManager().findFragmentById(R.id.takeoffMapLayout)).getMap();
                     Marker marker = map.addMarker(markerOptions);
                     Pair<Marker, Takeoff> pair = new Pair<>(marker, takeoff);
                     markers.put(marker.getId(), pair);
@@ -387,7 +385,6 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
                     it.remove();
                 }
                 /* draw zones that should be visible */
-                //GoogleMap map = ((MapFragment) getChildFragmentManager().findFragmentById(R.id.takeoffMapLayout)).getMap();
                 for (Airspace.Zone zone : showZones) {
                     Pair<Polygon, Marker> pair = new Pair<>(map.addPolygon(zone.getPolygon()), map.addMarker(zone.getMarker()));
                     zones.put(pair, zone);

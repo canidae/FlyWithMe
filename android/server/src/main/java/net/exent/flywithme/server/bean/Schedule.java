@@ -2,6 +2,7 @@ package net.exent.flywithme.server.bean;
 
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
+import com.googlecode.objectify.annotation.Index;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -11,10 +12,10 @@ import java.util.Set;
  */
 @Entity
 public class Schedule {
-    @Id private long timestamp;
-
-    private long takeoffId;
-    private Set<String> pilotIds;
+    @Id private Long id;
+    @Index private long takeoffId;
+    @Index private long timestamp;
+    private Set<Pilot> pilots;
 
     public long getTimestamp() {
         return timestamp;
@@ -25,29 +26,29 @@ public class Schedule {
         return this;
     }
 
-    public long getTakeoff() {
+    public long getTakeoffId() {
         return takeoffId;
     }
 
-    public Schedule setTakeoff(long takeoffId) {
+    public Schedule setTakeoffId(long takeoffId) {
         this.takeoffId = takeoffId;
         return this;
     }
 
-    public Set<String> getPilotIds() {
-        return pilotIds;
+    public Set<Pilot> getPilots() {
+        return pilots;
     }
 
-    public Schedule addPilot(String pilotId) {
-        if (pilotIds == null)
-            pilotIds = new HashSet<>();
-        pilotIds.add(pilotId);
+    public Schedule addPilot(Pilot pilot) {
+        if (pilots == null)
+            pilots = new HashSet<>();
+        pilots.add(pilot);
         return this;
     }
 
-    public Schedule removePilot(String pilotId) {
-        if (pilotIds != null)
-            pilotIds.remove(pilotId);
+    public Schedule removePilot(Pilot pilot) {
+        if (pilots != null)
+            pilots.remove(pilot);
         return this;
     }
 }

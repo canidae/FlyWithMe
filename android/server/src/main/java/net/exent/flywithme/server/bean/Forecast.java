@@ -13,8 +13,8 @@ public class Forecast {
         METEOGRAM, SOUNDING
     }
 
-    @Id private long takeoffId;
-
+    @Id private Long id;
+    @Index private long takeoffId;
     @Index private ForecastType type;
     @Index private long lastUpdated;
     @Index private long validFor; // used by sounding as those are only valid for a certain time of a day

@@ -89,7 +89,7 @@ public class FlightlogCrawler {
 
                     long currentTime = System.currentTimeMillis();
                     Takeoff takeoff = new Takeoff();
-                    takeoff.setTakeoffId(takeoffId).setName(takeoffName).setAsl(aboveSeaLevel).setHeight(height).setLatitude(latitude).setLongitude(longitude);
+                    takeoff.setId(takeoffId).setName(takeoffName).setAsl(aboveSeaLevel).setHeight(height).setLatitude(latitude).setLongitude(longitude);
                     takeoff.setDescription(description).setWindpai(windpai).setLastUpdated(currentTime).setLastChecked(currentTime);
                     return takeoff;
                 }

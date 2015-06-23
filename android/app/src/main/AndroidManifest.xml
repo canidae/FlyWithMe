@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="net.exent.flywithme" >
+    package="net.exent.flywithme">
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /> <!-- TODO: remove when we fix location fetching? see http://stackoverflow.com/questions/17089141/google-maps-api-android-v2-access-fine-location-permission-required-with-my -->
@@ -37,7 +37,7 @@
             android:value="AIzaSyDxop_2QoIHu-zgof2EhWMC6f5gxAZQOpI" />
 
         <receiver
-            android:name=".service.FlyWithMeBroadcastReceiver"
+            android:name="net.exent.flywithme.service.FlyWithMeBroadcastReceiver"
             android:permission="com.google.android.c2dm.permission.SEND">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
@@ -46,8 +46,34 @@
             </intent-filter>
         </receiver>
 
+        <receiver
+            android:name="com.google.android.gms.gcm.GcmReceiver"
+            android:exported="true"
+            android:permission="com.google.android.c2dm.permission.SEND" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <category android:name="net.exent.flywithme" />
+            </intent-filter>
+        </receiver>
+
         <service
-            android:name=".service.ScheduleService"
+            android:name="net.exent.flywithme.service.InstanceIdListenerService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.android.gms.iid.InstanceID"/>
+            </intent-filter>
+        </service>
+
+        <service
+            android:name="net.exent.flywithme.service.GcmListenerService"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+            </intent-filter>
+        </service>
+
+        <service
+            android:name="net.exent.flywithme.service.FlyWithMeService"
             android:exported="false" />
 
         <activity
@@ -61,5 +87,4 @@
             </intent-filter>
         </activity>
     </application>
-
 </manifest>

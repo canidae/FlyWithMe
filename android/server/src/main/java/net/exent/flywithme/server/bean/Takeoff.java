@@ -9,7 +9,7 @@ import com.googlecode.objectify.annotation.Index;
  */
 @Entity
 public class Takeoff {
-    @Id private long takeoffId;
+    @Id private long id;
 
     // takeoff data
     @Index private long lastUpdated;
@@ -22,12 +22,12 @@ public class Takeoff {
     private float longitude;
     private String windpai;
 
-    public long getTakeoffId() {
-        return takeoffId;
+    public long getId() {
+        return id;
     }
 
-    public Takeoff setTakeoffId(long takeoffId) {
-        this.takeoffId = takeoffId;
+    public Takeoff setId(long id) {
+        this.id = id;
         return this;
     }
 
@@ -117,7 +117,7 @@ public class Takeoff {
         if (!(object instanceof Takeoff))
             return false;
         Takeoff takeoff = (Takeoff) object;
-        return getTakeoffId() == takeoff.getTakeoffId() && getAsl() == takeoff.getAsl() && getHeight() == takeoff.getHeight()
+        return getId() == takeoff.getId() && getAsl() == takeoff.getAsl() && getHeight() == takeoff.getHeight()
                 && getLatitude() == takeoff.getLatitude() && getLongitude() == takeoff.getLongitude()
                 && getWindpai().equals(takeoff.getWindpai()) && getName().equals(takeoff.getName()) && getDescription().equals(takeoff.getDescription());
     }

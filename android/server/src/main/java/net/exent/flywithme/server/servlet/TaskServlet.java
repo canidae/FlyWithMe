@@ -58,7 +58,7 @@ public class TaskServlet extends HttpServlet {
         long nextCheck = TimeUnit.MILLISECONDS.convert(1, TimeUnit.DAYS);
         try {
             // check if we should do a full scan
-            Property lastFullScan = ofy().load().type(Property.class).filter("key", "lastFullScan").first().now();
+            Property lastFullScan = ofy().load().type(Property.class).id("lastFullScan").now();
             if (lastFullScan == null)
                 lastFullScan = new Property("lastFullScan", 0);
             if (lastFullScan.getValueAsLong() + FULL_SCAN_INTERVAL < currentTimeMillis) {
@@ -82,7 +82,7 @@ public class TaskServlet extends HttpServlet {
             }
 
             // check if we should scan for new takeoffs
-            Property lastNewScan = ofy().load().type(Property.class).filter("key", "lastNewScan").first().now();
+            Property lastNewScan = ofy().load().type(Property.class).id("lastNewScan").now();
             if (lastNewScan == null)
                 lastNewScan = new Property("lastNewScan", 0);
             if (lastNewScan.getValueAsLong() + NEW_SCAN_INTERVAL < currentTimeMillis) {
@@ -93,7 +93,7 @@ public class TaskServlet extends HttpServlet {
 
                 // reset properties used for scanning
                 Takeoff takeoffWithHighestId = ofy().load().type(Takeoff.class).order("-takeoffId").first().now();
-                long startIndex = takeoffWithHighestId == null ? 0 : takeoffWithHighestId.getTakeoffId();
+                long startIndex = takeoffWithHighestId == null ? 0 : takeoffWithHighestId.getId();
                 ofy().save().entity(new Property("scanCurrentId", startIndex)).now();
                 ofy().save().entity(new Property("scanFailedInARow", 0)).now();
 
@@ -108,7 +108,7 @@ public class TaskServlet extends HttpServlet {
 
             Takeoff lastCheckedTakeoff = ofy().load().type(Takeoff.class).order("lastChecked").first().now();
             if (lastCheckedTakeoff != null && lastCheckedTakeoff.getLastChecked() + UPDATE_TAKEOFF_INTERVAL < currentTimeMillis)
-                updateTakeoff(lastCheckedTakeoff.getTakeoffId());
+                updateTakeoff(lastCheckedTakeoff.getId());
             lastCheckedTakeoff = ofy().load().type(Takeoff.class).order("lastChecked").first().now();
             if (lastCheckedTakeoff != null) {
                 nextCheck = currentTimeMillis - (lastCheckedTakeoff.getLastChecked() + UPDATE_TAKEOFF_INTERVAL);
@@ -131,14 +131,14 @@ public class TaskServlet extends HttpServlet {
 
     private static void scanTakeoffs() {
         // increase takeoff id counter
-        Property currentIdProperty = ofy().load().type(Property.class).filter("key", "scanCurrentId").first().now();
+        Property currentIdProperty = ofy().load().type(Property.class).id("scanCurrentId").now();
         if (currentIdProperty == null)
             currentIdProperty = new Property("scanCurrentId", 0);
         currentIdProperty.setValue(currentIdProperty.getValueAsLong() + 1);
         ofy().save().entity(currentIdProperty).now();
 
         // either reset or increase failed counter
-        Property failedInARow = ofy().load().type(Property.class).filter("key", "scanFailedInARow").first().now();
+        Property failedInARow = ofy().load().type(Property.class).id("scanFailedInARow").now();
         if (failedInARow == null)
             failedInARow = new Property("scanFailedInARow", 0);
         else if (failedInARow.getValueAsInt() > 50)
@@ -158,7 +158,7 @@ public class TaskServlet extends HttpServlet {
 
     private static boolean updateTakeoff(long takeoffId) {
         try {
-            Takeoff existing = ofy().load().type(Takeoff.class).filter("takeoffId", takeoffId).first().now();
+            Takeoff existing = ofy().load().type(Takeoff.class).id(takeoffId).now();
             if (existing == null || existing.getLastChecked() > System.currentTimeMillis() + 86400000) {
                 // we may have multiple instances, check above is to prevent multiple tasks querying flightlog for same takeoff at the same time
                 Takeoff takeoff = FlightlogCrawler.fetchTakeoff(takeoffId);

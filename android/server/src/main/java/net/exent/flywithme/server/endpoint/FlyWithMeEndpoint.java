@@ -53,28 +53,27 @@ public class FlyWithMeEndpoint {
     /**
      * Register a pilot to the backend.
      *
-     * @param pilotId The Pilot ID to add.
+     * @param pilotId The pilot ID to add.
      */
     @ApiMethod(name = "registerPilot")
-    public void registerPilot(@Named("pilotId") String pilotId) {
-        // TODO: more fields (pilot name, phone, etc)
-        Pilot pilot = fetchPilot((pilotId));
+    public void registerPilot(@Named("pilotId") String pilotId, @Named("pilotName") String pilotName, @Named("pilotPhone") String pilotPhone) {
+        Pilot pilot = fetchPilot(pilotId);
         if (pilot == null)
-            pilot = new Pilot();
-        pilot.setPilotId(pilotId);
+            pilot = new Pilot().setId(pilotId);
+        pilot.setName(pilotName).setPhone(pilotPhone);
         ofy().save().entity(pilot).now();
     }
 
     /**
      * Unregister a pilot from the backend.
      *
-     * @param pilotId The Pilot ID to remove.
+     * @param pilotId The pilot ID to remove.
      */
     @ApiMethod(name = "unregisterPilot")
     public void unregisterPilot(@Named("pilotId") String pilotId) {
         Pilot pilot = fetchPilot(pilotId);
         if (pilot == null) {
-            log.info("Device " + pilotId + " not registered, skipping unregister");
+            log.info("Pilot " + pilotId + " not registered, skipping unregister");
             return;
         }
         ofy().delete().entity(pilot).now();
@@ -84,7 +83,7 @@ public class FlyWithMeEndpoint {
      * Schedule flight at a takeoff.
      *
      * @param pilotId The Pilot ID.
-     * @param takeoffId The Takeoff ID.
+     * @param takeoffId The takeoff ID.
      * @param timestamp Scheduled time, in seconds since epoch.
      */
     @ApiMethod(name = "scheduleFlight")
@@ -96,9 +95,9 @@ public class FlyWithMeEndpoint {
         if (schedule == null) {
             schedule = new Schedule();
             schedule.setTimestamp(timestamp);
-            schedule.setTakeoff(takeoffId);
+            schedule.setTakeoffId(takeoffId);
         }
-        schedule.addPilot(pilotId);
+        schedule.addPilot(fetchPilot(pilotId));
         ofy().save().entity(schedule).now();
         sendActivityUpdate();
     }
@@ -106,18 +105,18 @@ public class FlyWithMeEndpoint {
     /**
      * Unschedule flight at a takeoff.
      *
-     * @param pilotId The Pilot ID.
-     * @param takeoffId The Takeoff ID.
+     * @param pilotId The pilot ID.
+     * @param takeoffId The takeoff ID.
      * @param timestamp Scheduled time, in seconds since epoch.
      */
     @ApiMethod(name = "unscheduleFlight")
     public void unscheduleFlight(@Named("pilotId") String pilotId, @Named("takeoffId") int takeoffId, @Named("timestamp") int timestamp) {
         Schedule schedule = ofy().load().type(Schedule.class)
-                .filter("takeoffId", takeoffId)
+                .filter("takeoff", takeoffId)
                 .filter("timestamp", timestamp)
                 .first().now();
         if (schedule != null) {
-            schedule.removePilot(pilotId);
+            schedule.removePilot(fetchPilot(pilotId));
             ofy().save().entity(schedule).now();
             sendActivityUpdate();
         }
@@ -126,7 +125,7 @@ public class FlyWithMeEndpoint {
     /**
      * Fetch meteogram for the given takeoff.
      *
-     * @param takeoffId The Takeoff ID.
+     * @param takeoffId The takeoff ID.
      * @return Meteogram for the given takeoff.
      */
     @ApiMethod(name = "getMeteogram")
@@ -156,7 +155,7 @@ public class FlyWithMeEndpoint {
     /**
      * Fetch sounding for the given takeoff and time.
      *
-     * @param takeoffId The Takeoff ID.
+     * @param takeoffId The takeoff ID.
      * @param timestamp The timestamp we want sounding for, in milliseconds since epoch.
      * @return Sounding for the given takeoff and timestamp.
      */
@@ -194,12 +193,22 @@ public class FlyWithMeEndpoint {
     /**
      * Fetch all takeoffs that have been updated after the given timestamp.
      *
-     * @param updatedAfter The timestamp of the last updated Takeoff cached on client.
+     * @param updatedAfter The timestamp of the last updated takeoff cached on client.
      * @return A list of takeoffs updated after the given timestamp.
      */
     @ApiMethod(name = "getUpdatedTakeoffs")
     public List<Takeoff> getUpdatedTakeoffs(@Named("updatedAfter") long updatedAfter) {
         return ofy().load().type(Takeoff.class).filter("lastUpdated >=", updatedAfter).list();
+    }
+
+    /**
+     * Fetch schedule for the given takeoff.
+     *
+     * @param takeoffId The takeoff ID.
+     */
+    @ApiMethod(name = "getTakeoffSchedules")
+    public Schedule getTakeoffSchedules(@Named("takeoffId") long takeoffId) {
+        return ofy().load().type(Schedule.class).filter("takeoffId", takeoffId).first().now();
     }
 
     private void sendActivityUpdate() {
@@ -210,7 +219,7 @@ public class FlyWithMeEndpoint {
                 .list();
         StringBuilder sb = new StringBuilder();
         for (Schedule schedule : schedules)
-            sb.append(schedule.getTakeoff()).append(',');
+            sb.append(schedule.getTakeoffId()).append(',');
         if (sb.length() <= 0)
             return; // no activity
         sb.deleteCharAt(sb.length() - 1);
@@ -219,7 +228,7 @@ public class FlyWithMeEndpoint {
         List<Pilot> pilots = ofy().load().type(Pilot.class).list();
         List<String> sendTo = new ArrayList<>();
         for (Pilot pilot : pilots)
-            sendTo.add(pilot.getPilotId());
+            sendTo.add(pilot.getId());
 
         // create a message
         Sender sender = new Sender(API_KEY);
@@ -245,18 +254,18 @@ public class FlyWithMeEndpoint {
             Result result = results.get(i);
             Pilot pilot = pilots.get(i);
             if (result.getMessageId() != null) {
-                log.info("Message sent to " + pilot.getPilotId());
+                log.info("Message sent to " + pilot.getId());
                 String canonicalRegId = result.getCanonicalRegistrationId();
                 if (canonicalRegId != null) {
                     // if the regId changed, we have to update the datastore
-                    log.info("Registration Id changed for " + pilot.getPilotId() + " updating to " + canonicalRegId);
-                    pilot.setPilotId(canonicalRegId);
+                    log.info("Registration Id changed for " + pilot.getId() + " updating to " + canonicalRegId);
+                    pilot.setId(canonicalRegId);
                     ofy().save().entity(pilot).now();
                 }
             } else {
                 String error = result.getErrorCodeName();
                 if (error.equals(Constants.ERROR_NOT_REGISTERED)) {
-                    log.warning("Registration Id " + pilot.getPilotId() + " no longer registered with GCM, removing from datastore");
+                    log.warning("Registration Id " + pilot.getId() + " no longer registered with GCM, removing from datastore");
                     // if the device is no longer registered with Gcm, remove it from the datastore
                     ofy().delete().entity(pilot).now();
                 } else {
@@ -268,10 +277,10 @@ public class FlyWithMeEndpoint {
     }
 
     private Pilot fetchPilot(String pilotId) {
-        return ofy().load().type(Pilot.class).filter("pilotId", pilotId).first().now();
+        return ofy().load().type(Pilot.class).id(pilotId).now();
     }
 
     private Takeoff fetchTakeoff(long takeoffId) {
-        return ofy().load().type(Takeoff.class).filter("takeoffId", takeoffId).first().now();
+        return ofy().load().type(Takeoff.class).id(takeoffId).now();
     }
 }
