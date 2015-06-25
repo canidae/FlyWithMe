@@ -57,6 +57,7 @@ public class FlyWithMeEndpoint {
      */
     @ApiMethod(name = "registerPilot")
     public void registerPilot(@Named("pilotId") String pilotId, @Named("pilotName") String pilotName, @Named("pilotPhone") String pilotPhone) {
+        pilotId = pilotId.replace("%3A", ":");
         Pilot pilot = fetchPilot(pilotId);
         if (pilot == null)
             pilot = new Pilot().setId(pilotId);

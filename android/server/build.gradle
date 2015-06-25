@@ -6,7 +6,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.google.appengine:gradle-appengine-plugin:1.9.18'
+        classpath 'com.google.appengine:gradle-appengine-plugin:1.9.19'
     }
 }
 
@@ -19,9 +19,9 @@ apply plugin: 'war'
 apply plugin: 'appengine'
 
 dependencies {
-    appengineSdk 'com.google.appengine:appengine-java-sdk:1.9.18'
-    compile 'com.google.appengine:appengine-endpoints:1.9.18'
-    compile 'com.google.appengine:appengine-endpoints-deps:1.9.18'
+    appengineSdk 'com.google.appengine:appengine-java-sdk:1.9.19'
+    compile 'com.google.appengine:appengine-endpoints:1.9.19'
+    compile 'com.google.appengine:appengine-endpoints-deps:1.9.19'
     compile 'javax.servlet:servlet-api:2.5'
     compile 'com.googlecode.objectify:objectify:5.0.3'
     compile 'com.ganyo:gcm-server:1.0.2'

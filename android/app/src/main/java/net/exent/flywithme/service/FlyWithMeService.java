@@ -44,11 +44,13 @@ public class FlyWithMeService extends IntentService {
         try {
             String action = intent.getAction();
             Bundle bundle = intent.getExtras();
+            if (bundle == null)
+                bundle = new Bundle();
             if (ACTION_REGISTER_PILOT.equals(action)) {
                 boolean refreshToken = bundle.getBoolean(DATA_BOOLEAN_REFRESH_TOKEN, false);
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                String pilotName = prefs.getString(FlyWithMe.PREFERENCE_PILOT_NAME, "");
-                String pilotPhone = prefs.getString(FlyWithMe.PREFERENCE_PILOT_PHONE, "");
+                String pilotName = prefs.getString(FlyWithMe.PREFERENCE_PILOT_NAME, "<unknown>");
+                String pilotPhone = prefs.getString(FlyWithMe.PREFERENCE_PILOT_PHONE, "<unknown>");
                 registerPilot(refreshToken, pilotName, pilotPhone);
             } else if (ACTION_GET_METEOGRAM.equals(action)) {
                 long takeoffId = bundle.getLong(DATA_LONG_TAKEOFF_ID, -1);
@@ -70,6 +72,9 @@ public class FlyWithMeService extends IntentService {
         String token = prefs.getString(FlyWithMe.PREFERENCE_TOKEN, null);
         if (refreshToken || token == null)
             token = InstanceID.getInstance(getApplicationContext()).getToken(PROJECT_ID, GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
+        token = token.replace(":", "%3A");
+        Log.i(TAG, getServer().registerPilot(token, name, phone).buildHttpRequest().getUrl().toString());
+        Log.i(TAG, getServer().registerPilot(token, name, phone).buildHttpRequest().getRequestMethod());
         getServer().registerPilot(token, name, phone).execute();
     }
 
@@ -85,7 +90,8 @@ public class FlyWithMeService extends IntentService {
         FlyWithMeServer.Builder builder = new FlyWithMeServer.Builder(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null);
         // Need setRootUrl and setGoogleClientRequestInitializer only for local testing,
         // otherwise they can be skipped
-        builder.setRootUrl("http://10.0.2.2:8080/_ah/api/");
+        builder.setApplicationName("FlyWithMe");
+        builder.setRootUrl("http://88.95.84.204:8080/_ah/api/");
         builder.setGoogleClientRequestInitializer(new GoogleClientRequestInitializer() {
             @Override
             public void initialize(AbstractGoogleClientRequest<?> abstractGoogleClientRequest)
