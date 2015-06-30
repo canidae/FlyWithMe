@@ -72,7 +72,6 @@ public class FlyWithMeService extends IntentService {
         String token = prefs.getString(FlyWithMe.PREFERENCE_TOKEN, null);
         if (refreshToken || token == null)
             token = InstanceID.getInstance(getApplicationContext()).getToken(PROJECT_ID, GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
-        token = token.replace(":", "%3A");
         Log.i(TAG, getServer().registerPilot(token, name, phone).buildHttpRequest().getUrl().toString());
         Log.i(TAG, getServer().registerPilot(token, name, phone).buildHttpRequest().getRequestMethod());
         getServer().registerPilot(token, name, phone).execute();
