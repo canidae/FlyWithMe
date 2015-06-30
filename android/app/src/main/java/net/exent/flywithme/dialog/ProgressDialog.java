@@ -39,6 +39,7 @@ public class ProgressDialog extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         view = inflater.inflate(R.layout.progress_dialog, null);
         builder.setView(view);
+        /*
         if (task != null) {
             builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
@@ -52,6 +53,7 @@ public class ProgressDialog extends DialogFragment {
                 }
             });
         }
+        */
         setCancelable(false);
         //setRetainInstance(true); // XXX: not retaining instance due to bug: http://code.google.com/p/android/issues/detail?id=17423
         return builder.create();
