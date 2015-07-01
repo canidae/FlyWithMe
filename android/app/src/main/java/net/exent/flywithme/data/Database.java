@@ -8,8 +8,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import net.exent.flywithme.bean.Pilot;
 import net.exent.flywithme.bean.Takeoff;
+import net.exent.flywithme.server.flyWithMeServer.model.Pilot;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -57,7 +57,10 @@ public class Database extends SQLiteOpenHelper {
                     pilots = new HashSet<>();
                     schedule.put(timestamp, pilots);
                 }
-                pilots.add(new Pilot(pilotName, pilotPhone));
+                Pilot pilot = new Pilot();
+                pilot.setName(pilotName);
+                pilot.setPhone(pilotPhone);
+                pilots.add(pilot);
             }
             return schedule;
         } finally {

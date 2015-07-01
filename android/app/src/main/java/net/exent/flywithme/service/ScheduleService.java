@@ -28,9 +28,9 @@ import com.google.android.gms.location.LocationServices;
 
 import net.exent.flywithme.FlyWithMe;
 import net.exent.flywithme.R;
-import net.exent.flywithme.bean.Pilot;
 import net.exent.flywithme.bean.Takeoff;
 import net.exent.flywithme.data.Database;
+import net.exent.flywithme.server.flyWithMeServer.model.Pilot;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -258,7 +258,10 @@ public class ScheduleService extends IntentService implements ConnectionCallback
                     for (int c = 0; c < pilots; ++c) {
                         String pilotName = inputStream.readUTF();
                         String pilotPhone = inputStream.readUTF();
-                        pilotList.add(new Pilot(pilotName, pilotPhone));
+                        Pilot pilot = new Pilot();
+                        pilot.setName(pilotName);
+                        pilot.setPhone(pilotPhone);
+                        pilotList.add(pilot);
                     }
                     schedule.put(timestamp, pilotList);
                 }

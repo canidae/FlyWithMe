@@ -22,9 +22,9 @@ import android.widget.TextView;
 
 import net.exent.flywithme.FlyWithMe;
 import net.exent.flywithme.R;
-import net.exent.flywithme.bean.Pilot;
 import net.exent.flywithme.bean.Takeoff;
 import net.exent.flywithme.data.Database;
+import net.exent.flywithme.server.flyWithMeServer.model.Pilot;
 import net.exent.flywithme.service.ScheduleService;
 
 import java.text.SimpleDateFormat;

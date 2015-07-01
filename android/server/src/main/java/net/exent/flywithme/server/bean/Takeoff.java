@@ -13,7 +13,7 @@ public class Takeoff {
 
     // takeoff data
     @Index private long lastUpdated;
-    private long lastChecked;
+    @Index private long lastChecked;
     private String name;
     private String description;
     private int asl;

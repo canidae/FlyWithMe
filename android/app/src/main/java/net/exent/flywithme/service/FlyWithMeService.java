@@ -90,7 +90,7 @@ public class FlyWithMeService extends IntentService {
         // Need setRootUrl and setGoogleClientRequestInitializer only for local testing,
         // otherwise they can be skipped
         builder.setApplicationName("FlyWithMe");
-        builder.setRootUrl("http://88.95.84.204:8080/_ah/api/");
+        builder.setRootUrl("http://192.168.43.186:8080/_ah/api/");
         builder.setGoogleClientRequestInitializer(new GoogleClientRequestInitializer() {
             @Override
             public void initialize(AbstractGoogleClientRequest<?> abstractGoogleClientRequest)
