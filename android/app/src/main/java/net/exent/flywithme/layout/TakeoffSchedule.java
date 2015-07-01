@@ -50,12 +50,14 @@ public class TakeoffSchedule extends Fragment {
             // setup day buttons
             Button dayPlus = (Button) getActivity().findViewById(R.id.scheduleDayPlus);
             dayPlus.setOnClickListener(new OnClickListener() {
+                @Override
                 public void onClick(View v) {
                     updateCalendar(Calendar.DAY_OF_YEAR, 1);
                 }
             });
             Button dayMinus = (Button) getActivity().findViewById(R.id.scheduleDayMinus);
             dayMinus.setOnClickListener(new OnClickListener() {
+                @Override
                 public void onClick(View v) {
                     updateCalendar(Calendar.DAY_OF_YEAR, -1);
                 }
@@ -64,12 +66,14 @@ public class TakeoffSchedule extends Fragment {
             // setup month buttons
             Button monthPlus = (Button) getActivity().findViewById(R.id.scheduleMonthPlus);
             monthPlus.setOnClickListener(new OnClickListener() {
+                @Override
                 public void onClick(View v) {
                     updateCalendar(Calendar.MONTH, 1);
                 }
             });
             Button monthMinus = (Button) getActivity().findViewById(R.id.scheduleMonthMinus);
             monthMinus.setOnClickListener(new OnClickListener() {
+                @Override
                 public void onClick(View v) {
                     updateCalendar(Calendar.MONTH, -1);
                 }
@@ -78,12 +82,14 @@ public class TakeoffSchedule extends Fragment {
             // setup hour buttons
             Button hourPlus = (Button) getActivity().findViewById(R.id.scheduleHourPlus);
             hourPlus.setOnClickListener(new OnClickListener() {
+                @Override
                 public void onClick(View v) {
                     updateCalendar(Calendar.HOUR, 1);
                 }
             });
             Button hourMinus = (Button) getActivity().findViewById(R.id.scheduleHourMinus);
             hourMinus.setOnClickListener(new OnClickListener() {
+                @Override
                 public void onClick(View v) {
                     updateCalendar(Calendar.HOUR, -1);
                 }
@@ -92,12 +98,14 @@ public class TakeoffSchedule extends Fragment {
             // setup minute buttons
             Button minutePlus = (Button) getActivity().findViewById(R.id.scheduleMinutePlus);
             minutePlus.setOnClickListener(new OnClickListener() {
+                @Override
                 public void onClick(View v) {
                     updateCalendar(Calendar.MINUTE, 15);
                 }
             });
             Button minuteMinus = (Button) getActivity().findViewById(R.id.scheduleMinuteMinus);
             minuteMinus.setOnClickListener(new OnClickListener() {
+                @Override
                 public void onClick(View v) {
                     updateCalendar(Calendar.MINUTE, -15);
                 }
@@ -106,6 +114,7 @@ public class TakeoffSchedule extends Fragment {
             // setup register schedule button
             final Button scheduleFlight = (Button) getActivity().findViewById(R.id.scheduleFlightButton);
             scheduleFlight.setOnClickListener(new OnClickListener() {
+                @Override
                 public void onClick(View v) {
                     scheduleFlight(calendar.getTimeInMillis());
                 }

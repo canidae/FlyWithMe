@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.TextView;
 
 public class NoaaForecast extends Fragment {
@@ -29,9 +30,10 @@ public class NoaaForecast extends Fragment {
             GestureImageView noaaForecastImage = (GestureImageView) getActivity().findViewById(R.id.noaaForecastImage);
             noaaForecastImage.setBitmap(takeoff.getNoaaforecast());
 
-            ImageButton navigationButton = (ImageButton) getActivity().findViewById(R.id.fragmentButton1);
-            navigationButton.setImageResource(R.mipmap.share);
-            navigationButton.setOnClickListener(new View.OnClickListener() {
+            ImageButton shareButton = (ImageButton) getActivity().findViewById(R.id.fragmentButton1);
+            shareButton.setImageResource(R.mipmap.share);
+            shareButton.setOnClickListener(new View.OnClickListener() {
+                @Override
                 public void onClick(View v) {
                     String title = takeoff.getName() + " (" + takeoff.getLocation().getLatitude() + ", " + takeoff.getLocation().getLongitude() + ")";
                     String url = MediaStore.Images.Media.insertImage(FlyWithMe.getInstance().getContentResolver(), takeoff.getNoaaforecast(), title, null);
@@ -43,7 +45,18 @@ public class NoaaForecast extends Fragment {
                     startActivity(Intent.createChooser(sharingIntent, null));
                 }
             });
-            ((ImageButton) getActivity().findViewById(R.id.fragmentButton2)).setImageDrawable(null);
+            ImageButton soundingButton = ((ImageButton) getActivity().findViewById(R.id.fragmentButton2));
+            soundingButton.setImageResource(R.mipmap.noaa);
+            soundingButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // TODO: show list for user to select meteogram/sounding
+                    GestureImageView forecastImage = ((GestureImageView) getActivity().findViewById(R.id.noaaForecastImage));
+                    forecastImage.setVisibility(View.GONE);
+                    ListView forecastList = ((ListView) getActivity().findViewById(R.id.forecastList));
+                    forecastList.setVisibility(View.VISIBLE);
+                }
+            });
             ((ImageButton) getActivity().findViewById(R.id.fragmentButton3)).setImageDrawable(null);
         } catch (Exception e) {
             Log.w(getClass().getName(), "showNoaaForecast() failed unexpectedly", e);

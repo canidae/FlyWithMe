@@ -144,6 +144,53 @@
     </string-array>
 
     <!-- Meteogram/sounding -->
+    <string-array name="meteogram_sounding_forecast_list">
+        <item>Meteogram</item>
+        <item>Sounding +0d 12 UTC</item>
+        <item>Sounding +0d 15 UTC</item>
+        <item>Sounding +0d 18 UTC</item>
+        <item>Sounding +0d 21 UTC</item>
+        <item>Sounding +1d 00 UTC</item>
+        <item>Sounding +1d 03 UTC</item>
+        <item>Sounding +1d 06 UTC</item>
+        <item>Sounding +1d 09 UTC</item>
+        <item>Sounding +1d 12 UTC</item>
+        <item>Sounding +1d 15 UTC</item>
+        <item>Sounding +1d 18 UTC</item>
+        <item>Sounding +1d 21 UTC</item>
+        <item>Sounding +2d 00 UTC</item>
+        <item>Sounding +2d 03 UTC</item>
+        <item>Sounding +2d 06 UTC</item>
+        <item>Sounding +2d 09 UTC</item>
+        <item>Sounding +2d 12 UTC</item>
+        <item>Sounding +2d 15 UTC</item>
+        <item>Sounding +2d 18 UTC</item>
+        <item>Sounding +2d 21 UTC</item>
+        <item>Sounding +3d 00 UTC</item>
+        <item>Sounding +3d 03 UTC</item>
+        <item>Sounding +3d 06 UTC</item>
+        <item>Sounding +3d 09 UTC</item>
+        <item>Sounding +3d 12 UTC</item>
+        <item>Sounding +3d 15 UTC</item>
+        <item>Sounding +3d 18 UTC</item>
+        <item>Sounding +3d 21 UTC</item>
+        <item>Sounding +4d 00 UTC</item>
+        <item>Sounding +4d 03 UTC</item>
+        <item>Sounding +4d 06 UTC</item>
+        <item>Sounding +4d 09 UTC</item>
+        <item>Sounding +4d 12 UTC</item>
+        <item>Sounding +4d 15 UTC</item>
+        <item>Sounding +4d 18 UTC</item>
+        <item>Sounding +4d 21 UTC</item>
+        <item>Sounding +5d 00 UTC</item>
+        <item>Sounding +5d 03 UTC</item>
+        <item>Sounding +5d 06 UTC</item>
+        <item>Sounding +5d 09 UTC</item>
+        <item>Sounding +5d 12 UTC</item>
+        <item>Sounding +5d 15 UTC</item>
+        <item>Sounding +5d 18 UTC</item>
+        <item>Sounding +5d 21 UTC</item>
+    </string-array>
     <string name="meteogram_sounding">Meteogram/sounding</string>
 
     <string name="pref_sounding_days">Fetch sounding</string>

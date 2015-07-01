@@ -68,6 +68,7 @@ public class TakeoffDetails extends Fragment {
         ImageButton navigationButton = (ImageButton) getActivity().findViewById(R.id.fragmentButton1);
         navigationButton.setImageResource(R.mipmap.navigation);
         navigationButton.setOnClickListener(new OnClickListener() {
+            @Override
             public void onClick(View v) {
                 Location loc = takeoff.getLocation();
                 String uri = "http://maps.google.com/maps?saddr=" + myLocation.getLatitude() + "," + myLocation.getLongitude() + "&daddr=" + loc.getLatitude() + "," + loc.getLongitude();
@@ -78,6 +79,7 @@ public class TakeoffDetails extends Fragment {
         ImageButton noaaButton = (ImageButton) getActivity().findViewById(R.id.fragmentButton2);
         noaaButton.setImageResource(R.mipmap.noaa);
         noaaButton.setOnClickListener(new OnClickListener() {
+            @Override
             public void onClick(View v) {
                 if (System.currentTimeMillis() - takeoff.getNoaaUpdated() < 1000 * 60 * 60 * 6) {
                     /* we fetched a forecast less than 6 hours ago */
@@ -94,6 +96,7 @@ public class TakeoffDetails extends Fragment {
         final ImageButton favouriteButton = (ImageButton) getActivity().findViewById(R.id.fragmentButton3);
         favouriteButton.setImageResource(takeoff.isFavourite() ? R.mipmap.favourite_enabled : R.mipmap.favourite_disabled);
         favouriteButton.setOnClickListener(new OnClickListener() {
+            @Override
             public void onClick(View v) {
                 takeoff.setFavourite(!takeoff.isFavourite());
                 new Database(getActivity()).updateFavourite(takeoff);

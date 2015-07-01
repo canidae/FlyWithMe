@@ -95,6 +95,7 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
             final ImageButton markerButton = (ImageButton) getActivity().findViewById(R.id.fragmentButton1);
             markerButton.setImageResource(showTakeoffs ? R.mipmap.takeoffs_enabled : R.mipmap.takeoffs_disabled);
             markerButton.setOnClickListener(new OnClickListener() {
+                @Override
                 public void onClick(View v) {
                     boolean markersEnabled = !prefs.getBoolean("pref_map_show_takeoffs", true);
                     SharedPreferences.Editor editor = prefs.edit();
@@ -108,6 +109,7 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
             final ImageButton polygonButton = (ImageButton) getActivity().findViewById(R.id.fragmentButton2);
             polygonButton.setImageResource(showAirspace ? R.mipmap.airspace_enabled : R.mipmap.airspace_disabled);
             polygonButton.setOnClickListener(new OnClickListener() {
+                @Override
                 public void onClick(View v) {
                     boolean polygonsEnabled = !prefs.getBoolean("pref_map_show_airspace", true);
                     SharedPreferences.Editor editor = prefs.edit();

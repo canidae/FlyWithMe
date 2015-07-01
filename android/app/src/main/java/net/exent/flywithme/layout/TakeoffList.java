@@ -89,6 +89,7 @@ public class TakeoffList extends Fragment {
         ListView listView = (ListView) getActivity().findViewById(R.id.takeoffListView);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new OnItemClickListener() {
+            @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 callback.showTakeoffDetails(takeoffs.get(position));
             }
