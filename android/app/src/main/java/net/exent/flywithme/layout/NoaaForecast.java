@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -51,10 +52,23 @@ public class NoaaForecast extends Fragment {
                 @Override
                 public void onClick(View v) {
                     // TODO: show list for user to select meteogram/sounding
-                    GestureImageView forecastImage = ((GestureImageView) getActivity().findViewById(R.id.noaaForecastImage));
+                    final GestureImageView forecastImage = ((GestureImageView) getActivity().findViewById(R.id.noaaForecastImage));
                     forecastImage.setVisibility(View.GONE);
-                    ListView forecastList = ((ListView) getActivity().findViewById(R.id.forecastList));
+                    final ListView forecastList = ((ListView) getActivity().findViewById(R.id.noaaForecastList));
                     forecastList.setVisibility(View.VISIBLE);
+                    forecastList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                            forecastList.setVisibility(View.GONE);
+                            forecastImage.setVisibility(View.VISIBLE);
+                            if (position == 0) {
+                                // fetch meteogram
+                            } else if (position > 0) {
+                                int soundingHourOffset = getResources().getIntArray(R.array.meteogram_sounding_forecast_list_values)[position];
+                                // fetch sounding
+                            }
+                        }
+                    });
                 }
             });
             ((ImageButton) getActivity().findViewById(R.id.fragmentButton3)).setImageDrawable(null);

@@ -24,9 +24,9 @@ import java.io.IOException;
  * Created by canidae on 6/23/15.
  */
 public class FlyWithMeService extends IntentService {
-    public static final String ACTION_REGISTER_PILOT = "RegisterPilot";
-    public static final String ACTION_GET_METEOGRAM = "GetMeteogram";
-    public static final String ACTION_GET_SOUNDING = "GetSounding";
+    public static final String ACTION_REGISTER_PILOT = "registerPilot";
+    public static final String ACTION_GET_METEOGRAM = "getMeteogram";
+    public static final String ACTION_GET_SOUNDING = "getSounding";
 
     public static final String DATA_BOOLEAN_REFRESH_TOKEN = "refreshToken";
     public static final String DATA_LONG_TAKEOFF_ID = "takeoffId";
@@ -72,17 +72,26 @@ public class FlyWithMeService extends IntentService {
         String token = prefs.getString(FlyWithMe.PREFERENCE_TOKEN, null);
         if (refreshToken || token == null)
             token = InstanceID.getInstance(getApplicationContext()).getToken(PROJECT_ID, GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
-        Log.i(TAG, getServer().registerPilot(token, name, phone).buildHttpRequest().getUrl().toString());
-        Log.i(TAG, getServer().registerPilot(token, name, phone).buildHttpRequest().getRequestMethod());
         getServer().registerPilot(token, name, phone).execute();
     }
 
     private void getMeteogram(long takeoffId) throws IOException {
-        Forecast forecast = getServer().getMeteogram(takeoffId).execute();
+        sendDisplayForecastIntent(getServer().getMeteogram(takeoffId).execute());
     }
 
     private void getSounding(long takeoffId, long timestamp) throws IOException {
-        Forecast forecast = getServer().getSounding(takeoffId, timestamp).execute();
+        sendDisplayForecastIntent(getServer().getSounding(takeoffId, timestamp).execute());
+    }
+
+    private void sendDisplayForecastIntent(Forecast forecast) {
+        Intent intent = new Intent(this, FlyWithMe.class);
+        intent.setAction(FlyWithMe.ACTION_SHOW_FORECAST);
+        intent.putExtra("image", forecast.decodeImage());
+        intent.putExtra("lastUpdated", forecast.getLastUpdated());
+        intent.putExtra("takeoffId", forecast.getTakeoffId());
+        intent.putExtra("type", forecast.getType());
+        intent.putExtra("validFor", forecast.getValidFor());
+        startActivity(intent);
     }
 
     private FlyWithMeServer getServer() {
@@ -93,8 +102,7 @@ public class FlyWithMeService extends IntentService {
         builder.setRootUrl("http://192.168.43.186:8080/_ah/api/");
         builder.setGoogleClientRequestInitializer(new GoogleClientRequestInitializer() {
             @Override
-            public void initialize(AbstractGoogleClientRequest<?> abstractGoogleClientRequest)
-                    throws IOException {
+            public void initialize(AbstractGoogleClientRequest<?> abstractGoogleClientRequest) throws IOException {
                 abstractGoogleClientRequest.setDisableGZipContent(true);
             }
         });

@@ -38,6 +38,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FlyWithMe extends Activity implements TakeoffListListener, TakeoffMapListener, TakeoffDetailsListener {
+    public static final String ACTION_SHOW_FORECAST = "showForecast";
+
     public static final String SERVER_URL = "http://flywithme-server.appspot.com/fwm";
     //public static final String SERVER_URL = "http://192.168.1.200:8080/fwm";
 
@@ -279,6 +281,12 @@ public class FlyWithMe extends Activity implements TakeoffListListener, TakeoffM
                 showTakeoffSchedule(new Database(getInstance()).getTakeoff(Integer.parseInt(lastFragment.substring(lastFragment.indexOf(',') + 1))));
             }
         }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        // TODO: handle forecast and stuff
     }
 
     private void showFragment(Fragment fragment, String name) {
