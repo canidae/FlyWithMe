@@ -91,19 +91,7 @@ public class FlyWithMe extends Activity implements TakeoffListListener, TakeoffM
      * @param takeoff The takeoff we wish to display the forecast for.
      */
     public void showNoaaForecast(Takeoff takeoff) {
-        Fragment fragment = getFragmentManager().findFragmentById(R.id.fragmentContainer);
-        NoaaForecast noaaForecast;
-        if (fragment != null && fragment instanceof NoaaForecast) {
-            noaaForecast = (NoaaForecast) fragment;
-        } else {
-            noaaForecast = new NoaaForecast();
-            /* pass arguments */
-            Bundle args = new Bundle();
-            args.putParcelable(NoaaForecast.ARG_TAKEOFF, takeoff);
-            noaaForecast.setArguments(args);
-        }
-        /* show fragment */
-        showFragment(noaaForecast, "noaaForecast," + takeoff.getId());
+        showFragment(new NoaaForecast(), "noaaForecast," + takeoff.getId());
     }
 
     public void showTakeoffSchedule(Takeoff takeoff) {
@@ -285,8 +273,14 @@ public class FlyWithMe extends Activity implements TakeoffListListener, TakeoffM
 
     @Override
     protected void onNewIntent(Intent intent) {
+        Log.d(getClass().getName(), "onNewIntent(" + intent + ")");
         super.onNewIntent(intent);
-        // TODO: handle forecast and stuff
+        if (ACTION_SHOW_FORECAST.equals(intent.getAction())) {
+            NoaaForecast noaaForecast = new NoaaForecast();
+            noaaForecast.setArguments(intent.getExtras());
+            long takeoffId = intent.getExtras() != null ? intent.getExtras().getLong(NoaaForecast.ARG_TAKEOFF_ID) : -1;
+            showFragment(noaaForecast, "noaaForecast," + takeoffId);
+        }
     }
 
     private void showFragment(Fragment fragment, String name) {

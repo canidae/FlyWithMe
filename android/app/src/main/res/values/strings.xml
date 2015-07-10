@@ -191,7 +191,7 @@
         <item>Sounding 18 UTC +5d</item>
         <item>Sounding 21 UTC +5d</item>
     </string-array>
-    <string-array name="meteogram_sounding_forecast_list_values" translatable="false">
+    <integer-array name="meteogram_sounding_forecast_list_values" translatable="false">
         <item>0</item>
         <item>12</item>
         <item>15</item>
@@ -237,7 +237,7 @@
         <item>135</item>
         <item>138</item>
         <item>141</item>
-    </string-array>
+    </integer-array>
     <string name="meteogram_sounding">Meteogram/sounding</string>
 
     <string name="pref_sounding_days">Fetch sounding</string>

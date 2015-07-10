@@ -97,6 +97,7 @@ public class NoaaProxy {
      */
     public static void updateFieldsAndCaptcha(float latitude, float longitude) {
         try {
+            noaaCaptcha = null;
             for (int a = 0; a < 3 && noaaCaptcha == null; ++a) {
                 noaaUserId = getOne(fetchPageContent(NOAA_URL + "/ready2-bin/main.pl?Lat=" + latitude + "&Lon=" + longitude), NOAA_USERID_PATTERN);
                 String content = fetchPageContent(NOAA_URL + "/ready2-bin/metcycle.pl?product=metgram1&userid=" + noaaUserId + "&metdata=GFS&mdatacfg=GFS&Lat=" + latitude + "&Lon=" + longitude);
@@ -121,18 +122,20 @@ public class NoaaProxy {
      * @return The meteogram image.
      */
     public static byte[] fetchMeteogram(float latitude, float longitude) {
+        // TODO: we need to handle when NOAA becomes unavailable much better
         try {
             if (noaaCaptcha == null)
                 updateFieldsAndCaptcha(latitude, longitude);
-            String meteogramUrl = getOne(fetchPageContent(NOAA_URL + "/ready2-bin/metgram2.pl?userid=" + noaaUserId + "&Lat=" + latitude + "&Lon=" + longitude
-                    + "&metdir=" + noaaMetDir + "&metcyc=" + noaaMetCyc + "&metdate=" + URLEncoder.encode(noaaMetDates.get(0), "UTF-8") + "&metfil=" + noaaMetFil
-                    + "&password1=" + noaaCaptcha + "&proc=" + noaaProc + NOAA_METGRAM_CONF), NOAA_METEOGRAM_PATTERN);
-            byte[] meteogramImage = fetchImage(NOAA_URL + meteogramUrl);
-            if (meteogramImage != null)
-                return meteogramImage;
-            log.info("No meteogram image returned, updating cached data and trying to solve new captcha");
-            updateFieldsAndCaptcha(latitude, longitude);
-            return fetchImage(NOAA_URL + meteogramUrl);
+            for (int a = 0; a < 2; ++a) {
+                String meteogramUrl = getOne(fetchPageContent(NOAA_URL + "/ready2-bin/metgram2.pl?userid=" + noaaUserId + "&Lat=" + latitude + "&Lon=" + longitude
+                        + "&metdir=" + noaaMetDir + "&metcyc=" + noaaMetCyc + "&metdate=" + URLEncoder.encode(noaaMetDates.get(0), "UTF-8") + "&metfil=" + noaaMetFil
+                        + "&password1=" + noaaCaptcha + "&proc=" + noaaProc + NOAA_METGRAM_CONF), NOAA_METEOGRAM_PATTERN);
+                byte[] meteogramImage = fetchImage(NOAA_URL + meteogramUrl);
+                if (meteogramImage != null)
+                    return meteogramImage;
+                log.info("No meteogram image returned, updating cached data and trying to solve new captcha");
+                updateFieldsAndCaptcha(latitude, longitude);
+            }
         } catch (Exception e) {
             log.log(Level.WARNING, "Failed fetching meteogram image", e);
         }
@@ -152,18 +155,19 @@ public class NoaaProxy {
             if (noaaCaptcha == null)
                 updateFieldsAndCaptcha(latitude, longitude);
             String metDate = metdateFormatter.format(new Date(soundingTimestamp));
-            for (String noaaMetdate : noaaMetDates) {
-                if (!noaaMetdate.startsWith(metDate))
-                    continue;
-                String soundingUrl = getOne(fetchPageContent(NOAA_URL + "/ready2-bin/profile2.pl?userid=" + noaaUserId + "&Lat=" + latitude + "&Lon=" + longitude
-                        + "&metdir=" + noaaMetDir + "&metcyc=" + noaaMetCyc + "&metdate=" + URLEncoder.encode(noaaMetdate, "UTF-8") + "&metfil=" + noaaMetFil
-                        + "&password1=" + noaaCaptcha + "&proc=" + noaaProc + NOAA_SOUNDING_CONF), NOAA_SOUNDING_PATTERN);
-                byte[] soundingImage = fetchImage(NOAA_URL + soundingUrl);
-                if (soundingImage != null)
-                    return soundingImage;
-                log.info("No sounding image returned, updating cached data and trying to solve new captcha");
-                updateFieldsAndCaptcha(latitude, longitude);
-                return fetchImage(NOAA_URL + soundingUrl);
+            for (int a = 0; a < 2; ++a) {
+                for (String noaaMetdate : noaaMetDates) {
+                    if (!noaaMetdate.startsWith(metDate))
+                        continue;
+                    String soundingUrl = getOne(fetchPageContent(NOAA_URL + "/ready2-bin/profile2.pl?userid=" + noaaUserId + "&Lat=" + latitude + "&Lon=" + longitude
+                            + "&metdir=" + noaaMetDir + "&metcyc=" + noaaMetCyc + "&metdate=" + URLEncoder.encode(noaaMetdate, "UTF-8") + "&metfil=" + noaaMetFil
+                            + "&password1=" + noaaCaptcha + "&proc=" + noaaProc + NOAA_SOUNDING_CONF), NOAA_SOUNDING_PATTERN);
+                    byte[] soundingImage = fetchImage(NOAA_URL + soundingUrl);
+                    if (soundingImage != null)
+                        return soundingImage;
+                    log.info("No sounding image returned, updating cached data and trying to solve new captcha");
+                    updateFieldsAndCaptcha(latitude, longitude);
+                }
             }
         } catch (Exception e) {
             log.log(Level.WARNING, "Failed fetching sounding image", e);

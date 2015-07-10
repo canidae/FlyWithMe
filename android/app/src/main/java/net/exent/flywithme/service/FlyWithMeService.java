@@ -15,6 +15,7 @@ import com.google.api.client.googleapis.services.AbstractGoogleClientRequest;
 import com.google.api.client.googleapis.services.GoogleClientRequestInitializer;
 
 import net.exent.flywithme.FlyWithMe;
+import net.exent.flywithme.layout.NoaaForecast;
 import net.exent.flywithme.server.flyWithMeServer.FlyWithMeServer;
 import net.exent.flywithme.server.flyWithMeServer.model.Forecast;
 
@@ -41,6 +42,7 @@ public class FlyWithMeService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
+        Log.d(getClass().getName(), "onHandleIntent(" + intent + ")");
         try {
             String action = intent.getAction();
             Bundle bundle = intent.getExtras();
@@ -76,21 +78,31 @@ public class FlyWithMeService extends IntentService {
     }
 
     private void getMeteogram(long takeoffId) throws IOException {
-        sendDisplayForecastIntent(getServer().getMeteogram(takeoffId).execute());
+        sendDisplayForecastIntent(takeoffId, getServer().getMeteogram(takeoffId).execute());
     }
 
     private void getSounding(long takeoffId, long timestamp) throws IOException {
-        sendDisplayForecastIntent(getServer().getSounding(takeoffId, timestamp).execute());
+        sendDisplayForecastIntent(takeoffId, getServer().getSounding(takeoffId, timestamp).execute());
     }
 
-    private void sendDisplayForecastIntent(Forecast forecast) {
+    private void sendDisplayForecastIntent(long takeoffId, Forecast forecast) {
+        Log.d(getClass().getName(), "sendDisplayForecastIntent(" + forecast + ")");
         Intent intent = new Intent(this, FlyWithMe.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.setAction(FlyWithMe.ACTION_SHOW_FORECAST);
-        intent.putExtra("image", forecast.decodeImage());
-        intent.putExtra("lastUpdated", forecast.getLastUpdated());
-        intent.putExtra("takeoffId", forecast.getTakeoffId());
-        intent.putExtra("type", forecast.getType());
-        intent.putExtra("validFor", forecast.getValidFor());
+        if (forecast == null) {
+            forecast = new Forecast();
+            forecast.setTakeoffId(takeoffId);
+            forecast.setType("ERROR");
+        }
+        /* AAH!
+         * Models in client library generated from endpoint are not serializable, we can't just pass the object.
+         */
+        intent.putExtra(NoaaForecast.ARG_IMAGE, forecast.decodeImage());
+        intent.putExtra(NoaaForecast.ARG_LAST_UPDATED, forecast.getLastUpdated());
+        intent.putExtra(NoaaForecast.ARG_TAKEOFF_ID, forecast.getTakeoffId());
+        intent.putExtra(NoaaForecast.ARG_TYPE, forecast.getType());
+        intent.putExtra(NoaaForecast.ARG_VALID_FOR, forecast.getValidFor());
         startActivity(intent);
     }
 
@@ -99,7 +111,7 @@ public class FlyWithMeService extends IntentService {
         // Need setRootUrl and setGoogleClientRequestInitializer only for local testing,
         // otherwise they can be skipped
         builder.setApplicationName("FlyWithMe");
-        builder.setRootUrl("http://192.168.43.186:8080/_ah/api/");
+        builder.setRootUrl("http://88.95.84.204:8080/_ah/api/");
         builder.setGoogleClientRequestInitializer(new GoogleClientRequestInitializer() {
             @Override
             public void initialize(AbstractGoogleClientRequest<?> abstractGoogleClientRequest) throws IOException {
