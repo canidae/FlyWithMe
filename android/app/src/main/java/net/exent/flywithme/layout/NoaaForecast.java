@@ -88,14 +88,11 @@ public class NoaaForecast extends Fragment {
                                 // set timestamp for sounding
                                 int soundingHourOffset = getResources().getIntArray(R.array.meteogram_sounding_forecast_list_values)[position];
                                 Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-                                Log.d(getClass().getName(), "Timestamp: " + calendar.getTimeInMillis() + " - " + calendar.getTime() + " - " + soundingHourOffset);
                                 calendar.set(Calendar.HOUR_OF_DAY, 0);
                                 calendar.set(Calendar.MINUTE, 0);
                                 calendar.set(Calendar.SECOND, 0);
                                 calendar.set(Calendar.MILLISECOND, 0);
-                                Log.d(getClass().getName(), "Timestamp: " + calendar.getTimeInMillis() + " - " + calendar.getTime() + " - " + soundingHourOffset);
                                 calendar.add(Calendar.HOUR_OF_DAY, soundingHourOffset);
-                                Log.d(getClass().getName(), "Timestamp: " + calendar.getTimeInMillis() + " - " + calendar.getTime() + " - " + soundingHourOffset);
                                 intent.putExtra(FlyWithMeService.DATA_LONG_TIMESTAMP, calendar.getTimeInMillis());
                             }
                             intent.putExtra(FlyWithMeService.DATA_LONG_TAKEOFF_ID, (long) takeoff.getId());

@@ -27,8 +27,6 @@ import java.util.List;
 
 public class TakeoffList extends Fragment {
     public interface TakeoffListListener {
-        void showTakeoffDetails(Takeoff takeoff);
-
         Location getLocation();
     }
 
@@ -91,7 +89,12 @@ public class TakeoffList extends Fragment {
         listView.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                callback.showTakeoffDetails(takeoffs.get(position));
+                Takeoff takeoff = takeoffs.get(position);
+                TakeoffDetails takeoffDetails = new TakeoffDetails();
+                Bundle args = new Bundle();
+                args.putParcelable(TakeoffDetails.ARG_TAKEOFF, takeoff);
+                takeoffDetails.setArguments(args);
+                getFragmentManager().beginTransaction().replace(R.id.fragmentContainer, takeoffDetails, "takeoffDetails," + takeoff.getId()).commit();
             }
         });
         /* position list */

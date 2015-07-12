@@ -50,8 +50,6 @@ import android.widget.ImageButton;
 public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, OnCameraChangeListener, OnMapReadyCallback {
 
     public interface TakeoffMapListener {
-        void showTakeoffDetails(Takeoff takeoff);
-
         Location getLocation();
     }
 
@@ -100,7 +98,7 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
                     boolean markersEnabled = !prefs.getBoolean("pref_map_show_takeoffs", true);
                     SharedPreferences.Editor editor = prefs.edit();
                     editor.putBoolean("pref_map_show_takeoffs", markersEnabled);
-                    editor.commit();
+                    editor.apply();
                     markerButton.setImageResource(markersEnabled ? R.mipmap.takeoffs_enabled : R.mipmap.takeoffs_disabled);
                     drawOverlay(map.getCameraPosition());
                 }
@@ -114,7 +112,7 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
                     boolean polygonsEnabled = !prefs.getBoolean("pref_map_show_airspace", true);
                     SharedPreferences.Editor editor = prefs.edit();
                     editor.putBoolean("pref_map_show_airspace", polygonsEnabled);
-                    editor.commit();
+                    editor.apply();
                     polygonButton.setImageResource(polygonsEnabled ? R.mipmap.airspace_enabled : R.mipmap.airspace_disabled);
                     drawOverlay(map.getCameraPosition());
                 }
@@ -141,10 +139,16 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
         }
         /* tell main activity to show takeoff details */
         Pair<Marker, Takeoff> pair = markers.get(marker.getId());
-        if (pair != null)
-            callback.showTakeoffDetails(pair.second);
-        else
+        if (pair != null) {
+            Takeoff takeoff = pair.second;
+            TakeoffDetails takeoffDetails = new TakeoffDetails();
+            Bundle args = new Bundle();
+            args.putParcelable(TakeoffDetails.ARG_TAKEOFF, takeoff);
+            takeoffDetails.setArguments(args);
+            getFragmentManager().beginTransaction().replace(R.id.fragmentContainer, takeoffDetails, "takeoffDetails," + takeoff.getId()).commit();
+        } else {
             Log.w(getClass().getName(), "Strange, could not find takeoff for marker");
+        }
     }
 
     public void onCameraChange(CameraPosition cameraPosition) {

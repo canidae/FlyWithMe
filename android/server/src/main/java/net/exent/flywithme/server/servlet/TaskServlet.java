@@ -74,6 +74,7 @@ public class TaskServlet extends HttpServlet {
                     Message msg = new Message.Builder()
                             .collapseKey("flywithme-takeoff-updated")
                             .delayWhileIdle(true)
+                            .addData("takeoffUpdated", "" + takeoff.getId())
                             .build();
                     GcmUtil.sendToAllClients(msg);
                 }

@@ -1,6 +1,5 @@
 package net.exent.flywithme.layout;
 
-import net.exent.flywithme.FlyWithMe;
 import net.exent.flywithme.R;
 import net.exent.flywithme.bean.Takeoff;
 import net.exent.flywithme.data.Database;
@@ -38,10 +37,6 @@ import java.util.Set;
 public class TakeoffDetails extends Fragment {
     public interface TakeoffDetailsListener {
         Location getLocation();
-
-        void showNoaaForecast(Takeoff takeoff);
-
-        void showTakeoffSchedule(Takeoff takeoff);
     }
 
     public static final String ARG_TAKEOFF = "takeoff";
@@ -80,10 +75,11 @@ public class TakeoffDetails extends Fragment {
         noaaButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), FlyWithMe.class);
-                intent.setAction(FlyWithMe.ACTION_SHOW_FORECAST);
-                intent.putExtra(NoaaForecast.ARG_TAKEOFF_ID, (long) takeoff.getId());
-                startActivity(intent);
+                NoaaForecast noaaForecast = new NoaaForecast();
+                Bundle args = new Bundle();
+                args.putLong(NoaaForecast.ARG_TAKEOFF_ID, takeoff.getId());
+                noaaForecast.setArguments(args);
+                getFragmentManager().beginTransaction().replace(R.id.fragmentContainer, noaaForecast, "noaaForecast," + takeoff.getId()).commit();
             }
         });
         final ImageButton favouriteButton = (ImageButton) getActivity().findViewById(R.id.fragmentButton3);
@@ -136,8 +132,11 @@ public class TakeoffDetails extends Fragment {
             });
             flyScheduleButton.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
-                    // show takeoff schedule details
-                    callback.showTakeoffSchedule(takeoff);
+                    TakeoffSchedule takeoffSchedule = new TakeoffSchedule();
+                    Bundle args = new Bundle();
+                    args.putParcelable(TakeoffSchedule.ARG_TAKEOFF, takeoff);
+                    takeoffSchedule.setArguments(args);
+                    getFragmentManager().beginTransaction().replace(R.id.fragmentContainer, takeoffSchedule, "takeoffSchedule," + takeoff.getId()).commit();
                 }
             });
         }

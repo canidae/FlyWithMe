@@ -2,7 +2,6 @@ package net.exent.flywithme;
 
 import net.exent.flywithme.layout.NoaaForecast;
 import net.exent.flywithme.layout.Preferences;
-import net.exent.flywithme.layout.TakeoffDetails;
 import net.exent.flywithme.layout.TakeoffDetails.TakeoffDetailsListener;
 import net.exent.flywithme.layout.TakeoffList;
 import net.exent.flywithme.layout.TakeoffList.TakeoffListListener;
@@ -10,7 +9,6 @@ import net.exent.flywithme.layout.TakeoffMap;
 import net.exent.flywithme.layout.TakeoffMap.TakeoffMapListener;
 import net.exent.flywithme.bean.Takeoff;
 import net.exent.flywithme.data.Database;
-import net.exent.flywithme.layout.TakeoffSchedule;
 import net.exent.flywithme.service.FlyWithMeService;
 import net.exent.flywithme.service.ScheduleService;
 
@@ -34,17 +32,18 @@ import android.widget.TextView;
 import java.io.DataInputStream;
 import java.io.EOFException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
-/* TODO
-   - Bug user to register name/phone if it isn't done.
+/* TODO:
+   - Bug user to register name/phone if it isn't already done
    - Register name/phone in backend
    - Use endpoint API for registering planned flight
    - Use endpoint API for fetching planned flights (schedule)
    - Display notification if user is close to takeoff ("are you flying?")
      - Must be possible to "blacklist" takeoffs, and somehow remove blacklisting later (in preference window?)
    - Notify clients when a takeoff is updated (clients respond with last updated takeoff timestamp, and get all updated takeoffs after that timestamp in return)
+   - Cache forecasts locally for some few hours
+   - Can we improve fetching location, or at least get rid of all the implemented interfaces?
+   - Don't like "FlyWithMe.getInstance()", is it possible to get rid of it?
  */
 public class FlyWithMe extends Activity implements TakeoffListListener, TakeoffMapListener, TakeoffDetailsListener {
     public static final String ACTION_SHOW_FORECAST = "showForecast";
@@ -60,7 +59,6 @@ public class FlyWithMe extends Activity implements TakeoffListListener, TakeoffM
     private static final int LOCATION_UPDATE_DISTANCE = 100; // or when we've moved more than LOCATION_UPDATE_DISTANCE meters
     private static Location location = new Location(LocationManager.PASSIVE_PROVIDER);
     private static FlyWithMe instance;
-    private static List<String> backstack = new ArrayList<>();
 
     public static FlyWithMe getInstance() {
         return instance;
@@ -76,57 +74,12 @@ public class FlyWithMe extends Activity implements TakeoffListListener, TakeoffM
     }
 
     /**
-     * Show takeoff details in TakeoffDetails fragment.
-     * @param takeoff The takeoff to display details for.
-     */
-    public void showTakeoffDetails(Takeoff takeoff) {
-        Fragment fragment = getFragmentManager().findFragmentById(R.id.fragmentContainer);
-        TakeoffDetails takeoffDetails;
-        if (fragment != null && fragment instanceof TakeoffDetails) {
-            takeoffDetails = (TakeoffDetails) fragment;
-        } else {
-            takeoffDetails = new TakeoffDetails();
-            /* pass arguments */
-            Bundle args = new Bundle();
-            args.putParcelable(TakeoffDetails.ARG_TAKEOFF, takeoff);
-            takeoffDetails.setArguments(args);
-        }
-        /* show fragment */
-        showFragment(takeoffDetails, "takeoffDetails," + takeoff.getId());
-    }
-
-    /**
-     * Show NOAA forecast for takeoff in NoaaForecast fragment.
-     * @param takeoff The takeoff we wish to display the forecast for.
-     */
-    public void showNoaaForecast(Takeoff takeoff) {
-        showFragment(new NoaaForecast(), "noaaForecast," + takeoff.getId());
-    }
-
-    public void showTakeoffSchedule(Takeoff takeoff) {
-        Fragment fragment = getFragmentManager().findFragmentById(R.id.fragmentContainer);
-        TakeoffSchedule takeoffSchedule;
-        if (fragment != null && fragment instanceof TakeoffSchedule) {
-            takeoffSchedule = (TakeoffSchedule) fragment;
-        } else {
-            takeoffSchedule = new TakeoffSchedule();
-            /* pass arguments */
-            Bundle args = new Bundle();
-            args.putParcelable(TakeoffSchedule.ARG_TAKEOFF, takeoff);
-            takeoffSchedule.setArguments(args);
-        }
-        /* show fragment */
-        showFragment(takeoffSchedule, "takeoffSchedule," + takeoff.getId());
-    }
-
-    /**
      * Show TakeoffList fragment.
      */
     public void showTakeoffList() {
         Fragment fragment = getFragmentManager().findFragmentById(R.id.fragmentContainer);
         TakeoffList takeoffList = (fragment != null && fragment instanceof TakeoffList) ? (TakeoffList) fragment : new TakeoffList();
-        /* show fragment */
-        showFragment(takeoffList, "takeoffList");
+        getFragmentManager().beginTransaction().replace(R.id.fragmentContainer, takeoffList, "takeoffList").commit();
     }
 
     /**
@@ -135,8 +88,7 @@ public class FlyWithMe extends Activity implements TakeoffListListener, TakeoffM
     public void showMap() {
         Fragment fragment = getFragmentManager().findFragmentById(R.id.fragmentContainer);
         TakeoffMap takeoffMap = (fragment != null && fragment instanceof TakeoffMap) ? (TakeoffMap) fragment : new TakeoffMap();
-        /* show fragment */
-        showFragment(takeoffMap, "map");
+        getFragmentManager().beginTransaction().replace(R.id.fragmentContainer, takeoffMap, "map").commit();
     }
 
     /**
@@ -145,8 +97,7 @@ public class FlyWithMe extends Activity implements TakeoffListListener, TakeoffM
     public void showSettings() {
         Fragment fragment = getFragmentManager().findFragmentById(R.id.fragmentContainer);
         Preferences preferences = (fragment != null && fragment instanceof Preferences) ? (Preferences) fragment : new Preferences();
-        /* show fragment */
-        showFragment(preferences, "preferences");
+        getFragmentManager().beginTransaction().replace(R.id.fragmentContainer, preferences, "preferences").commit();
     }
 
     /**
@@ -245,42 +196,6 @@ public class FlyWithMe extends Activity implements TakeoffListListener, TakeoffM
     }
 
     @Override
-    public void onBackPressed() {
-        /* using our own "backstack", because the android one is utterly on crack */
-        /* last entry in backstack is currently viewed fragment, remove it */
-        if (!backstack.isEmpty())
-            backstack.remove(backstack.size() - 1);
-        if (backstack.isEmpty()) {
-            // no more entries in backstack, return to takeoff list, or exit application if we're looking at the takeoff list
-            Fragment fragment = getFragmentManager().findFragmentById(R.id.fragmentContainer);
-            if (fragment instanceof TakeoffList) {
-                super.onBackPressed();
-            } else {
-                showTakeoffList();
-            }
-        } else {
-            /* more entries in backstack, show previous entry */
-            String lastFragment = backstack.remove(backstack.size() - 1);
-            if (lastFragment == null) {
-                // this shouldn't happen
-                super.onBackPressed();
-            } else if (lastFragment.equals("map")) {
-                showMap();
-            } else if (lastFragment.equals("preferences")) {
-                showSettings();
-            } else if (lastFragment.equals("takeoffList")) {
-                showTakeoffList();
-            } else if (lastFragment.startsWith("takeoffDetails")) {
-                showTakeoffDetails(new Database(getInstance()).getTakeoff(Integer.parseInt(lastFragment.substring(lastFragment.indexOf(',') + 1))));
-            } else if (lastFragment.startsWith("noaaForecast")) {
-                showNoaaForecast(new Database(getInstance()).getTakeoff(Integer.parseInt(lastFragment.substring(lastFragment.indexOf(',') + 1))));
-            } else if (lastFragment.startsWith("takeoffSchedule")) {
-                showTakeoffSchedule(new Database(getInstance()).getTakeoff(Integer.parseInt(lastFragment.substring(lastFragment.indexOf(',') + 1))));
-            }
-        }
-    }
-
-    @Override
     protected void onNewIntent(Intent intent) {
         Log.d(getClass().getName(), "onNewIntent(" + intent + ")");
         super.onNewIntent(intent);
@@ -288,14 +203,8 @@ public class FlyWithMe extends Activity implements TakeoffListListener, TakeoffM
             NoaaForecast noaaForecast = new NoaaForecast();
             noaaForecast.setArguments(intent.getExtras());
             long takeoffId = intent.getExtras() != null ? intent.getExtras().getLong(NoaaForecast.ARG_TAKEOFF_ID) : -1;
-            showFragment(noaaForecast, "noaaForecast," + takeoffId);
+            getFragmentManager().beginTransaction().replace(R.id.fragmentContainer, noaaForecast, "noaaForecast," + takeoffId).commit();
         }
-    }
-
-    private void showFragment(Fragment fragment, String name) {
-        backstack.remove(name);
-        backstack.add(name);
-        getFragmentManager().beginTransaction().replace(R.id.fragmentContainer, fragment, name).commit();
     }
 
     private void importTakeoffs() {
