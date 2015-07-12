@@ -11,10 +11,8 @@ import com.googlecode.objectify.ObjectifyService;
 
 import net.exent.flywithme.server.bean.Forecast;
 import net.exent.flywithme.server.bean.Pilot;
-import net.exent.flywithme.server.bean.Property;
 import net.exent.flywithme.server.bean.Schedule;
 import net.exent.flywithme.server.bean.Takeoff;
-import net.exent.flywithme.server.servlet.TaskServlet;
 import net.exent.flywithme.server.utils.NoaaProxy;
 
 import java.io.IOException;
@@ -42,12 +40,8 @@ public class FlyWithMeEndpoint {
     static {
         ObjectifyService.register(Forecast.class);
         ObjectifyService.register(Pilot.class);
-        ObjectifyService.register(Property.class);
         ObjectifyService.register(Schedule.class);
         ObjectifyService.register(Takeoff.class);
-
-        // check if any tasks needs to run
-        TaskServlet.checkTasks();
     }
 
     /**

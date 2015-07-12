@@ -43,46 +43,50 @@ public class FlyWithMeService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         Log.d(getClass().getName(), "onHandleIntent(" + intent + ")");
-        try {
-            String action = intent.getAction();
-            Bundle bundle = intent.getExtras();
-            if (bundle == null)
-                bundle = new Bundle();
-            if (ACTION_REGISTER_PILOT.equals(action)) {
-                boolean refreshToken = bundle.getBoolean(DATA_BOOLEAN_REFRESH_TOKEN, false);
-                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                String pilotName = prefs.getString(FlyWithMe.PREFERENCE_PILOT_NAME, "<unknown>");
-                String pilotPhone = prefs.getString(FlyWithMe.PREFERENCE_PILOT_PHONE, "<unknown>");
-                registerPilot(refreshToken, pilotName, pilotPhone);
-            } else if (ACTION_GET_METEOGRAM.equals(action)) {
-                long takeoffId = bundle.getLong(DATA_LONG_TAKEOFF_ID, -1);
-                getMeteogram(takeoffId);
-            } else if (ACTION_GET_SOUNDING.equals(action)) {
-                long takeoffId = bundle.getLong(DATA_LONG_TAKEOFF_ID, -1);
-                long timestamp = bundle.getLong(DATA_LONG_TIMESTAMP, -1);
-                getSounding(takeoffId, timestamp);
-            } else {
-                Log.w(TAG, "Unknown action: " + intent.getAction());
+        String action = intent.getAction();
+        Bundle bundle = intent.getExtras();
+        if (bundle == null)
+            bundle = new Bundle();
+        if (ACTION_REGISTER_PILOT.equals(action)) {
+            boolean refreshToken = bundle.getBoolean(DATA_BOOLEAN_REFRESH_TOKEN, false);
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+            String pilotName = prefs.getString(FlyWithMe.PREFERENCE_PILOT_NAME, "<unknown>");
+            String pilotPhone = prefs.getString(FlyWithMe.PREFERENCE_PILOT_PHONE, "<unknown>");
+            registerPilot(refreshToken, pilotName, pilotPhone);
+        } else if (ACTION_GET_METEOGRAM.equals(action)) {
+            long takeoffId = bundle.getLong(DATA_LONG_TAKEOFF_ID, -1);
+            Forecast forecast = null;
+            try {
+                forecast = getServer().getMeteogram(takeoffId).execute();
+            } catch (IOException e) {
+                Log.w(TAG, "Fetching meteogram failed", e);
             }
-        } catch (IOException e) {
-            Log.w(TAG, "Action failed: " + intent.getAction(), e);
+            sendDisplayForecastIntent(takeoffId, forecast);
+        } else if (ACTION_GET_SOUNDING.equals(action)) {
+            long takeoffId = bundle.getLong(DATA_LONG_TAKEOFF_ID, -1);
+            long timestamp = bundle.getLong(DATA_LONG_TIMESTAMP, -1);
+            Forecast forecast = null;
+            try {
+                forecast = getServer().getSounding(takeoffId, timestamp).execute();
+            } catch (IOException e) {
+                Log.w(TAG, "Fetching sounding failed", e);
+            }
+            sendDisplayForecastIntent(takeoffId, forecast);
+        } else {
+            Log.w(TAG, "Unknown action: " + intent.getAction());
         }
     }
 
-    private void registerPilot(boolean refreshToken, String name, String phone) throws IOException {
+    private void registerPilot(boolean refreshToken, String name, String phone) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         String token = prefs.getString(FlyWithMe.PREFERENCE_TOKEN, null);
-        if (refreshToken || token == null)
-            token = InstanceID.getInstance(getApplicationContext()).getToken(PROJECT_ID, GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
-        getServer().registerPilot(token, name, phone).execute();
-    }
-
-    private void getMeteogram(long takeoffId) throws IOException {
-        sendDisplayForecastIntent(takeoffId, getServer().getMeteogram(takeoffId).execute());
-    }
-
-    private void getSounding(long takeoffId, long timestamp) throws IOException {
-        sendDisplayForecastIntent(takeoffId, getServer().getSounding(takeoffId, timestamp).execute());
+        try {
+            if (refreshToken || token == null)
+                token = InstanceID.getInstance(getApplicationContext()).getToken(PROJECT_ID, GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
+            getServer().registerPilot(token, name, phone).execute();
+        } catch (IOException e) {
+            Log.w(TAG, "Registering pilot failed", e);
+        }
     }
 
     private void sendDisplayForecastIntent(long takeoffId, Forecast forecast) {
@@ -111,7 +115,8 @@ public class FlyWithMeService extends IntentService {
         // Need setRootUrl and setGoogleClientRequestInitializer only for local testing,
         // otherwise they can be skipped
         builder.setApplicationName("FlyWithMe");
-        builder.setRootUrl("http://88.95.84.204:8080/_ah/api/");
+        //builder.setRootUrl("http://88.95.84.204:8080/_ah/api/");
+        builder.setRootUrl("https://4-dot-flywithme-server.appspot.com/_ah/api/");
         builder.setGoogleClientRequestInitializer(new GoogleClientRequestInitializer() {
             @Override
             public void initialize(AbstractGoogleClientRequest<?> abstractGoogleClientRequest) throws IOException {

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cronentries>
+    <cron>
+        <url>/task/updateNextTakeoffData</url>
+        <description>Update data for a single takeoff</description>
+        <schedule>every 3 minutes</schedule>
+        <target>4</target>
+    </cron>
+</cronentries>
