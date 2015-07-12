@@ -11,7 +11,6 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
-import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -122,7 +121,7 @@ public class NoaaProxy {
      * @return The meteogram image.
      */
     public static byte[] fetchMeteogram(float latitude, float longitude) {
-        // TODO: we need to handle when NOAA becomes unavailable much better
+        // TODO (medium): we need to handle when NOAA becomes unavailable much better (app just hangs with loading animation)
         try {
             if (noaaCaptcha == null)
                 updateFieldsAndCaptcha(latitude, longitude);
@@ -245,26 +244,7 @@ public class NoaaProxy {
         return null;
     }
 
-    // TODO: remove, used for testing
-    public static void main(String... argS) throws Exception {
-        int correct = 0;
-        int wrong = 0;
-        File directory = new File("captchas");
-        for (File file : directory.listFiles()) {
-            if (file.isDirectory() || !"iuckxi".equals(file.getName()))
-                continue;
-            String captcha = solveCaptcha(Files.readAllBytes(file.toPath()));
-            if (file.getName().equals(captcha)) {
-                ++correct;
-            } else {
-                System.out.println("Wrong CAPTCHA, found '" + captcha + "', expected '" + file.getName() + "'");
-                ++wrong;
-            }
-        }
-        System.out.println("Found correct CAPTCHA in " + correct + " out of " + (correct + wrong) + " images");
-    }
-
-    private static String solveCaptcha(byte[] captchaImage) throws Exception { // TODO: fix exception handling
+    private static String solveCaptcha(byte[] captchaImage) throws Exception {
         log.info("CAPTCHA image size: " + captchaImage.length);
         GifDecoder.GifImage image = GifDecoder.read(captchaImage);
         int startX = 0;
@@ -340,7 +320,7 @@ public class NoaaProxy {
             if (bestMatch.xOffset <= 0)
                 continue;
             bestMatch.character = entry.getKey();
-            // TODO: precalculate character width?
+            // TODO (low): precalculate character width?
             for (int index = 0; index < blackPixels.length; index += 2) {
                 if (blackPixels[index] > bestMatch.width)
                     bestMatch.width = blackPixels[index];

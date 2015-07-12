@@ -37,6 +37,15 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+/* TODO
+   - Bug user to register name/phone if it isn't done.
+   - Register name/phone in backend
+   - Use endpoint API for registering planned flight
+   - Use endpoint API for fetching planned flights (schedule)
+   - Display notification if user is close to takeoff ("are you flying?")
+     - Must be possible to "blacklist" takeoffs, and somehow remove blacklisting later (in preference window?)
+   - Notify clients when a takeoff is updated (clients respond with last updated takeoff timestamp, and get all updated takeoffs after that timestamp in return)
+ */
 public class FlyWithMe extends Activity implements TakeoffListListener, TakeoffMapListener, TakeoffDetailsListener {
     public static final String ACTION_SHOW_FORECAST = "showForecast";
 

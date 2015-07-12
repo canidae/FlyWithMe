@@ -23,7 +23,7 @@ import com.google.android.gms.maps.model.PolygonOptions;
 import android.content.Context;
 import android.util.Log;
 
-/* TODO:
+/* TODO (low):
  * periodically (every month or so) fetch http://grytnes-it.no/pg/luftrom/luftrom.kml
  * ask hans cato to make this url permanently pointing to the most updated version of the overlay
  * add marker icons, but we need to figure out how to store these first

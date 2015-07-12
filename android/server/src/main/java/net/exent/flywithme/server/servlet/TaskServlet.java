@@ -1,10 +1,12 @@
 package net.exent.flywithme.server.servlet;
 
+import com.google.android.gcm.server.Message;
 import com.googlecode.objectify.ObjectifyService;
 
 import net.exent.flywithme.server.bean.Property;
 import net.exent.flywithme.server.bean.Takeoff;
 import net.exent.flywithme.server.utils.FlightlogCrawler;
+import net.exent.flywithme.server.utils.GcmUtil;
 
 import java.io.IOException;
 import java.util.logging.Level;
@@ -62,12 +64,18 @@ public class TaskServlet extends HttpServlet {
 
     private static boolean updateTakeoff(long takeoffId) {
         try {
-            Takeoff existing = ofy().load().type(Takeoff.class).id(takeoffId).now();
+            Takeoff existing = ofy().load().type(Takeoff.class).id(takeoffId).now(); // TODO: this increase datastore read ops, is it a problem? can we remove it? "update where new data doesn't match old data"?
             Takeoff takeoff = FlightlogCrawler.fetchTakeoff(takeoffId);
             if (takeoff != null) {
                 if (existing != null && takeoff.equals(existing)) {
                     takeoff.setLastUpdated(existing.getLastUpdated()); // data not changed, keep "lastUpdated"
                     log.info("Updated data for takeoff with ID " + takeoffId);
+                    // send message to clients, letting them know a takeoff was updated
+                    Message msg = new Message.Builder()
+                            .collapseKey("flywithme-takeoff-updated")
+                            .delayWhileIdle(true)
+                            .build();
+                    GcmUtil.sendToAllClients(msg);
                 }
                 ofy().save().entity(takeoff).now();
                 return true;

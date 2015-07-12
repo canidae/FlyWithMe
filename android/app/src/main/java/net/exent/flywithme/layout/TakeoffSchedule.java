@@ -218,7 +218,7 @@ public class TakeoffSchedule extends Fragment {
         scheduleFlight.setEnabled(false);
 
         // TODO: currently we need to mark every takeoff we schedule for as favourites
-        // TODO: this is because that's the only way we can fetch schedule for that takeoff if it's far away
+        //       this is because that's the only way we can fetch schedule for that takeoff if it's far away
         takeoff.setFavourite(true);
         new Database(getActivity()).updateFavourite(takeoff);
 
