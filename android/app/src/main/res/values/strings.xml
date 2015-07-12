@@ -1,12 +1,4 @@
 <resources>
-    <!-- Config for PreferenceFragment -->
-    <!-- Strings for possible PreferenceActivity Back/Next buttons -->
-    <string name="back_button_label">Back</string>
-    <string name="next_button_label">Next</string>
-    <!-- Optional button to Skip a PreferenceActivity [CHAR LIMIT=20] -->
-    <string name="skip_button_label">Skip</string>
-    <!-- End config for PreferenceFragment -->
-
     <!-- General -->
     <string name="app_name">Fly With Me!</string>
     <string name="distance">Distance</string>
@@ -20,8 +12,6 @@
 
     <!-- Status messages -->
     <string name="importing_takeoffs">Importing takeoffs…</string>
-    <string name="type_noaa_captcha">Type in CAPTCHA:</string>
-    <string name="retrieving_noaa_forecast">Retrieving forecast…</string>
     <string name="fetching_noaa_failed">Fetching forecast failed</string>
 
     <!-- Flight schedule -->
@@ -36,112 +26,12 @@
 
     <!-- Preferences -->
     <string name="preferences">Preferences</string>
-
-    <!-- Schedule preferences -->
-    <string name="pref_schedule_fetch_takeoffs">Fetch takeoff schedules</string>
-    <string name="pref_schedule_fetch_takeoffs_default_value" translatable="false">50</string>
-    <string-array name="pref_schedule_fetch_takeoffs_keys">
-        <item>Disabled</item>
-        <item>10 takeoffs</item>
-        <item>25 takeoffs</item>
-        <item>50 takeoffs</item>
-        <item>100 takeoffs</item>
-        <item>200 takeoffs</item>
-    </string-array>
-    <string-array name="pref_schedule_fetch_takeoffs_values" translatable="false">
-        <item>-1</item>
-        <item>10</item>
-        <item>25</item>
-        <item>50</item>
-        <item>100</item>
-        <item>200</item>
-    </string-array>
-
+    <string name="general_settings">General settings</string>
     <string name="pref_schedule_pilot_name">My name</string>
     <string name="pref_schedule_pilot_name_description">When scheduling a flight, this name will be shown to other pilots. This field is required (or you won\'t be allowed to schedule flights).</string>
-
     <string name="pref_schedule_pilot_phone">My phone number</string>
     <string name="pref_schedule_pilot_phone_description">When scheduling a flight, this phone number will be shown to other pilots. You don\'t have to fill this in, but it is recommended so other pilots can contact you.</string>
-
-    <string name="schedule_settings">Fetch schedule settings</string>
-
     <string name="pref_schedule_notification">Notifications</string>
-
-    <string name="pref_schedule_update_interval">Update interval</string>
-    <string name="pref_schedule_update_interval_default_value" translatable="false">3600</string>
-    <string-array name="pref_schedule_update_interval_keys">
-        <item>Every 15 min</item>
-        <item>Every 30 min</item>
-        <item>Every 1 hour</item>
-        <item>Every 2 hour</item>
-        <item>Every 4 hour</item>
-        <item>Every 8 hour</item>
-    </string-array>
-    <string-array name="pref_schedule_update_interval_values" translatable="false">
-        <item>900</item>
-        <item>1800</item>
-        <item>3600</item>
-        <item>7200</item>
-        <item>14400</item>
-        <item>28800</item>
-    </string-array>
-
-    <string name="pref_schedule_start_fetch_time">Start fetching at</string>
-    <string name="pref_schedule_start_fetch_time_default_value" translatable="false">25200</string>
-    <string name="pref_schedule_stop_fetch_time">Stop fetching at</string>
-    <string name="pref_schedule_stop_fetch_time_default_value" translatable="false">68400</string>
-    <string-array name="pref_schedule_fetch_time_keys" translatable="false">
-        <item>00.00</item>
-        <item>01.00</item>
-        <item>02.00</item>
-        <item>03.00</item>
-        <item>04.00</item>
-        <item>05.00</item>
-        <item>06.00</item>
-        <item>07.00</item>
-        <item>08.00</item>
-        <item>09.00</item>
-        <item>10.00</item>
-        <item>11.00</item>
-        <item>12.00</item>
-        <item>13.00</item>
-        <item>14.00</item>
-        <item>15.00</item>
-        <item>16.00</item>
-        <item>17.00</item>
-        <item>18.00</item>
-        <item>19.00</item>
-        <item>20.00</item>
-        <item>21.00</item>
-        <item>22.00</item>
-        <item>23.00</item>
-    </string-array>
-    <string-array name="pref_schedule_fetch_time_values" translatable="false">
-        <item>0</item>
-        <item>3600</item>
-        <item>7200</item>
-        <item>10800</item>
-        <item>14400</item>
-        <item>18000</item>
-        <item>21600</item>
-        <item>25200</item>
-        <item>28800</item>
-        <item>32400</item>
-        <item>36000</item>
-        <item>39600</item>
-        <item>43200</item>
-        <item>46800</item>
-        <item>50400</item>
-        <item>54000</item>
-        <item>57600</item>
-        <item>61500</item>
-        <item>64800</item>
-        <item>68400</item>
-        <item>72000</item>
-        <item>75600</item>
-        <item>79200</item>
-        <item>82800</item>
-    </string-array>
 
     <!-- Meteogram/sounding -->
     <string-array name="meteogram_sounding_forecast_list_keys">
@@ -238,26 +128,6 @@
         <item>138</item>
         <item>141</item>
     </integer-array>
-    <string name="meteogram_sounding">Meteogram/sounding</string>
-
-    <string name="pref_sounding_days">Fetch sounding</string>
-    <string name="pref_sounding_days_default_value" translatable="false">2</string>
-    <string-array name="pref_sounding_days_keys">
-        <item>Don\'t fetch sounding</item>
-        <item>For one day</item>
-        <item>For two days</item>
-        <item>For three days</item>
-        <item>For four days</item>
-        <item>For five days</item>
-    </string-array>
-    <string-array name="pref_sounding_days_values" translatable="false">
-        <item>-1</item>
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-        <item>4</item>
-        <item>5</item>
-    </string-array>
 
     <!-- What airspace to draw -->
     <string name="show_airspace_types">Show airspace types</string>

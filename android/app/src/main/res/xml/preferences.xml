@@ -4,17 +4,10 @@
     android:layout_height="match_parent"
     android:title="@string/preferences" >
 
-    <!-- Schedule settings -->
-    <ListPreference
-        android:key="pref_schedule_fetch_takeoffs"
-        android:title="@string/pref_schedule_fetch_takeoffs"
-        android:defaultValue="@string/pref_schedule_fetch_takeoffs_default_value"
-        android:dialogTitle="@string/pref_schedule_fetch_takeoffs"
-        android:entries="@array/pref_schedule_fetch_takeoffs_keys"
-        android:entryValues="@array/pref_schedule_fetch_takeoffs_values" />
+    <!-- General settings -->
     <PreferenceCategory
-        android:key="pref_schedule"
-        android:title="@string/schedule_settings">
+        android:key="pref_general"
+        android:title="@string/general_settings">
         <EditTextPreference
             android:key="pref_schedule_pilot_name"
             android:maxLength="20"
@@ -35,40 +28,6 @@
             android:defaultValue="true"
             android:key="pref_schedule_notification"
             android:title="@string/pref_schedule_notification" />
-        <ListPreference
-            android:key="pref_schedule_update_interval"
-            android:title="@string/pref_schedule_update_interval"
-            android:defaultValue="@string/pref_schedule_update_interval_default_value"
-            android:dialogTitle="@string/pref_schedule_update_interval"
-            android:entries="@array/pref_schedule_update_interval_keys"
-            android:entryValues="@array/pref_schedule_update_interval_values" />
-        <ListPreference
-            android:key="pref_schedule_start_fetch_time"
-            android:title="@string/pref_schedule_start_fetch_time"
-            android:defaultValue="@string/pref_schedule_start_fetch_time_default_value"
-            android:dialogTitle="@string/pref_schedule_start_fetch_time"
-            android:entries="@array/pref_schedule_fetch_time_keys"
-            android:entryValues="@array/pref_schedule_fetch_time_values" />
-        <ListPreference
-            android:key="pref_schedule_stop_fetch_time"
-            android:title="@string/pref_schedule_stop_fetch_time"
-            android:defaultValue="@string/pref_schedule_stop_fetch_time_default_value"
-            android:dialogTitle="@string/pref_schedule_stop_fetch_time"
-            android:entries="@array/pref_schedule_fetch_time_keys"
-            android:entryValues="@array/pref_schedule_fetch_time_values" />
-    </PreferenceCategory>
-
-    <!-- Settings for meteogram/sounding. This is (partly) filled programmatically -->
-    <PreferenceCategory
-        android:key="pref_meteogram_and_sounding"
-        android:title="@string/meteogram_sounding">
-        <ListPreference
-            android:key="pref_sounding_days"
-            android:title="@string/pref_sounding_days"
-            android:defaultValue="@string/pref_sounding_days_default_value"
-            android:dialogTitle="@string/pref_sounding_days"
-            android:entries="@array/pref_sounding_days_keys"
-            android:entryValues="@array/pref_sounding_days_values" />
     </PreferenceCategory>
 
     <!-- What airspace polygons to show. This is filled programmatically -->

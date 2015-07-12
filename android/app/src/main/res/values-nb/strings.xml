@@ -1,12 +1,4 @@
 <resources>
-    <!-- Config for PreferenceFragment -->
-    <!-- Strings for possible PreferenceActivity Back/Next buttons -->
-    <string name="back_button_label">Back</string>
-    <string name="next_button_label">Next</string>
-    <!-- Optional button to Skip a PreferenceActivity [CHAR LIMIT=20] -->
-    <string name="skip_button_label">Skip</string>
-    <!-- End config for PreferenceFragment -->
-
     <!-- General -->
     <string name="app_name">Fly With Me!</string>
     <string name="distance">Luftavstand</string>
@@ -20,8 +12,6 @@
 
     <!-- Status messages -->
     <string name="importing_takeoffs">Importerer flysteder…</string>
-    <string name="type_noaa_captcha">Skriv inn CAPTCHA:</string>
-    <string name="retrieving_noaa_forecast">Laster ned værvarsel…</string>
     <string name="fetching_noaa_failed">Hente værvarsel feilet</string>
 
     <!-- Flight schedule graph -->
@@ -36,52 +26,14 @@
 
     <!-- Preferences -->
     <string name="preferences">Innstillinger</string>
-
-    <!-- Schedule preferences -->
-    <string name="pref_schedule_fetch_takeoffs">Hent flyprogram</string>
-    <string-array name="pref_schedule_fetch_takeoffs_keys">
-        <item>Avslått</item>
-        <item>10 flysteder</item>
-        <item>25 flysteder</item>
-        <item>50 flysteder</item>
-        <item>100 flysteder</item>
-        <item>200 flysteder</item>
-    </string-array>
-
-    <string name="schedule_settings">Innstillinger, henting av flyprogram</string>
-
-    <string name="pref_schedule_notification">Notifikasjoner</string>
-
-    <string name="pref_schedule_update_interval">Oppdateringsfrekvens</string>
-    <string-array name="pref_schedule_update_interval_keys">
-        <item>Hvert 15. min</item>
-        <item>Hvert 30. min</item>
-        <item>Hver time</item>
-        <item>Hver 2. time</item>
-        <item>Hver 4. time</item>
-        <item>Hver 8. time</item>
-    </string-array>
-
+    <string name="general_settings">Generelle innstillinger</string>
     <string name="pref_schedule_pilot_name">Navnet mitt</string>
     <string name="pref_schedule_pilot_name_description">Ved registrering av flyplan vil dette navnet bli vist til andre piloter. Dette feltet må settes (ellers får du ikke lov til å registrere flyplan).</string>
-
     <string name="pref_schedule_pilot_phone">Telefonnummeret mitt</string>
     <string name="pref_schedule_pilot_phone_description">Ved registrering av flyplan vil dette telefonnummeret bli vist til andre piloter. Du må ikke fylle ut dette, men det er anbefalt slik at andre piloter kan kontakte deg.</string>
-
-    <string name="pref_schedule_start_fetch_time">Oppdater flyprogram fra</string>
-    <string name="pref_schedule_stop_fetch_time">Oppdater flyprogram til</string>
+    <string name="pref_schedule_notification">Notifikasjoner</string>
 
     <!-- Meteogram/sounding -->
-    <string name="meteogram_sounding">Meteogram/sounding</string>
-    <string name="pref_sounding_days">Hent sounding</string>
-    <string-array name="pref_sounding_days_keys">
-        <item>Ikke hent sounding</item>
-        <item>For én dag</item>
-        <item>For to dager</item>
-        <item>For tre dager</item>
-        <item>For fire dager</item>
-        <item>For fem dager</item>
-    </string-array>
 
     <!-- What airspace to draw (this is mostly set programatically) -->
     <string name="show_airspace_types">Vis luftromstyper</string>
