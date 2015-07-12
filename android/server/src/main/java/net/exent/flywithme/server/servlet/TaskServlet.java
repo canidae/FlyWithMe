@@ -64,9 +64,9 @@ public class TaskServlet extends HttpServlet {
 
     private static boolean updateTakeoff(long takeoffId) {
         try {
-            Takeoff existing = ofy().load().type(Takeoff.class).id(takeoffId).now(); // TODO: this increase datastore read ops, is it a problem? can we remove it? "update where new data doesn't match old data"?
             Takeoff takeoff = FlightlogCrawler.fetchTakeoff(takeoffId);
             if (takeoff != null) {
+                Takeoff existing = ofy().load().type(Takeoff.class).id(takeoffId).now(); // TODO: this increase datastore read ops, is it a problem? can we remove it? "update where new data doesn't match old data"?
                 if (existing != null && takeoff.equals(existing)) {
                     takeoff.setLastUpdated(existing.getLastUpdated()); // data not changed, keep "lastUpdated"
                     log.info("Updated data for takeoff with ID " + takeoffId);
