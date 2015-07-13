@@ -3,7 +3,6 @@ package net.exent.flywithme.server.servlet;
 import com.google.android.gcm.server.Message;
 import com.googlecode.objectify.ObjectifyService;
 
-import net.exent.flywithme.server.bean.Property;
 import net.exent.flywithme.server.bean.Takeoff;
 import net.exent.flywithme.server.utils.FlightlogCrawler;
 import net.exent.flywithme.server.utils.GcmUtil;
@@ -29,7 +28,6 @@ public class TaskServlet extends HttpServlet {
     private static final int MAX_TAKEOFF_ID_GAP = 50;
 
     static {
-        ObjectifyService.register(Property.class);
         ObjectifyService.register(Takeoff.class);
     }
 

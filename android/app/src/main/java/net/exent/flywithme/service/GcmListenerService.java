@@ -12,5 +12,11 @@ public class GcmListenerService extends com.google.android.gms.gcm.GcmListenerSe
     @Override
     public void onMessageReceived(String from, Bundle data) {
         Log.i(TAG, "Received message from: " + from + ". Data: " + data);
+        if (data == null)
+            return;
+        if (data.containsKey("takeoffUpdated")) {
+            // a takeoff was updated or added, retrieve all takeoffs updated after the last updated takeoff stored on device
+
+        }
     }
 }

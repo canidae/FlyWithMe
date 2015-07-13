@@ -34,17 +34,19 @@ import java.io.EOFException;
 import java.io.IOException;
 
 /* TODO:
-   - Remove "Property"-table from GAE/Objectify, no longer in use
+   - Remove old forecasts (cron-job to clean old data?)
    - Bug user to register name/phone if it isn't already done
    - Register name/phone in backend
    - Use endpoint API for registering planned flight
    - Use endpoint API for fetching planned flights (schedule)
+   - Fix "back"-functionality, see "addToBackStack()" for FragmentTransaction
    - Display notification if user is close to takeoff ("are you flying?")
      - Must be possible to "blacklist" takeoffs, and somehow remove blacklisting later (in preference window?)
    - Notify clients when a takeoff is updated (clients respond with last updated takeoff timestamp, and get all updated takeoffs after that timestamp in return)
-   - Cache forecasts locally for some few hours
+   - Cache forecasts locally for some few hours (fetched timestamp is returned, cache for the same amount of time as server caches the forecast)
    - Can we improve fetching location, or at least get rid of all the implemented interfaces?
    - Don't like "FlyWithMe.getInstance()", is it possible to get rid of it?
+   - Implement "Poor Man's SPOT"? Livetracking?
  */
 public class FlyWithMe extends Activity implements TakeoffListListener, TakeoffMapListener, TakeoffDetailsListener {
     public static final String ACTION_SHOW_FORECAST = "showForecast";
@@ -217,12 +219,12 @@ public class FlyWithMe extends Activity implements TakeoffListListener, TakeoffM
             inputStream = new DataInputStream(context.getResources().openRawResource(R.raw.flywithme));
             long importTimestamp = inputStream.readLong();
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-            long previousImportTimestamp = prefs.getLong("pref_import_timestamp", 0);
+            long previousImportTimestamp = prefs.getLong("pref_last_takeoff_update_timestamp", 0);
             if (importTimestamp <= previousImportTimestamp) {
                 Log.d(getClass().getName(), "No need to import, already up to date");
                 return; // no need to import, already updated
             }
-            prefs.edit().putLong("pref_import_timestamp", importTimestamp).apply();
+            prefs.edit().putLong("pref_last_takeoff_update_timestamp", importTimestamp).apply();
             while (true) {
                 /* loop breaks once we get an EOFException */
                 int takeoffId = inputStream.readShort();

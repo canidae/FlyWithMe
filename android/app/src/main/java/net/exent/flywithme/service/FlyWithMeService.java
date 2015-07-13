@@ -15,11 +15,14 @@ import com.google.api.client.googleapis.services.AbstractGoogleClientRequest;
 import com.google.api.client.googleapis.services.GoogleClientRequestInitializer;
 
 import net.exent.flywithme.FlyWithMe;
+import net.exent.flywithme.data.Database;
 import net.exent.flywithme.layout.NoaaForecast;
 import net.exent.flywithme.server.flyWithMeServer.FlyWithMeServer;
 import net.exent.flywithme.server.flyWithMeServer.model.Forecast;
+import net.exent.flywithme.server.flyWithMeServer.model.Takeoff;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Created by canidae on 6/23/15.
@@ -28,6 +31,7 @@ public class FlyWithMeService extends IntentService {
     public static final String ACTION_REGISTER_PILOT = "registerPilot";
     public static final String ACTION_GET_METEOGRAM = "getMeteogram";
     public static final String ACTION_GET_SOUNDING = "getSounding";
+    public static final String ACTION_GET_UPDATED_TAKEOFFS = "getUpdatedTakeoffs";
 
     public static final String DATA_BOOLEAN_REFRESH_TOKEN = "refreshToken";
     public static final String DATA_LONG_TAKEOFF_ID = "takeoffId";
@@ -72,6 +76,22 @@ public class FlyWithMeService extends IntentService {
                 Log.w(TAG, "Fetching sounding failed", e);
             }
             sendDisplayForecastIntent(takeoffId, forecast);
+        } else if (ACTION_GET_UPDATED_TAKEOFFS.equals(action)) {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+            long timestamp = prefs.getLong("pref_last_takeoff_update_timestamp", 0);
+            try {
+                List<Takeoff> updatedTakeoffs = getServer().getUpdatedTakeoffs(timestamp).execute().getItems();
+                Database database = new Database(getApplicationContext());
+                long lastUpdated = timestamp;
+                for (Takeoff takeoff : updatedTakeoffs) {
+                    if (takeoff.getLastUpdated() > lastUpdated)
+                        lastUpdated = takeoff.getLastUpdated();
+                    // TODO: database.updateTakeoff(takeoff);
+                }
+                // TODO: prefs.edit().putLong("pref_last_takeoff_update_timestamp", lastUpdated).apply();
+            } catch (IOException e) {
+                Log.w(TAG, "Fetching updated takeoffs failed", e);
+            }
         } else {
             Log.w(TAG, "Unknown action: " + intent.getAction());
         }
