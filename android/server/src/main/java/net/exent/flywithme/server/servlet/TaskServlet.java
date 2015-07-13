@@ -26,6 +26,8 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
 public class TaskServlet extends HttpServlet {
     private static final Logger log = Logger.getLogger(TaskServlet.class.getName());
 
+    private static final int MAX_TAKEOFF_ID_GAP = 50;
+
     static {
         ObjectifyService.register(Property.class);
         ObjectifyService.register(Takeoff.class);
@@ -45,21 +47,21 @@ public class TaskServlet extends HttpServlet {
     }
 
     private static void updateNextTakeoffData() {
-        // increase takeoff id counter
-        Property currentIdProperty = ofy().load().type(Property.class).id("scanCurrentId").now();
-        if (currentIdProperty == null)
-            currentIdProperty = new Property("scanCurrentId", 0);
-        currentIdProperty.setValue(currentIdProperty.getValueAsLong() + 1);
-        ofy().save().entity(currentIdProperty).now();
-
-        // either reset or increase failed counter
-        Property failedInARow = ofy().load().type(Property.class).id("scanFailedInARow").now();
-        if (failedInARow == null)
-            failedInARow = new Property("scanFailedInARow", 0);
-        else if (failedInARow.getValueAsInt() > 50)
-            return; // failed so many times in a row that we've either found all takeoffs or we should just give up
-        failedInARow.setValue(updateTakeoff(currentIdProperty.getValueAsLong()) ? 0 : failedInARow.getValueAsInt() + 1);
-        ofy().save().entity(failedInARow).now();
+        // update the takeoff after the last checked takeoff
+        Takeoff lastChecked = ofy().load().type(Takeoff.class).order("-lastChecked").first().now();
+        long currentId = lastChecked == null ? 1 : lastChecked.getId() + 1;
+        long maxId = currentId + MAX_TAKEOFF_ID_GAP;
+        for (; currentId < maxId; ++currentId) {
+            if (updateTakeoff(currentId))
+                return;
+        }
+        // couldn't find a takeoff with ID within MAX_TAKEOFF_ID_GAP after last updated takeoff, wrap around to start from ID 1
+        currentId = 1;
+        maxId = currentId + MAX_TAKEOFF_ID_GAP;
+        for (; currentId < maxId; ++currentId) {
+            if (updateTakeoff(currentId))
+                return;
+        }
     }
 
     private static boolean updateTakeoff(long takeoffId) {
@@ -69,8 +71,9 @@ public class TaskServlet extends HttpServlet {
                 Takeoff existing = ofy().load().type(Takeoff.class).id(takeoffId).now(); // TODO: this increase datastore read ops, is it a problem? can we remove it? "update where new data doesn't match old data"?
                 if (existing != null && takeoff.equals(existing)) {
                     takeoff.setLastUpdated(existing.getLastUpdated()); // data not changed, keep "lastUpdated"
+                } else {
                     log.info("Updated data for takeoff with ID " + takeoffId);
-                    // send message to clients, letting them know a takeoff was updated
+                    // send message to clients, letting them know a takeoff was added/updated
                     Message msg = new Message.Builder()
                             .collapseKey("flywithme-takeoff-updated")
                             .delayWhileIdle(true)

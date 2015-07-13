@@ -34,6 +34,7 @@ import java.io.EOFException;
 import java.io.IOException;
 
 /* TODO:
+   - Remove "Property"-table from GAE/Objectify, no longer in use
    - Bug user to register name/phone if it isn't already done
    - Register name/phone in backend
    - Use endpoint API for registering planned flight
