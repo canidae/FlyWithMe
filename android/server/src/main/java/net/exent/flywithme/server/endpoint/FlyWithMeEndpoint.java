@@ -120,7 +120,7 @@ public class FlyWithMeEndpoint {
         Forecast forecast = ofy().load().type(Forecast.class)
                 .filter("takeoffId", takeoffId)
                 .filter("type", Forecast.ForecastType.METEOGRAM)
-                .filter("lastUpdated <", System.currentTimeMillis() + FORECAST_CACHE_LIFETIME)
+                .filter("lastUpdated >", System.currentTimeMillis() - FORECAST_CACHE_LIFETIME)
                 .first().now();
         if (forecast != null) {
             // return forecast to client
@@ -157,7 +157,7 @@ public class FlyWithMeEndpoint {
                 .filter("takeoffId", takeoffId)
                 .filter("type", Forecast.ForecastType.SOUNDING)
                 .filter("validFor", timestamp)
-                .filter("lastUpdated <", System.currentTimeMillis() + FORECAST_CACHE_LIFETIME)
+                .filter("lastUpdated >", System.currentTimeMillis() - FORECAST_CACHE_LIFETIME)
                 .first().now();
         if (forecast != null) {
             // return forecast to client
