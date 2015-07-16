@@ -65,21 +65,6 @@
         <item>Sounding 18 UTC +3d</item>
         <item>Sounding 21 UTC +3d</item>
         <item>Sounding 00 UTC +4d</item>
-        <item>Sounding 03 UTC +4d</item>
-        <item>Sounding 06 UTC +4d</item>
-        <item>Sounding 09 UTC +4d</item>
-        <item>Sounding 12 UTC +4d</item>
-        <item>Sounding 15 UTC +4d</item>
-        <item>Sounding 18 UTC +4d</item>
-        <item>Sounding 21 UTC +4d</item>
-        <item>Sounding 00 UTC +5d</item>
-        <item>Sounding 03 UTC +5d</item>
-        <item>Sounding 06 UTC +5d</item>
-        <item>Sounding 09 UTC +5d</item>
-        <item>Sounding 12 UTC +5d</item>
-        <item>Sounding 15 UTC +5d</item>
-        <item>Sounding 18 UTC +5d</item>
-        <item>Sounding 21 UTC +5d</item>
     </string-array>
 
     <!-- What airspace to draw (this is mostly set programatically) -->

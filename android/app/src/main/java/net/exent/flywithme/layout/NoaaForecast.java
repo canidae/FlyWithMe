@@ -111,7 +111,7 @@ public class NoaaForecast extends Fragment {
                     @Override
                     public void onClick(View v) {
                         String title = takeoff.getName() + " (" + takeoff.getLocation().getLatitude() + ", " + takeoff.getLocation().getLongitude() + ")";
-                        String url = MediaStore.Images.Media.insertImage(FlyWithMe.getInstance().getContentResolver(), image, title, null);
+                        String url = MediaStore.Images.Media.insertImage(getActivity().getContentResolver(), image, title, null);
 
                         Intent sharingIntent = new Intent(Intent.ACTION_SEND);
                         sharingIntent.setType("image/*");

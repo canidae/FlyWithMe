@@ -283,7 +283,7 @@ public class TakeoffSchedule extends Fragment {
         @Override
         public View getGroupView(final int groupPosition, boolean isExpanded, View convertView, final ViewGroup parent) {
             if (convertView == null) {
-                LayoutInflater inflater = (LayoutInflater) FlyWithMe.getInstance().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 convertView = inflater.inflate(R.layout.takeoff_schedule_group, null);
             }
             /* AAH! Adding a button to the ExpandableListView removes expansion/collapse functionality of group as well as background color when clicked */
@@ -306,7 +306,7 @@ public class TakeoffSchedule extends Fragment {
             groupPilots.setText(getString(R.string.pilots) + ": " + entryGroup.getValue().size());
             final ImageButton joinOrLeave = (ImageButton) convertView.findViewById(R.id.joinOrLeaveButton);
 
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(FlyWithMe.getInstance());
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
             String pilotName = prefs.getString("pref_schedule_pilot_name", "").trim();
             boolean foundPilot = false;
             for (Pilot pilot : entryGroup.getValue()) {
@@ -344,7 +344,7 @@ public class TakeoffSchedule extends Fragment {
         @Override
         public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
             if (convertView == null) {
-                LayoutInflater inflater = (LayoutInflater) FlyWithMe.getInstance().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 convertView = inflater.inflate(R.layout.takeoff_schedule_entry, null);
             }
             final Pilot pilot = getEntryGroupChild(groupPosition, childPosition);
