@@ -3,7 +3,9 @@ package net.exent.flywithme.server.servlet;
 import com.google.android.gcm.server.Message;
 import com.googlecode.objectify.ObjectifyService;
 
+import net.exent.flywithme.server.bean.Forecast;
 import net.exent.flywithme.server.bean.Takeoff;
+import net.exent.flywithme.server.endpoint.FlyWithMeEndpoint;
 import net.exent.flywithme.server.utils.FlightlogCrawler;
 import net.exent.flywithme.server.utils.GcmUtil;
 
@@ -28,12 +30,17 @@ public class TaskServlet extends HttpServlet {
     private static final int MAX_TAKEOFF_ID_GAP = 50;
 
     static {
+        ObjectifyService.register(Forecast.class);
         ObjectifyService.register(Takeoff.class);
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         switch (req.getPathInfo()) {
+            case "/cleanCache":
+                cleanCache();
+                break;
+
             case "/updateNextTakeoffData":
                 updateNextTakeoffData();
                 break;
@@ -42,6 +49,10 @@ public class TaskServlet extends HttpServlet {
                 log.log(Level.WARNING, "Unknown task: " + req.getPathInfo());
                 break;
         }
+    }
+
+    private static void cleanCache() {
+        ofy().delete().entities(ofy().load().type(Forecast.class).filter("lastUpdated <=", System.currentTimeMillis() - FlyWithMeEndpoint.FORECAST_CACHE_LIFETIME).list());
     }
 
     private static void updateNextTakeoffData() {

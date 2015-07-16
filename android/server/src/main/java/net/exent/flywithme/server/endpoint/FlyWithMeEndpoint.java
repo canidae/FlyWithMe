@@ -28,7 +28,7 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
 public class FlyWithMeEndpoint {
     private static final Logger log = Logger.getLogger(FlyWithMeEndpoint.class.getName());
 
-    private static final long FORECAST_CACHE_LIFETIME = TimeUnit.MILLISECONDS.convert(6, TimeUnit.HOURS);
+    public static final long FORECAST_CACHE_LIFETIME = TimeUnit.MILLISECONDS.convert(6, TimeUnit.HOURS);
 
     static {
         ObjectifyService.register(Forecast.class);

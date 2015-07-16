@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <cronentries>
     <cron>
+        <url>/task/cleanCache</url>
+        <description>Delete cached data</description>
+        <schedule>every day 05:00</schedule>
+        <target>4</target>
+    </cron>
+    <cron>
         <url>/task/updateNextTakeoffData</url>
         <description>Update data for a single takeoff</description>
         <schedule>every 3 minutes</schedule>

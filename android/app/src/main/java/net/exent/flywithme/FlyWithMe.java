@@ -34,7 +34,7 @@ import java.io.EOFException;
 import java.io.IOException;
 
 /* TODO:
-   - Remove old forecasts (cron-job to clean old data?)
+   - Remove old forecasts (cron-job to clean old data?) - DONE: check that it works
    - Bug user to register name/phone if it isn't already done
    - Register name/phone in backend
    - Use endpoint API for registering planned flight
