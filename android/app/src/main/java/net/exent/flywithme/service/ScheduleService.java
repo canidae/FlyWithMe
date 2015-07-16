@@ -112,7 +112,7 @@ public class ScheduleService extends IntentService implements ConnectionCallback
             outputStream.writeByte(0);
             outputStream.writeShort(takeoffs.size());
             for (Takeoff takeoff : takeoffs)
-                outputStream.writeShort(takeoff.getId());
+                outputStream.writeShort((int) takeoff.getId());
             outputStream.close();
             int responseCode = con.getResponseCode();
             Log.d(ScheduleService.class.getName(), "Response code: " + responseCode);

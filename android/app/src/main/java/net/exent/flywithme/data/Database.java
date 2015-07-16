@@ -199,6 +199,14 @@ public class Database extends SQLiteOpenHelper {
         db.execSQL("alter table takeofftmp rename to takeoff");
     }
 
+    private synchronized void upgradeDatabaseToV4(SQLiteDatabase db) {
+        // TODO: but not before server got a complete takeoff database
+        // TODO: is it necessary to modify column types?
+        // - id changed from int to long
+        // - latitude and longitude changed from double to float
+        db.execSQL("drop table pilot");
+    }
+
     public static class ImprovedCursor {
         private Cursor cursor;
 
@@ -250,6 +258,20 @@ public class Database extends SQLiteOpenHelper {
             if (index >= 0)
                 return cursor.getLong(index);
             return 0;
+        }
+
+        public float getFloat(String column) {
+            int index = cursor.getColumnIndex(column);
+            if (index >= 0)
+                return cursor.getFloat(index);
+            return 0.0f;
+        }
+
+        public float getFloatOrThrow(String column) {
+            int index = cursor.getColumnIndexOrThrow(column);
+            if (index >= 0)
+                return cursor.getFloat(index);
+            return 0.0f;
         }
 
         public double getDouble(String column) {

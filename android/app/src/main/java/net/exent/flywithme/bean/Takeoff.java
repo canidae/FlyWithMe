@@ -1,7 +1,6 @@
 package net.exent.flywithme.bean;
 
 import android.content.ContentValues;
-import android.graphics.Bitmap;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Parcel;
@@ -16,7 +15,7 @@ import java.util.Map;
 public class Takeoff implements Parcelable {
     public static final Parcelable.Creator<Takeoff> CREATOR = new Parcelable.Creator<Takeoff>() {
         public Takeoff createFromParcel(Parcel in) {
-            return new Takeoff(in.readInt(), in.readLong(), in.readString(), in.readString(), in.readInt(), in.readInt(), in.readDouble(), in.readDouble(), in.readInt(), in.readByte() == 1);
+            return new Takeoff(in.readLong(), in.readLong(), in.readString(), in.readString(), in.readInt(), in.readInt(), in.readFloat(), in.readFloat(), in.readInt(), in.readByte() == 1);
         }
 
         public Takeoff[] newArray(int size) {
@@ -31,31 +30,23 @@ public class Takeoff implements Parcelable {
     // used to prevent excessive memory allocations. it means more memory used, but also that the garbage collector won't run so aggressively.
     private static Map<Integer, Takeoff> takeoffCache = new HashMap<>();
 
-    private int id;
-    private long lastUpdated;
-    private String name;
-    private String description;
-    private int asl;
-    private int height;
-    private double latitude;
-    private double longitude;
+    private net.exent.flywithme.server.flyWithMeServer.model.Takeoff takeoff = new net.exent.flywithme.server.flyWithMeServer.model.Takeoff();
+
     private int exits;
     private boolean favourite;
-    private int pilotsToday;
-    private int pilotsLater;
-    private Bitmap noaaForecast;
-    private long noaaUpdated;
+    private int pilotsToday; // TODO: remove?
+    private int pilotsLater; // TODO: remove?
 
     /* Should only be used for importing takeoffs from file */
-    public Takeoff(int id, long lastUpdated, String name, String description, int asl, int height, double latitude, double longitude, String exitDirections, boolean favourite) {
-        this.id = id;
-        this.lastUpdated = lastUpdated;
-        this.name = name;
-        this.description = description;
-        this.asl = asl;
-        this.height = height;
-        this.latitude = latitude;
-        this.longitude = longitude;
+    public Takeoff(long id, long lastUpdated, String name, String description, int asl, int height, float latitude, float longitude, String exitDirections, boolean favourite) {
+        takeoff.setId(id);
+        takeoff.setLastUpdated(lastUpdated);
+        takeoff.setName(name);
+        takeoff.setDescription(description);
+        takeoff.setAsl(asl);
+        takeoff.setHeight(height);
+        takeoff.setLatitude(latitude);
+        takeoff.setLongitude(longitude);
         for (String direction : exitDirections.split(" ")) {
             if ("N".equals(direction))
                 exits |= 1 << 8;
@@ -78,27 +69,27 @@ public class Takeoff implements Parcelable {
     }
 
     private Takeoff(Database.ImprovedCursor cursor) {
-        id = cursor.getIntOrThrow("takeoff_id");
-        lastUpdated = cursor.getLong("last_updated") * 1000;
-        name = cursor.getString("name");
-        description = cursor.getString("description");
-        asl = cursor.getInt("asl");
-        height = cursor.getInt("height");
-        latitude = cursor.getDouble("latitude");
-        longitude = cursor.getDouble("longitude");
+        takeoff.setId(cursor.getLongOrThrow("takeoff_id"));
+        takeoff.setLastUpdated(cursor.getLong("last_updated") * 1000);
+        takeoff.setName(cursor.getString("name"));
+        takeoff.setDescription(cursor.getString("description"));
+        takeoff.setAsl(cursor.getInt("asl"));
+        takeoff.setHeight(cursor.getInt("height"));
+        takeoff.setLatitude(cursor.getFloat("latitude"));
+        takeoff.setLongitude(cursor.getFloat("longitude"));
         exits = cursor.getInt("exits");
         favourite = cursor.getInt("favourite") == 1;
     }
 
-    private Takeoff(int id, long lastUpdated, String name, String description, int asl, int height, double latitude, double longitude, int exits, boolean favourite) {
-        this.id = id;
-        this.lastUpdated = lastUpdated;
-        this.name = name;
-        this.description = description;
-        this.asl = asl;
-        this.height = height;
-        this.latitude = latitude;
-        this.longitude = longitude;
+    private Takeoff(long id, long lastUpdated, String name, String description, int asl, int height, float latitude, float longitude, int exits, boolean favourite) {
+        takeoff.setId(id);
+        takeoff.setLastUpdated(lastUpdated);
+        takeoff.setName(name);
+        takeoff.setDescription(description);
+        takeoff.setAsl(asl);
+        takeoff.setHeight(height);
+        takeoff.setLatitude(latitude);
+        takeoff.setLongitude(longitude);
         this.exits = exits;
         this.favourite = favourite;
     }
@@ -119,42 +110,34 @@ public class Takeoff implements Parcelable {
         return takeoff;
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public void setLastUpdated(long lastUpdated) {
-        this.lastUpdated = lastUpdated;
+    public long getId() {
+        return takeoff.getId();
     }
 
     public long getLastUpdated() {
-        return lastUpdated;
+        return takeoff.getLastUpdated();
     }
 
     public String getName() {
-        return name;
+        return takeoff.getName();
     }
 
     public String getDescription() {
-        return description;
+        return takeoff.getDescription();
     }
 
     public int getAsl() {
-        return asl;
-    }
-
-    public void setAsl(int asl) {
-        this.asl = asl;
+        return takeoff.getAsl();
     }
 
     public int getHeight() {
-        return height;
+        return takeoff.getHeight();
     }
 
     public Location getLocation() {
         Location location = new Location(LocationManager.PASSIVE_PROVIDER);
-        location.setLatitude(latitude);
-        location.setLongitude(longitude);
+        location.setLatitude(takeoff.getLatitude());
+        location.setLongitude(takeoff.getLongitude());
         return location;
     }
 
@@ -218,33 +201,20 @@ public class Takeoff implements Parcelable {
         this.pilotsLater = pilotsLater;
     }
 
-    public Bitmap getNoaaforecast() {
-        return noaaForecast;
-    }
-
-    public void setNoaaForecast(Bitmap noaaForecast) {
-        this.noaaForecast = noaaForecast;
-        noaaUpdated = System.currentTimeMillis();
-    }
-
-    public long getNoaaUpdated() {
-        return noaaUpdated;
-    }
-
     public ContentValues getContentValues() {
         ContentValues contentValues = new ContentValues();
-        contentValues.put("takeoff_id", id);
-        contentValues.put("last_updated", lastUpdated);
-        contentValues.put("name", name);
-        contentValues.put("description", description);
-        contentValues.put("asl", asl);
-        contentValues.put("height", height);
-        double latitudeRadians = latitude * Math.PI / 180.0;
-        contentValues.put("latitude", latitude);
+        contentValues.put("takeoff_id", takeoff.getId());
+        contentValues.put("last_updated", takeoff.getLastUpdated());
+        contentValues.put("name", takeoff.getName());
+        contentValues.put("description", takeoff.getDescription());
+        contentValues.put("asl", takeoff.getAsl());
+        contentValues.put("height", takeoff.getHeight());
+        double latitudeRadians = takeoff.getLatitude() * Math.PI / 180.0;
+        contentValues.put("latitude", takeoff.getLatitude());
         contentValues.put("latitude_cos", Math.cos(latitudeRadians));
         contentValues.put("latitude_sin", Math.sin(latitudeRadians));
-        double longitudeRadians = longitude * Math.PI / 180.0;
-        contentValues.put("longitude", longitude);
+        double longitudeRadians = takeoff.getLongitude() * Math.PI / 180.0;
+        contentValues.put("longitude", takeoff.getLongitude());
         contentValues.put("longitude_cos", Math.cos(longitudeRadians));
         contentValues.put("longitude_sin", Math.sin(longitudeRadians));
         contentValues.put("exits", exits);
@@ -257,19 +227,19 @@ public class Takeoff implements Parcelable {
     }
 
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(id);
-        dest.writeString(name);
-        dest.writeString(description);
-        dest.writeInt(asl);
-        dest.writeInt(height);
-        dest.writeDouble(latitude);
-        dest.writeDouble(longitude);
+        dest.writeLong(takeoff.getId());
+        dest.writeString(takeoff.getName());
+        dest.writeString(takeoff.getDescription());
+        dest.writeInt(takeoff.getAsl());
+        dest.writeInt(takeoff.getHeight());
+        dest.writeFloat(takeoff.getLatitude());
+        dest.writeFloat(takeoff.getLongitude());
         dest.writeInt(exits);
         dest.writeByte((byte) (favourite ? 1 : 0));
     }
 
     @Override
     public String toString() {
-        return name;
+        return takeoff.getName();
     }
 }
