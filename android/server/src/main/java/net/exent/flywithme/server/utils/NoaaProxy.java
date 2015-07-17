@@ -37,8 +37,8 @@ public class NoaaProxy {
     private static final int BLACK = -16777216;
 
     private static final String NOAA_URL = "http://www.ready.noaa.gov";
-    private static final String NOAA_METGRAM_CONF = "&metdata=GFS0p5&mdatacfg=GFS0p5&metext=gfs0p5f&nhrs=96&type=user&wndtxt=2&Field1=FLAG&Level1=0&Field2=FLAG&Level2=5&Field3=FLAG&Level3=7&Field4=FLAG&Level4=9&Field5=TCLD&Level5=0&Field6=MSLP&Level6=0&Field7=T02M&Level7=0&Field8=TPP6&Level8=0&Field9=%20&Level9=0&Field10=%20&Level10=0&textonly=No&gsize=96&pdf=No";
-    private static final String NOAA_SOUNDING_CONF = "&metdata=GFS0p5&type=0&nhrs=24&hgt=1&textonly=No&skewt=1&gsize=96&pdf=No";
+    private static final String NOAA_METGRAM_CONF = "&metdata=GFS&mdatacfg=GFS&metext=gfsf&nhrs=96&type=user&wndtxt=2&Field1=FLAG&Level1=0&Field2=FLAG&Level2=5&Field3=FLAG&Level3=7&Field4=FLAG&Level4=9&Field5=TCLD&Level5=0&Field6=MSLP&Level6=0&Field7=T02M&Level7=0&Field8=TPP6&Level8=0&Field9=%20&Level9=0&Field10=%20&Level10=0&textonly=No&gsize=96&pdf=No";
+    private static final String NOAA_SOUNDING_CONF = "&metdata=GFS&type=0&nhrs=24&hgt=0&textonly=No&skewt=1&gsize=96&pdf=No";
     private static final Pattern NOAA_METCYC_PATTERN = Pattern.compile(".*</div><option value=\"(\\d+ \\d+)\">.*");
     private static final Pattern NOAA_USERID_PATTERN = Pattern.compile(".*userid=(\\d+).*");
     private static final Pattern NOAA_METDIR_PATTERN = Pattern.compile(".*<input type=\"HIDDEN\" name=\"metdir\" value=\"([^\"]+)\">.*");
@@ -99,9 +99,9 @@ public class NoaaProxy {
         for (int a = 0; a < 3 && noaaCaptcha == null; ++a) {
             try {
                 noaaUserId = getOne(fetchPageContent(NOAA_URL + "/ready2-bin/main.pl?Lat=" + latitude + "&Lon=" + longitude), NOAA_USERID_PATTERN);
-                String content = fetchPageContent(NOAA_URL + "/ready2-bin/metcycle.pl?product=metgram1&userid=" + noaaUserId + "&metdata=GFS0p5&mdatacfg=GFS0p5&Lat=" + latitude + "&Lon=" + longitude);
+                String content = fetchPageContent(NOAA_URL + "/ready2-bin/metcycle.pl?product=metgram1&userid=" + noaaUserId + "&metdata=GFS&mdatacfg=GFS&Lat=" + latitude + "&Lon=" + longitude);
                 noaaMetCyc = getOne(content, NOAA_METCYC_PATTERN).replace(' ', '+');
-                content = fetchPageContent(NOAA_URL + "/ready2-bin/metgram1.pl?userid=" + noaaUserId + "&metdata=GFS0p5&mdatacfg=GFS0p5&Lat=" + latitude + "&Lon=" + longitude + "&metext=gfs0p5f&metcyc=" + noaaMetCyc);
+                content = fetchPageContent(NOAA_URL + "/ready2-bin/metgram1.pl?userid=" + noaaUserId + "&metdata=GFS&mdatacfg=GFS&Lat=" + latitude + "&Lon=" + longitude + "&metext=gfsf&metcyc=" + noaaMetCyc);
                 noaaMetDir = getOne(content, NOAA_METDIR_PATTERN);
                 noaaMetFil = getOne(content, NOAA_METFIL_PATTERN);
                 noaaMetDates = getAll(content, NOAA_METDATE_PATTERN);
