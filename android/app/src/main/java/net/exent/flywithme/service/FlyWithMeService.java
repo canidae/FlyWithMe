@@ -114,7 +114,7 @@ public class FlyWithMeService extends IntentService {
         Intent intent = new Intent(this, FlyWithMe.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.setAction(FlyWithMe.ACTION_SHOW_FORECAST);
-        if (forecast == null) {
+        if (forecast == null || forecast.getImage() == null) {
             forecast = new Forecast();
             forecast.setTakeoffId(takeoffId);
             forecast.setType("ERROR");
