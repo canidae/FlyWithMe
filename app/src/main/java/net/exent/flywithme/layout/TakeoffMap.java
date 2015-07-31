@@ -206,14 +206,11 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
         }
     }
 
-    private class DrawMarkersTask extends AsyncTask<CameraPosition, Object, Void> {
+    private class DrawMarkersTask extends AsyncTask<CameraPosition, Object, Runnable> {
         @Override
-        protected Void doInBackground(CameraPosition... cameraPositions) {
+        protected Runnable doInBackground(CameraPosition... cameraPositions) {
             try {
-                /* clone markers & save visible takeoffs, so we know which markers to remove later */
-                Map<Takeoff, String> visibleTakeoffs = new HashMap<>();
-                for (Map.Entry<String, Pair<Marker, Takeoff>> entry : markers.entrySet())
-                    visibleTakeoffs.put(entry.getValue().second, entry.getKey());
+                final Map<Takeoff, MarkerOptions> addMarkers = new HashMap<>();
 
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
                 if (prefs.getBoolean("pref_map_show_takeoffs", true)) {
@@ -229,10 +226,6 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
 
                     /* add markers */
                     for (Takeoff takeoff : takeoffs) {
-                        if (visibleTakeoffs.containsKey(takeoff)) {
-                            visibleTakeoffs.remove(takeoff);
-                            continue; // takeoff already shown
-                        }
                         Bitmap bitmap = Bitmap.createBitmap(markerBitmap.getWidth(), markerBitmap.getHeight(), Bitmap.Config.ARGB_8888);
                         Canvas canvas = new Canvas(bitmap);
                         Paint paint = new Paint();
@@ -261,13 +254,39 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
                             canvas.drawBitmap(markerExclamationYellow, 0, 0, paint);
                         String snippet = getString(R.string.height) + ": " + takeoff.getHeight() + "m\n" + getString(R.string.distance) + ": " + (int) FlyWithMe.getInstance().getLocation().distanceTo(takeoff.getLocation()) / 1000 + "km";
                         MarkerOptions markerOptions = new MarkerOptions().position(new LatLng(takeoff.getLocation().getLatitude(), takeoff.getLocation().getLongitude())).title(takeoff.getName()).snippet(snippet).icon(BitmapDescriptorFactory.fromBitmap(bitmap)).anchor(0.5f, 0.875f);
-                        publishProgress(takeoff, markerOptions);
+                        addMarkers.put(takeoff, markerOptions);
                     }
                 }
 
                 /* remove markers that we didn't "add" */
-                for (Map.Entry<Takeoff, String> entry : visibleTakeoffs.entrySet())
-                    publishProgress(entry.getValue());
+                return new Runnable() {
+                    @Override
+                    public void run() {
+                        // remove markers that no longer should be visible
+                        for (Iterator<Map.Entry<String, Pair<Marker, Takeoff>>> iterator = markers.entrySet().iterator(); iterator.hasNext(); ) {
+                            Map.Entry<String, Pair<Marker, Takeoff>> entry = iterator.next();
+                            if (!addMarkers.containsKey(entry.getValue().second)) {
+                                entry.getValue().first.remove();
+                                iterator.remove();
+                            }
+                        }
+                        // add markers that should be visible
+                        for (Map.Entry<Takeoff, MarkerOptions> addEntry : addMarkers.entrySet()) {
+                            boolean alreadyShown = false;
+                            for (Map.Entry<String, Pair<Marker, Takeoff>> entry : markers.entrySet()) {
+                                if (addEntry.getKey().equals(entry.getValue().second)) {
+                                    alreadyShown = true;
+                                    break;
+                                }
+                            }
+                            if (!alreadyShown) {
+                                Marker marker = map.addMarker(addEntry.getValue());
+                                Pair<Marker, Takeoff> pair = new Pair<>(marker, addEntry.getKey());
+                                markers.put(marker.getId(), pair);
+                            }
+                        }
+                    }
+                };
             } catch (Exception e) {
                 Log.w(getClass().getName(), "doInBackground() failed unexpectedly", e);
             }
@@ -275,23 +294,9 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
         }
 
         @Override
-        protected void onProgressUpdate(Object... objects) {
-            try {
-                if (objects[0] instanceof Takeoff) {
-                    /* add marker */
-                    Takeoff takeoff = (Takeoff) objects[0];
-                    MarkerOptions markerOptions = (MarkerOptions) objects[1];
-                    Marker marker = map.addMarker(markerOptions);
-                    Pair<Marker, Takeoff> pair = new Pair<>(marker, takeoff);
-                    markers.put(marker.getId(), pair);
-                } else {
-                    /* remove marker */
-                    Marker marker = (markers.remove((String) objects[0])).first;
-                    marker.remove();
-                }
-            } catch (Exception e) {
-                Log.w(getClass().getName(), "onProgressUpdate() failed unexpectedly", e);
-            }
+        protected void onPostExecute(Runnable runnable) {
+            if (runnable != null)
+                runnable.run();
         }
     }
 
@@ -326,6 +331,7 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
                 if (!prefs.getBoolean("pref_map_show_airspace", true))
                     showZones.clear();
                 return new Runnable() {
+                    @Override
                     public void run() {
                         drawAirspaceMap(showZones);
                     }
