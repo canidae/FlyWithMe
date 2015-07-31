@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="appengine-api-1.0-sdk-1.8.9">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/www/WEB-INF/lib/appengine-api-1.0-sdk-1.8.9.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>
