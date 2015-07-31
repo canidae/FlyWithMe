@@ -34,7 +34,6 @@ import java.io.EOFException;
 import java.io.IOException;
 
 /* TODO:
-   - Bug user to register name/phone if it isn't already done
    - Use endpoint API for registering planned flight
    - Use endpoint API for fetching planned flights (schedule)
    - Fix "back"-functionality, see "addToBackStack()" for FragmentTransaction
@@ -163,9 +162,15 @@ public class FlyWithMe extends Activity implements TakeoffListListener, TakeoffM
         /* start importing takeoffs from files */
         (new ImportTakeoffTask()).execute();
 
-        /* show takeoff list */
-        if (savedInstanceState == null)
-            showTakeoffList();
+        /* show preferences if we haven't set pilot name, otherwise takeoff list */
+        if (savedInstanceState == null) {
+            String pilotName = prefs.getString("pref_pilot_name", null);
+            if (pilotName == null || pilotName.trim().equals("")) {
+                showSettings();
+            } else {
+                showTakeoffList();
+            }
+        }
     }
 
     @Override

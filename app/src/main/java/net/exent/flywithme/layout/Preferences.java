@@ -99,11 +99,15 @@ public class Preferences extends PreferenceFragment implements SharedPreferences
     /* END AAH! */
 
     private void updateDynamicPreferenceScreen() {
-        EditTextPreference schedulePilotName = (EditTextPreference) findPreference("pref_pilot_name");
-        schedulePilotName.setSummary(schedulePilotName.getText());
-        EditTextPreference schedulePilotPhone = (EditTextPreference) findPreference("pref_pilot_phone");
-        schedulePilotPhone.setSummary(schedulePilotPhone.getText());
-        CheckBoxPreference scheduleNotification = (CheckBoxPreference) findPreference("pref_notifications");
-        scheduleNotification.setOnPreferenceChangeListener(preferenceChangeListener);
+        EditTextPreference pilotName = (EditTextPreference) findPreference("pref_pilot_name");
+        if (pilotName.getText() == null || pilotName.getText().trim().equals("")) {
+            pilotName.setSummary(getActivity().getString(R.string.pilot_name_please_enter));
+        } else {
+            pilotName.setSummary(pilotName.getText());
+        }
+        EditTextPreference pilotPhone = (EditTextPreference) findPreference("pref_pilot_phone");
+        pilotPhone.setSummary(pilotPhone.getText());
+        CheckBoxPreference notifications = (CheckBoxPreference) findPreference("pref_notifications");
+        notifications.setOnPreferenceChangeListener(preferenceChangeListener);
     }
 }

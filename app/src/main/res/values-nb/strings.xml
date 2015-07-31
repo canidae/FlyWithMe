@@ -29,6 +29,7 @@
     <string name="general_settings">Generelle innstillinger</string>
     <string name="pilot_name">Navnet mitt</string>
     <string name="pilot_name_description">Ved registrering av flyplan vil dette navnet bli vist til andre piloter. Dette feltet må settes (ellers får du ikke lov til å registrere flyplan).</string>
+    <string name="pilot_name_please_enter">Vennligst skriv inn navn</string>
     <string name="pilot_phone">Telefonnummeret mitt</string>
     <string name="pilot_phone_description">Ved registrering av flyplan vil dette telefonnummeret bli vist til andre piloter. Du må ikke fylle ut dette, men det er anbefalt slik at andre piloter kan kontakte deg.</string>
     <string name="notifications">Notifikasjoner</string>

@@ -29,6 +29,7 @@
     <string name="general_settings">General settings</string>
     <string name="pilot_name">My name</string>
     <string name="pilot_name_description">When scheduling a flight, this name will be shown to other pilots. This field is required (or you won\'t be allowed to schedule flights).</string>
+    <string name="pilot_name_please_enter">Please enter your name</string>
     <string name="pilot_phone">My phone number</string>
     <string name="pilot_phone_description">When scheduling a flight, this phone number will be shown to other pilots. You don\'t have to fill this in, but it is recommended so other pilots can contact you.</string>
     <string name="notifications">Notifications</string>

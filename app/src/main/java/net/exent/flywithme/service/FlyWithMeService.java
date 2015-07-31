@@ -55,7 +55,11 @@ public class FlyWithMeService extends IntentService {
             boolean refreshToken = bundle.getBoolean(DATA_BOOLEAN_REFRESH_TOKEN, false);
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
             String pilotName = prefs.getString("pref_pilot_name", "<unknown>");
+            if (pilotName.trim().equals(""))
+                pilotName = "<unknown>";
             String pilotPhone = prefs.getString("pref_pilot_phone", "<unknown>");
+            if (pilotPhone.trim().equals(""))
+                pilotPhone = "<unknown>";
             registerPilot(refreshToken, pilotName, pilotPhone);
         } else if (ACTION_GET_METEOGRAM.equals(action)) {
             long takeoffId = bundle.getLong(DATA_LONG_TAKEOFF_ID, -1);
