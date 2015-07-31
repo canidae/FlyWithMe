@@ -38,7 +38,7 @@ public class Takeoff implements Parcelable {
     private int pilotsLater; // TODO: remove?
 
     /* Should only be used for importing takeoffs from file */
-    public Takeoff(long id, long lastUpdated, String name, String description, int asl, int height, float latitude, float longitude, String exitDirections, boolean favourite) {
+    public Takeoff(long id, long lastUpdated, String name, String description, int asl, int height, float latitude, float longitude, String windpai, boolean favourite) {
         takeoff.setId(id);
         takeoff.setLastUpdated(lastUpdated);
         takeoff.setName(name);
@@ -47,25 +47,13 @@ public class Takeoff implements Parcelable {
         takeoff.setHeight(height);
         takeoff.setLatitude(latitude);
         takeoff.setLongitude(longitude);
-        for (String direction : exitDirections.split(" ")) {
-            if ("N".equals(direction))
-                exits |= 1 << 8;
-            if ("NE".equals(direction))
-                exits |= 1 << 7;
-            if ("E".equals(direction))
-                exits |= 1 << 6;
-            if ("SE".equals(direction))
-                exits |= 1 << 5;
-            if ("S".equals(direction))
-                exits |= 1 << 4;
-            if ("SW".equals(direction))
-                exits |= 1 << 3;
-            if ("W".equals(direction))
-                exits |= 1 << 2;
-            if ("NW".equals(direction))
-                exits |= 1 << 1;
-        }
+        setExits(windpai);
         this.favourite = favourite;
+    }
+
+    public Takeoff(net.exent.flywithme.server.flyWithMeServer.model.Takeoff takeoff) {
+        this.takeoff = takeoff;
+        setExits(takeoff.getWindpai());
     }
 
     private Takeoff(Database.ImprovedCursor cursor) {
@@ -108,6 +96,10 @@ public class Takeoff implements Parcelable {
         takeoff.setPilotsToday(pilotsToday);
         takeoffCache.put(takeoffId, takeoff);
         return takeoff;
+    }
+
+    public void setTakeoff(net.exent.flywithme.server.flyWithMeServer.model.Takeoff takeoff) {
+        this.takeoff = takeoff;
     }
 
     public long getId() {
@@ -175,6 +167,27 @@ public class Takeoff implements Parcelable {
 
     public boolean hasNorthwestExit() {
         return (exits & (1 << 1)) != 0;
+    }
+
+    public void setExits(String windpai) {
+        for (String direction : windpai.split(" ")) {
+            if ("N".equals(direction))
+                exits |= 1 << 8;
+            if ("NE".equals(direction))
+                exits |= 1 << 7;
+            if ("E".equals(direction))
+                exits |= 1 << 6;
+            if ("SE".equals(direction))
+                exits |= 1 << 5;
+            if ("S".equals(direction))
+                exits |= 1 << 4;
+            if ("SW".equals(direction))
+                exits |= 1 << 3;
+            if ("W".equals(direction))
+                exits |= 1 << 2;
+            if ("NW".equals(direction))
+                exits |= 1 << 1;
+        }
     }
 
     public void setFavourite(boolean favourite) {

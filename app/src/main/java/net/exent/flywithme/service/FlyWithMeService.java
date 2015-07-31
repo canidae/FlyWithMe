@@ -90,9 +90,16 @@ public class FlyWithMeService extends IntentService {
                 for (Takeoff takeoff : updatedTakeoffs) {
                     if (takeoff.getLastUpdated() > lastUpdated)
                         lastUpdated = takeoff.getLastUpdated();
-                    // TODO: database.updateTakeoff(takeoff);
+                    net.exent.flywithme.bean.Takeoff updatedTakeoff = database.getTakeoff(takeoff.getId());
+                    if (updatedTakeoff != null) {
+                        updatedTakeoff.setTakeoff(takeoff);
+                    } else {
+                        updatedTakeoff = new net.exent.flywithme.bean.Takeoff(takeoff);
+                    }
+                    database.updateTakeoff(updatedTakeoff);
+                    Log.i(TAG, "Updated takeoff: " + updatedTakeoff);
                 }
-                // TODO: prefs.edit().putLong("pref_last_takeoff_update_timestamp", lastUpdated).apply();
+                prefs.edit().putLong("pref_last_takeoff_update_timestamp", lastUpdated).apply();
             } catch (IOException e) {
                 Log.w(TAG, "Fetching updated takeoffs failed", e);
             }

@@ -1,5 +1,6 @@
 package net.exent.flywithme.service;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -16,7 +17,9 @@ public class GcmListenerService extends com.google.android.gms.gcm.GcmListenerSe
             return;
         if (data.containsKey("takeoffUpdated")) {
             // a takeoff was updated or added, retrieve all takeoffs updated after the last updated takeoff stored on device
-
+            Intent intent = new Intent(this, FlyWithMeService.class);
+            intent.setAction(FlyWithMeService.ACTION_GET_UPDATED_TAKEOFFS);
+            startService(intent);
         }
     }
 }

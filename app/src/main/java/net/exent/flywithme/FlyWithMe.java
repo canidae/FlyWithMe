@@ -39,7 +39,7 @@ import java.io.IOException;
    - Fix "back"-functionality, see "addToBackStack()" for FragmentTransaction
    - Display notification if user is close to takeoff ("are you flying?")
      - Must be possible to "blacklist" takeoffs, and somehow remove blacklisting later (in preference window?)
-   - Notify clients when a takeoff is updated (clients respond with last updated takeoff timestamp, and get all updated takeoffs after that timestamp in return)
+   - Notify clients when a takeoff is updated. DONE: test if works
    - Cache forecasts locally for some few hours (fetched timestamp is returned, cache for the same amount of time as server caches the forecast)
    - Can we improve fetching location, or at least get rid of all the implemented interfaces?
    - Don't like "FlyWithMe.getInstance()", is it possible to get rid of it?

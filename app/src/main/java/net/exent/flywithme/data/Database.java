@@ -85,7 +85,7 @@ public class Database extends SQLiteOpenHelper {
         }
     }
 
-    public synchronized void updateTakeoffSchedule(int takeoffId, Map<Long, List<Pilot>> schedule) {
+    public synchronized void updateTakeoffSchedule(long takeoffId, Map<Long, List<Pilot>> schedule) {
         SQLiteDatabase db = getWritableDatabase();
         if (db == null)
             throw new IllegalArgumentException("Unable to get database object");
@@ -108,7 +108,7 @@ public class Database extends SQLiteOpenHelper {
         }
     }
 
-    public synchronized Takeoff getTakeoff(int takeoffId) {
+    public synchronized Takeoff getTakeoff(long takeoffId) {
         SQLiteDatabase db = getReadableDatabase();
         if (db == null)
             throw new IllegalArgumentException("Unable to get database object");
