@@ -35,7 +35,6 @@ import java.io.IOException;
 
 /* TODO:
    - Bug user to register name/phone if it isn't already done
-   - Register name/phone in backend
    - Use endpoint API for registering planned flight
    - Use endpoint API for fetching planned flights (schedule)
    - Fix "back"-functionality, see "addToBackStack()" for FragmentTransaction
