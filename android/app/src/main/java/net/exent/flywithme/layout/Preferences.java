@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
@@ -17,6 +18,7 @@ import android.widget.ImageButton;
 
 import net.exent.flywithme.R;
 import net.exent.flywithme.data.Airspace;
+import net.exent.flywithme.service.FlyWithMeService;
 
 public class Preferences extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
     private Preference.OnPreferenceChangeListener preferenceChangeListener = new Preference.OnPreferenceChangeListener() {
@@ -88,15 +90,20 @@ public class Preferences extends PreferenceFragment implements SharedPreferences
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         updateDynamicPreferenceScreen();
+
+        // register new pilot name/phone
+        Intent intent = new Intent(getActivity(), FlyWithMeService.class);
+        intent.setAction(FlyWithMeService.ACTION_REGISTER_PILOT);
+        getActivity().startService(intent);
     }
     /* END AAH! */
 
     private void updateDynamicPreferenceScreen() {
-        EditTextPreference schedulePilotName = (EditTextPreference) findPreference("pref_schedule_pilot_name");
+        EditTextPreference schedulePilotName = (EditTextPreference) findPreference("pref_pilot_name");
         schedulePilotName.setSummary(schedulePilotName.getText());
-        EditTextPreference schedulePilotPhone = (EditTextPreference) findPreference("pref_schedule_pilot_phone");
+        EditTextPreference schedulePilotPhone = (EditTextPreference) findPreference("pref_pilot_phone");
         schedulePilotPhone.setSummary(schedulePilotPhone.getText());
-        CheckBoxPreference scheduleNotification = (CheckBoxPreference) findPreference("pref_schedule_notification");
+        CheckBoxPreference scheduleNotification = (CheckBoxPreference) findPreference("pref_notifications");
         scheduleNotification.setOnPreferenceChangeListener(preferenceChangeListener);
     }
 }

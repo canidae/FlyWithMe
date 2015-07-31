@@ -9,25 +9,25 @@
         android:key="pref_general"
         android:title="@string/general_settings">
         <EditTextPreference
-            android:key="pref_schedule_pilot_name"
+            android:key="pref_pilot_name"
             android:maxLength="20"
             android:inputType="textCapWords"
             android:selectAllOnFocus="true"
-            android:title="@string/pref_schedule_pilot_name"
-            android:dialogTitle="@string/pref_schedule_pilot_name"
-            android:dialogMessage="@string/pref_schedule_pilot_name_description" />
+            android:title="@string/pilot_name"
+            android:dialogTitle="@string/pilot_name"
+            android:dialogMessage="@string/pilot_name_description" />
         <EditTextPreference
-            android:key="pref_schedule_pilot_phone"
+            android:key="pref_pilot_phone"
             android:maxLength="40"
             android:inputType="phone"
             android:selectAllOnFocus="true"
-            android:title="@string/pref_schedule_pilot_phone"
-            android:dialogTitle="@string/pref_schedule_pilot_phone"
-            android:dialogMessage="@string/pref_schedule_pilot_phone_description" />
+            android:title="@string/pilot_phone"
+            android:dialogTitle="@string/pilot_phone"
+            android:dialogMessage="@string/pilot_phone_description" />
         <CheckBoxPreference
             android:defaultValue="true"
-            android:key="pref_schedule_notification"
-            android:title="@string/pref_schedule_notification" />
+            android:key="pref_notifications"
+            android:title="@string/notifications" />
     </PreferenceCategory>
 
     <!-- What airspace polygons to show. This is filled programmatically -->

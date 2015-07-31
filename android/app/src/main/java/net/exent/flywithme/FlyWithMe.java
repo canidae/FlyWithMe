@@ -34,7 +34,6 @@ import java.io.EOFException;
 import java.io.IOException;
 
 /* TODO:
-   - Remove old forecasts (cron-job to clean old data?) - DONE: check that it works
    - Bug user to register name/phone if it isn't already done
    - Register name/phone in backend
    - Use endpoint API for registering planned flight
@@ -53,10 +52,6 @@ public class FlyWithMe extends Activity implements TakeoffListListener, TakeoffM
 
     public static final String SERVER_URL = "http://flywithme-server.appspot.com/fwm";
     //public static final String SERVER_URL = "http://192.168.1.200:8080/fwm";
-
-    public static final String PREFERENCE_TOKEN = "token";
-    public static final String PREFERENCE_PILOT_NAME = "pilotName";
-    public static final String PREFERENCE_PILOT_PHONE = "pilotPhone";
 
     private static final int LOCATION_UPDATE_TIME = 60000; // update location every LOCATION_UPDATE_TIME millisecond
     private static final int LOCATION_UPDATE_DISTANCE = 100; // or when we've moved more than LOCATION_UPDATE_DISTANCE meters
@@ -160,7 +155,7 @@ public class FlyWithMe extends Activity implements TakeoffListListener, TakeoffM
 
         /* register pilot if we haven't done so already */
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        if (prefs.getString(FlyWithMe.PREFERENCE_TOKEN, null) == null) {
+        if (prefs.getString("token", null) == null) {
             Intent intent = new Intent(this, FlyWithMeService.class);
             intent.setAction(FlyWithMeService.ACTION_REGISTER_PILOT);
             startService(intent);

@@ -54,8 +54,8 @@ public class FlyWithMeService extends IntentService {
         if (ACTION_REGISTER_PILOT.equals(action)) {
             boolean refreshToken = bundle.getBoolean(DATA_BOOLEAN_REFRESH_TOKEN, false);
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-            String pilotName = prefs.getString(FlyWithMe.PREFERENCE_PILOT_NAME, "<unknown>");
-            String pilotPhone = prefs.getString(FlyWithMe.PREFERENCE_PILOT_PHONE, "<unknown>");
+            String pilotName = prefs.getString("pref_pilot_name", "<unknown>");
+            String pilotPhone = prefs.getString("pref_pilot_phone", "<unknown>");
             registerPilot(refreshToken, pilotName, pilotPhone);
         } else if (ACTION_GET_METEOGRAM.equals(action)) {
             long takeoffId = bundle.getLong(DATA_LONG_TAKEOFF_ID, -1);
@@ -99,10 +99,12 @@ public class FlyWithMeService extends IntentService {
 
     private void registerPilot(boolean refreshToken, String name, String phone) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        String token = prefs.getString(FlyWithMe.PREFERENCE_TOKEN, null);
+        String token = prefs.getString("token", null);
         try {
-            if (refreshToken || token == null)
+            if (refreshToken || token == null) {
                 token = InstanceID.getInstance(getApplicationContext()).getToken(PROJECT_ID, GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
+                prefs.edit().putString("token", token).apply();
+            }
             getServer().registerPilot(token, name, phone).execute();
         } catch (IOException e) {
             Log.w(TAG, "Registering pilot failed", e);
