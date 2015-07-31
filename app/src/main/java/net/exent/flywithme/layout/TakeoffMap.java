@@ -118,8 +118,6 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
                 }
             });
             ((ImageButton) getActivity().findViewById(R.id.fragmentButton3)).setImageDrawable(null);
-            /* draw overlay */
-            drawOverlay(map.getCameraPosition());
         } catch (Exception e) {
             Log.w(getClass().getName(), "drawMap() task failed unexpectedly", e);
         }
