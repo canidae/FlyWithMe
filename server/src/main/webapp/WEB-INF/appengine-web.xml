@@ -8,4 +8,8 @@
         <property name="java.util.logging.config.file" value="WEB-INF/logging.properties"/>
         <property name="gcm.api.key" value="AIzaSyCoWi-w2NhY0DnKSDK33M4rJb671PHOhZ8"/>
     </system-properties>
+
+    <admin-console>
+        <page name="Appstats" url="/appstats" />
+    </admin-console>
 </appengine-web-app>

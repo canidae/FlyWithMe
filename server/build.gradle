@@ -20,6 +20,7 @@ apply plugin: 'appengine'
 
 dependencies {
     appengineSdk 'com.google.appengine:appengine-java-sdk:1.9.23'
+    compile 'com.google.appengine:appengine-api-labs:1.9.23'
     compile 'com.google.appengine:appengine-endpoints:1.9.23'
     compile 'com.google.appengine:appengine-endpoints-deps:1.9.23'
     compile 'javax.servlet:servlet-api:2.5'
