@@ -13,6 +13,7 @@ import net.exent.flywithme.server.bean.Takeoff;
 import net.exent.flywithme.server.utils.GcmUtil;
 import net.exent.flywithme.server.utils.NoaaProxy;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
@@ -140,41 +141,75 @@ public class FlyWithMeEndpoint {
     }
 
     /**
-     * Fetch sounding for the given takeoff and time.
+     * Fetch sounding profile, theta and text for the given takeoff and time.
      *
      * @param takeoffId The takeoff ID.
      * @param timestamp The timestamp we want sounding for, in milliseconds since epoch.
-     * @return Sounding for the given takeoff and timestamp.
+     * @return Sounding profile, theta and text for the given takeoff and timestamp.
      */
     @ApiMethod(name = "getSounding")
-    public Forecast getSounding(@Named("takeoffId") long takeoffId, @Named("timestamp") long timestamp) {
+    public List<Forecast> getSounding(@Named("takeoffId") long takeoffId, @Named("timestamp") long timestamp) {
         timestamp = (timestamp / 10800000) * 10800000; // aligns timestamp with valid values for sounding (sounding every 3rd hour)
         if (timestamp < System.currentTimeMillis() - TimeUnit.MILLISECONDS.convert(1, TimeUnit.DAYS)) {
             log.info("Client tried to retrieve sounding for takeoff '" + takeoffId + "' with timestamp '" + timestamp + "', but that timestamp was a long time ago");
             return null;
         }
-        Forecast forecast = ofy().load().type(Forecast.class)
+        Forecast profile = ofy().load().type(Forecast.class)
                 .filter("takeoffId", takeoffId)
-                .filter("type", Forecast.ForecastType.SOUNDING)
+                .filter("type", Forecast.ForecastType.PROFILE)
                 .filter("validFor", timestamp)
                 .filter("lastUpdated >", System.currentTimeMillis() - FORECAST_CACHE_LIFETIME)
                 .first().now();
-        if (forecast != null) {
-            // return forecast to client
-            return forecast;
+        if (profile != null) {
+            Forecast theta = ofy().load().type(Forecast.class)
+                    .filter("takeoffId", takeoffId)
+                    .filter("type", Forecast.ForecastType.THETA)
+                    .filter("validFor", timestamp)
+                    .filter("lastUpdated >", System.currentTimeMillis() - FORECAST_CACHE_LIFETIME)
+                    .first().now();
+            if (theta != null) {
+                Forecast text = ofy().load().type(Forecast.class)
+                        .filter("takeoffId", takeoffId)
+                        .filter("type", Forecast.ForecastType.TEXT)
+                        .filter("validFor", timestamp)
+                        .filter("lastUpdated >", System.currentTimeMillis() - FORECAST_CACHE_LIFETIME)
+                        .first().now();
+                if (text != null) {
+                    // return forecasts to client
+                    return Arrays.asList(profile, theta, text);
+                }
+            }
         }
-        // need to fetch forecast
+        // need to fetch sounding, theta and text
         Takeoff takeoff = fetchTakeoff(takeoffId);
-        if (takeoff != null) {
-            forecast = new Forecast();
-            forecast.setTakeoffId(takeoffId);
-            forecast.setType(Forecast.ForecastType.SOUNDING);
-            forecast.setLastUpdated(System.currentTimeMillis());
-            forecast.setValidFor(timestamp);
-            forecast.setImage(NoaaProxy.fetchSounding(takeoff.getLatitude(), takeoff.getLongitude(), timestamp));
-            ofy().save().entity(forecast).now();
-        }
-        return forecast;
+        if (takeoff == null)
+            return null;
+        List<byte[]> images = NoaaProxy.fetchSounding(takeoff.getLatitude(), takeoff.getLongitude(), timestamp);
+        // profile
+        profile = new Forecast();
+        profile.setTakeoffId(takeoffId);
+        profile.setType(Forecast.ForecastType.PROFILE);
+        profile.setLastUpdated(System.currentTimeMillis());
+        profile.setValidFor(timestamp);
+        profile.setImage(images.get(0));
+        ofy().save().entity(profile).now();
+        // theta
+        Forecast theta = new Forecast();
+        theta.setTakeoffId(takeoffId);
+        theta.setType(Forecast.ForecastType.THETA);
+        theta.setLastUpdated(System.currentTimeMillis());
+        theta.setValidFor(timestamp);
+        theta.setImage(images.get(1));
+        ofy().save().entity(theta).now();
+        // text
+        Forecast text = new Forecast();
+        text.setTakeoffId(takeoffId);
+        text.setType(Forecast.ForecastType.TEXT);
+        text.setLastUpdated(System.currentTimeMillis());
+        text.setValidFor(timestamp);
+        text.setImage(images.get(2));
+        ofy().save().entity(text).now();
+        return Arrays.asList(profile, theta, text);
     }
 
     /**

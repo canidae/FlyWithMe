@@ -38,7 +38,7 @@ public class NoaaProxy {
 
     private static final String NOAA_URL = "http://www.ready.noaa.gov";
     private static final String NOAA_METGRAM_CONF = "&metdata=GFS&mdatacfg=GFS&metext=gfsf&nhrs=96&type=user&wndtxt=2&Field1=FLAG&Level1=0&Field2=FLAG&Level2=5&Field3=FLAG&Level3=7&Field4=FLAG&Level4=9&Field5=TCLD&Level5=0&Field6=MSLP&Level6=0&Field7=T02M&Level7=0&Field8=TPP6&Level8=0&Field9=%20&Level9=0&Field10=%20&Level10=0&textonly=No&gsize=96&pdf=No";
-    private static final String NOAA_SOUNDING_CONF = "&metdata=GFS&type=0&nhrs=24&hgt=0&textonly=No&skewt=1&gsize=96&pdf=No";
+    private static final String NOAA_SOUNDING_CONF = "&metdata=GFS&type=0&nhrs=24&hgt=0&textonly=No&skewt=3&gsize=96&pdf=No";
     private static final Pattern NOAA_METCYC_PATTERN = Pattern.compile(".*</div><option value=\"(\\d+ \\d+)\">.*");
     private static final Pattern NOAA_USERID_PATTERN = Pattern.compile(".*userid=(\\d+).*");
     private static final Pattern NOAA_METDIR_PATTERN = Pattern.compile(".*<input type=\"HIDDEN\" name=\"metdir\" value=\"([^\"]+)\">.*");
@@ -47,7 +47,9 @@ public class NoaaProxy {
     private static final Pattern NOAA_PROC_PATTERN = Pattern.compile(".*<input type=\"HIDDEN\" name=\"proc\" value=\"(\\d+)\">.*");
     private static final Pattern NOAA_CAPTCHA_URL_PATTERN = Pattern.compile(".*<img src=\"([^\"]+)\" ALT=\"Security Code\".*");
     private static final Pattern NOAA_METEOGRAM_PATTERN = Pattern.compile(".*<img src=\"([^\"]+)\" ALT=\"meteorogram\">.*");
-    private static final Pattern NOAA_SOUNDING_PATTERN = Pattern.compile(".*<IMG SRC=\"([^\"]+)\" ALT=\"Profile\">.*");
+    private static final Pattern NOAA_SOUNDING_PROFILE_PATTERN = Pattern.compile(".*<img src=\"([^\"]+)\" ALT=\"Profile\">.*");
+    private static final Pattern NOAA_SOUNDING_THETA_PATTERN = Pattern.compile(".*<img src=\"([^\"]+)\" ALT=\"Theta Plot\">.*");
+    private static final Pattern NOAA_SOUNDING_TEXT_PATTERN = Pattern.compile(".*<img src=\"([^\"]+)\" ALT=\"Text listing\">.*");
 
     private static SimpleDateFormat metdateFormatter = new SimpleDateFormat("MMMM dd, yyyy 'at' HH 'UTC'", Locale.US);
     static {
@@ -142,36 +144,40 @@ public class NoaaProxy {
     }
 
     /**
-     * Fetch sounding for a given location and time.
+     * Fetch sounding profile, theta and text for a given location and time.
      *
      * @param latitude The latitude of the location we want forecast for.
      * @param longitude The longitude of the location we want forecast for.
      * @param soundingTimestamp The timestamp we want sounding for, in milliseconds since epoch.
-     * @return The sounding image.
+     * @return The sounding profile, theta and text images, in that order.
      */
-    public static byte[] fetchSounding(float latitude, float longitude, long soundingTimestamp) {
+    public static List<byte[]> fetchSounding(float latitude, float longitude, long soundingTimestamp) {
         if (noaaCaptcha == null)
             updateFieldsAndCaptcha(latitude, longitude);
+        List<byte[]> result = new ArrayList<>();
         String metDate = metdateFormatter.format(new Date(soundingTimestamp));
         for (int a = 0; a < 2; ++a) {
             for (String noaaMetdate : noaaMetDates) {
                 if (!noaaMetdate.startsWith(metDate))
                     continue;
                 try {
-                    String soundingUrl = getOne(fetchPageContent(NOAA_URL + "/ready2-bin/profile2.pl?userid=" + noaaUserId + "&Lat=" + latitude + "&Lon=" + longitude
+                    String pageContent = fetchPageContent(NOAA_URL + "/ready2-bin/profile2.pl?userid=" + noaaUserId + "&Lat=" + latitude + "&Lon=" + longitude
                             + "&metdir=" + noaaMetDir + "&metcyc=" + noaaMetCyc + "&metdate=" + URLEncoder.encode(noaaMetdate, "UTF-8") + "&metfil=" + noaaMetFil
-                            + "&password1=" + noaaCaptcha + "&proc=" + noaaProc + NOAA_SOUNDING_CONF), NOAA_SOUNDING_PATTERN);
-                    byte[] soundingImage = fetchImage(NOAA_URL + soundingUrl);
-                    if (soundingImage != null)
-                        return soundingImage;
+                            + "&password1=" + noaaCaptcha + "&proc=" + noaaProc + NOAA_SOUNDING_CONF);
+                    String soundingUrl = getOne(pageContent, NOAA_SOUNDING_PROFILE_PATTERN);
+                    result.add(fetchImage(NOAA_URL + soundingUrl));
+                    String thetaUrl = getOne(pageContent, NOAA_SOUNDING_THETA_PATTERN);
+                    result.add(fetchImage(NOAA_URL + thetaUrl));
+                    String textUrl = getOne(pageContent, NOAA_SOUNDING_TEXT_PATTERN);
+                    result.add(fetchImage(NOAA_URL + textUrl));
                 } catch (Exception e) {
-                    log.log(Level.WARNING, "Failed fetching sounding image", e);
+                    log.log(Level.WARNING, "Failed fetching sounding profile/theta/text images", e);
                 }
             }
-            log.info("No sounding image returned, updating cached data and trying to solve new captcha");
+            log.info("No sounding profile/theta/text images returned, updating cached data and trying to solve new captcha");
             updateFieldsAndCaptcha(latitude, longitude);
         }
-        return null;
+        return result;
     }
 
     private static URLConnection fetchPage(String url) {

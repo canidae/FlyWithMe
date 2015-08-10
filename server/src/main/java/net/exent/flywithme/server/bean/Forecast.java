@@ -10,7 +10,7 @@ import com.googlecode.objectify.annotation.Index;
 @Entity
 public class Forecast {
     public enum ForecastType {
-        METEOGRAM, SOUNDING
+        METEOGRAM, PROFILE, THETA, TEXT
     }
 
     @Id private Long id;

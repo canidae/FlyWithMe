@@ -22,6 +22,7 @@ import net.exent.flywithme.server.flyWithMeServer.model.Forecast;
 import net.exent.flywithme.server.flyWithMeServer.model.Takeoff;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -69,17 +70,19 @@ public class FlyWithMeService extends IntentService {
             } catch (IOException e) {
                 Log.w(TAG, "Fetching meteogram failed", e);
             }
-            sendDisplayForecastIntent(takeoffId, forecast);
+            List<Forecast> forecasts = new ArrayList<>();
+            forecasts.add(forecast);
+            sendDisplayForecastIntent(takeoffId, forecasts);
         } else if (ACTION_GET_SOUNDING.equals(action)) {
             long takeoffId = bundle.getLong(DATA_LONG_TAKEOFF_ID, -1);
             long timestamp = bundle.getLong(DATA_LONG_TIMESTAMP, -1);
-            Forecast forecast = null;
+            List<Forecast> forecasts = null;
             try {
-                forecast = getServer().getSounding(takeoffId, timestamp).execute();
+                forecasts = getServer().getSounding(takeoffId, timestamp).execute().getItems();
             } catch (IOException e) {
                 Log.w(TAG, "Fetching sounding failed", e);
             }
-            sendDisplayForecastIntent(takeoffId, forecast);
+            sendDisplayForecastIntent(takeoffId, forecasts);
         } else if (ACTION_GET_UPDATED_TAKEOFFS.equals(action)) {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
             long timestamp = prefs.getLong("pref_last_takeoff_update_timestamp", 0);
@@ -122,24 +125,31 @@ public class FlyWithMeService extends IntentService {
         }
     }
 
-    private void sendDisplayForecastIntent(long takeoffId, Forecast forecast) {
-        Log.d(getClass().getName(), "sendDisplayForecastIntent(" + forecast + ")");
+    private void sendDisplayForecastIntent(long takeoffId, List<Forecast> forecasts) {
+        Log.d(getClass().getName(), "sendDisplayForecastIntent(" + forecasts + ")");
         Intent intent = new Intent(this, FlyWithMe.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.setAction(FlyWithMe.ACTION_SHOW_FORECAST);
-        if (forecast == null || forecast.getImage() == null) {
-            forecast = new Forecast();
+        if (forecasts == null)
+            forecasts = new ArrayList<>();
+        if (forecasts.isEmpty() || forecasts.get(0) == null || forecasts.get(0).getImage() == null) {
+            forecasts.clear();
+            Forecast forecast = new Forecast();
             forecast.setTakeoffId(takeoffId);
             forecast.setType("ERROR");
+            forecasts.add(forecast);
         }
         /* AAH!
          * Models in client library generated from endpoint are not serializable, we can't just pass the object.
          */
-        intent.putExtra(NoaaForecast.ARG_IMAGE, forecast.decodeImage());
-        intent.putExtra(NoaaForecast.ARG_LAST_UPDATED, forecast.getLastUpdated());
-        intent.putExtra(NoaaForecast.ARG_TAKEOFF_ID, forecast.getTakeoffId());
-        intent.putExtra(NoaaForecast.ARG_TYPE, forecast.getType());
-        intent.putExtra(NoaaForecast.ARG_VALID_FOR, forecast.getValidFor());
+        for (int i = 0; i < forecasts.size(); ++i) {
+            Forecast forecast = forecasts.get(i);
+            intent.putExtra(NoaaForecast.ARG_IMAGE + "_" + i, forecast.decodeImage());
+            intent.putExtra(NoaaForecast.ARG_TYPE + "_" + i, forecast.getType());
+        }
+        intent.putExtra(NoaaForecast.ARG_LAST_UPDATED, forecasts.get(0).getLastUpdated());
+        intent.putExtra(NoaaForecast.ARG_TAKEOFF_ID, forecasts.get(0).getTakeoffId());
+        intent.putExtra(NoaaForecast.ARG_VALID_FOR, forecasts.get(0).getValidFor());
         startActivity(intent);
     }
 
@@ -149,7 +159,7 @@ public class FlyWithMeService extends IntentService {
         // otherwise they can be skipped
         builder.setApplicationName("FlyWithMe");
         //builder.setRootUrl("http://88.95.84.204:8080/_ah/api/");
-        builder.setRootUrl("https://4-dot-flywithme-server.appspot.com/_ah/api/");
+        builder.setRootUrl("https://4003-dot-flywithme-server.appspot.com/_ah/api/");
         builder.setGoogleClientRequestInitializer(new GoogleClientRequestInitializer() {
             @Override
             public void initialize(AbstractGoogleClientRequest<?> abstractGoogleClientRequest) throws IOException {

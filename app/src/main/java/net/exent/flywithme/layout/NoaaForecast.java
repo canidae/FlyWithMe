@@ -1,6 +1,5 @@
 package net.exent.flywithme.layout;
 
-import net.exent.flywithme.FlyWithMe;
 import net.exent.flywithme.R;
 import net.exent.flywithme.bean.Takeoff;
 import net.exent.flywithme.data.Database;
@@ -10,6 +9,7 @@ import net.exent.flywithme.view.GestureImageView;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -24,7 +24,9 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.TimeZone;
 
 public class NoaaForecast extends Fragment {
@@ -61,8 +63,32 @@ public class NoaaForecast extends Fragment {
             final ProgressBar forecastLoadingAnimation = ((ProgressBar) getActivity().findViewById(R.id.noaaForecastLoadingAnimation));
             final TextView noaaForecastErrorMessage = (TextView) getActivity().findViewById(R.id.noaaForecastErrorMessage);
             final Takeoff takeoff = new Database(getActivity()).getTakeoff((int) args.getLong(ARG_TAKEOFF_ID));
-            final byte[] imageArray = args.getByteArray(ARG_IMAGE);
-            final Bitmap image = imageArray == null ? null : BitmapFactory.decodeByteArray(imageArray, 0, imageArray.length);
+
+            int width = 0;
+            int height = 0;
+            List<Bitmap> images = new ArrayList<>();
+            for (int i = 0; ; ++i) {
+                final byte[] imageArray = args.getByteArray(ARG_IMAGE + "_" + i);
+                final Bitmap image = imageArray == null ? null : BitmapFactory.decodeByteArray(imageArray, 0, imageArray.length);
+                if (image == null)
+                    break;
+                width += image.getWidth();
+                if (image.getHeight() > height)
+                    height = image.getHeight();
+                images.add(image);
+            }
+            final Bitmap image;
+            if (width > 0) {
+                image = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+                Canvas canvas = new Canvas(image);
+                width = 0;
+                for (Bitmap tmpImage : images) {
+                    canvas.drawBitmap(tmpImage, width, 0, null);
+                    width += tmpImage.getWidth();
+                }
+            } else {
+                image = null;
+            }
 
             ImageButton soundingButton = ((ImageButton) getActivity().findViewById(R.id.fragmentButton1));
             soundingButton.setImageResource(R.mipmap.noaa);
@@ -128,7 +154,7 @@ public class NoaaForecast extends Fragment {
             noaaForecastText.setText(takeoff.getName());
 
             if (image == null) {
-                if ("ERROR".equals(args.getString(ARG_TYPE))) {
+                if ("ERROR".equals(args.getString(ARG_TYPE + "_0"))) {
                     // hmm, we couldn't load forecast for some reason, display error
                     Log.w(getClass().getName(), "Unable to fetch forecast for takeoff with ID: " + takeoff.getId());
                     forecastList.setVisibility(View.GONE);
