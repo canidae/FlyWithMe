@@ -185,6 +185,8 @@ public class FlyWithMeEndpoint {
         if (takeoff == null)
             return null;
         List<byte[]> images = NoaaProxy.fetchSounding(takeoff.getLatitude(), takeoff.getLongitude(), timestamp);
+        if (images == null || images.size() != 3)
+            return null;
         // profile
         profile = new Forecast();
         profile.setTakeoffId(takeoffId);

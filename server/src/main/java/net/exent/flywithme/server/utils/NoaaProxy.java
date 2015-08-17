@@ -13,6 +13,7 @@ import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -47,7 +48,7 @@ public class NoaaProxy {
     private static final Pattern NOAA_PROC_PATTERN = Pattern.compile(".*<input type=\"HIDDEN\" name=\"proc\" value=\"(\\d+)\">.*");
     private static final Pattern NOAA_CAPTCHA_URL_PATTERN = Pattern.compile(".*<img src=\"([^\"]+)\" ALT=\"Security Code\".*");
     private static final Pattern NOAA_METEOGRAM_PATTERN = Pattern.compile(".*<img src=\"([^\"]+)\" ALT=\"meteorogram\">.*");
-    private static final Pattern NOAA_SOUNDING_PROFILE_PATTERN = Pattern.compile(".*<img src=\"([^\"]+)\" ALT=\"Profile\">.*");
+    private static final Pattern NOAA_SOUNDING_PROFILE_PATTERN = Pattern.compile(".*<IMG SRC=\"([^\"]+)\" ALT=\"Profile\">.*");
     private static final Pattern NOAA_SOUNDING_THETA_PATTERN = Pattern.compile(".*<img src=\"([^\"]+)\" ALT=\"Theta Plot\">.*");
     private static final Pattern NOAA_SOUNDING_TEXT_PATTERN = Pattern.compile(".*<img src=\"([^\"]+)\" ALT=\"Text listing\">.*");
 
@@ -68,7 +69,6 @@ public class NoaaProxy {
     static {
         try {
             captchaCharacters = new HashMap<>();
-            //File directory = new File("server/src/main/webapp/captcha_bitmaps");
             File directory = new File("captcha_bitmaps");
             for (File file : directory.listFiles()) {
                 GifDecoder.GifImage image = GifDecoder.read(new FileInputStream(file));
@@ -94,7 +94,6 @@ public class NoaaProxy {
      *
      * @param latitude The latitude of the location we want forecast for.
      * @param longitude The longitude of the location we want forecast for.
-     * @return The CAPTCHA image to be solved.
      */
     public static void updateFieldsAndCaptcha(float latitude, float longitude) {
         noaaCaptcha = null;
@@ -154,7 +153,6 @@ public class NoaaProxy {
     public static List<byte[]> fetchSounding(float latitude, float longitude, long soundingTimestamp) {
         if (noaaCaptcha == null)
             updateFieldsAndCaptcha(latitude, longitude);
-        List<byte[]> result = new ArrayList<>();
         String metDate = metdateFormatter.format(new Date(soundingTimestamp));
         for (int a = 0; a < 2; ++a) {
             for (String noaaMetdate : noaaMetDates) {
@@ -165,11 +163,16 @@ public class NoaaProxy {
                             + "&metdir=" + noaaMetDir + "&metcyc=" + noaaMetCyc + "&metdate=" + URLEncoder.encode(noaaMetdate, "UTF-8") + "&metfil=" + noaaMetFil
                             + "&password1=" + noaaCaptcha + "&proc=" + noaaProc + NOAA_SOUNDING_CONF);
                     String soundingUrl = getOne(pageContent, NOAA_SOUNDING_PROFILE_PATTERN);
-                    result.add(fetchImage(NOAA_URL + soundingUrl));
-                    String thetaUrl = getOne(pageContent, NOAA_SOUNDING_THETA_PATTERN);
-                    result.add(fetchImage(NOAA_URL + thetaUrl));
-                    String textUrl = getOne(pageContent, NOAA_SOUNDING_TEXT_PATTERN);
-                    result.add(fetchImage(NOAA_URL + textUrl));
+                    byte[] profileImage = fetchImage(NOAA_URL + soundingUrl);
+                    if (profileImage != null) {
+                        String thetaUrl = getOne(pageContent, NOAA_SOUNDING_THETA_PATTERN);
+                        byte[] thetaImage = fetchImage(NOAA_URL + thetaUrl);
+                        if (thetaImage != null) {
+                            String textUrl = getOne(pageContent, NOAA_SOUNDING_TEXT_PATTERN);
+                            byte[] textImage = fetchImage(NOAA_URL + textUrl);
+                            return Arrays.asList(profileImage, thetaImage, textImage);
+                        }
+                    }
                 } catch (Exception e) {
                     log.log(Level.WARNING, "Failed fetching sounding profile/theta/text images", e);
                 }
@@ -177,7 +180,7 @@ public class NoaaProxy {
             log.info("No sounding profile/theta/text images returned, updating cached data and trying to solve new captcha");
             updateFieldsAndCaptcha(latitude, longitude);
         }
-        return result;
+        return null;
     }
 
     private static URLConnection fetchPage(String url) {

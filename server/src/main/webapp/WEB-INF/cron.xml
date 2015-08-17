@@ -6,10 +6,12 @@
         <schedule>every day 05:00</schedule>
         <target>4</target>
     </cron>
+    <!--
     <cron>
         <url>/task/updateNextTakeoffData</url>
         <description>Update data for a single takeoff</description>
         <schedule>every 3 minutes</schedule>
         <target>4</target>
     </cron>
+    -->
 </cronentries>
