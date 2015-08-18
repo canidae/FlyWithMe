@@ -3,15 +3,15 @@
     android:id="@+id/takeoffDetailsLayout"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:layout_alignParentLeft="true"
+    android:layout_alignParentStart="true"
     android:layout_alignParentTop="true" >
 
     <TextView
         android:id="@+id/takeoffDetailsName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_toLeftOf="@+id/takeoffDetailsWindroseNorth"
+        android:layout_alignParentStart="true"
+        android:layout_toStartOf="@+id/takeoffDetailsWindroseNorth"
         android:maxLines="1"
         android:text="@string/app_name"
         android:textAppearance="?android:attr/textAppearanceLarge" />
@@ -20,8 +20,8 @@
         android:id="@+id/takeoffDetailsCoordAslHeight"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignRight="@+id/takeoffDetailsName"
+        android:layout_alignParentStart="true"
+        android:layout_alignEnd="@+id/takeoffDetailsName"
         android:layout_below="@+id/takeoffDetailsName"
         android:maxLines="1"
         android:text="@string/app_name"
@@ -32,8 +32,8 @@
         android:id="@+id/takeoffDetailsDescription"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
         android:scrollbars="vertical"
         android:autoLink="web"
         android:text="@string/app_name"
@@ -44,7 +44,7 @@
         android:id="@+id/takeoffDetailsWindroseNorth"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
         android:src="@mipmap/windrose_north" />
 
@@ -53,7 +53,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/takeoffDetailsName"
+        android:layout_toEndOf="@+id/takeoffDetailsName"
         android:src="@mipmap/windrose_northwest" />
 
     <ImageView
@@ -61,7 +61,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/takeoffDetailsName"
+        android:layout_toEndOf="@+id/takeoffDetailsName"
         android:src="@mipmap/windrose_west" />
 
     <ImageView
@@ -69,7 +69,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/takeoffDetailsName"
+        android:layout_toEndOf="@+id/takeoffDetailsName"
         android:src="@mipmap/windrose_southwest" />
 
     <ImageView
@@ -77,7 +77,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/takeoffDetailsName"
+        android:layout_toEndOf="@+id/takeoffDetailsName"
         android:src="@mipmap/windrose_south" />
 
     <ImageView
@@ -85,7 +85,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/takeoffDetailsName"
+        android:layout_toEndOf="@+id/takeoffDetailsName"
         android:src="@mipmap/windrose_southeast" />
 
     <ImageView
@@ -93,7 +93,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/takeoffDetailsName"
+        android:layout_toEndOf="@+id/takeoffDetailsName"
         android:src="@mipmap/windrose_east" />
 
     <ImageView
@@ -101,7 +101,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/takeoffDetailsName"
+        android:layout_toEndOf="@+id/takeoffDetailsName"
         android:src="@mipmap/windrose_northeast" />
 
     <ImageView
@@ -109,7 +109,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/takeoffDetailsName"
+        android:layout_toEndOf="@+id/takeoffDetailsName"
         android:src="@mipmap/windrose_circle" />
 
     <TextView
@@ -119,9 +119,7 @@
         android:text="@string/graph_text"
         android:id="@+id/scheduleTimeLabel"
         android:layout_above="@+id/takeoffDetailsFlyScheduleChart"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_alignRight="@+id/takeoffDetailsWindroseNorth"
         android:layout_alignEnd="@+id/takeoffDetailsWindroseNorth"
         android:gravity="center" />
 
@@ -131,10 +129,8 @@
         android:id="@+id/takeoffDetailsFlyScheduleChart"
         android:background="@null"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:minHeight="150px" />
+        android:minHeight="150dp" />
 
 </RelativeLayout>

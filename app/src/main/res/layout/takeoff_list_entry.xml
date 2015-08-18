@@ -8,9 +8,9 @@
         android:id="@+id/takeoffListEntryName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_alignRight="@+id/takeoffListEntryInfo"
+        android:layout_alignEnd="@+id/takeoffListEntryInfo"
         android:maxLines="1"
         android:text="@string/app_name"
         android:textAppearance="?android:attr/textAppearanceMedium" />
@@ -19,9 +19,9 @@
         android:id="@+id/takeoffListEntryInfo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:layout_below="@+id/takeoffListEntryName"
-        android:layout_toLeftOf="@+id/takeoffListEntryWindroseNorth"
+        android:layout_toStartOf="@+id/takeoffListEntryWindroseNorth"
         android:maxLines="1"
         android:text="@string/app_name"
         android:textAppearance="?android:attr/textAppearanceSmall" />
@@ -30,7 +30,7 @@
         android:id="@+id/takeoffListEntryWindroseNorth"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
         android:src="@mipmap/windrose_north" />
 
@@ -38,7 +38,7 @@
         android:id="@+id/takeoffListEntryWindroseNorthwest"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
         android:src="@mipmap/windrose_northwest" />
 
@@ -46,7 +46,7 @@
         android:id="@+id/takeoffListEntryWindroseWest"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
         android:src="@mipmap/windrose_west" />
 
@@ -54,7 +54,7 @@
         android:id="@+id/takeoffListEntryWindroseSouthwest"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
         android:src="@mipmap/windrose_southwest" />
 
@@ -62,7 +62,7 @@
         android:id="@+id/takeoffListEntryWindroseSouth"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
         android:src="@mipmap/windrose_south" />
 
@@ -70,7 +70,7 @@
         android:id="@+id/takeoffListEntryWindroseSoutheast"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
         android:src="@mipmap/windrose_southeast" />
 
@@ -78,7 +78,7 @@
         android:id="@+id/takeoffListEntryWindroseEast"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
         android:src="@mipmap/windrose_east" />
 
@@ -86,7 +86,7 @@
         android:id="@+id/takeoffListEntryWindroseNortheast"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
         android:src="@mipmap/windrose_northeast" />
 
@@ -94,7 +94,7 @@
         android:id="@+id/takeoffListEntryWindroseCircle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
         android:src="@mipmap/windrose_circle" />
 

@@ -16,7 +16,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/fwmButton"
+        android:layout_toEndOf="@+id/fwmButton"
         android:background="@null"
         android:src="@mipmap/google_maps" />
 
@@ -25,7 +25,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/mapButton"
+        android:layout_toEndOf="@+id/mapButton"
         android:background="@null"
         android:src="@mipmap/hammer" />
 
@@ -33,7 +33,7 @@
         android:id="@+id/fragmentButton1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
         android:background="@null"
         android:src="@null" />
@@ -43,7 +43,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_toLeftOf="@+id/fragmentButton1"
+        android:layout_toStartOf="@+id/fragmentButton1"
         android:background="@null"
         android:src="@null" />
 
@@ -52,7 +52,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_toLeftOf="@+id/fragmentButton2"
+        android:layout_toStartOf="@+id/fragmentButton2"
         android:background="@null"
         android:src="@null" />
 
@@ -62,11 +62,9 @@
         android:textAppearance="@android:style/TextAppearance.Medium"
         android:text="@string/app_name"
         android:id="@+id/fwmStatusText"
-        android:layout_gravity="left|top"
+        android:layout_gravity="start|top"
         android:layout_below="@+id/fwmButton"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:singleLine="true"
         android:textStyle="bold|italic"
@@ -79,8 +77,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
         android:layout_below="@+id/fwmStatusText">
 
     </FrameLayout>
