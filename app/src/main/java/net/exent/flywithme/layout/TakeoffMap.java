@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import net.exent.flywithme.FlyWithMe;
+import net.exent.flywithme.LocationSupplier;
 import net.exent.flywithme.R;
 import net.exent.flywithme.bean.Takeoff;
 import net.exent.flywithme.data.Airspace;
@@ -49,11 +49,6 @@ import android.view.View.OnClickListener;
 import android.widget.ImageButton;
 
 public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, OnCameraChangeListener, OnMapReadyCallback {
-
-    public interface TakeoffMapListener {
-        Location getLocation();
-    }
-
     private static CameraPosition cameraPosition;
     private GoogleMap map;
 
@@ -72,7 +67,7 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
     private static Bitmap markerNorthwestBitmap;
     private static Bitmap markerExclamation;
     private static Bitmap markerExclamationYellow;
-    private TakeoffMapListener callback;
+    private LocationSupplier callback;
 
     public void drawMap() {
         if (callback == null) {
@@ -164,7 +159,7 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        callback = (TakeoffMapListener) activity;
+        callback = (LocationSupplier) activity;
         if (markerBitmap == null) {
             markerBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.mapmarker);
             markerNorthBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.mapmarker_octant_n);
@@ -259,7 +254,7 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
                             canvas.drawBitmap(markerExclamation, 0, 0, paint);
                         else if (takeoff.getPilotsLater() > 0)
                             canvas.drawBitmap(markerExclamationYellow, 0, 0, paint);
-                        String snippet = getString(R.string.height) + ": " + takeoff.getHeight() + "m\n" + getString(R.string.distance) + ": " + (int) FlyWithMe.getInstance().getLocation().distanceTo(takeoff.getLocation()) / 1000 + "km";
+                        String snippet = getString(R.string.height) + ": " + takeoff.getHeight() + "m\n" + getString(R.string.distance) + ": " + (int) callback.getLocation().distanceTo(takeoff.getLocation()) / 1000 + "km";
                         MarkerOptions markerOptions = new MarkerOptions().position(new LatLng(takeoff.getLocation().getLatitude(), takeoff.getLocation().getLongitude())).title(takeoff.getName()).snippet(snippet).icon(BitmapDescriptorFactory.fromBitmap(bitmap)).anchor(0.5f, 0.875f);
                         addMarkers.put(takeoff, markerOptions);
                     }
@@ -322,7 +317,7 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
                     }
                     Location tmpLocation = new Location(location);
 
-                    for (Map.Entry<String, List<Airspace.Zone>> entry : Airspace.getAirspaceMap().entrySet()) {
+                    for (Map.Entry<String, List<Airspace.Zone>> entry : Airspace.getAirspaceMap(getActivity()).entrySet()) {
                         if (entry.getKey() == null || !prefs.getBoolean("pref_airspace_enabled_" + entry.getKey().trim(), true))
                             continue;
                         for (Airspace.Zone zone : entry.getValue()) {

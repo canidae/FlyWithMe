@@ -32,7 +32,7 @@ public class Preferences extends PreferenceFragment implements SharedPreferences
     public static void setupDefaultPreferences(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         // setup default airspace map polygons (all shown)
-        ArrayList<String> airspaceList = new ArrayList<>(Airspace.getAirspaceMap().keySet());
+        ArrayList<String> airspaceList = new ArrayList<>(Airspace.getAirspaceMap(context).keySet());
         for (String key : airspaceList) {
             if (key == null || "".equals(key.trim()))
                 continue;
@@ -50,7 +50,7 @@ public class Preferences extends PreferenceFragment implements SharedPreferences
         updateDynamicPreferenceScreen();
 
         PreferenceCategory showAirspaceTypesCategory = (PreferenceCategory) findPreference("pref_show_airspace_types");
-        ArrayList<String> airspaceList = new ArrayList<>(Airspace.getAirspaceMap().keySet());
+        ArrayList<String> airspaceList = new ArrayList<>(Airspace.getAirspaceMap(getActivity()).keySet());
         Collections.sort(airspaceList);
         for (String key : airspaceList) {
             if (key == null || "".equals(key.trim()))

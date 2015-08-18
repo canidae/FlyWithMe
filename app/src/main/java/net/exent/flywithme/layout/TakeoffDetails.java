@@ -1,5 +1,6 @@
 package net.exent.flywithme.layout;
 
+import net.exent.flywithme.LocationSupplier;
 import net.exent.flywithme.R;
 import net.exent.flywithme.bean.Takeoff;
 import net.exent.flywithme.data.Database;
@@ -37,10 +38,6 @@ import java.util.Map;
 import java.util.Set;
 
 public class TakeoffDetails extends Fragment {
-    public interface TakeoffDetailsListener {
-        Location getLocation();
-    }
-
     public static final String ARG_TAKEOFF = "takeoff";
     private static final int SCHEDULE_BAR_WIDTH = 90;
     private static final int SCHEDULE_BAR_SPACE = 15;
@@ -48,7 +45,7 @@ public class TakeoffDetails extends Fragment {
     private static final int Y_AXIS_WIDTH = 100;
     private static final int LINE_WIDTH = 3;
     private Takeoff takeoff;
-    private TakeoffDetailsListener callback;
+    private LocationSupplier callback;
 
     public void showTakeoffDetails(final Takeoff takeoff) {
         if (callback == null) {
@@ -159,7 +156,7 @@ public class TakeoffDetails extends Fragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        callback = (TakeoffDetailsListener) activity;
+        callback = (LocationSupplier) activity;
     }
 
     @Override

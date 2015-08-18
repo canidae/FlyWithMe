@@ -1,6 +1,6 @@
 package net.exent.flywithme.layout;
 
-import net.exent.flywithme.FlyWithMe;
+import net.exent.flywithme.LocationSupplier;
 import net.exent.flywithme.R;
 import net.exent.flywithme.bean.Takeoff;
 import net.exent.flywithme.data.Database;
@@ -28,19 +28,15 @@ import java.util.Comparator;
 import java.util.List;
 
 public class TakeoffList extends Fragment {
-    public interface TakeoffListListener {
-        Location getLocation();
-    }
-
     private static int savedPosition;
     private static int savedListTop;
-    private TakeoffListListener callback;
+    private LocationSupplier callback;
     private List<Takeoff> takeoffs;
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        callback = (TakeoffListListener) activity;
+        callback = (LocationSupplier) activity;
     }
 
     @Override
@@ -53,7 +49,7 @@ public class TakeoffList extends Fragment {
     public void onStart() {
         super.onStart();
 
-        final Location location = FlyWithMe.getInstance().getLocation();
+        final Location location = callback.getLocation();
         takeoffs = new Database(getActivity()).getTakeoffs(location.getLatitude(), location.getLongitude(), 100, true);
 
         Collections.sort(takeoffs, new Comparator<Takeoff>() {

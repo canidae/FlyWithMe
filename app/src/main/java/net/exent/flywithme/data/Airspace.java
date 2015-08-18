@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.exent.flywithme.FlyWithMe;
 import net.exent.flywithme.R;
 
 import org.xmlpull.v1.XmlPullParser;
@@ -32,9 +31,9 @@ import android.util.Log;
 public class Airspace {
     private static Map<String, List<Zone>> airspaceMap = new HashMap<>();
 
-    public static Map<String, List<Zone>> getAirspaceMap() {
+    public static Map<String, List<Zone>> getAirspaceMap(Context context) {
         if (airspaceMap.isEmpty())
-            readAirspaceMapFile(FlyWithMe.getInstance());
+            readAirspaceMapFile(context);
         return airspaceMap;
     }
 

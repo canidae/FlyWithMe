@@ -2,11 +2,8 @@ package net.exent.flywithme;
 
 import net.exent.flywithme.layout.NoaaForecast;
 import net.exent.flywithme.layout.Preferences;
-import net.exent.flywithme.layout.TakeoffDetails.TakeoffDetailsListener;
 import net.exent.flywithme.layout.TakeoffList;
-import net.exent.flywithme.layout.TakeoffList.TakeoffListListener;
 import net.exent.flywithme.layout.TakeoffMap;
-import net.exent.flywithme.layout.TakeoffMap.TakeoffMapListener;
 import net.exent.flywithme.bean.Takeoff;
 import net.exent.flywithme.data.Database;
 import net.exent.flywithme.service.FlyWithMeService;
@@ -38,20 +35,19 @@ import java.io.IOException;
 /* TODO:
    - Use endpoint API for registering planned flight
    - Use endpoint API for fetching planned flights (schedule)
-   - Fix "back"-functionality, see "addToBackStack()" for FragmentTransaction
+   - Fix "back"-functionality, see "addToBackStack()" for FragmentTransaction. DONE: sort of, could be better
    - Display notification if user is close to takeoff ("are you flying?")
      - Must be possible to "blacklist" takeoffs, and somehow remove blacklisting later (in preference window?)
    - Notify clients when a takeoff is updated. DONE: TODO: currently disabled, also causes excessive database read operations
    - Cache forecasts locally for some few hours (fetched timestamp is returned, cache for the same amount of time as server caches the forecast)
-   - Can we improve fetching location, or at least get rid of all the implemented interfaces?
+   - Can we improve fetching location, or at least get rid of all the implemented interfaces? DONE-ish: fused 3 interfaces to 1. TODO: FusedLocationApi
    - Don't like "FlyWithMe.getInstance()", is it possible to get rid of it?
    - Implement "Poor Man's SPOT"? Livetracking?
  */
-public class FlyWithMe extends Activity implements TakeoffListListener, TakeoffMapListener, TakeoffDetailsListener {
+public class FlyWithMe extends Activity implements LocationSupplier {
     public static final String ACTION_SHOW_FORECAST = "showForecast";
 
     public static final String SERVER_URL = "http://flywithme-server.appspot.com/fwm";
-    //public static final String SERVER_URL = "http://192.168.1.200:8080/fwm";
 
     private static final int LOCATION_UPDATE_TIME = 60000; // update location every LOCATION_UPDATE_TIME millisecond
     private static final int LOCATION_UPDATE_DISTANCE = 100; // or when we've moved more than LOCATION_UPDATE_DISTANCE meters
