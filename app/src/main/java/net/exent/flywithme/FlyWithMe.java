@@ -12,6 +12,8 @@ import net.exent.flywithme.data.Database;
 import net.exent.flywithme.service.FlyWithMeService;
 import net.exent.flywithme.service.ScheduleService;
 
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -39,7 +41,7 @@ import java.io.IOException;
    - Fix "back"-functionality, see "addToBackStack()" for FragmentTransaction
    - Display notification if user is close to takeoff ("are you flying?")
      - Must be possible to "blacklist" takeoffs, and somehow remove blacklisting later (in preference window?)
-   - Notify clients when a takeoff is updated. DONE: test if works
+   - Notify clients when a takeoff is updated. DONE: TODO: currently disabled, also causes excessive database read operations
    - Cache forecasts locally for some few hours (fetched timestamp is returned, cache for the same amount of time as server caches the forecast)
    - Can we improve fetching location, or at least get rid of all the implemented interfaces?
    - Don't like "FlyWithMe.getInstance()", is it possible to get rid of it?
@@ -67,33 +69,6 @@ public class FlyWithMe extends Activity implements TakeoffListListener, TakeoffM
      */
     public Location getLocation() {
         return new Location(location);
-    }
-
-    /**
-     * Show TakeoffList fragment.
-     */
-    public void showTakeoffList() {
-        Fragment fragment = getFragmentManager().findFragmentById(R.id.fragmentContainer);
-        TakeoffList takeoffList = (fragment != null && fragment instanceof TakeoffList) ? (TakeoffList) fragment : new TakeoffList();
-        getFragmentManager().beginTransaction().replace(R.id.fragmentContainer, takeoffList, "takeoffList").commit();
-    }
-
-    /**
-     * Show TakeoffMap fragment.
-     */
-    public void showMap() {
-        Fragment fragment = getFragmentManager().findFragmentById(R.id.fragmentContainer);
-        TakeoffMap takeoffMap = (fragment != null && fragment instanceof TakeoffMap) ? (TakeoffMap) fragment : new TakeoffMap();
-        getFragmentManager().beginTransaction().replace(R.id.fragmentContainer, takeoffMap, "map").commit();
-    }
-
-    /**
-     * Show settings.
-     */
-    public void showSettings() {
-        Fragment fragment = getFragmentManager().findFragmentById(R.id.fragmentContainer);
-        Preferences preferences = (fragment != null && fragment instanceof Preferences) ? (Preferences) fragment : new Preferences();
-        getFragmentManager().beginTransaction().replace(R.id.fragmentContainer, preferences, "preferences").commit();
     }
 
     /**
@@ -166,9 +141,9 @@ public class FlyWithMe extends Activity implements TakeoffListListener, TakeoffM
         if (savedInstanceState == null) {
             String pilotName = prefs.getString("pref_pilot_name", null);
             if (pilotName == null || pilotName.trim().equals("")) {
-                showSettings();
+                replaceFragment(new Preferences(), "preferences", false);
             } else {
-                showTakeoffList();
+                replaceFragment(new TakeoffList(), "takeoffList", false);
             }
         }
     }
@@ -205,8 +180,44 @@ public class FlyWithMe extends Activity implements TakeoffListListener, TakeoffM
             NoaaForecast noaaForecast = new NoaaForecast();
             noaaForecast.setArguments(intent.getExtras());
             long takeoffId = intent.getExtras() != null ? intent.getExtras().getLong(NoaaForecast.ARG_TAKEOFF_ID) : -1;
-            getFragmentManager().beginTransaction().replace(R.id.fragmentContainer, noaaForecast, "noaaForecast," + takeoffId).commit();
+            replaceFragment(noaaForecast, "noaaForecast," + takeoffId, true);
         }
+    }
+
+    private void showTakeoffList() {
+        String tag = "takeoffList";
+        FragmentManager fragmentManager = getFragmentManager();
+        Fragment fragment = fragmentManager.findFragmentByTag(tag);
+        if (fragment == null)
+            fragment = new TakeoffList();
+        replaceFragment(fragment, tag, true);
+    }
+
+    private void showMap() {
+        String tag = "takeoffMap";
+        FragmentManager fragmentManager = getFragmentManager();
+        Fragment fragment = fragmentManager.findFragmentByTag(tag);
+        if (fragment == null)
+            fragment = new TakeoffMap();
+        replaceFragment(fragment, tag, true);
+    }
+
+    private void showSettings() {
+        String tag = "preferences";
+        FragmentManager fragmentManager = getFragmentManager();
+        Fragment fragment = fragmentManager.findFragmentByTag(tag);
+        if (fragment == null)
+            fragment = new Preferences();
+        replaceFragment(fragment, tag, true);
+    }
+
+    private void replaceFragment(Fragment fragment, String tag, boolean addToBackStack) {
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.fragmentContainer, fragment, tag);
+        if (addToBackStack)
+            fragmentTransaction.addToBackStack(tag);
+        fragmentTransaction.commit();
     }
 
     private void importTakeoffs() {

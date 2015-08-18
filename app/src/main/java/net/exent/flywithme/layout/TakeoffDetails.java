@@ -5,6 +5,8 @@ import net.exent.flywithme.bean.Takeoff;
 import net.exent.flywithme.data.Database;
 import net.exent.flywithme.server.flyWithMeServer.model.Pilot;
 import android.app.Activity;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -79,7 +81,13 @@ public class TakeoffDetails extends Fragment {
                 Bundle args = new Bundle();
                 args.putLong(NoaaForecast.ARG_TAKEOFF_ID, takeoff.getId());
                 noaaForecast.setArguments(args);
-                getFragmentManager().beginTransaction().replace(R.id.fragmentContainer, noaaForecast, "noaaForecast," + takeoff.getId()).commit();
+                String tag = "noaaForecast," + takeoff.getId();
+                FragmentManager fragmentManager = getFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.fragmentContainer, noaaForecast, tag);
+                if (fragmentManager.findFragmentByTag(tag) == null)
+                    fragmentTransaction.addToBackStack(tag);
+                fragmentTransaction.commit();
             }
         });
         final ImageButton favouriteButton = (ImageButton) getActivity().findViewById(R.id.fragmentButton3);
@@ -136,7 +144,13 @@ public class TakeoffDetails extends Fragment {
                     Bundle args = new Bundle();
                     args.putParcelable(TakeoffSchedule.ARG_TAKEOFF, takeoff);
                     takeoffSchedule.setArguments(args);
-                    getFragmentManager().beginTransaction().replace(R.id.fragmentContainer, takeoffSchedule, "takeoffSchedule," + takeoff.getId()).commit();
+                    String tag = "takeoffSchedule," + takeoff.getId();
+                    FragmentManager fragmentManager = getFragmentManager();
+                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                    fragmentTransaction.replace(R.id.fragmentContainer, takeoffSchedule, tag);
+                    if (fragmentManager.findFragmentByTag(tag) == null)
+                        fragmentTransaction.addToBackStack(tag);
+                    fragmentTransaction.commit();
                 }
             });
         }

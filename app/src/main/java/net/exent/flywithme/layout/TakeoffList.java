@@ -5,6 +5,8 @@ import net.exent.flywithme.R;
 import net.exent.flywithme.bean.Takeoff;
 import net.exent.flywithme.data.Database;
 import android.app.Activity;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.graphics.Color;
 import android.location.Location;
@@ -94,7 +96,13 @@ public class TakeoffList extends Fragment {
                 Bundle args = new Bundle();
                 args.putParcelable(TakeoffDetails.ARG_TAKEOFF, takeoff);
                 takeoffDetails.setArguments(args);
-                getFragmentManager().beginTransaction().replace(R.id.fragmentContainer, takeoffDetails, "takeoffDetails," + takeoff.getId()).commit();
+                String tag = "takeoffDetails," + takeoff.getId();
+                FragmentManager fragmentManager = getFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.fragmentContainer, takeoffDetails, tag);
+                if (fragmentManager.findFragmentByTag(tag) == null)
+                    fragmentTransaction.addToBackStack(tag);
+                fragmentTransaction.commit();
             }
         });
         /* position list */

@@ -28,6 +28,7 @@ import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.PolygonOptions;
 
 import android.app.Activity;
+import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -143,7 +144,13 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
             Bundle args = new Bundle();
             args.putParcelable(TakeoffDetails.ARG_TAKEOFF, takeoff);
             takeoffDetails.setArguments(args);
-            getFragmentManager().beginTransaction().replace(R.id.fragmentContainer, takeoffDetails, "takeoffDetails," + takeoff.getId()).commit();
+            String tag = "takeoffDetails," + takeoff.getId();
+            FragmentManager fragmentManager = getFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.fragmentContainer, takeoffDetails, tag);
+            if (fragmentManager.findFragmentByTag(tag) == null)
+                fragmentTransaction.addToBackStack(tag);
+            fragmentTransaction.commit();
         } else {
             Log.w(getClass().getName(), "Strange, could not find takeoff for marker");
         }
