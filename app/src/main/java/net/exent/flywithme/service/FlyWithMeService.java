@@ -159,7 +159,7 @@ public class FlyWithMeService extends IntentService {
         // otherwise they can be skipped
         builder.setApplicationName("FlyWithMe");
         //builder.setRootUrl("http://88.95.84.204:8080/_ah/api/");
-        builder.setRootUrl("https://4003-dot-flywithme-server.appspot.com/_ah/api/");
+        builder.setRootUrl("https://40-dot-flywithme-server.appspot.com/_ah/api/");
         builder.setGoogleClientRequestInitializer(new GoogleClientRequestInitializer() {
             @Override
             public void initialize(AbstractGoogleClientRequest<?> abstractGoogleClientRequest) throws IOException {
