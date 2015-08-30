@@ -1,14 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 22
+    compileSdkVersion 23
     buildToolsVersion "22.0.1"
 
     defaultConfig {
         applicationId "net.exent.flywithme"
         minSdkVersion 17
-        targetSdkVersion 22
-        versionCode 4004
+        targetSdkVersion 23
+        versionCode 4005
         versionName "4.0"
     }
     signingConfigs {
