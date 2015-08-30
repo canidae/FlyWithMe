@@ -13,6 +13,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -24,82 +26,119 @@ import java.util.regex.Pattern;
 public class FlightlogCrawler {
     private static final Logger log = Logger.getLogger(FlightlogCrawler.class.getName());
 
+    private static final String TAKEOFF_URL = "http://flightlog.org/fl.html?l=1&a=22&country_id=160&start_id=";
     private static final Pattern NAME_PATTERN = Pattern.compile(".*<title>.* - .* - .* - (.*)</title>.*", Pattern.DOTALL);
     private static final Pattern DESCRIPTION_PATTERN = Pattern.compile(".*Description</td>.*('right'>|'left'></a>)(.*)</td></tr>.*Coordinates</td>.*", Pattern.DOTALL);
     private static final Pattern ALTITUDE_PATTERN = Pattern.compile(".*Altitude</td><td bgcolor='white'>(\\d+) meters asl Top to bottom (\\d+) meters</td>.*", Pattern.DOTALL);
     private static final Pattern COORD_PATTERN = Pattern.compile(".*Coordinates</td>.*DMS: ([NS]) (\\d+)&deg; (\\d+)&#039; (\\d+)&#039;&#039; &nbsp;([EW]) (\\d+)&deg; (\\d+)&#039; (\\d+)&#039;&#039;.*", Pattern.DOTALL);
     private static final Pattern WINDPAI_PATTERN = Pattern.compile(".*<img src='fl_b5/windpai\\.html\\?[^']*' alt='([^']*)'.*", Pattern.DOTALL);
 
-    private static final String TAKEOFF_URL = "http://flightlog.org/fl.html?l=1&a=22&country_id=160&start_id=";
+    private static final String UPDATED_URL = "http://flightlog.org/?returntype=xml&rqtid=12&d=";
+    private static final Pattern UPDATED_ID_PATTERN = Pattern.compile("<id>(\\d+|<!\\[CDATA\\[(\\d+)]]>)</id>", Pattern.DOTALL);
+
+    public static List<Long> fetchUpdatedTakeoffs(long days) {
+        List<Long> takeoffIds = new ArrayList<>();
+        try {
+            URL url = new URL(UPDATED_URL + days);
+            HttpURLConnection httpUrlConnection = (HttpURLConnection) url.openConnection();
+            if (httpUrlConnection.getResponseCode() != HttpURLConnection.HTTP_OK) {
+                log.warning("Whoops, not good! Response code " + httpUrlConnection.getResponseCode() + " when fetching list of takeoffs updated within the last " + days + " days");
+                return takeoffIds;
+            }
+            String text = getPageContent(httpUrlConnection);
+            Matcher idMatcher = UPDATED_ID_PATTERN.matcher(text);
+            while (idMatcher.find()) {
+                Long id = null;
+                try {
+                    id = Long.parseLong(idMatcher.group(1));
+                } catch (NumberFormatException e) {
+                    try {
+                        id = Long.parseLong(idMatcher.group(2));
+                    } catch (NumberFormatException e2) {
+                        log.warning("Unable to retrive takeoff ID from string: " + idMatcher.group());
+                    }
+                }
+                if (id != null)
+                    takeoffIds.add(id);
+            }
+        } catch (Exception e) {
+            log.log(Level.WARNING, "Unable to fetch list of updated takeoffs within the last " + days + " days", e);
+        }
+        return takeoffIds;
+    }
 
     public static Takeoff fetchTakeoff(long takeoffId) {
         try {
             URL url = new URL(TAKEOFF_URL + takeoffId);
             HttpURLConnection httpUrlConnection = (HttpURLConnection) url.openConnection();
-            if (httpUrlConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                String charset = getCharsetFromHeaderValue(httpUrlConnection.getContentType());
-                StringBuilder sb = new StringBuilder();
-                BufferedReader br = new BufferedReader(new InputStreamReader(httpUrlConnection.getInputStream(), charset), 32768);
-                char[] buffer = new char[32768];
-                int read;
-                while ((read = br.read(buffer)) != -1)
-                    sb.append(buffer, 0, read);
-                br.close();
-
-                String text = sb.toString();
-                Matcher nameMatcher = NAME_PATTERN.matcher(text);
-                Matcher descriptionMatcher = DESCRIPTION_PATTERN.matcher(text);
-                Matcher altitudeMatcher = ALTITUDE_PATTERN.matcher(text);
-                Matcher coordMatcher = COORD_PATTERN.matcher(text);
-                Matcher windpaiMatcher = WINDPAI_PATTERN.matcher(text);
-
-                if (nameMatcher.matches() && coordMatcher.matches()) {
-                    String takeoffName = nameMatcher.group(1).trim();
-                    String description = "";
-                    if (descriptionMatcher.matches())
-                        description = descriptionMatcher.group(2).replace("<br />", "").trim();
-                    int aboveSeaLevel = 0;
-                    int height = 0;
-                    if (altitudeMatcher.matches()) {
-                        aboveSeaLevel = Integer.parseInt(altitudeMatcher.group(1).trim());
-                        height = Integer.parseInt(altitudeMatcher.group(2).trim());
-                    }
-
-                    String northOrSouth = coordMatcher.group(1);
-                    int latDeg = Integer.parseInt(coordMatcher.group(2));
-                    int latMin = Integer.parseInt(coordMatcher.group(3));
-                    int latSec = Integer.parseInt(coordMatcher.group(4));
-                    float latitude;
-                    latitude = (float) latDeg + (float) (latMin * 60 + latSec) / (float) 3600;
-                    if ("S".equals(northOrSouth))
-                        latitude *= -1.0;
-
-                    String eastOrWest = coordMatcher.group(5);
-                    int lonDeg = Integer.parseInt(coordMatcher.group(6));
-                    int lonMin = Integer.parseInt(coordMatcher.group(7));
-                    int lonSec = Integer.parseInt(coordMatcher.group(8));
-                    float longitude;
-                    longitude = (float) lonDeg + (float) (lonMin * 60 + lonSec) / (float) 3600;
-                    if ("W".equals(eastOrWest))
-                        longitude *= -1.0;
-
-                    String windpai = "";
-                    if (windpaiMatcher.matches())
-                        windpai = windpaiMatcher.group(1).trim();
-
-                    long currentTime = System.currentTimeMillis();
-                    Takeoff takeoff = new Takeoff();
-                    takeoff.setId(takeoffId).setName(takeoffName).setAsl(aboveSeaLevel).setHeight(height).setLatitude(latitude).setLongitude(longitude);
-                    takeoff.setDescription(description).setWindpai(windpai).setLastUpdated(currentTime).setLastChecked(currentTime);
-                    return takeoff;
-                }
-            } else {
+            if (httpUrlConnection.getResponseCode() != HttpURLConnection.HTTP_OK) {
                 log.warning("Whoops, not good! Response code " + httpUrlConnection.getResponseCode() + " when fetching takeoff with ID " + takeoffId);
+                return null;
+            }
+            String text = getPageContent(httpUrlConnection);
+            Matcher nameMatcher = NAME_PATTERN.matcher(text);
+            Matcher descriptionMatcher = DESCRIPTION_PATTERN.matcher(text);
+            Matcher altitudeMatcher = ALTITUDE_PATTERN.matcher(text);
+            Matcher coordMatcher = COORD_PATTERN.matcher(text);
+            Matcher windpaiMatcher = WINDPAI_PATTERN.matcher(text);
+
+            if (nameMatcher.matches() && coordMatcher.matches()) {
+                String takeoffName = nameMatcher.group(1).trim();
+                String description = "";
+                if (descriptionMatcher.matches())
+                    description = descriptionMatcher.group(2).replace("<br />", "").trim();
+                int aboveSeaLevel = 0;
+                int height = 0;
+                if (altitudeMatcher.matches()) {
+                    aboveSeaLevel = Integer.parseInt(altitudeMatcher.group(1).trim());
+                    height = Integer.parseInt(altitudeMatcher.group(2).trim());
+                }
+
+                String northOrSouth = coordMatcher.group(1);
+                int latDeg = Integer.parseInt(coordMatcher.group(2));
+                int latMin = Integer.parseInt(coordMatcher.group(3));
+                int latSec = Integer.parseInt(coordMatcher.group(4));
+                float latitude;
+                latitude = (float) latDeg + (float) (latMin * 60 + latSec) / (float) 3600;
+                if ("S".equals(northOrSouth))
+                    latitude *= -1.0;
+
+                String eastOrWest = coordMatcher.group(5);
+                int lonDeg = Integer.parseInt(coordMatcher.group(6));
+                int lonMin = Integer.parseInt(coordMatcher.group(7));
+                int lonSec = Integer.parseInt(coordMatcher.group(8));
+                float longitude;
+                longitude = (float) lonDeg + (float) (lonMin * 60 + lonSec) / (float) 3600;
+                if ("W".equals(eastOrWest))
+                    longitude *= -1.0;
+
+                String windpai = "";
+                if (windpaiMatcher.matches())
+                    windpai = windpaiMatcher.group(1).trim();
+
+                long currentTime = System.currentTimeMillis();
+                Takeoff takeoff = new Takeoff();
+                takeoff.setId(takeoffId).setName(takeoffName).setAsl(aboveSeaLevel).setHeight(height).setLatitude(latitude).setLongitude(longitude);
+                takeoff.setDescription(description).setWindpai(windpai).setLastUpdated(currentTime).setLastChecked(currentTime);
+                return takeoff;
             }
         } catch (Exception e) {
             log.log(Level.WARNING, "Unable to fetch takeoff with ID " + takeoffId, e);
         }
         return null;
+    }
+
+    private static String getPageContent(HttpURLConnection httpUrlConnection) throws IOException {
+        String charset = getCharsetFromHeaderValue(httpUrlConnection.getContentType());
+        StringBuilder sb = new StringBuilder();
+        BufferedReader br = new BufferedReader(new InputStreamReader(httpUrlConnection.getInputStream(), charset), 32768);
+        char[] buffer = new char[32768];
+        int read;
+        while ((read = br.read(buffer)) != -1)
+            sb.append(buffer, 0, read);
+        br.close();
+
+        return sb.toString();
     }
 
     private static String getCharsetFromHeaderValue(String text) {

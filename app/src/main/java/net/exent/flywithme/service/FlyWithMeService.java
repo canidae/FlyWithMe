@@ -91,6 +91,7 @@ public class FlyWithMeService extends IntentService {
                 Database database = new Database(getApplicationContext());
                 long lastUpdated = timestamp;
                 for (Takeoff takeoff : updatedTakeoffs) {
+                    Log.i(TAG, "Updating takeoff with ID: " + takeoff.getId());
                     if (takeoff.getLastUpdated() > lastUpdated)
                         lastUpdated = takeoff.getLastUpdated();
                     net.exent.flywithme.bean.Takeoff updatedTakeoff = database.getTakeoff(takeoff.getId());
@@ -100,7 +101,6 @@ public class FlyWithMeService extends IntentService {
                         updatedTakeoff = new net.exent.flywithme.bean.Takeoff(takeoff);
                     }
                     database.updateTakeoff(updatedTakeoff);
-                    Log.i(TAG, "Updated takeoff: " + updatedTakeoff);
                 }
                 prefs.edit().putLong("pref_last_takeoff_update_timestamp", lastUpdated).apply();
             } catch (IOException e) {
@@ -159,7 +159,7 @@ public class FlyWithMeService extends IntentService {
         // otherwise they can be skipped
         builder.setApplicationName("FlyWithMe");
         //builder.setRootUrl("http://88.95.84.204:8080/_ah/api/");
-        builder.setRootUrl("https://40-dot-flywithme-server.appspot.com/_ah/api/");
+        builder.setRootUrl("https://4-dot-flywithme-server.appspot.com/_ah/api/");
         builder.setGoogleClientRequestInitializer(new GoogleClientRequestInitializer() {
             @Override
             public void initialize(AbstractGoogleClientRequest<?> abstractGoogleClientRequest) throws IOException {

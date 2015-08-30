@@ -27,8 +27,6 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
 public class TaskServlet extends HttpServlet {
     private static final Logger log = Logger.getLogger(TaskServlet.class.getName());
 
-    private static final int MAX_TAKEOFF_ID_GAP = 50;
-
     static {
         ObjectifyService.register(Forecast.class);
         ObjectifyService.register(Takeoff.class);
@@ -41,8 +39,8 @@ public class TaskServlet extends HttpServlet {
                 cleanCache();
                 break;
 
-            case "/updateNextTakeoffData":
-                updateNextTakeoffData();
+            case "/updateTakeoffData":
+                updateTakeoffData();
                 break;
 
             default:
@@ -55,25 +53,19 @@ public class TaskServlet extends HttpServlet {
         ofy().delete().entities(ofy().load().type(Forecast.class).filter("lastUpdated <=", System.currentTimeMillis() - FlyWithMeEndpoint.FORECAST_CACHE_LIFETIME).list());
     }
 
-    private static void updateNextTakeoffData() {
-        // update the takeoff after the last checked takeoff
-        Takeoff lastChecked = ofy().load().type(Takeoff.class).order("-lastChecked").first().now();
-        long currentId = lastChecked == null ? 1 : lastChecked.getId() + 1;
-        long maxId = currentId + MAX_TAKEOFF_ID_GAP;
-        for (; currentId < maxId; ++currentId) {
-            if (updateTakeoff(currentId))
-                return;
-        }
-        // couldn't find a takeoff with ID within MAX_TAKEOFF_ID_GAP after last updated takeoff, wrap around to start from ID 1
-        currentId = 1;
-        maxId = currentId + MAX_TAKEOFF_ID_GAP;
-        for (; currentId < maxId; ++currentId) {
-            if (updateTakeoff(currentId))
-                return;
-        }
+    private static void updateTakeoffData() {
+        // check for takeoffs updated after the last time we checked a takeoff
+        Takeoff takeoff = ofy().load().type(Takeoff.class).order("-lastChecked").first().now();
+        long lastChecked = takeoff == null ? 0 : takeoff.getLastChecked();
+        long daysToCheck = Math.round((double) (System.currentTimeMillis() - lastChecked) / (double) (1000 * 60 * 60 * 24)) + 1;
+        log.info("Checking for updated takeoffs within the last " + daysToCheck + " days");
+
+        for (Long takeoffId : FlightlogCrawler.fetchUpdatedTakeoffs(daysToCheck))
+            updateTakeoff(takeoffId);
     }
 
     private static boolean updateTakeoff(long takeoffId) {
+        log.info("Attempting to update takeoff with ID " + takeoffId);
         try {
             Takeoff takeoff = FlightlogCrawler.fetchTakeoff(takeoffId);
             if (takeoff != null) {

@@ -170,23 +170,27 @@ public class Takeoff implements Parcelable {
     }
 
     public void setExits(String windpai) {
-        for (String direction : windpai.split(" ")) {
-            if ("N".equals(direction))
-                exits |= 1 << 8;
-            if ("NE".equals(direction))
-                exits |= 1 << 7;
-            if ("E".equals(direction))
-                exits |= 1 << 6;
-            if ("SE".equals(direction))
-                exits |= 1 << 5;
-            if ("S".equals(direction))
-                exits |= 1 << 4;
-            if ("SW".equals(direction))
-                exits |= 1 << 3;
-            if ("W".equals(direction))
-                exits |= 1 << 2;
-            if ("NW".equals(direction))
-                exits |= 1 << 1;
+        if (windpai == null) {
+            Log.w(getClass().getName(), "Unable to set windpai for takeoff with ID " + getId() + ", parameter is <null>");
+        } else {
+            for (String direction : windpai.split(" ")) {
+                if ("N".equals(direction))
+                    exits |= 1 << 8;
+                if ("NE".equals(direction))
+                    exits |= 1 << 7;
+                if ("E".equals(direction))
+                    exits |= 1 << 6;
+                if ("SE".equals(direction))
+                    exits |= 1 << 5;
+                if ("S".equals(direction))
+                    exits |= 1 << 4;
+                if ("SW".equals(direction))
+                    exits |= 1 << 3;
+                if ("W".equals(direction))
+                    exits |= 1 << 2;
+                if ("NW".equals(direction))
+                    exits |= 1 << 1;
+            }
         }
     }
 
