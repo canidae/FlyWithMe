@@ -28,6 +28,7 @@ public class FlightlogCrawler {
 
     private static final String TAKEOFF_URL = "http://flightlog.org/fl.html?l=1&a=22&country_id=160&start_id=";
     private static final Pattern NAME_PATTERN = Pattern.compile(".*<title>.* - .* - .* - (.*)</title>.*", Pattern.DOTALL);
+    // TODO: next is wrong, "('right'>|'left'></a>)" may not exist (no windpai, for example. see Årsta and Pitolero)
     private static final Pattern DESCRIPTION_PATTERN = Pattern.compile(".*Description</td>.*('right'>|'left'></a>)(.*)</td></tr>.*Coordinates</td>.*", Pattern.DOTALL);
     private static final Pattern ALTITUDE_PATTERN = Pattern.compile(".*Altitude</td><td bgcolor='white'>(\\d+) meters asl Top to bottom (\\d+) meters</td>.*", Pattern.DOTALL);
     private static final Pattern COORD_PATTERN = Pattern.compile(".*Coordinates</td>.*DMS: ([NS]) (\\d+)&deg; (\\d+)&#039; (\\d+)&#039;&#039; &nbsp;([EW]) (\\d+)&deg; (\\d+)&#039; (\\d+)&#039;&#039;.*", Pattern.DOTALL);

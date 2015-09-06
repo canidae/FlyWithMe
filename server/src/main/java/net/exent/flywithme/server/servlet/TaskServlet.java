@@ -68,23 +68,23 @@ public class TaskServlet extends HttpServlet {
         log.info("Attempting to update takeoff with ID " + takeoffId);
         try {
             Takeoff takeoff = FlightlogCrawler.fetchTakeoff(takeoffId);
-            if (takeoff != null) {
-                Takeoff existing = ofy().load().type(Takeoff.class).id(takeoffId).now(); // TODO: this increase datastore read ops, is it a problem? can we remove it? "update where new data doesn't match old data"?
-                if (existing != null && takeoff.equals(existing)) {
-                    takeoff.setLastUpdated(existing.getLastUpdated()); // data not changed, keep "lastUpdated"
-                } else {
-                    log.info("Updated data for takeoff with ID " + takeoffId);
-                    // send message to clients, letting them know a takeoff was added/updated
-                    Message msg = new Message.Builder()
-                            .collapseKey("flywithme-takeoff-updated")
-                            .delayWhileIdle(true)
-                            .addData("takeoffUpdated", "" + takeoff.getId())
-                            .build();
-                    GcmUtil.sendToAllClients(msg);
-                }
-                ofy().save().entity(takeoff).now();
-                return true;
+            if (takeoff == null)
+                return false;
+            Takeoff existing = ofy().load().type(Takeoff.class).id(takeoffId).now(); // TODO: this increase datastore read ops, is it a problem? can we remove it? "update where new data doesn't match old data"?
+            if (existing != null && takeoff.equals(existing)) {
+                takeoff.setLastUpdated(existing.getLastUpdated()); // data not changed, keep "lastUpdated"
+            } else {
+                log.info("Updated data for takeoff with ID " + takeoffId);
+                // send message to clients, letting them know a takeoff was added/updated
+                Message msg = new Message.Builder()
+                        .collapseKey("flywithme-takeoff-updated")
+                        .delayWhileIdle(true)
+                        .addData("takeoffUpdated", "" + takeoff.getId())
+                        .build();
+                GcmUtil.sendToAllClients(msg);
             }
+            ofy().save().entity(takeoff).now();
+            return true;
         } catch (Exception e) {
             log.log(Level.WARNING, "Unable to update takeoff data", e);
         }
