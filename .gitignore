@@ -1,8 +1,6 @@
 *.apk
 flywithme.keystore
 flywithme.txt
-flywithme.dat
-takeoffs.kml
 .gradle
 gradle
 .idea
