@@ -75,7 +75,7 @@ public class FlyWithMeEndpoint {
      * @param timestamp Scheduled time, in seconds since epoch.
      */
     @ApiMethod(name = "scheduleFlight")
-    public void scheduleFlight(@Named("pilotId") String pilotId, @Named("takeoffId") int takeoffId, @Named("timestamp") int timestamp) {
+    public void scheduleFlight(@Named("pilotId") String pilotId, @Named("takeoffId") long takeoffId, @Named("timestamp") long timestamp) {
         Schedule schedule = ofy().load().type(Schedule.class)
                 .filter("takeoffId", takeoffId)
                 .filter("timestamp", timestamp)
@@ -98,7 +98,7 @@ public class FlyWithMeEndpoint {
      * @param timestamp Scheduled time, in seconds since epoch.
      */
     @ApiMethod(name = "unscheduleFlight")
-    public void unscheduleFlight(@Named("pilotId") String pilotId, @Named("takeoffId") int takeoffId, @Named("timestamp") int timestamp) {
+    public void unscheduleFlight(@Named("pilotId") String pilotId, @Named("takeoffId") long takeoffId, @Named("timestamp") long timestamp) {
         Schedule schedule = ofy().load().type(Schedule.class)
                 .filter("takeoff", takeoffId)
                 .filter("timestamp", timestamp)
@@ -246,7 +246,7 @@ public class FlyWithMeEndpoint {
             sb.append(schedule.getTakeoffId()).append(',');
         if (sb.length() <= 0)
             return; // no activity
-        sb.deleteCharAt(sb.length() - 1);
+        sb.setLength(sb.length() - 1);
 
         // send message
         Message msg = new Message.Builder()

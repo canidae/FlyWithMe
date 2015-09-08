@@ -32,11 +32,14 @@ public class FlyWithMeService extends IntentService {
     public static final String ACTION_REGISTER_PILOT = "registerPilot";
     public static final String ACTION_GET_METEOGRAM = "getMeteogram";
     public static final String ACTION_GET_SOUNDING = "getSounding";
+    public static final String ACTION_SCHEDULE_FLIGHT = "scheduleFlight";
+    public static final String ACTION_UNSCHEDULE_FLIGHT = "unscheduleFlight";
     public static final String ACTION_GET_UPDATED_TAKEOFFS = "getUpdatedTakeoffs";
 
     public static final String DATA_BOOLEAN_REFRESH_TOKEN = "refreshToken";
     public static final String DATA_LONG_TAKEOFF_ID = "takeoffId";
     public static final String DATA_LONG_TIMESTAMP = "timestamp";
+    public static final String DATA_PILOT_ID = "pilotId";
 
     private static final String TAG = FlyWithMeService.class.getName();
     private static final String PROJECT_ID = "586531582715";
@@ -83,6 +86,24 @@ public class FlyWithMeService extends IntentService {
                 Log.w(TAG, "Fetching sounding failed", e);
             }
             sendDisplayForecastIntent(takeoffId, forecasts);
+        } else if (ACTION_SCHEDULE_FLIGHT.equals(action)) {
+            String pilotId = bundle.getString(DATA_PILOT_ID, "");
+            long takeoffId = bundle.getLong(DATA_LONG_TAKEOFF_ID, -1);
+            long timestamp = bundle.getLong(DATA_LONG_TIMESTAMP, -1);
+            try {
+                getServer().scheduleFlight(pilotId, takeoffId, timestamp);
+            } catch (IOException e) {
+                Log.w(TAG, "Scheduling flight failed", e);
+            }
+        } else if (ACTION_UNSCHEDULE_FLIGHT.equals(action)) {
+            String pilotId = bundle.getString(DATA_PILOT_ID, "");
+            long takeoffId = bundle.getLong(DATA_LONG_TAKEOFF_ID, -1);
+            long timestamp = bundle.getLong(DATA_LONG_TIMESTAMP, -1);
+            try {
+                getServer().unscheduleFlight(pilotId, takeoffId, timestamp);
+            } catch (IOException e) {
+                Log.w(TAG, "Unscheduling flight failed", e);
+            }
         } else if (ACTION_GET_UPDATED_TAKEOFFS.equals(action)) {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
             long timestamp = prefs.getLong("pref_last_takeoff_update_timestamp", 0);

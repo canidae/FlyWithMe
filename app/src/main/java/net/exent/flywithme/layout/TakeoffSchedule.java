@@ -157,12 +157,11 @@ public class TakeoffSchedule extends Fragment {
 
         // don't show buttons for registering flight if user haven't set a name
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        String pilotName = prefs.getString("pref_schedule_pilot_name", "").trim();
-        int fetchTakeoffs = Integer.parseInt(prefs.getString("pref_schedule_fetch_takeoffs", "-1"));
+        String pilotName = prefs.getString("pref_pilot_name", "").trim();
         TextView mayNotRegister = (TextView) getActivity().findViewById(R.id.scheduleMayNotRegister);
         TableLayout flightTime = (TableLayout) getActivity().findViewById(R.id.scheduleFlightTime);
         Button scheduleFlight = (Button) getActivity().findViewById(R.id.scheduleFlightButton);
-        if (fetchTakeoffs == -1 || "".equals(pilotName)) {
+        if ("".equals(pilotName)) {
             mayNotRegister.setVisibility(View.VISIBLE);
             flightTime.setVisibility(View.GONE);
             scheduleFlight.setVisibility(View.GONE);
@@ -315,8 +314,7 @@ public class TakeoffSchedule extends Fragment {
                     break;
                 }
             }
-            int fetchTakeoffs = Integer.parseInt(prefs.getString("pref_schedule_fetch_takeoffs", "-1"));
-            if (fetchTakeoffs == -1 || "".equals(pilotName)) {
+            if ("".equals(pilotName)) {
                 joinOrLeave.setVisibility(View.GONE);
             } else {
                 joinOrLeave.setVisibility(View.VISIBLE);
