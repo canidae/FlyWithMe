@@ -1,8 +1,9 @@
-package net.exent.flywithme.layout;
+package net.exent.flywithme.fragment;
 
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -20,7 +21,11 @@ import android.widget.ImageButton;
 import android.widget.TableLayout;
 import android.widget.TextView;
 
-import net.exent.flywithme.FlyWithMe;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+
 import net.exent.flywithme.R;
 import net.exent.flywithme.bean.Takeoff;
 import net.exent.flywithme.data.Database;
@@ -31,14 +36,18 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-public class TakeoffSchedule extends Fragment {
+public class TakeoffSchedule extends Fragment implements GoogleApiClient.ConnectionCallbacks, LocationListener {
     public static final String ARG_TAKEOFF = "takeoff";
     private Takeoff takeoff;
     private Calendar calendar = GregorianCalendar.getInstance();
     private TakeoffScheduleAdapter scheduleAdapter;
+
+    private GoogleApiClient googleApiClient;
+    private Location location;
 
     public void showTakeoffSchedule(Takeoff takeoff) {
         try {
@@ -122,7 +131,7 @@ public class TakeoffSchedule extends Fragment {
 
             // guesstimate when we're gonna fly by using distance to takeoff
             // travel time of 12 m/s seems to be a fair rough estimate
-            double travelTime = FlyWithMe.getInstance().getLocation().distanceTo(takeoff.getLocation()) / 12;
+            double travelTime = location.distanceTo(takeoff.getLocation()) / 12;
             // then round up travel time and current time to nearest 15 minute
             travelTime = Math.ceil(travelTime / 900.0) * 900.0;
             calendar.set(Calendar.MINUTE, (int) Math.ceil(calendar.get(Calendar.MINUTE) / 15.0) * 15);
@@ -137,6 +146,12 @@ public class TakeoffSchedule extends Fragment {
     }
 
     @Override
+    public void onCreate(Bundle bundle) {
+        super.onCreate(bundle);
+        googleApiClient = new GoogleApiClient.Builder(getActivity()).addApi(LocationServices.API).addConnectionCallbacks(this).build();
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         if (savedInstanceState != null)
             takeoff = savedInstanceState.getParcelable(ARG_TAKEOFF);
@@ -147,6 +162,8 @@ public class TakeoffSchedule extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+        googleApiClient.connect();
+
         Bundle args = getArguments();
         if (args != null)
             showTakeoffSchedule((Takeoff) args.getParcelable(ARG_TAKEOFF));
@@ -180,6 +197,23 @@ public class TakeoffSchedule extends Fragment {
     }
 
     @Override
+    public void onConnected(Bundle bundle) {
+        LocationRequest locationRequest = LocationRequest.create().setInterval(10000).setPriority(LocationRequest.PRIORITY_LOW_POWER);
+        LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
+        location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        this.location = location;
+    }
+
+    @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable(ARG_TAKEOFF, takeoff);
@@ -202,13 +236,13 @@ public class TakeoffSchedule extends Fragment {
 
         // update labels
         TextView dayText = (TextView) getActivity().findViewById(R.id.scheduleDay);
-        dayText.setText(new SimpleDateFormat("d.").format(calendar.getTime()));
+        dayText.setText(new SimpleDateFormat("d.", Locale.US).format(calendar.getTime()));
         TextView monthText = (TextView) getActivity().findViewById(R.id.scheduleMonth);
-        monthText.setText(new SimpleDateFormat("MMM").format(calendar.getTime()));
+        monthText.setText(new SimpleDateFormat("MMM", Locale.US).format(calendar.getTime()));
         TextView hourText = (TextView) getActivity().findViewById(R.id.scheduleHour);
-        hourText.setText(new SimpleDateFormat("HH").format(calendar.getTime()));
+        hourText.setText(new SimpleDateFormat("HH", Locale.US).format(calendar.getTime()));
         TextView minuteText = (TextView) getActivity().findViewById(R.id.scheduleMinute);
-        minuteText.setText(new SimpleDateFormat("mm").format(calendar.getTime()));
+        minuteText.setText(new SimpleDateFormat("mm", Locale.US).format(calendar.getTime()));
     }
 
     private void scheduleFlight(long timestamp) {
@@ -233,7 +267,7 @@ public class TakeoffSchedule extends Fragment {
 
     private class TakeoffScheduleAdapter extends BaseExpandableListAdapter {
         private Map<Date, Set<Pilot>> schedule;
-        private SimpleDateFormat dateFormatter = new SimpleDateFormat("EEE dd. MMM, HH:mm");
+        private SimpleDateFormat dateFormatter = new SimpleDateFormat("EEE dd. MMM, HH:mm", Locale.US);
 
         public TakeoffScheduleAdapter() {
             updateData();
@@ -405,7 +439,7 @@ public class TakeoffSchedule extends Fragment {
                 ScheduleService.scheduleFlight(getActivity(), params[0].intValue(), params[1]);
             else
                 ScheduleService.unscheduleFlight(getActivity(), params[0].intValue(), params[1]);
-            ScheduleService.updateSchedule(getActivity(), FlyWithMe.getInstance().getLocation());
+            ScheduleService.updateSchedule(getActivity(), location);
             return null;
         }
 

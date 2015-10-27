@@ -62,6 +62,7 @@ public class Database extends SQLiteOpenHelper {
                 pilot.setPhone(pilotPhone);
                 pilots.add(pilot);
             }
+            cursor.close();
             return schedule;
         } finally {
             db.close();
@@ -79,6 +80,7 @@ public class Database extends SQLiteOpenHelper {
             Cursor cursor = db.rawQuery("select distinct takeoff.name from takeoff join schedule on takeoff.takeoff_id = schedule.takeoff_id where datetime(schedule.timestamp, 'unixepoch') >= datetime('now') and datetime(schedule.timestamp, 'unixepoch') <= datetime('now', '+2 days') and schedule.pilot_name != ?", new String[]{ignorePilot});
             while (cursor.moveToNext())
                 takeoffs.add(cursor.getString(0));
+            cursor.close();
             return takeoffs;
         } finally {
             db.close();
@@ -159,6 +161,7 @@ public class Database extends SQLiteOpenHelper {
             Cursor cursor = db.rawQuery("select *, (select count(*) from schedule where schedule.takeoff_id = takeoff.takeoff_id and date(schedule.timestamp, 'unixepoch') = date('now')) as pilots_today, (select count(*) from schedule where schedule.takeoff_id = takeoff.takeoff_id and date(schedule.timestamp, 'unixepoch') > date('now')) as pilots_later from takeoff order by " + orderBy + " limit " + maxResult, null);
             while (cursor.moveToNext())
                 takeoffs.add(Takeoff.create(new ImprovedCursor(cursor)));
+            cursor.close();
             return takeoffs;
         } finally {
             db.close();

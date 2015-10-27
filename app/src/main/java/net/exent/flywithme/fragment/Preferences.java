@@ -1,4 +1,4 @@
-package net.exent.flywithme.layout;
+package net.exent.flywithme.fragment;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -13,7 +13,6 @@ import android.preference.Preference;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceFragment;
-import android.util.Log;
 import android.widget.ImageButton;
 
 import net.exent.flywithme.R;

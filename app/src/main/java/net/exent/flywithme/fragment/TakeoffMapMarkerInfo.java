@@ -1,7 +1,6 @@
-package net.exent.flywithme.layout;
+package net.exent.flywithme.fragment;
 
 import android.text.Html;
-import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;

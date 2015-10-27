@@ -1,9 +1,9 @@
 package net.exent.flywithme;
 
-import net.exent.flywithme.layout.NoaaForecast;
-import net.exent.flywithme.layout.Preferences;
-import net.exent.flywithme.layout.TakeoffList;
-import net.exent.flywithme.layout.TakeoffMap;
+import net.exent.flywithme.fragment.NoaaForecast;
+import net.exent.flywithme.fragment.Preferences;
+import net.exent.flywithme.fragment.TakeoffList;
+import net.exent.flywithme.fragment.TakeoffMap;
 import net.exent.flywithme.bean.Takeoff;
 import net.exent.flywithme.data.Database;
 import net.exent.flywithme.service.FlyWithMeService;
@@ -14,9 +14,6 @@ import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -33,39 +30,21 @@ import java.io.EOFException;
 import java.io.IOException;
 
 /* TODO:
+   - Go through onCreate(), onStart(), onResume(), onPause(), onStop(), etc and check if they're sane
    - Use endpoint API for registering planned flight
    - Use endpoint API for fetching planned flights (schedule)
    - Fix "back"-functionality, see "addToBackStack()" for FragmentTransaction. DONE: sort of, could be better
    - Display notification if user is close to takeoff ("are you flying?")
      - Must be possible to "blacklist" takeoffs, and somehow remove blacklisting later (in preference window?)
-   - Notify clients when a takeoff is updated. DONE: TODO: currently disabled, also causes excessive database read operations
    - Cache forecasts locally for some few hours (fetched timestamp is returned, cache for the same amount of time as server caches the forecast)
    - Can we improve fetching location, or at least get rid of all the implemented interfaces? DONE-ish: fused 3 interfaces to 1. TODO: FusedLocationApi
    - Don't like "FlyWithMe.getInstance()", is it possible to get rid of it?
    - Implement "Poor Man's SPOT"? Livetracking?
  */
-public class FlyWithMe extends Activity implements LocationSupplier {
+public class FlyWithMe extends Activity {
     public static final String ACTION_SHOW_FORECAST = "showForecast";
 
     public static final String SERVER_URL = "http://flywithme-server.appspot.com/fwm";
-
-    private static final int LOCATION_UPDATE_TIME = 60000; // update location every LOCATION_UPDATE_TIME millisecond
-    private static final int LOCATION_UPDATE_DISTANCE = 100; // or when we've moved more than LOCATION_UPDATE_DISTANCE meters
-    private static Location location = new Location(LocationManager.PASSIVE_PROVIDER);
-    private static FlyWithMe instance;
-
-    public static FlyWithMe getInstance() {
-        return instance;
-    }
-
-    /**
-     * Get approximate location of user.
-     *
-     * @return Approximate location of user.
-     */
-    public Location getLocation() {
-        return new Location(location);
-    }
 
     /**
      * {@inheritDoc}
@@ -74,46 +53,6 @@ public class FlyWithMe extends Activity implements LocationSupplier {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fly_with_me);
-
-        /* setup location listener */
-        LocationListener locationListener = new LocationListener() {
-            public void onStatusChanged(String provider, int status, Bundle extras) {
-            }
-
-            public void onProviderEnabled(String provider) {
-            }
-
-            public void onProviderDisabled(String provider) {
-            }
-
-            public void onLocationChanged(Location newLocation) {
-                /* TODO:
-                   some users disable android location services.
-                   this cause the map to be centered in the gulf of guinea,
-                   and the list of takeoffs is sorted after distance to that location.
-                   if location information is not available we should sort the list of takeoffs
-                   after the location centered in the map.
-                   we should also see if there's another way to find our location,
-                   GPS for example apparently can be turned on, but i don't know if the location
-                   data is any more accessible then.
-                 */
-                if (newLocation == null)
-                    return;
-                location = newLocation;
-            }
-        };
-        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, LOCATION_UPDATE_TIME, LOCATION_UPDATE_DISTANCE, locationListener);
-        location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-        if (location == null) {
-            // no location set, let's pretend we're at the Rikssenter :)
-            location = new Location(LocationManager.PASSIVE_PROVIDER);
-            location.setLatitude(61.874655);
-            location.setLongitude(9.154848);
-        }
-
-        /* set instance/context, our fragments are using this a lot */
-        instance = this;
 
         /* setup any preferences that needs to be done programmatically */
         Preferences.setupDefaultPreferences(this);
@@ -293,5 +232,4 @@ public class FlyWithMe extends Activity implements LocationSupplier {
             }
         }
     }
-
 }

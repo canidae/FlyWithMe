@@ -1,4 +1,4 @@
-package net.exent.flywithme.layout;
+package net.exent.flywithme.fragment;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -7,12 +7,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import net.exent.flywithme.LocationSupplier;
 import net.exent.flywithme.R;
 import net.exent.flywithme.bean.Takeoff;
 import net.exent.flywithme.data.Airspace;
 import net.exent.flywithme.data.Database;
 
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
@@ -27,7 +30,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.PolygonOptions;
 
-import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.SharedPreferences;
@@ -48,10 +50,7 @@ import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
 
-public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, OnCameraChangeListener, OnMapReadyCallback {
-    private static CameraPosition cameraPosition;
-    private GoogleMap map;
-
+public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, OnCameraChangeListener, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, LocationListener {
     /* we can't use Map<Marker, Takeoff> below, because the Marker may be recreated, invalidating the reference we got to the previous instantiation.
      * instead we'll have to keep the id (String) as a reference to the marker */
     private static Map<String, Pair<Marker, Takeoff>> markers = new HashMap<>();
@@ -67,13 +66,14 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
     private static Bitmap markerNorthwestBitmap;
     private static Bitmap markerExclamation;
     private static Bitmap markerExclamationYellow;
-    private LocationSupplier callback;
+
+    private static CameraPosition cameraPosition;
+
+    private GoogleApiClient googleApiClient;
+    private GoogleMap map;
+    private Location location;
 
     public void drawMap() {
-        if (callback == null) {
-            Log.w(getClass().getName(), "callback is null, returning");
-            return;
-        }
         try {
             /* need to do this here or it'll end up with a reference to an old instance of "this", somehow */
             map.setInfoWindowAdapter(new TakeoffMapMarkerInfo(getActivity().getLayoutInflater()));
@@ -120,17 +120,68 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
     }
 
     @Override
+    public void onCreate(Bundle bundle) {
+        super.onCreate(bundle);
+        googleApiClient = new GoogleApiClient.Builder(getActivity()).addApi(LocationServices.API).addConnectionCallbacks(this).build();
+
+        markerBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.mapmarker);
+        markerNorthBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.mapmarker_octant_n);
+        markerNortheastBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.mapmarker_octant_ne);
+        markerEastBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.mapmarker_octant_e);
+        markerSoutheastBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.mapmarker_octant_se);
+        markerSouthBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.mapmarker_octant_s);
+        markerSouthwestBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.mapmarker_octant_sw);
+        markerWestBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.mapmarker_octant_w);
+        markerNorthwestBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.mapmarker_octant_nw);
+        markerExclamation = BitmapFactory.decodeResource(getResources(), R.drawable.mapmarker_exclamation);
+        markerExclamationYellow = BitmapFactory.decodeResource(getResources(), R.drawable.mapmarker_exclamation_yellow);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        View view = inflater.inflate(R.layout.takeoff_map, container, false);
+        GoogleMapOptions mapOptions = new GoogleMapOptions();
+        mapOptions.zoomControlsEnabled(false);
+        if (cameraPosition != null) {
+            mapOptions.camera(cameraPosition);
+        } else {
+            mapOptions.camera(new CameraPosition(new LatLng(location.getLatitude(), location.getLongitude()), 10.0f, 0.0f, 0.0f));
+        }
+        MapFragment mapFragment = MapFragment.newInstance(mapOptions);
+        mapFragment.getMapAsync(this);
+        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
+        transaction.replace(R.id.takeoffMapLayout, mapFragment).commit();
+        return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        googleApiClient.connect();
+    }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+        LocationRequest locationRequest = LocationRequest.create().setInterval(1000).setPriority(LocationRequest.PRIORITY_LOW_POWER);
+        LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
+        location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
+    }
+
+    @Override
     public void onMapReady(GoogleMap map) {
         this.map = map;
         this.map.setMyLocationEnabled(true);
         drawMap();
     }
 
+    @Override
+    public void onLocationChanged(Location location) {
+        this.location = location;
+    }
+
+    @Override
     public void onInfoWindowClick(Marker marker) {
-        if (callback == null) {
-            Log.w(getClass().getName(), "callback is null, returning");
-            return;
-        }
         /* tell main activity to show takeoff details */
         Pair<Marker, Takeoff> pair = markers.get(marker.getId());
         if (pair != null) {
@@ -157,46 +208,19 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        callback = (LocationSupplier) activity;
-        if (markerBitmap == null) {
-            markerBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.mapmarker);
-            markerNorthBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.mapmarker_octant_n);
-            markerNortheastBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.mapmarker_octant_ne);
-            markerEastBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.mapmarker_octant_e);
-            markerSoutheastBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.mapmarker_octant_se);
-            markerSouthBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.mapmarker_octant_s);
-            markerSouthwestBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.mapmarker_octant_sw);
-            markerWestBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.mapmarker_octant_w);
-            markerNorthwestBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.mapmarker_octant_nw);
-            markerExclamation = BitmapFactory.decodeResource(getResources(), R.drawable.mapmarker_exclamation);
-            markerExclamationYellow = BitmapFactory.decodeResource(getResources(), R.drawable.mapmarker_exclamation_yellow);
-        }
+    public void onConnectionSuspended(int i) {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.takeoff_map, container, false);
-        GoogleMapOptions mapOptions = new GoogleMapOptions();
-        mapOptions.zoomControlsEnabled(false);
-        if (cameraPosition != null) {
-            mapOptions.camera(cameraPosition);
-        } else {
-            Location loc = callback.getLocation();
-            mapOptions.camera(new CameraPosition(new LatLng(loc.getLatitude(), loc.getLongitude()), 10.0f, 0.0f, 0.0f));
-        }
-        MapFragment mapFragment = MapFragment.newInstance(mapOptions);
-        mapFragment.getMapAsync(this);
-        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-        transaction.replace(R.id.takeoffMapLayout, mapFragment).commit();
-        return view;
+    public void onPause() {
+        super.onPause();
+        LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
+    public void onStop() {
+        super.onStop();
+        googleApiClient.disconnect();
     }
 
     private void drawOverlay(CameraPosition cameraPosition) {
@@ -216,7 +240,6 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
 
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
                 if (prefs.getBoolean("pref_map_show_takeoffs", true)) {
-                    Location location = callback.getLocation();
                     LatLng latLng = cameraPositions[0].target;
                     if (latLng.latitude != 0.0 && latLng.longitude != 0.0) {
                         location.setLatitude(latLng.latitude);
@@ -254,7 +277,7 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
                             canvas.drawBitmap(markerExclamation, 0, 0, paint);
                         else if (takeoff.getPilotsLater() > 0)
                             canvas.drawBitmap(markerExclamationYellow, 0, 0, paint);
-                        String snippet = getString(R.string.height) + ": " + takeoff.getHeight() + "m\n" + getString(R.string.distance) + ": " + (int) callback.getLocation().distanceTo(takeoff.getLocation()) / 1000 + "km";
+                        String snippet = getString(R.string.height) + ": " + takeoff.getHeight() + "m\n" + getString(R.string.distance) + ": " + (int) location.distanceTo(takeoff.getLocation()) / 1000 + "km";
                         MarkerOptions markerOptions = new MarkerOptions().position(new LatLng(takeoff.getLocation().getLatitude(), takeoff.getLocation().getLongitude())).title(takeoff.getName()).snippet(snippet).icon(BitmapDescriptorFactory.fromBitmap(bitmap)).anchor(0.5f, 0.875f);
                         addMarkers.put(takeoff, markerOptions);
                     }
@@ -309,7 +332,6 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
                 final Set<Airspace.Zone> showZones = new HashSet<>();
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
                 if (prefs.getBoolean("pref_map_show_airspace", true)) {
-                    Location location = callback.getLocation();
                     LatLng latLng = cameraPositions[0].target;
                     if (latLng.latitude != 0.0 && latLng.longitude != 0.0) {
                         location.setLatitude(latLng.latitude);

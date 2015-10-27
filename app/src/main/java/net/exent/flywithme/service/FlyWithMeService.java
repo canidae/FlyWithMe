@@ -16,7 +16,7 @@ import com.google.api.client.googleapis.services.GoogleClientRequestInitializer;
 
 import net.exent.flywithme.FlyWithMe;
 import net.exent.flywithme.data.Database;
-import net.exent.flywithme.layout.NoaaForecast;
+import net.exent.flywithme.fragment.NoaaForecast;
 import net.exent.flywithme.server.flyWithMeServer.FlyWithMeServer;
 import net.exent.flywithme.server.flyWithMeServer.model.Forecast;
 import net.exent.flywithme.server.flyWithMeServer.model.Takeoff;

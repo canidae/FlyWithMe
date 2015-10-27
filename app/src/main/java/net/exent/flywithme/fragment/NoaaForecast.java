@@ -1,4 +1,4 @@
-package net.exent.flywithme.layout;
+package net.exent.flywithme.fragment;
 
 import net.exent.flywithme.R;
 import net.exent.flywithme.bean.Takeoff;

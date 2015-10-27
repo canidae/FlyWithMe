@@ -1,11 +1,10 @@
-package net.exent.flywithme.layout;
+package net.exent.flywithme.fragment;
 
-import net.exent.flywithme.LocationSupplier;
 import net.exent.flywithme.R;
 import net.exent.flywithme.bean.Takeoff;
 import net.exent.flywithme.data.Database;
 import net.exent.flywithme.server.flyWithMeServer.model.Pilot;
-import android.app.Activity;
+
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
@@ -20,7 +19,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.text.method.LinkMovementMethod;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -30,14 +28,20 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-public class TakeoffDetails extends Fragment {
+public class TakeoffDetails extends Fragment implements GoogleApiClient.ConnectionCallbacks, LocationListener {
     public static final String ARG_TAKEOFF = "takeoff";
     private static final int SCHEDULE_BAR_WIDTH = 90;
     private static final int SCHEDULE_BAR_SPACE = 15;
@@ -45,18 +49,14 @@ public class TakeoffDetails extends Fragment {
     private static final int Y_AXIS_WIDTH = 100;
     private static final int LINE_WIDTH = 3;
     private Takeoff takeoff;
-    private LocationSupplier callback;
+
+    private GoogleApiClient googleApiClient;
+    private Location location;
 
     public void showTakeoffDetails(final Takeoff takeoff) {
-        if (callback == null) {
-            Log.w(getClass().getName(), "callback is null, returning");
-            return;
-        }
         this.takeoff = takeoff;
         if (takeoff == null)
             return;
-
-        final Location myLocation = callback.getLocation();
 
         ImageButton navigationButton = (ImageButton) getActivity().findViewById(R.id.fragmentButton1);
         navigationButton.setImageResource(R.mipmap.navigation);
@@ -64,7 +64,7 @@ public class TakeoffDetails extends Fragment {
             @Override
             public void onClick(View v) {
                 Location loc = takeoff.getLocation();
-                String uri = "http://maps.google.com/maps?saddr=" + myLocation.getLatitude() + "," + myLocation.getLongitude() + "&daddr=" + loc.getLatitude() + "," + loc.getLongitude();
+                String uri = "http://maps.google.com/maps?saddr=" + location.getLatitude() + "," + location.getLongitude() + "&daddr=" + loc.getLatitude() + "," + loc.getLongitude();
                 Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(uri));
                 getActivity().startActivity(intent);
             }
@@ -154,9 +154,9 @@ public class TakeoffDetails extends Fragment {
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        callback = (LocationSupplier) activity;
+    public void onCreate(Bundle bundle) {
+        super.onCreate(bundle);
+        googleApiClient = new GoogleApiClient.Builder(getActivity()).addApi(LocationServices.API).addConnectionCallbacks(this).build();
     }
 
     @Override
@@ -170,6 +170,8 @@ public class TakeoffDetails extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+        googleApiClient.connect();
+
         Bundle args = getArguments();
         if (args != null)
             showTakeoffDetails((Takeoff) args.getParcelable(ARG_TAKEOFF));
@@ -179,6 +181,34 @@ public class TakeoffDetails extends Fragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable(ARG_TAKEOFF, takeoff);
+    }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+        LocationRequest locationRequest = LocationRequest.create().setInterval(10000).setPriority(LocationRequest.PRIORITY_NO_POWER);
+        LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
+        location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        this.location = location;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        googleApiClient.disconnect();
     }
 
     private void drawFlySchedule(ImageButton flyScheduleButton) {
@@ -222,7 +252,7 @@ public class TakeoffDetails extends Fragment {
             if (today.get(Calendar.DAY_OF_YEAR) == cal.get(Calendar.DAY_OF_YEAR) && today.get(Calendar.YEAR) == cal.get(Calendar.YEAR)) {
                 text = getActivity().getString(R.string.today);
             } else {
-                SimpleDateFormat dayFormatter = new SimpleDateFormat("d. MMM");
+                SimpleDateFormat dayFormatter = new SimpleDateFormat("d. MMM", Locale.US);
                 text = dayFormatter.format(cal.getTime());
             }
             if (!prevDate.equals(text)) {
@@ -250,7 +280,7 @@ public class TakeoffDetails extends Fragment {
             paint.setColor(Color.BLACK);
             canvas.drawText(text, xPos + (SCHEDULE_BAR_WIDTH - textWidth) / 2, bitmap.getHeight() - X_AXIS_HEIGHT - LINE_WIDTH - 4, paint);
             // draw time
-            SimpleDateFormat timeFormatter = new SimpleDateFormat("HH:mm");
+            SimpleDateFormat timeFormatter = new SimpleDateFormat("HH:mm", Locale.US);
             text = timeFormatter.format(cal.getTime());
             textWidth = (int) Math.ceil(paint.measureText(text));
             paint.setColor(Color.LTGRAY);
