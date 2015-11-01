@@ -30,7 +30,6 @@ import java.io.EOFException;
 import java.io.IOException;
 
 /* TODO:
-   - Go through onCreate(), onStart(), onResume(), onPause(), onStop(), etc and check if they're sane
    - NoaaForecast: Would prefer a better way to transfer data to fragment
    - Use endpoint API for registering planned flight
    - Use endpoint API for fetching planned flights (schedule)
@@ -52,6 +51,26 @@ public class FlyWithMe extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fly_with_me);
+
+        /* starting app, setup buttons */
+        ImageButton fwmButton = (ImageButton) findViewById(R.id.fwmButton);
+        fwmButton.setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
+                showTakeoffList();
+            }
+        });
+        ImageButton mapButton = (ImageButton) findViewById(R.id.mapButton);
+        mapButton.setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
+                showMap();
+            }
+        });
+        ImageButton settingsButton = (ImageButton) findViewById(R.id.settingsButton);
+        settingsButton.setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
+                showSettings();
+            }
+        });
 
         /* setup any preferences that needs to be done programmatically */
         Preferences.setupDefaultPreferences(this);
@@ -80,30 +99,6 @@ public class FlyWithMe extends Activity {
                 replaceFragment(new TakeoffList(), "takeoffList", false);
             }
         }
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        /* starting app, setup buttons */
-        ImageButton fwmButton = (ImageButton) findViewById(R.id.fwmButton);
-        fwmButton.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                showTakeoffList();
-            }
-        });
-        ImageButton mapButton = (ImageButton) findViewById(R.id.mapButton);
-        mapButton.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                showMap();
-            }
-        });
-        ImageButton settingsButton = (ImageButton) findViewById(R.id.settingsButton);
-        settingsButton.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                showSettings();
-            }
-        });
     }
 
     @Override
@@ -154,49 +149,6 @@ public class FlyWithMe extends Activity {
         fragmentTransaction.commit();
     }
 
-    private void importTakeoffs() {
-        Log.d(getClass().getName(), "Importing takeoffs from file");
-        DataInputStream inputStream = null;
-        try {
-            Context context = getApplicationContext();
-            Database database = new Database(context);
-            inputStream = new DataInputStream(context.getResources().openRawResource(R.raw.flywithme));
-            long importTimestamp = inputStream.readLong();
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-            long previousImportTimestamp = prefs.getLong("pref_last_takeoff_update_timestamp", 0);
-            if (importTimestamp <= previousImportTimestamp) {
-                Log.d(getClass().getName(), "No need to import, already up to date");
-                return; // no need to import, already updated
-            }
-            prefs.edit().putLong("pref_last_takeoff_update_timestamp", importTimestamp).apply();
-            while (true) {
-                /* loop breaks once we get an EOFException */
-                int takeoffId = inputStream.readShort();
-                String name = inputStream.readUTF();
-                String description = inputStream.readUTF();
-                int asl = inputStream.readShort();
-                int height = inputStream.readShort();
-                float latitude = inputStream.readFloat();
-                float longitude = inputStream.readFloat();
-                String windpai = inputStream.readUTF();
-                Takeoff takeoff = new Takeoff(takeoffId, importTimestamp, name, description, asl, height, latitude, longitude, windpai, false);
-                database.updateTakeoff(takeoff);
-            }
-        } catch (EOFException e) {
-            /* expected to happen when reaching end of file */
-        } catch (IOException e) {
-            Log.e(getClass().getName(), "Error when reading file with takeoffs", e);
-        } finally {
-            try {
-                if (inputStream != null)
-                    inputStream.close();
-            } catch (IOException e) {
-                Log.w(getClass().getName(), "Unable to close file with takeoffs");
-            }
-        }
-        Log.d(getClass().getName(), "Done importing takeoffs from file");
-    }
-
     private class ImportTakeoffTask extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... params) {
@@ -229,6 +181,49 @@ public class FlyWithMe extends Activity {
                     takeoffMap.drawMap();
                 }
             }
+        }
+
+        private void importTakeoffs() {
+            Log.d(getClass().getName(), "Importing takeoffs from file");
+            DataInputStream inputStream = null;
+            try {
+                Context context = getApplicationContext();
+                Database database = new Database(context);
+                inputStream = new DataInputStream(context.getResources().openRawResource(R.raw.flywithme));
+                long importTimestamp = inputStream.readLong();
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+                long previousImportTimestamp = prefs.getLong("pref_last_takeoff_update_timestamp", 0);
+                if (importTimestamp <= previousImportTimestamp) {
+                    Log.d(getClass().getName(), "No need to import, already up to date");
+                    return; // no need to import, already updated
+                }
+                prefs.edit().putLong("pref_last_takeoff_update_timestamp", importTimestamp).apply();
+                while (true) {
+                /* loop breaks once we get an EOFException */
+                    int takeoffId = inputStream.readShort();
+                    String name = inputStream.readUTF();
+                    String description = inputStream.readUTF();
+                    int asl = inputStream.readShort();
+                    int height = inputStream.readShort();
+                    float latitude = inputStream.readFloat();
+                    float longitude = inputStream.readFloat();
+                    String windpai = inputStream.readUTF();
+                    Takeoff takeoff = new Takeoff(takeoffId, importTimestamp, name, description, asl, height, latitude, longitude, windpai, false);
+                    database.updateTakeoff(takeoff);
+                }
+            } catch (EOFException e) {
+            /* expected to happen when reaching end of file */
+            } catch (IOException e) {
+                Log.e(getClass().getName(), "Error when reading file with takeoffs", e);
+            } finally {
+                try {
+                    if (inputStream != null)
+                        inputStream.close();
+                } catch (IOException e) {
+                    Log.w(getClass().getName(), "Unable to close file with takeoffs");
+                }
+            }
+            Log.d(getClass().getName(), "Done importing takeoffs from file");
         }
     }
 }
