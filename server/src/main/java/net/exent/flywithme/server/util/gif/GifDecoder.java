@@ -1,4 +1,4 @@
-package net.exent.flywithme.server.utils.gif;
+package net.exent.flywithme.server.util.gif;
 
 import java.io.IOException;
 import java.io.InputStream;

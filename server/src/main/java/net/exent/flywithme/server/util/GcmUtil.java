@@ -1,4 +1,4 @@
-package net.exent.flywithme.server.utils;
+package net.exent.flywithme.server.util;
 
 import com.google.android.gcm.server.Constants;
 import com.google.android.gcm.server.Message;

@@ -6,8 +6,8 @@ import com.googlecode.objectify.ObjectifyService;
 import net.exent.flywithme.server.bean.Forecast;
 import net.exent.flywithme.server.bean.Takeoff;
 import net.exent.flywithme.server.endpoint.FlyWithMeEndpoint;
-import net.exent.flywithme.server.utils.FlightlogCrawler;
-import net.exent.flywithme.server.utils.GcmUtil;
+import net.exent.flywithme.server.util.FlightlogCrawler;
+import net.exent.flywithme.server.util.GcmUtil;
 
 import java.io.IOException;
 import java.util.logging.Level;

@@ -10,8 +10,8 @@ import net.exent.flywithme.server.bean.Forecast;
 import net.exent.flywithme.server.bean.Pilot;
 import net.exent.flywithme.server.bean.Schedule;
 import net.exent.flywithme.server.bean.Takeoff;
-import net.exent.flywithme.server.utils.GcmUtil;
-import net.exent.flywithme.server.utils.NoaaProxy;
+import net.exent.flywithme.server.util.GcmUtil;
+import net.exent.flywithme.server.util.NoaaProxy;
 
 import java.util.Arrays;
 import java.util.List;

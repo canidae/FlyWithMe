@@ -1,6 +1,6 @@
-package net.exent.flywithme.server.utils;
+package net.exent.flywithme.server.util;
 
-import net.exent.flywithme.server.utils.gif.GifDecoder;
+import net.exent.flywithme.server.util.gif.GifDecoder;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;

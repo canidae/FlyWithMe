@@ -19,6 +19,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.text.method.LinkMovementMethod;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -48,65 +49,34 @@ public class TakeoffDetails extends Fragment implements GoogleApiClient.Connecti
     private static final int X_AXIS_HEIGHT = 30;
     private static final int Y_AXIS_WIDTH = 100;
     private static final int LINE_WIDTH = 3;
-    private Takeoff takeoff;
 
     private GoogleApiClient googleApiClient;
     private Location location;
+    private Takeoff takeoff;
 
-    public void showTakeoffDetails(final Takeoff takeoff) {
-        this.takeoff = takeoff;
-        if (takeoff == null)
-            return;
+    @Override
+    public void onCreate(Bundle bundle) {
+        super.onCreate(bundle);
+        googleApiClient = new GoogleApiClient.Builder(getActivity()).addApi(LocationServices.API).addConnectionCallbacks(this).build();
+    }
 
-        ImageButton navigationButton = (ImageButton) getActivity().findViewById(R.id.fragmentButton1);
-        navigationButton.setImageResource(R.mipmap.navigation);
-        navigationButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Location loc = takeoff.getLocation();
-                String uri = "http://maps.google.com/maps?saddr=" + location.getLatitude() + "," + location.getLongitude() + "&daddr=" + loc.getLatitude() + "," + loc.getLongitude();
-                Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(uri));
-                getActivity().startActivity(intent);
-            }
-        });
-        ImageButton noaaButton = (ImageButton) getActivity().findViewById(R.id.fragmentButton2);
-        noaaButton.setImageResource(R.mipmap.noaa);
-        noaaButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                NoaaForecast noaaForecast = new NoaaForecast();
-                Bundle args = new Bundle();
-                args.putLong(NoaaForecast.ARG_TAKEOFF_ID, takeoff.getId());
-                noaaForecast.setArguments(args);
-                String tag = "noaaForecast," + takeoff.getId();
-                FragmentManager fragmentManager = getFragmentManager();
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.replace(R.id.fragmentContainer, noaaForecast, tag);
-                if (fragmentManager.findFragmentByTag(tag) == null)
-                    fragmentTransaction.addToBackStack(tag);
-                fragmentTransaction.commit();
-            }
-        });
-        final ImageButton favouriteButton = (ImageButton) getActivity().findViewById(R.id.fragmentButton3);
-        favouriteButton.setImageResource(takeoff.isFavourite() ? R.mipmap.favourite_enabled : R.mipmap.favourite_disabled);
-        favouriteButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                takeoff.setFavourite(!takeoff.isFavourite());
-                new Database(getActivity()).updateFavourite(takeoff);
-                favouriteButton.setImageResource(takeoff.isFavourite() ? R.mipmap.favourite_enabled : R.mipmap.favourite_disabled);
-            }
-        });
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
+        if (getArguments() != null)
+            takeoff = getArguments().getParcelable(ARG_TAKEOFF);
+        if (takeoff == null && bundle != null)
+            takeoff = bundle.getParcelable(ARG_TAKEOFF);
 
+        View view = inflater.inflate(R.layout.takeoff_details, container, false);
         /* windpai */
-        ImageView windroseNorth = (ImageView) getActivity().findViewById(R.id.takeoffDetailsWindroseNorth);
-        ImageView windroseNorthwest = (ImageView) getActivity().findViewById(R.id.takeoffDetailsWindroseNorthwest);
-        ImageView windroseWest = (ImageView) getActivity().findViewById(R.id.takeoffDetailsWindroseWest);
-        ImageView windroseSouthwest = (ImageView) getActivity().findViewById(R.id.takeoffDetailsWindroseSouthwest);
-        ImageView windroseSouth = (ImageView) getActivity().findViewById(R.id.takeoffDetailsWindroseSouth);
-        ImageView windroseSoutheast = (ImageView) getActivity().findViewById(R.id.takeoffDetailsWindroseSoutheast);
-        ImageView windroseEast = (ImageView) getActivity().findViewById(R.id.takeoffDetailsWindroseEast);
-        ImageView windroseNortheast = (ImageView) getActivity().findViewById(R.id.takeoffDetailsWindroseNortheast);
+        ImageView windroseNorth = (ImageView) view.findViewById(R.id.takeoffDetailsWindroseNorth);
+        ImageView windroseNorthwest = (ImageView) view.findViewById(R.id.takeoffDetailsWindroseNorthwest);
+        ImageView windroseWest = (ImageView) view.findViewById(R.id.takeoffDetailsWindroseWest);
+        ImageView windroseSouthwest = (ImageView) view.findViewById(R.id.takeoffDetailsWindroseSouthwest);
+        ImageView windroseSouth = (ImageView) view.findViewById(R.id.takeoffDetailsWindroseSouth);
+        ImageView windroseSoutheast = (ImageView) view.findViewById(R.id.takeoffDetailsWindroseSoutheast);
+        ImageView windroseEast = (ImageView) view.findViewById(R.id.takeoffDetailsWindroseEast);
+        ImageView windroseNortheast = (ImageView) view.findViewById(R.id.takeoffDetailsWindroseNortheast);
         windroseNorth.setVisibility(takeoff.hasNorthExit() ? ImageView.VISIBLE : ImageView.INVISIBLE);
         windroseNorthwest.setVisibility(takeoff.hasNorthwestExit() ? ImageView.VISIBLE : ImageView.INVISIBLE);
         windroseWest.setVisibility(takeoff.hasWestExit() ? ImageView.VISIBLE : ImageView.INVISIBLE);
@@ -117,16 +87,16 @@ public class TakeoffDetails extends Fragment implements GoogleApiClient.Connecti
         windroseNortheast.setVisibility(takeoff.hasNortheastExit() ? ImageView.VISIBLE : ImageView.INVISIBLE);
 
 
-        TextView takeoffName = (TextView) getActivity().findViewById(R.id.takeoffDetailsName);
-        TextView takeoffCoordAslHeight = (TextView) getActivity().findViewById(R.id.takeoffDetailsCoordAslHeight);
-        TextView takeoffDescription = (TextView) getActivity().findViewById(R.id.takeoffDetailsDescription);
+        TextView takeoffName = (TextView) view.findViewById(R.id.takeoffDetailsName);
+        TextView takeoffCoordAslHeight = (TextView) view.findViewById(R.id.takeoffDetailsCoordAslHeight);
+        TextView takeoffDescription = (TextView) view.findViewById(R.id.takeoffDetailsDescription);
 
         takeoffName.setText(takeoff.getName());
         takeoffCoordAslHeight.setText(String.format("[%.2f,%.2f] " + getActivity().getString(R.string.asl) + ": %d " + getActivity().getString(R.string.height) + ": %d", takeoff.getLocation().getLatitude(), takeoff.getLocation().getLongitude(), takeoff.getAsl(), takeoff.getHeight()));
         takeoffDescription.setText("http://flightlog.org/fl.html?a=22&country_id=160&start_id=" + takeoff.getId() + "\n" + takeoff.getDescription());
         takeoffDescription.setMovementMethod(LinkMovementMethod.getInstance());
 
-        final ImageButton flyScheduleButton = (ImageButton) getActivity().findViewById(R.id.takeoffDetailsFlyScheduleChart);
+        final ImageButton flyScheduleButton = (ImageButton) view.findViewById(R.id.takeoffDetailsFlyScheduleChart);
         if (flyScheduleButton != null && flyScheduleButton.getViewTreeObserver() != null) {
             flyScheduleButton.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                 @Override
@@ -151,30 +121,53 @@ public class TakeoffDetails extends Fragment implements GoogleApiClient.Connecti
                 }
             });
         }
-    }
 
-    @Override
-    public void onCreate(Bundle bundle) {
-        super.onCreate(bundle);
-        googleApiClient = new GoogleApiClient.Builder(getActivity()).addApi(LocationServices.API).addConnectionCallbacks(this).build();
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        if (savedInstanceState != null)
-            takeoff = savedInstanceState.getParcelable(ARG_TAKEOFF);
-        setRetainInstance(true);
-        return inflater.inflate(R.layout.takeoff_details, container, false);
+        ImageButton navigationButton = (ImageButton) getActivity().findViewById(R.id.fragmentButton1);
+        navigationButton.setImageResource(R.mipmap.navigation);
+        navigationButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Location loc = takeoff.getLocation();
+                String uri = "http://maps.google.com/maps?saddr=" + location.getLatitude() + "," + location.getLongitude() + "&daddr=" + loc.getLatitude() + "," + loc.getLongitude();
+                Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(uri));
+                getActivity().startActivity(intent);
+            }
+        });
+        ImageButton noaaButton = (ImageButton) getActivity().findViewById(R.id.fragmentButton2);
+        noaaButton.setImageResource(R.mipmap.noaa);
+        noaaButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                NoaaForecast noaaForecast = new NoaaForecast();
+                Bundle args = new Bundle();
+                args.putParcelable(NoaaForecast.ARG_TAKEOFF, takeoff);
+                noaaForecast.setArguments(args);
+                String tag = "noaaForecast," + takeoff.getId();
+                FragmentManager fragmentManager = getFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.fragmentContainer, noaaForecast, tag);
+                if (fragmentManager.findFragmentByTag(tag) == null)
+                    fragmentTransaction.addToBackStack(tag);
+                fragmentTransaction.commit();
+            }
+        });
+        final ImageButton favouriteButton = (ImageButton) getActivity().findViewById(R.id.fragmentButton3);
+        favouriteButton.setImageResource(takeoff.isFavourite() ? R.mipmap.favourite_enabled : R.mipmap.favourite_disabled);
+        favouriteButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                takeoff.setFavourite(!takeoff.isFavourite());
+                new Database(getActivity()).updateFavourite(takeoff);
+                favouriteButton.setImageResource(takeoff.isFavourite() ? R.mipmap.favourite_enabled : R.mipmap.favourite_disabled);
+            }
+        });
+        return view;
     }
 
     @Override
     public void onStart() {
         super.onStart();
         googleApiClient.connect();
-
-        Bundle args = getArguments();
-        if (args != null)
-            showTakeoffDetails((Takeoff) args.getParcelable(ARG_TAKEOFF));
     }
 
     @Override

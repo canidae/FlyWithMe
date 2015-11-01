@@ -1,4 +1,4 @@
-package net.exent.flywithme.server.utils;
+package net.exent.flywithme.server.util;
 
 import net.exent.flywithme.server.bean.Takeoff;
 

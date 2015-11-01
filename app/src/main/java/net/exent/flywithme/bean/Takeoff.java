@@ -14,10 +14,12 @@ import java.util.Map;
 
 public class Takeoff implements Parcelable {
     public static final Parcelable.Creator<Takeoff> CREATOR = new Parcelable.Creator<Takeoff>() {
+        @Override
         public Takeoff createFromParcel(Parcel in) {
             return new Takeoff(in.readLong(), in.readLong(), in.readString(), in.readString(), in.readInt(), in.readInt(), in.readFloat(), in.readFloat(), in.readInt(), in.readByte() == 1);
         }
 
+        @Override
         public Takeoff[] newArray(int size) {
             return new Takeoff[size];
         }
@@ -241,10 +243,12 @@ public class Takeoff implements Parcelable {
         return contentValues;
     }
 
+    @Override
     public int describeContents() {
         return 0;
     }
 
+    @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeLong(takeoff.getId());
         dest.writeString(takeoff.getName());

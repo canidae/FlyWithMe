@@ -36,8 +36,12 @@ public class Database extends SQLiteOpenHelper {
         if (oldVersion == 1) {
             createDatabaseV2(db);
             upgradeDatabaseToV2(db);
-        } else if (oldVersion == 2) {
+        }
+        if (oldVersion == 2) {
             upgradeDatabaseToV3(db);
+        }
+        if (oldVersion == 3) {
+            //upgradeDatabaseToV4(db); // TODO
         }
     }
 
@@ -203,10 +207,6 @@ public class Database extends SQLiteOpenHelper {
     }
 
     private synchronized void upgradeDatabaseToV4(SQLiteDatabase db) {
-        // TODO: but not before server got a complete takeoff database
-        // TODO: is it necessary to modify column types?
-        // - id changed from int to long
-        // - latitude and longitude changed from double to float
         db.execSQL("drop table pilot");
     }
 

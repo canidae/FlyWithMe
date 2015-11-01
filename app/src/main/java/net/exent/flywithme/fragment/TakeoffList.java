@@ -11,6 +11,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,10 +49,8 @@ public class TakeoffList extends Fragment implements GoogleApiClient.ConnectionC
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        setRetainInstance(true);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
         View view = inflater.inflate(R.layout.takeoff_list, container, false);
-
         takeoffArrayAdapter = new TakeoffArrayAdapter(getActivity());
         ListView listView = (ListView) view.findViewById(R.id.takeoffListView);
         listView.setAdapter(takeoffArrayAdapter);
@@ -74,6 +73,11 @@ public class TakeoffList extends Fragment implements GoogleApiClient.ConnectionC
         });
         /* position list */
         listView.setSelectionFromTop(savedPosition, savedListTop);
+
+        ((ImageButton) getActivity().findViewById(R.id.fragmentButton1)).setImageDrawable(null);
+        ((ImageButton) getActivity().findViewById(R.id.fragmentButton2)).setImageDrawable(null);
+        ((ImageButton) getActivity().findViewById(R.id.fragmentButton3)).setImageDrawable(null);
+
         return view;
     }
 
@@ -81,10 +85,6 @@ public class TakeoffList extends Fragment implements GoogleApiClient.ConnectionC
     public void onStart() {
         super.onStart();
         googleApiClient.connect();
-
-        ((ImageButton) getActivity().findViewById(R.id.fragmentButton1)).setImageDrawable(null);
-        ((ImageButton) getActivity().findViewById(R.id.fragmentButton2)).setImageDrawable(null);
-        ((ImageButton) getActivity().findViewById(R.id.fragmentButton3)).setImageDrawable(null);
     }
 
     @Override
