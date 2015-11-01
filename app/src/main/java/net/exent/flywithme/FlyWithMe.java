@@ -31,6 +31,7 @@ import java.io.IOException;
 
 /* TODO:
    - Go through onCreate(), onStart(), onResume(), onPause(), onStop(), etc and check if they're sane
+   - NoaaForecast: Would prefer a better way to transfer data to fragment
    - Use endpoint API for registering planned flight
    - Use endpoint API for fetching planned flights (schedule)
    - Fix "back"-functionality, see "addToBackStack()" for FragmentTransaction. DONE: sort of, could be better

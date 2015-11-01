@@ -143,11 +143,10 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
         View view = inflater.inflate(R.layout.takeoff_map, container, false);
         GoogleMapOptions mapOptions = new GoogleMapOptions();
         mapOptions.zoomControlsEnabled(false);
-        if (cameraPosition != null) {
+        if (cameraPosition != null)
             mapOptions.camera(cameraPosition);
-        } else {
+        else
             mapOptions.camera(new CameraPosition(new LatLng(location.getLatitude(), location.getLongitude()), 10.0f, 0.0f, 0.0f));
-        }
         MapFragment mapFragment = MapFragment.newInstance(mapOptions);
         mapFragment.getMapAsync(this);
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
