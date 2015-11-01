@@ -39,29 +39,19 @@ public class NoaaForecast extends Fragment {
     private Bundle args;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Log.d(getClass().getName(), "onCreateView(" + inflater + ", " + container + ", " + savedInstanceState + ")");
-        if (savedInstanceState != null)
-            args = savedInstanceState;
-        setRetainInstance(true);
-        return inflater.inflate(R.layout.noaa_forecast, container, false);
-    }
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
+        Log.d(getClass().getName(), "onCreateView(" + inflater + ", " + container + ", " + bundle + ")");
+        if (getArguments() != null)
+            args = getArguments();
+        if (args == null && bundle != null)
+            args = bundle;
 
-    @Override
-    public void onStart() {
-        Log.d(getClass().getName(), "onStart()");
-        super.onStart();
-        this.args = getArguments();
-        if (args == null || !args.containsKey(ARG_TAKEOFF_ID)) {
-            Log.w(getClass().getName(), "No arguments passed to fragment, can't display forecast");
-            return;
-        }
-
+        View view = inflater.inflate(R.layout.noaa_forecast, container, false);
         try {
-            final ListView forecastList = ((ListView) getActivity().findViewById(R.id.noaaForecastList));
-            final GestureImageView forecastImage = ((GestureImageView) getActivity().findViewById(R.id.noaaForecastImage));
-            final ProgressBar forecastLoadingAnimation = ((ProgressBar) getActivity().findViewById(R.id.noaaForecastLoadingAnimation));
-            final TextView noaaForecastErrorMessage = (TextView) getActivity().findViewById(R.id.noaaForecastErrorMessage);
+            final ListView forecastList = ((ListView) view.findViewById(R.id.noaaForecastList));
+            final GestureImageView forecastImage = ((GestureImageView) view.findViewById(R.id.noaaForecastImage));
+            final ProgressBar forecastLoadingAnimation = ((ProgressBar) view.findViewById(R.id.noaaForecastLoadingAnimation));
+            final TextView noaaForecastErrorMessage = (TextView) view.findViewById(R.id.noaaForecastErrorMessage);
             final Takeoff takeoff = new Database(getActivity()).getTakeoff((int) args.getLong(ARG_TAKEOFF_ID));
 
             int width = 0;
@@ -88,6 +78,38 @@ public class NoaaForecast extends Fragment {
                 }
             } else {
                 image = null;
+            }
+
+            final TextView noaaForecastText = (TextView) view.findViewById(R.id.noaaForecastText);
+            noaaForecastText.setText(takeoff.getName());
+
+            if (image == null) {
+                if ("ERROR".equals(args.getString(ARG_TYPE + "_0"))) {
+                    // hmm, we couldn't load forecast for some reason, display error
+                    Log.w(getClass().getName(), "Unable to fetch forecast for takeoff with ID: " + takeoff.getId());
+                    forecastList.setVisibility(View.GONE);
+                    forecastImage.setVisibility(View.GONE);
+                    forecastLoadingAnimation.setVisibility(View.GONE);
+                    noaaForecastErrorMessage.setVisibility(View.VISIBLE);
+                } else {
+                    Log.d(getClass().getName(), "No image passed to fragment, fetching meteogram");
+                    Intent intent = new Intent(getActivity(), FlyWithMeService.class);
+                    intent.setAction(FlyWithMeService.ACTION_GET_METEOGRAM);
+                    intent.putExtra(FlyWithMeService.DATA_LONG_TAKEOFF_ID, (long) takeoff.getId());
+                    getActivity().startService(intent);
+                    // show loading animation
+                    forecastList.setVisibility(View.GONE);
+                    forecastImage.setVisibility(View.VISIBLE);
+                    forecastLoadingAnimation.setVisibility(View.VISIBLE);
+                    noaaForecastErrorMessage.setVisibility(View.GONE);
+                }
+            } else {
+                // show image
+                forecastImage.setBitmap(image);
+                forecastList.setVisibility(View.GONE);
+                forecastImage.setVisibility(View.VISIBLE);
+                forecastLoadingAnimation.setVisibility(View.GONE);
+                noaaForecastErrorMessage.setVisibility(View.GONE);
             }
 
             ImageButton soundingButton = ((ImageButton) getActivity().findViewById(R.id.fragmentButton1));
@@ -149,41 +171,10 @@ public class NoaaForecast extends Fragment {
             }
 
             ((ImageButton) getActivity().findViewById(R.id.fragmentButton3)).setImageDrawable(null);
-
-            final TextView noaaForecastText = (TextView) getActivity().findViewById(R.id.noaaForecastText);
-            noaaForecastText.setText(takeoff.getName());
-
-            if (image == null) {
-                if ("ERROR".equals(args.getString(ARG_TYPE + "_0"))) {
-                    // hmm, we couldn't load forecast for some reason, display error
-                    Log.w(getClass().getName(), "Unable to fetch forecast for takeoff with ID: " + takeoff.getId());
-                    forecastList.setVisibility(View.GONE);
-                    forecastImage.setVisibility(View.GONE);
-                    forecastLoadingAnimation.setVisibility(View.GONE);
-                    noaaForecastErrorMessage.setVisibility(View.VISIBLE);
-                } else {
-                    Log.d(getClass().getName(), "No image passed to fragment, fetching meteogram");
-                    Intent intent = new Intent(getActivity(), FlyWithMeService.class);
-                    intent.setAction(FlyWithMeService.ACTION_GET_METEOGRAM);
-                    intent.putExtra(FlyWithMeService.DATA_LONG_TAKEOFF_ID, (long) takeoff.getId());
-                    getActivity().startService(intent);
-                    // show loading animation
-                    forecastList.setVisibility(View.GONE);
-                    forecastImage.setVisibility(View.VISIBLE);
-                    forecastLoadingAnimation.setVisibility(View.VISIBLE);
-                    noaaForecastErrorMessage.setVisibility(View.GONE);
-                }
-            } else {
-                // show image
-                forecastImage.setBitmap(image);
-                forecastList.setVisibility(View.GONE);
-                forecastImage.setVisibility(View.VISIBLE);
-                forecastLoadingAnimation.setVisibility(View.GONE);
-                noaaForecastErrorMessage.setVisibility(View.GONE);
-            }
         } catch (Exception e) {
             Log.w(getClass().getName(), "Showing NOAA forecast failed unexpectedly", e);
         }
+        return view;
     }
 
     @Override
