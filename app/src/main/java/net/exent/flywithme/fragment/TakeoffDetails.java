@@ -140,7 +140,7 @@ public class TakeoffDetails extends Fragment implements GoogleApiClient.Connecti
             public void onClick(View v) {
                 NoaaForecast noaaForecast = new NoaaForecast();
                 Bundle args = new Bundle();
-                args.putParcelable(NoaaForecast.ARG_TAKEOFF, takeoff);
+                args.putLong(NoaaForecast.ARG_TAKEOFF_ID, takeoff.getId());
                 noaaForecast.setArguments(args);
                 String tag = "noaaForecast," + takeoff.getId();
                 FragmentManager fragmentManager = getFragmentManager();
