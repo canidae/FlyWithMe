@@ -37,8 +37,6 @@ import java.io.IOException;
    - Display notification if user is close to takeoff ("are you flying?")
      - Must be possible to "blacklist" takeoffs, and somehow remove blacklisting later (in preference window?)
    - Cache forecasts locally for some few hours (fetched timestamp is returned, cache for the same amount of time as server caches the forecast)
-   - Can we improve fetching location, or at least get rid of all the implemented interfaces? DONE-ish: fused 3 interfaces to 1. TODO: FusedLocationApi
-   - Don't like "FlyWithMe.getInstance()", is it possible to get rid of it?
    - Implement "Poor Man's SPOT"? Livetracking?
  */
 public class FlyWithMe extends Activity {
