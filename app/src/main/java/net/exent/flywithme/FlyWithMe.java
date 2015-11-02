@@ -30,6 +30,7 @@ import java.io.EOFException;
 import java.io.IOException;
 
 /* TODO:
+   - Replace ScheduleService with FlyWithMeService (remember FlyWithMeBroadcastReceiver and AndroidManifest)
    - NoaaForecast: Would prefer a better way to transfer data to fragment
    - Use endpoint API for registering planned flight
    - Use endpoint API for fetching planned flights (schedule)
@@ -76,16 +77,15 @@ public class FlyWithMe extends Activity {
         Preferences.setupDefaultPreferences(this);
 
         /* start background task */
-        Intent scheduleService = new Intent(this, ScheduleService.class);
-        startService(scheduleService);
-
+        Intent flyWithMeService = new Intent(this, FlyWithMeService.class);
         /* register pilot if we haven't done so already */
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         if (prefs.getString("token", null) == null) {
             Intent intent = new Intent(this, FlyWithMeService.class);
             intent.setAction(FlyWithMeService.ACTION_REGISTER_PILOT);
-            startService(intent);
         }
+        startService(flyWithMeService);
+
 
         /* start importing takeoffs from files */
         (new ImportTakeoffTask()).execute();

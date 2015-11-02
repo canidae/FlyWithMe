@@ -1,20 +1,29 @@
 package net.exent.flywithme.service;
 
 import android.app.IntentService;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.location.Location;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.iid.InstanceID;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 import com.google.api.client.googleapis.services.AbstractGoogleClientRequest;
 import com.google.api.client.googleapis.services.GoogleClientRequestInitializer;
 
 import net.exent.flywithme.FlyWithMe;
+import net.exent.flywithme.R;
 import net.exent.flywithme.data.Database;
 import net.exent.flywithme.fragment.NoaaForecast;
 import net.exent.flywithme.server.flyWithMeServer.FlyWithMeServer;
@@ -28,7 +37,12 @@ import java.util.List;
 /**
  * Created by canidae on 6/23/15.
  */
-public class FlyWithMeService extends IntentService {
+public class FlyWithMeService extends IntentService implements GoogleApiClient.ConnectionCallbacks {
+    public static final String ACTION_CHECK_CURRENT_LOCATION = "checkCurrentLocation";
+    public static final String ACTION_DISMISS_CURRENT_LOCATION = "dismissCurrentLocation";
+    public static final String ACTION_CLICK_CURRENT_LOCATION = "clickCurrentLocation";
+    public static final String ACTION_SCHEDULE_CURRENT_LOCATION = "scheduleCurrentLocation";
+    public static final String ACTION_BLACKLIST_CURRENT_LOCATION = "blacklistCurrentLocation";
     public static final String ACTION_REGISTER_PILOT = "registerPilot";
     public static final String ACTION_GET_METEOGRAM = "getMeteogram";
     public static final String ACTION_GET_SOUNDING = "getSounding";
@@ -44,8 +58,35 @@ public class FlyWithMeService extends IntentService {
     private static final String TAG = FlyWithMeService.class.getName();
     private static final String PROJECT_ID = "586531582715";
 
+    private static GoogleApiClient googleApiClient;
+    private static PendingIntent locationIntent;
+
     public FlyWithMeService() {
         super(TAG);
+    }
+
+    @Override
+    public void onCreate() {
+        Log.d(getClass().getName(), "onCreate()");
+        super.onCreate();
+        if (googleApiClient == null) {
+            Intent intent = new Intent(this, FlyWithMeService.class);
+            intent.setAction(ACTION_CHECK_CURRENT_LOCATION);
+            locationIntent = PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+            googleApiClient = new GoogleApiClient.Builder(this).addApi(LocationServices.API).addConnectionCallbacks(this).build();
+            googleApiClient.connect();
+        }
+    }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+        Log.d(getClass().getName(), "onConnected(" + bundle + ")");
+        LocationRequest locationRequest = LocationRequest.create().setSmallestDisplacement(100).setFastestInterval(300000).setPriority(LocationRequest.PRIORITY_LOW_POWER);
+        LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, locationIntent);
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
     }
 
     @Override
@@ -55,9 +96,50 @@ public class FlyWithMeService extends IntentService {
         Bundle bundle = intent.getExtras();
         if (bundle == null)
             bundle = new Bundle();
-        if (ACTION_REGISTER_PILOT.equals(action)) {
+        if (ACTION_CHECK_CURRENT_LOCATION.equals(action)) {
+            LocationResult locationResult = LocationResult.extractResult(intent);
+            if (locationResult == null)
+                return;
+            Location location = locationResult.getLastLocation();
+            if (location == null)
+                return;
+            Database database = new Database(this);
+            List<net.exent.flywithme.bean.Takeoff> takeoffs = database.getTakeoffs(location.getLatitude(), location.getLongitude(), 10, false);
+            for (net.exent.flywithme.bean.Takeoff takeoff : takeoffs) {
+                Log.d(getClass().getName(), "Takeoff: " + takeoff + " - Distance: " + location.distanceTo(takeoff.getLocation()));
+                if (location.distanceTo(takeoff.getLocation()) > 500)
+                    return;
+                // TODO: if takeoff dismissed within last x hours or blacklisted, continue
+
+                PendingIntent clickIntent = PendingIntent.getService(this, 0, new Intent(this, FlyWithMeService.class).setAction(ACTION_CLICK_CURRENT_LOCATION), PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent dismissIntent = PendingIntent.getService(this, 0, new Intent(this, FlyWithMeService.class).setAction(ACTION_DISMISS_CURRENT_LOCATION), PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent scheduleIntent = PendingIntent.getService(this, 0, new Intent(this, FlyWithMeService.class).setAction(ACTION_SCHEDULE_CURRENT_LOCATION), PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent blacklistIntent = PendingIntent.getService(this, 0, new Intent(this, FlyWithMeService.class).setAction(ACTION_BLACKLIST_CURRENT_LOCATION), PendingIntent.FLAG_UPDATE_CURRENT);
+                Notification notification = new Notification.Builder(this)
+                        .setSmallIcon(R.drawable.notification_icon)
+                        .setContentTitle(takeoff.getName())
+                        .setContentText(getString(R.string.are_you_flying))
+                        .setContentIntent(clickIntent)
+                        .setDeleteIntent(dismissIntent)
+                        .setAutoCancel(true)
+                        .addAction(android.R.drawable.ic_input_add, getString(R.string.yes), scheduleIntent)
+                        .addAction(android.R.drawable.ic_dialog_alert, getString(R.string.never_notify_here), blacklistIntent)
+                        .build();
+                notification.flags |= Notification.FLAG_AUTO_CANCEL;
+                ((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).notify(0, notification);
+                break;
+            }
+        } else if (ACTION_CLICK_CURRENT_LOCATION.equals(action)) {
+            // TODO
+        } else if (ACTION_DISMISS_CURRENT_LOCATION.equals(action)) {
+            // TODO
+        } else if (ACTION_SCHEDULE_CURRENT_LOCATION.equals(action)) {
+            // TODO
+        } else if (ACTION_BLACKLIST_CURRENT_LOCATION.equals(action)) {
+            // TODO
+        } else if (ACTION_REGISTER_PILOT.equals(action)) {
             boolean refreshToken = bundle.getBoolean(DATA_BOOLEAN_REFRESH_TOKEN, false);
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
             String pilotName = prefs.getString("pref_pilot_name", "<unknown>");
             if (pilotName.trim().equals(""))
                 pilotName = "<unknown>";
@@ -105,11 +187,11 @@ public class FlyWithMeService extends IntentService {
                 Log.w(TAG, "Unscheduling flight failed", e);
             }
         } else if (ACTION_GET_UPDATED_TAKEOFFS.equals(action)) {
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
             long timestamp = prefs.getLong("pref_last_takeoff_update_timestamp", 0);
             try {
                 List<Takeoff> updatedTakeoffs = getServer().getUpdatedTakeoffs(timestamp).execute().getItems();
-                Database database = new Database(getApplicationContext());
+                Database database = new Database(this);
                 long lastUpdated = timestamp;
                 for (Takeoff takeoff : updatedTakeoffs) {
                     Log.i(TAG, "Updating takeoff with ID: " + takeoff.getId());
@@ -133,11 +215,11 @@ public class FlyWithMeService extends IntentService {
     }
 
     private void registerPilot(boolean refreshToken, String name, String phone) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         String token = prefs.getString("token", null);
         try {
             if (refreshToken || token == null) {
-                token = InstanceID.getInstance(getApplicationContext()).getToken(PROJECT_ID, GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
+                token = InstanceID.getInstance(this).getToken(PROJECT_ID, GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
                 prefs.edit().putString("token", token).apply();
             }
             getServer().registerPilot(token, name, phone).execute();

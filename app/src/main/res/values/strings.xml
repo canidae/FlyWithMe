@@ -10,6 +10,11 @@
     <string name="cancel">Cancel</string>
     <string name="get_your_wing">Upcoming activity</string>
 
+    <!-- Notification -->
+    <string name="are_you_flying">Are you here to fly?</string>
+    <string name="yes">Yes</string>
+    <string name="never_notify_here">Blacklist</string>
+
     <!-- Status messages -->
     <string name="importing_takeoffs">Importing takeoffs…</string>
     <string name="fetching_noaa_failed">Fetching forecast failed</string>
