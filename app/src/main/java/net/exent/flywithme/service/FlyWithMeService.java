@@ -106,7 +106,6 @@ public class FlyWithMeService extends IntentService implements GoogleApiClient.C
             Database database = new Database(this);
             List<net.exent.flywithme.bean.Takeoff> takeoffs = database.getTakeoffs(location.getLatitude(), location.getLongitude(), 10, false);
             for (net.exent.flywithme.bean.Takeoff takeoff : takeoffs) {
-                Log.d(getClass().getName(), "Takeoff: " + takeoff + " - Distance: " + location.distanceTo(takeoff.getLocation()));
                 if (location.distanceTo(takeoff.getLocation()) > 500)
                     return;
                 // TODO: if takeoff dismissed within last x hours or blacklisted, continue

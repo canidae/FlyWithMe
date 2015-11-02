@@ -7,13 +7,13 @@ import net.exent.flywithme.fragment.TakeoffMap;
 import net.exent.flywithme.bean.Takeoff;
 import net.exent.flywithme.data.Database;
 import net.exent.flywithme.service.FlyWithMeService;
-import net.exent.flywithme.service.ScheduleService;
 
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -24,6 +24,11 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
 import android.widget.TextView;
+
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 
 import java.io.DataInputStream;
 import java.io.EOFException;
@@ -40,10 +45,12 @@ import java.io.IOException;
    - Cache forecasts locally for some few hours (fetched timestamp is returned, cache for the same amount of time as server caches the forecast)
    - Implement "Poor Man's SPOT"? Livetracking?
  */
-public class FlyWithMe extends Activity {
+public class FlyWithMe extends Activity implements GoogleApiClient.ConnectionCallbacks, LocationListener {
     public static final String ACTION_SHOW_FORECAST = "showForecast";
-
     public static final String SERVER_URL = "http://flywithme-server.appspot.com/fwm";
+
+    private GoogleApiClient googleApiClient;
+    private Location location;
 
     /**
      * {@inheritDoc}
@@ -52,6 +59,9 @@ public class FlyWithMe extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fly_with_me);
+
+        /* setup Google API client */
+        googleApiClient = new GoogleApiClient.Builder(this).addApi(LocationServices.API).addConnectionCallbacks(this).build();
 
         /* starting app, setup buttons */
         ImageButton fwmButton = (ImageButton) findViewById(R.id.fwmButton);
@@ -102,6 +112,28 @@ public class FlyWithMe extends Activity {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        googleApiClient.connect();
+    }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+        LocationRequest locationRequest = LocationRequest.create().setInterval(10000).setFastestInterval(10000).setPriority(LocationRequest.PRIORITY_LOW_POWER);
+        LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
+        location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        this.location = location;
+    }
+
+    @Override
     protected void onNewIntent(Intent intent) {
         Log.d(getClass().getName(), "onNewIntent(" + intent + ")");
         super.onNewIntent(intent);
@@ -113,12 +145,28 @@ public class FlyWithMe extends Activity {
         }
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        googleApiClient.disconnect();
+    }
+
     private void showTakeoffList() {
         String tag = "takeoffList";
         FragmentManager fragmentManager = getFragmentManager();
         Fragment fragment = fragmentManager.findFragmentByTag(tag);
         if (fragment == null)
             fragment = new TakeoffList();
+        Bundle bundle = new Bundle();
+        if (location != null)
+            bundle.putParcelable(TakeoffList.ARG_LOCATION, location);
+        fragment.setArguments(bundle);
         replaceFragment(fragment, tag, true);
     }
 
@@ -128,6 +176,10 @@ public class FlyWithMe extends Activity {
         Fragment fragment = fragmentManager.findFragmentByTag(tag);
         if (fragment == null)
             fragment = new TakeoffMap();
+        Bundle bundle = new Bundle();
+        if (location != null)
+            bundle.putParcelable(TakeoffMap.ARG_LOCATION, location);
+        fragment.setArguments(bundle);
         replaceFragment(fragment, tag, true);
     }
 

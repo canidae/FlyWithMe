@@ -51,8 +51,12 @@ import android.view.View.OnClickListener;
 import android.widget.ImageButton;
 
 public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, OnCameraChangeListener, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, LocationListener {
+    public static final String ARG_LOCATION = "location";
+    public static final String ARG_CAMERA_POSITION = "cameraPosition";
+
     /* we can't use Map<Marker, Takeoff> below, because the Marker may be recreated, invalidating the reference we got to the previous instantiation.
      * instead we'll have to keep the id (String) as a reference to the marker */
+    // TODO: make all these not static?
     private static Map<String, Pair<Marker, Takeoff>> markers = new HashMap<>();
     private static Map<Pair<Polygon, Marker>, Airspace.Zone> zones = new HashMap<>();
     private static Bitmap markerBitmap;
@@ -67,11 +71,10 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
     private static Bitmap markerExclamation;
     private static Bitmap markerExclamationYellow;
 
-    private static CameraPosition cameraPosition;
-
     private GoogleApiClient googleApiClient;
     private GoogleMap map;
     private Location location;
+    private CameraPosition cameraPosition;
 
     public void drawMap() {
         try {
@@ -138,14 +141,28 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
+        if (getArguments() != null) {
+            Location location = getArguments().getParcelable(ARG_LOCATION);
+            if (location != null)
+                this.location = location;
+            if (this.cameraPosition == null)
+                cameraPosition = getArguments().getParcelable(ARG_CAMERA_POSITION);
+        }
+        if (bundle != null) {
+            Location location = bundle.getParcelable(ARG_LOCATION);
+            if (location != null)
+                this.location = location;
+            if (cameraPosition == null)
+                cameraPosition = bundle.getParcelable(ARG_LOCATION);
+        }
+
         View view = inflater.inflate(R.layout.takeoff_map, container, false);
         GoogleMapOptions mapOptions = new GoogleMapOptions();
         mapOptions.zoomControlsEnabled(false);
         if (cameraPosition != null)
             mapOptions.camera(cameraPosition);
-        else
+        else if (location != null)
             mapOptions.camera(new CameraPosition(new LatLng(location.getLatitude(), location.getLongitude()), 10.0f, 0.0f, 0.0f));
         MapFragment mapFragment = MapFragment.newInstance(mapOptions);
         mapFragment.getMapAsync(this);
@@ -202,12 +219,19 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
     }
 
     public void onCameraChange(CameraPosition cameraPosition) {
-        TakeoffMap.cameraPosition = cameraPosition;
+        this.cameraPosition = cameraPosition;
         drawOverlay(cameraPosition);
     }
 
     @Override
     public void onConnectionSuspended(int i) {
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(ARG_LOCATION, location);
+        outState.putParcelable(ARG_CAMERA_POSITION, cameraPosition);
     }
 
     @Override

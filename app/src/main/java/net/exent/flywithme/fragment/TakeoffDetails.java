@@ -29,11 +29,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
-
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -42,7 +37,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-public class TakeoffDetails extends Fragment implements GoogleApiClient.ConnectionCallbacks, LocationListener {
+public class TakeoffDetails extends Fragment {
     public static final String ARG_TAKEOFF = "takeoff";
     private static final int SCHEDULE_BAR_WIDTH = 90;
     private static final int SCHEDULE_BAR_SPACE = 15;
@@ -50,15 +45,7 @@ public class TakeoffDetails extends Fragment implements GoogleApiClient.Connecti
     private static final int Y_AXIS_WIDTH = 100;
     private static final int LINE_WIDTH = 3;
 
-    private GoogleApiClient googleApiClient;
-    private Location location;
     private Takeoff takeoff;
-
-    @Override
-    public void onCreate(Bundle bundle) {
-        super.onCreate(bundle);
-        googleApiClient = new GoogleApiClient.Builder(getActivity()).addApi(LocationServices.API).addConnectionCallbacks(this).build();
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
@@ -128,9 +115,7 @@ public class TakeoffDetails extends Fragment implements GoogleApiClient.Connecti
             @Override
             public void onClick(View v) {
                 Location loc = takeoff.getLocation();
-                String uri = "http://maps.google.com/maps?saddr=" + location.getLatitude() + "," + location.getLongitude() + "&daddr=" + loc.getLatitude() + "," + loc.getLongitude();
-                Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(uri));
-                getActivity().startActivity(intent);
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://maps.google.com/maps?daddr=" + loc.getLatitude() + "," + loc.getLongitude())));
             }
         });
         ImageButton noaaButton = (ImageButton) getActivity().findViewById(R.id.fragmentButton2);
@@ -165,43 +150,9 @@ public class TakeoffDetails extends Fragment implements GoogleApiClient.Connecti
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        googleApiClient.connect();
-    }
-
-    @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable(ARG_TAKEOFF, takeoff);
-    }
-
-    @Override
-    public void onConnected(Bundle bundle) {
-        LocationRequest locationRequest = LocationRequest.create().setInterval(10000).setPriority(LocationRequest.PRIORITY_NO_POWER);
-        LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
-        location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-    }
-
-    @Override
-    public void onLocationChanged(Location location) {
-        this.location = location;
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        googleApiClient.disconnect();
     }
 
     private void drawFlySchedule(ImageButton flyScheduleButton) {

@@ -34,8 +34,10 @@ import java.util.Comparator;
 import java.util.List;
 
 public class TakeoffList extends Fragment implements GoogleApiClient.ConnectionCallbacks, LocationListener {
-    private static int savedPosition;
-    private static int savedListTop;
+    public static final String ARG_LOCATION = "location";
+
+    private static int savedPosition; // TODO: not static?
+    private static int savedListTop; // TODO: not static?
     private List<Takeoff> takeoffs = new ArrayList<>();
     private TakeoffArrayAdapter takeoffArrayAdapter;
 
@@ -50,6 +52,17 @@ public class TakeoffList extends Fragment implements GoogleApiClient.ConnectionC
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
+        if (getArguments() != null) {
+            Location location = getArguments().getParcelable(ARG_LOCATION);
+            if (location != null)
+                this.location = location;
+        }
+        if (bundle != null) {
+            Location location = bundle.getParcelable(ARG_LOCATION);
+            if (location != null)
+                this.location = location;
+        }
+
         View view = inflater.inflate(R.layout.takeoff_list, container, false);
         takeoffArrayAdapter = new TakeoffArrayAdapter(getActivity());
         ListView listView = (ListView) view.findViewById(R.id.takeoffListView);
@@ -101,6 +114,12 @@ public class TakeoffList extends Fragment implements GoogleApiClient.ConnectionC
     @Override
     public void onLocationChanged(Location location) {
         updateTakeoffList(location);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(ARG_LOCATION, location);
     }
 
     @Override
