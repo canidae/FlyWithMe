@@ -154,7 +154,7 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
             if (location != null)
                 this.location = location;
             if (cameraPosition == null)
-                cameraPosition = bundle.getParcelable(ARG_LOCATION);
+                cameraPosition = bundle.getParcelable(ARG_CAMERA_POSITION);
         }
 
         View view = inflater.inflate(R.layout.takeoff_map, container, false);

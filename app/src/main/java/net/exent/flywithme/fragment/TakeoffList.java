@@ -65,6 +65,7 @@ public class TakeoffList extends Fragment implements GoogleApiClient.ConnectionC
 
         View view = inflater.inflate(R.layout.takeoff_list, container, false);
         takeoffArrayAdapter = new TakeoffArrayAdapter(getActivity());
+        updateTakeoffList(location);
         ListView listView = (ListView) view.findViewById(R.id.takeoffListView);
         listView.setAdapter(takeoffArrayAdapter);
         listView.setOnItemClickListener(new OnItemClickListener() {
@@ -149,11 +150,11 @@ public class TakeoffList extends Fragment implements GoogleApiClient.ConnectionC
         } else if (newLocation == null) {
             // null location received? that's odd, do nothing
             return;
-        } else if (location != null && location.distanceTo(newLocation) < 100) {
-            // we're within 100 meters from the last place we updated the list, do nothing
+        } else if (location != null && !takeoffs.isEmpty() && location.distanceTo(newLocation) < 100) {
+            // we're within 100 meters from the last place we updated the list and we got a list of takeoffs, do nothing
             return;
         } else {
-            // no previous location set or we've moved 100 meters or more
+            // no previous location set, we've moved 100 meters or more, or we don't have a list of takeoffs
             location = newLocation;
         }
         takeoffs = new Database(getActivity()).getTakeoffs(location.getLatitude(), location.getLongitude(), 100, true);
