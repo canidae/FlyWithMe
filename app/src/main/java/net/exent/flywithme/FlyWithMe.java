@@ -104,10 +104,11 @@ public class FlyWithMe extends Activity implements GoogleApiClient.ConnectionCal
         if (savedInstanceState == null) {
             String pilotName = prefs.getString("pref_pilot_name", null);
             if (pilotName == null || pilotName.trim().equals("")) {
-                replaceFragment(new Preferences(), "preferences", false);
+                replaceFragment(new Preferences(), "preferences");
             } else {
-                replaceFragment(new TakeoffList(), "takeoffList", false);
+                replaceFragment(new TakeoffList(), "takeoffList");
             }
+        } else {
         }
     }
 
@@ -130,6 +131,7 @@ public class FlyWithMe extends Activity implements GoogleApiClient.ConnectionCal
 
     @Override
     public void onLocationChanged(Location location) {
+        Log.d(getClass().getName(), "onLocationChanged(" + location + ")");
         this.location = location;
     }
 
@@ -141,8 +143,16 @@ public class FlyWithMe extends Activity implements GoogleApiClient.ConnectionCal
             NoaaForecast noaaForecast = new NoaaForecast();
             noaaForecast.setArguments(intent.getExtras());
             long takeoffId = intent.getExtras() != null ? intent.getExtras().getLong(NoaaForecast.ARG_TAKEOFF_ID) : -1;
-            replaceFragment(noaaForecast, "noaaForecast," + takeoffId, true);
+            replaceFragment(noaaForecast, "noaaForecast," + takeoffId);
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (getFragmentManager().getBackStackEntryCount() <= 1)
+            finish();
+        else
+            super.onBackPressed();
     }
 
     @Override
@@ -161,26 +171,28 @@ public class FlyWithMe extends Activity implements GoogleApiClient.ConnectionCal
         String tag = "takeoffList";
         FragmentManager fragmentManager = getFragmentManager();
         Fragment fragment = fragmentManager.findFragmentByTag(tag);
-        if (fragment == null)
-            fragment = new TakeoffList();
         Bundle bundle = new Bundle();
         if (location != null)
             bundle.putParcelable(TakeoffList.ARG_LOCATION, location);
-        fragment.setArguments(bundle);
-        replaceFragment(fragment, tag, true);
+        if (fragment == null) {
+            fragment = new TakeoffList();
+            fragment.setArguments(bundle);
+        }
+        replaceFragment(fragment, tag);
     }
 
     private void showMap() {
         String tag = "takeoffMap";
         FragmentManager fragmentManager = getFragmentManager();
         Fragment fragment = fragmentManager.findFragmentByTag(tag);
-        if (fragment == null)
-            fragment = new TakeoffMap();
         Bundle bundle = new Bundle();
         if (location != null)
             bundle.putParcelable(TakeoffMap.ARG_LOCATION, location);
-        fragment.setArguments(bundle);
-        replaceFragment(fragment, tag, true);
+        if (fragment == null) {
+            fragment = new TakeoffMap();
+            fragment.setArguments(bundle);
+        }
+        replaceFragment(fragment, tag);
     }
 
     private void showSettings() {
@@ -189,15 +201,16 @@ public class FlyWithMe extends Activity implements GoogleApiClient.ConnectionCal
         Fragment fragment = fragmentManager.findFragmentByTag(tag);
         if (fragment == null)
             fragment = new Preferences();
-        replaceFragment(fragment, tag, true);
+        replaceFragment(fragment, tag);
     }
 
-    private void replaceFragment(Fragment fragment, String tag, boolean addToBackStack) {
+    private void replaceFragment(Fragment fragment, String tag) {
         FragmentManager fragmentManager = getFragmentManager();
+        if (fragmentManager.getBackStackEntryCount() > 1)
+            fragmentManager.popBackStack(tag, 0);
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.fragmentContainer, fragment, tag);
-        if (addToBackStack)
-            fragmentTransaction.addToBackStack(tag);
+        fragmentTransaction.addToBackStack(tag);
         fragmentTransaction.commit();
     }
 
