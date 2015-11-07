@@ -1,10 +1,9 @@
 package net.exent.flywithme.fragment;
 
+import net.exent.flywithme.FlyWithMe;
 import net.exent.flywithme.R;
 import net.exent.flywithme.bean.Takeoff;
 import net.exent.flywithme.data.Database;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.Context;
 import android.graphics.Color;
 import android.location.Location;
@@ -72,17 +71,9 @@ public class TakeoffList extends Fragment implements GoogleApiClient.ConnectionC
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Takeoff takeoff = takeoffs.get(position);
-                TakeoffDetails takeoffDetails = new TakeoffDetails();
                 Bundle args = new Bundle();
                 args.putParcelable(TakeoffDetails.ARG_TAKEOFF, takeoff);
-                takeoffDetails.setArguments(args);
-                String tag = "takeoffDetails," + takeoff.getId();
-                FragmentManager fragmentManager = getFragmentManager();
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.replace(R.id.fragmentContainer, takeoffDetails, tag);
-                if (fragmentManager.findFragmentByTag(tag) == null)
-                    fragmentTransaction.addToBackStack(tag);
-                fragmentTransaction.commit();
+                FlyWithMe.showFragment(getActivity(), "takeoffDetails," + takeoff.getId(), TakeoffDetails.class, args);
             }
         });
         /* position list */

@@ -50,7 +50,6 @@ public class NoaaForecast extends Fragment {
         try {
             final ListView forecastList = ((ListView) view.findViewById(R.id.noaaForecastList));
             final GestureImageView forecastImage = ((GestureImageView) view.findViewById(R.id.noaaForecastImage));
-            final ProgressBar forecastLoadingAnimation = ((ProgressBar) view.findViewById(R.id.noaaForecastLoadingAnimation));
             final TextView noaaForecastErrorMessage = (TextView) view.findViewById(R.id.noaaForecastErrorMessage);
             final Takeoff takeoff = new Database(getActivity()).getTakeoff((int) args.getLong(ARG_TAKEOFF_ID));
 
@@ -89,7 +88,6 @@ public class NoaaForecast extends Fragment {
                     Log.w(getClass().getName(), "Unable to fetch forecast for takeoff with ID: " + takeoff.getId());
                     forecastList.setVisibility(View.GONE);
                     forecastImage.setVisibility(View.GONE);
-                    forecastLoadingAnimation.setVisibility(View.GONE);
                     noaaForecastErrorMessage.setVisibility(View.VISIBLE);
                 } else {
                     Log.d(getClass().getName(), "No image passed to fragment, fetching meteogram");
@@ -100,15 +98,17 @@ public class NoaaForecast extends Fragment {
                     // show loading animation
                     forecastList.setVisibility(View.GONE);
                     forecastImage.setVisibility(View.VISIBLE);
-                    forecastLoadingAnimation.setVisibility(View.VISIBLE);
                     noaaForecastErrorMessage.setVisibility(View.GONE);
+
+                    // show loading animation
+                    ProgressBar progressBar = (ProgressBar) getActivity().findViewById(R.id.progressBar1);
+                    progressBar.setVisibility(View.VISIBLE);
                 }
             } else {
                 // show image
                 forecastImage.setBitmap(image);
                 forecastList.setVisibility(View.GONE);
                 forecastImage.setVisibility(View.VISIBLE);
-                forecastLoadingAnimation.setVisibility(View.GONE);
                 noaaForecastErrorMessage.setVisibility(View.GONE);
             }
 
@@ -119,13 +119,11 @@ public class NoaaForecast extends Fragment {
                 public void onClick(View v) {
                     forecastList.setVisibility(View.VISIBLE);
                     forecastImage.setVisibility(View.GONE);
-                    forecastLoadingAnimation.setVisibility(View.GONE);
                     forecastList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                         @Override
                         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                             forecastList.setVisibility(View.GONE);
                             forecastImage.setVisibility(View.VISIBLE);
-                            forecastLoadingAnimation.setVisibility(View.VISIBLE);
                             Intent intent = new Intent(getActivity(), FlyWithMeService.class);
                             if (position == 0) {
                                 // fetch meteogram
@@ -145,6 +143,10 @@ public class NoaaForecast extends Fragment {
                             }
                             intent.putExtra(FlyWithMeService.DATA_LONG_TAKEOFF_ID, (long) takeoff.getId());
                             getActivity().startService(intent);
+
+                            // show loading animation
+                            ProgressBar progressBar = (ProgressBar) getActivity().findViewById(R.id.progressBar1);
+                            progressBar.setVisibility(View.VISIBLE);
                         }
                     });
                 }

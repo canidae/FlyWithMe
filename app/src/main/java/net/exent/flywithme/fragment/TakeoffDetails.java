@@ -1,12 +1,12 @@
 package net.exent.flywithme.fragment;
 
+import net.exent.flywithme.FlyWithMe;
 import net.exent.flywithme.R;
 import net.exent.flywithme.bean.Takeoff;
 import net.exent.flywithme.data.Database;
 import net.exent.flywithme.server.flyWithMeServer.model.Pilot;
+import net.exent.flywithme.service.FlyWithMeService;
 
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -27,6 +27,7 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
@@ -94,17 +95,9 @@ public class TakeoffDetails extends Fragment {
             });
             flyScheduleButton.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
-                    TakeoffSchedule takeoffSchedule = new TakeoffSchedule();
                     Bundle args = new Bundle();
                     args.putParcelable(TakeoffSchedule.ARG_TAKEOFF, takeoff);
-                    takeoffSchedule.setArguments(args);
-                    String tag = "takeoffSchedule," + takeoff.getId();
-                    FragmentManager fragmentManager = getFragmentManager();
-                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                    fragmentTransaction.replace(R.id.fragmentContainer, takeoffSchedule, tag);
-                    if (fragmentManager.findFragmentByTag(tag) == null)
-                        fragmentTransaction.addToBackStack(tag);
-                    fragmentTransaction.commit();
+                    FlyWithMe.showFragment(getActivity(), "takeoffSchedule," + takeoff.getId(), TakeoffSchedule.class, args);
                 }
             });
         }
@@ -123,17 +116,13 @@ public class TakeoffDetails extends Fragment {
         noaaButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                NoaaForecast noaaForecast = new NoaaForecast();
-                Bundle args = new Bundle();
-                args.putLong(NoaaForecast.ARG_TAKEOFF_ID, takeoff.getId());
-                noaaForecast.setArguments(args);
-                String tag = "noaaForecast," + takeoff.getId();
-                FragmentManager fragmentManager = getFragmentManager();
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.replace(R.id.fragmentContainer, noaaForecast, tag);
-                if (fragmentManager.findFragmentByTag(tag) == null)
-                    fragmentTransaction.addToBackStack(tag);
-                fragmentTransaction.commit();
+                Intent intent = new Intent(getActivity(), FlyWithMeService.class);
+                intent.setAction(FlyWithMeService.ACTION_GET_METEOGRAM);
+                intent.putExtra(FlyWithMeService.DATA_LONG_TAKEOFF_ID, (long) takeoff.getId());
+                getActivity().startService(intent);
+                // show loading animation
+                ProgressBar progressBar = (ProgressBar) getActivity().findViewById(R.id.progressBar2);
+                progressBar.setVisibility(View.VISIBLE);
             }
         });
         final ImageButton favouriteButton = (ImageButton) getActivity().findViewById(R.id.fragmentButton3);

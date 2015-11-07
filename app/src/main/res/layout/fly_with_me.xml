@@ -36,7 +36,8 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
         android:background="@null"
-        android:src="@null" />
+        android:src="@mipmap/ic_launcher"
+        />
 
     <ImageButton
         android:id="@+id/fragmentButton2"
@@ -45,7 +46,7 @@
         android:layout_alignParentTop="true"
         android:layout_toStartOf="@+id/fragmentButton1"
         android:background="@null"
-        android:src="@null" />
+        android:src="@mipmap/ic_launcher" />
 
     <ImageButton
         android:id="@+id/fragmentButton3"
@@ -54,7 +55,31 @@
         android:layout_alignParentTop="true"
         android:layout_toStartOf="@+id/fragmentButton2"
         android:background="@null"
-        android:src="@null" />
+        android:src="@mipmap/ic_launcher" />
+
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/progressBar1"
+        android:layout_alignParentTop="true"
+        android:layout_alignStart="@+id/fragmentButton1"
+        android:visibility="invisible"/>
+
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/progressBar2"
+        android:layout_alignParentTop="true"
+        android:layout_alignStart="@+id/fragmentButton2"
+        android:visibility="invisible"/>
+
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/progressBar3"
+        android:layout_alignParentTop="true"
+        android:layout_alignStart="@+id/fragmentButton3"
+        android:visibility="invisible"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -82,5 +107,4 @@
         android:layout_below="@+id/fwmStatusText">
 
     </FrameLayout>
-
 </RelativeLayout>

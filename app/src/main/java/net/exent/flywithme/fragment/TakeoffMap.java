@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import net.exent.flywithme.FlyWithMe;
 import net.exent.flywithme.R;
 import net.exent.flywithme.bean.Takeoff;
 import net.exent.flywithme.data.Airspace;
@@ -30,7 +31,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.PolygonOptions;
 
-import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -202,17 +202,9 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
         Pair<Marker, Takeoff> pair = markers.get(marker.getId());
         if (pair != null) {
             Takeoff takeoff = pair.second;
-            TakeoffDetails takeoffDetails = new TakeoffDetails();
             Bundle args = new Bundle();
             args.putParcelable(TakeoffDetails.ARG_TAKEOFF, takeoff);
-            takeoffDetails.setArguments(args);
-            String tag = "takeoffDetails," + takeoff.getId();
-            FragmentManager fragmentManager = getFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.fragmentContainer, takeoffDetails, tag);
-            if (fragmentManager.findFragmentByTag(tag) == null)
-                fragmentTransaction.addToBackStack(tag);
-            fragmentTransaction.commit();
+            FlyWithMe.showFragment(getActivity(), "takeoffDetails," + takeoff.getId(), TakeoffDetails.class, args);
         } else {
             Log.w(getClass().getName(), "Strange, could not find takeoff for marker");
         }

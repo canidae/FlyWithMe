@@ -51,6 +51,33 @@ public class FlyWithMe extends Activity implements GoogleApiClient.ConnectionCal
     private GoogleApiClient googleApiClient;
     private Location location;
 
+    public static void showFragment(Activity activity, String tag, Class<? extends Fragment> fragmentClass, Bundle args) {
+        FragmentManager fragmentManager = activity.getFragmentManager();
+        if (tag != null && fragmentManager.findFragmentByTag(tag) != null) {
+            fragmentManager.popBackStack(tag, 0);
+        } else {
+            try {
+                Fragment fragment = fragmentClass.newInstance();
+                if (args != null)
+                    fragment.setArguments(args);
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.fragmentContainer, fragment, tag);
+                fragmentTransaction.addToBackStack(tag);
+                fragmentTransaction.commit();
+            } catch (Exception e) {
+                Log.w(FlyWithMe.class.getName(), "Error instantiating class", e);
+            }
+        }
+        // reset icons
+        ((ImageButton) activity.findViewById(R.id.fragmentButton1)).setImageDrawable(null);
+        ((ImageButton) activity.findViewById(R.id.fragmentButton2)).setImageDrawable(null);
+        ((ImageButton) activity.findViewById(R.id.fragmentButton3)).setImageDrawable(null);
+        // and progress bars
+        activity.findViewById(R.id.progressBar1).setVisibility(View.INVISIBLE);
+        activity.findViewById(R.id.progressBar2).setVisibility(View.INVISIBLE);
+        activity.findViewById(R.id.progressBar3).setVisibility(View.INVISIBLE);
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -63,22 +90,33 @@ public class FlyWithMe extends Activity implements GoogleApiClient.ConnectionCal
         googleApiClient = new GoogleApiClient.Builder(this).addApi(LocationServices.API).addConnectionCallbacks(this).build();
 
         /* starting app, setup buttons */
+        final Activity activity = this;
         ImageButton fwmButton = (ImageButton) findViewById(R.id.fwmButton);
         fwmButton.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
-                showTakeoffList();
+                Bundle bundle = null;
+                if (location != null) {
+                    bundle = new Bundle();
+                    bundle.putParcelable(TakeoffList.ARG_LOCATION, location);
+                }
+                showFragment(activity, "takeoffList", TakeoffList.class, bundle);
             }
         });
         ImageButton mapButton = (ImageButton) findViewById(R.id.mapButton);
         mapButton.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
-                showMap();
+                Bundle bundle = null;
+                if (location != null) {
+                    bundle = new Bundle();
+                    bundle.putParcelable(TakeoffMap.ARG_LOCATION, location);
+                }
+                showFragment(activity, "takeoffMap", TakeoffMap.class, bundle);
             }
         });
         ImageButton settingsButton = (ImageButton) findViewById(R.id.settingsButton);
         settingsButton.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
-                showSettings();
+                showFragment(activity, "preferences", Preferences.class, null);
             }
         });
 
@@ -103,9 +141,9 @@ public class FlyWithMe extends Activity implements GoogleApiClient.ConnectionCal
         if (savedInstanceState == null) {
             String pilotName = prefs.getString("pref_pilot_name", null);
             if (pilotName == null || pilotName.trim().equals("")) {
-                replaceFragment(new Preferences(), "preferences");
+                showFragment(this, "preferences", Preferences.class, null);
             } else {
-                replaceFragment(new TakeoffList(), "takeoffList");
+                showFragment(this, "takeoffList", TakeoffList.class, null);
             }
         } else {
         }
@@ -139,10 +177,7 @@ public class FlyWithMe extends Activity implements GoogleApiClient.ConnectionCal
         Log.d(getClass().getName(), "onNewIntent(" + intent + ")");
         super.onNewIntent(intent);
         if (ACTION_SHOW_FORECAST.equals(intent.getAction())) {
-            NoaaForecast noaaForecast = new NoaaForecast();
-            noaaForecast.setArguments(intent.getExtras());
-            long takeoffId = intent.getExtras() != null ? intent.getExtras().getLong(NoaaForecast.ARG_TAKEOFF_ID) : -1;
-            replaceFragment(noaaForecast, "noaaForecast," + takeoffId);
+            showFragment(this, null, NoaaForecast.class, intent.getExtras());
         }
     }
 
@@ -164,55 +199,6 @@ public class FlyWithMe extends Activity implements GoogleApiClient.ConnectionCal
     public void onStop() {
         super.onStop();
         googleApiClient.disconnect();
-    }
-
-    private void showTakeoffList() {
-        String tag = "takeoffList";
-        FragmentManager fragmentManager = getFragmentManager();
-        Fragment fragment = fragmentManager.findFragmentByTag(tag);
-        Bundle bundle = new Bundle();
-        if (location != null)
-            bundle.putParcelable(TakeoffList.ARG_LOCATION, location);
-        if (fragment == null) {
-            fragment = new TakeoffList();
-            fragment.setArguments(bundle);
-        }
-        replaceFragment(fragment, tag);
-    }
-
-    private void showMap() {
-        String tag = "takeoffMap";
-        FragmentManager fragmentManager = getFragmentManager();
-        Fragment fragment = fragmentManager.findFragmentByTag(tag);
-        Bundle bundle = new Bundle();
-        if (location != null)
-            bundle.putParcelable(TakeoffMap.ARG_LOCATION, location);
-        if (fragment == null) {
-            fragment = new TakeoffMap();
-            fragment.setArguments(bundle);
-        }
-        replaceFragment(fragment, tag);
-    }
-
-    private void showSettings() {
-        String tag = "preferences";
-        FragmentManager fragmentManager = getFragmentManager();
-        Fragment fragment = fragmentManager.findFragmentByTag(tag);
-        if (fragment == null)
-            fragment = new Preferences();
-        replaceFragment(fragment, tag);
-    }
-
-    private void replaceFragment(Fragment fragment, String tag) {
-        FragmentManager fragmentManager = getFragmentManager();
-        if (fragmentManager.findFragmentByTag(tag) != null) {
-            fragmentManager.popBackStack(tag, 0);
-        } else {
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.fragmentContainer, fragment, tag);
-            fragmentTransaction.addToBackStack(tag);
-            fragmentTransaction.commit();
-        }
     }
 
     private class ImportTakeoffTask extends AsyncTask<Void, Void, Void> {
