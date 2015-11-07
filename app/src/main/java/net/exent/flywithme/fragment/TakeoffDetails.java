@@ -19,7 +19,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.text.method.LinkMovementMethod;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -118,7 +117,7 @@ public class TakeoffDetails extends Fragment {
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), FlyWithMeService.class);
                 intent.setAction(FlyWithMeService.ACTION_GET_METEOGRAM);
-                intent.putExtra(FlyWithMeService.DATA_LONG_TAKEOFF_ID, (long) takeoff.getId());
+                intent.putExtra(FlyWithMeService.ARG_TAKEOFF_ID, (long) takeoff.getId());
                 getActivity().startService(intent);
                 // show loading animation
                 ProgressBar progressBar = (ProgressBar) getActivity().findViewById(R.id.progressBar2);

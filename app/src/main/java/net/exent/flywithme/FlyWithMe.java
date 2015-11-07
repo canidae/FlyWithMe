@@ -2,6 +2,7 @@ package net.exent.flywithme;
 
 import net.exent.flywithme.fragment.NoaaForecast;
 import net.exent.flywithme.fragment.Preferences;
+import net.exent.flywithme.fragment.TakeoffDetails;
 import net.exent.flywithme.fragment.TakeoffList;
 import net.exent.flywithme.fragment.TakeoffMap;
 import net.exent.flywithme.bean.Takeoff;
@@ -46,6 +47,10 @@ import java.io.IOException;
  */
 public class FlyWithMe extends Activity implements GoogleApiClient.ConnectionCallbacks, LocationListener {
     public static final String ACTION_SHOW_FORECAST = "showForecast";
+    public static final String ACTION_SHOW_TAKEOFF_DETAILS = "showTakeoffDetails";
+
+    public static final String ARG_TAKEOFF_ID = "takeoffId";
+
     public static final String SERVER_URL = "http://flywithme-server.appspot.com/fwm";
 
     private GoogleApiClient googleApiClient;
@@ -168,7 +173,6 @@ public class FlyWithMe extends Activity implements GoogleApiClient.ConnectionCal
 
     @Override
     public void onLocationChanged(Location location) {
-        Log.d(getClass().getName(), "onLocationChanged(" + location + ")");
         this.location = location;
     }
 
@@ -178,6 +182,12 @@ public class FlyWithMe extends Activity implements GoogleApiClient.ConnectionCal
         super.onNewIntent(intent);
         if (ACTION_SHOW_FORECAST.equals(intent.getAction())) {
             showFragment(this, null, NoaaForecast.class, intent.getExtras());
+        } else if (ACTION_SHOW_TAKEOFF_DETAILS.equals(intent.getAction())) {
+            Database database = new Database(this);
+            Takeoff takeoff = database.getTakeoff(intent.getLongExtra(ARG_TAKEOFF_ID, 0));
+            Bundle args = new Bundle();
+            args.putParcelable(TakeoffDetails.ARG_TAKEOFF, takeoff);
+            FlyWithMe.showFragment(this, "takeoffDetails," + takeoff.getId(), TakeoffDetails.class, args);
         }
     }
 

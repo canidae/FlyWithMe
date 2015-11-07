@@ -4,6 +4,7 @@ import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Location;
@@ -50,10 +51,10 @@ public class FlyWithMeService extends IntentService implements GoogleApiClient.C
     public static final String ACTION_UNSCHEDULE_FLIGHT = "unscheduleFlight";
     public static final String ACTION_GET_UPDATED_TAKEOFFS = "getUpdatedTakeoffs";
 
-    public static final String DATA_BOOLEAN_REFRESH_TOKEN = "refreshToken";
-    public static final String DATA_LONG_TAKEOFF_ID = "takeoffId";
-    public static final String DATA_LONG_TIMESTAMP = "timestamp";
-    public static final String DATA_PILOT_ID = "pilotId";
+    public static final String ARG_REFRESH_TOKEN = "refreshToken";
+    public static final String ARG_TAKEOFF_ID = "takeoffId";
+    public static final String ARG_TIMESTAMP = "timestamp";
+    public static final String ARG_PILOT_ID = "pilotId";
 
     private static final String TAG = FlyWithMeService.class.getName();
     private static final String PROJECT_ID = "586531582715";
@@ -104,20 +105,27 @@ public class FlyWithMeService extends IntentService implements GoogleApiClient.C
             if (location == null)
                 return;
             Database database = new Database(this);
+            SharedPreferences dismissedTakeoffsPref = getSharedPreferences(ACTION_DISMISS_CURRENT_LOCATION, Context.MODE_PRIVATE);
+            SharedPreferences blacklistedTakeoffsPref = getSharedPreferences(ACTION_BLACKLIST_CURRENT_LOCATION, Context.MODE_PRIVATE);
             List<net.exent.flywithme.bean.Takeoff> takeoffs = database.getTakeoffs(location.getLatitude(), location.getLongitude(), 10, false);
             for (net.exent.flywithme.bean.Takeoff takeoff : takeoffs) {
-                if (location.distanceTo(takeoff.getLocation()) > 500)
+                if (location.distanceTo(takeoff.getLocation()) > 2500)
                     return;
-                // TODO: if takeoff dismissed within last x hours or blacklisted, continue
+                if (dismissedTakeoffsPref.getLong("" + takeoff.getId(), 0) + 3600000 > System.currentTimeMillis())
+                    continue; // user dismissed this takeoff less than 6 hours ago, ignore takeoff
+                if (blacklistedTakeoffsPref.contains("" + takeoff.getId()))
+                    continue; // user blacklisted this takeoff, ignore takeoff
+                // TODO: if pilot scheduled for flying here recently, continue
 
-                PendingIntent clickIntent = PendingIntent.getService(this, 0, new Intent(this, FlyWithMeService.class).setAction(ACTION_CLICK_CURRENT_LOCATION), PendingIntent.FLAG_UPDATE_CURRENT);
-                PendingIntent dismissIntent = PendingIntent.getService(this, 0, new Intent(this, FlyWithMeService.class).setAction(ACTION_DISMISS_CURRENT_LOCATION), PendingIntent.FLAG_UPDATE_CURRENT);
-                PendingIntent scheduleIntent = PendingIntent.getService(this, 0, new Intent(this, FlyWithMeService.class).setAction(ACTION_SCHEDULE_CURRENT_LOCATION), PendingIntent.FLAG_UPDATE_CURRENT);
-                PendingIntent blacklistIntent = PendingIntent.getService(this, 0, new Intent(this, FlyWithMeService.class).setAction(ACTION_BLACKLIST_CURRENT_LOCATION), PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent clickIntent = PendingIntent.getService(this, 0, new Intent(this, FlyWithMeService.class).setAction(ACTION_CLICK_CURRENT_LOCATION).putExtra(ARG_TAKEOFF_ID, takeoff.getId()), PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent dismissIntent = PendingIntent.getService(this, 0, new Intent(this, FlyWithMeService.class).setAction(ACTION_DISMISS_CURRENT_LOCATION).putExtra(ARG_TAKEOFF_ID, takeoff.getId()), PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent scheduleIntent = PendingIntent.getService(this, 0, new Intent(this, FlyWithMeService.class).setAction(ACTION_SCHEDULE_CURRENT_LOCATION).putExtra(ARG_TAKEOFF_ID, takeoff.getId()), PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent blacklistIntent = PendingIntent.getService(this, 0, new Intent(this, FlyWithMeService.class).setAction(ACTION_BLACKLIST_CURRENT_LOCATION).putExtra(ARG_TAKEOFF_ID, takeoff.getId()), PendingIntent.FLAG_UPDATE_CURRENT);
                 Notification notification = new Notification.Builder(this)
                         .setSmallIcon(R.drawable.notification_icon)
                         .setContentTitle(takeoff.getName())
                         .setContentText(getString(R.string.are_you_flying))
+                        .setVibrate(new long[] {0, 100, 100, 100, 100, 100}) // TODO: setting in preference so users can disable this
                         .setContentIntent(clickIntent)
                         .setDeleteIntent(dismissIntent)
                         .setAutoCancel(true)
@@ -129,15 +137,21 @@ public class FlyWithMeService extends IntentService implements GoogleApiClient.C
                 break;
             }
         } else if (ACTION_CLICK_CURRENT_LOCATION.equals(action)) {
-            // TODO
+            Intent showTakeoffDetailsIntent = new Intent(this, FlyWithMe.class);
+            showTakeoffDetailsIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            showTakeoffDetailsIntent.setAction(FlyWithMe.ACTION_SHOW_TAKEOFF_DETAILS);
+            showTakeoffDetailsIntent.putExtra(FlyWithMe.ARG_TAKEOFF_ID, bundle.getLong(ARG_TAKEOFF_ID));
+            startActivity(showTakeoffDetailsIntent);
         } else if (ACTION_DISMISS_CURRENT_LOCATION.equals(action)) {
-            // TODO
+            SharedPreferences prefs = getSharedPreferences(ACTION_DISMISS_CURRENT_LOCATION, Context.MODE_PRIVATE);
+            prefs.edit().putLong("" + bundle.getLong(ARG_TAKEOFF_ID), System.currentTimeMillis());
         } else if (ACTION_SCHEDULE_CURRENT_LOCATION.equals(action)) {
             // TODO
         } else if (ACTION_BLACKLIST_CURRENT_LOCATION.equals(action)) {
-            // TODO
+            SharedPreferences prefs = getSharedPreferences(ACTION_BLACKLIST_CURRENT_LOCATION, Context.MODE_PRIVATE);
+            prefs.edit().putLong("" + bundle.getLong(ARG_TAKEOFF_ID), System.currentTimeMillis());
         } else if (ACTION_REGISTER_PILOT.equals(action)) {
-            boolean refreshToken = bundle.getBoolean(DATA_BOOLEAN_REFRESH_TOKEN, false);
+            boolean refreshToken = bundle.getBoolean(ARG_REFRESH_TOKEN, false);
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
             String pilotName = prefs.getString("pref_pilot_name", "<unknown>");
             if (pilotName.trim().equals(""))
@@ -147,7 +161,7 @@ public class FlyWithMeService extends IntentService implements GoogleApiClient.C
                 pilotPhone = "<unknown>";
             registerPilot(refreshToken, pilotName, pilotPhone);
         } else if (ACTION_GET_METEOGRAM.equals(action)) {
-            long takeoffId = bundle.getLong(DATA_LONG_TAKEOFF_ID, -1);
+            long takeoffId = bundle.getLong(ARG_TAKEOFF_ID, -1);
             Forecast forecast = null;
             try {
                 forecast = getServer().getMeteogram(takeoffId).execute();
@@ -158,8 +172,8 @@ public class FlyWithMeService extends IntentService implements GoogleApiClient.C
             forecasts.add(forecast);
             sendDisplayForecastIntent(takeoffId, forecasts);
         } else if (ACTION_GET_SOUNDING.equals(action)) {
-            long takeoffId = bundle.getLong(DATA_LONG_TAKEOFF_ID, -1);
-            long timestamp = bundle.getLong(DATA_LONG_TIMESTAMP, -1);
+            long takeoffId = bundle.getLong(ARG_TAKEOFF_ID, -1);
+            long timestamp = bundle.getLong(ARG_TIMESTAMP, -1);
             List<Forecast> forecasts = null;
             try {
                 forecasts = getServer().getSounding(takeoffId, timestamp).execute().getItems();
@@ -168,18 +182,18 @@ public class FlyWithMeService extends IntentService implements GoogleApiClient.C
             }
             sendDisplayForecastIntent(takeoffId, forecasts);
         } else if (ACTION_SCHEDULE_FLIGHT.equals(action)) {
-            String pilotId = bundle.getString(DATA_PILOT_ID, "");
-            long takeoffId = bundle.getLong(DATA_LONG_TAKEOFF_ID, -1);
-            long timestamp = bundle.getLong(DATA_LONG_TIMESTAMP, -1);
+            String pilotId = bundle.getString(ARG_PILOT_ID, "");
+            long takeoffId = bundle.getLong(ARG_TAKEOFF_ID, -1);
+            long timestamp = bundle.getLong(ARG_TIMESTAMP, -1);
             try {
                 getServer().scheduleFlight(pilotId, takeoffId, timestamp);
             } catch (IOException e) {
                 Log.w(TAG, "Scheduling flight failed", e);
             }
         } else if (ACTION_UNSCHEDULE_FLIGHT.equals(action)) {
-            String pilotId = bundle.getString(DATA_PILOT_ID, "");
-            long takeoffId = bundle.getLong(DATA_LONG_TAKEOFF_ID, -1);
-            long timestamp = bundle.getLong(DATA_LONG_TIMESTAMP, -1);
+            String pilotId = bundle.getString(ARG_PILOT_ID, "");
+            long takeoffId = bundle.getLong(ARG_TAKEOFF_ID, -1);
+            long timestamp = bundle.getLong(ARG_TIMESTAMP, -1);
             try {
                 getServer().unscheduleFlight(pilotId, takeoffId, timestamp);
             } catch (IOException e) {

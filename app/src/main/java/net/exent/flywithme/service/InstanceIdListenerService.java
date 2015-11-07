@@ -15,7 +15,7 @@ public class InstanceIdListenerService extends com.google.android.gms.iid.Instan
         Log.d(TAG, "Token is no longer valid, updating");
         Intent intent = new Intent(this, FlyWithMeService.class);
         intent.setAction(FlyWithMeService.ACTION_REGISTER_PILOT);
-        intent.putExtra(FlyWithMeService.DATA_BOOLEAN_REFRESH_TOKEN, true);
+        intent.putExtra(FlyWithMeService.ARG_REFRESH_TOKEN, true);
         startService(intent);
     }
 }
