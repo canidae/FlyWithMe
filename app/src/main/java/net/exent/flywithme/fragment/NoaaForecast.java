@@ -93,7 +93,7 @@ public class NoaaForecast extends Fragment {
                     Log.d(getClass().getName(), "No image passed to fragment, fetching meteogram");
                     Intent intent = new Intent(getActivity(), FlyWithMeService.class);
                     intent.setAction(FlyWithMeService.ACTION_GET_METEOGRAM);
-                    intent.putExtra(FlyWithMeService.ARG_TAKEOFF_ID, (long) takeoff.getId());
+                    intent.putExtra(FlyWithMeService.ARG_TAKEOFF_ID, takeoff.getId());
                     getActivity().startService(intent);
                     // show loading animation
                     forecastList.setVisibility(View.GONE);
@@ -141,7 +141,7 @@ public class NoaaForecast extends Fragment {
                                 calendar.add(Calendar.HOUR_OF_DAY, soundingHourOffset);
                                 intent.putExtra(FlyWithMeService.ARG_TIMESTAMP, calendar.getTimeInMillis());
                             }
-                            intent.putExtra(FlyWithMeService.ARG_TAKEOFF_ID, (long) takeoff.getId());
+                            intent.putExtra(FlyWithMeService.ARG_TAKEOFF_ID, takeoff.getId());
                             getActivity().startService(intent);
 
                             // show loading animation

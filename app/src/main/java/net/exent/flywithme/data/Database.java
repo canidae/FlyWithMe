@@ -118,12 +118,15 @@ public class Database extends SQLiteOpenHelper {
         SQLiteDatabase db = getReadableDatabase();
         if (db == null)
             throw new IllegalArgumentException("Unable to get database object");
+        Cursor cursor = null;
         try {
-            Cursor cursor = db.query("takeoff", Takeoff.COLUMNS, "takeoff_id = " + takeoffId, null, null, null, null);
+            cursor = db.query("takeoff", Takeoff.COLUMNS, "takeoff_id = " + takeoffId, null, null, null, null);
             if (cursor.moveToNext())
                 return Takeoff.create(new ImprovedCursor(cursor));
             return null;
         } finally {
+            if (cursor != null)
+                cursor.close();
             db.close();
         }
     }

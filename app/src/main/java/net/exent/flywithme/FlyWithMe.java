@@ -150,7 +150,6 @@ public class FlyWithMe extends Activity implements GoogleApiClient.ConnectionCal
             } else {
                 showFragment(this, "takeoffList", TakeoffList.class, null);
             }
-        } else {
         }
     }
 
