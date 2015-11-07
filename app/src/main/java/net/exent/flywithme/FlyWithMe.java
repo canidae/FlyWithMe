@@ -39,7 +39,6 @@ import java.io.IOException;
    - NoaaForecast: Would prefer a better way to transfer data to fragment
    - Use endpoint API for registering planned flight
    - Use endpoint API for fetching planned flights (schedule)
-   - Fix "back"-functionality, see "addToBackStack()" for FragmentTransaction. DONE: sort of, could be better
    - Display notification if user is close to takeoff ("are you flying?")
      - Must be possible to "blacklist" takeoffs, and somehow remove blacklisting later (in preference window?)
    - Cache forecasts locally for some few hours (fetched timestamp is returned, cache for the same amount of time as server caches the forecast)
@@ -206,12 +205,14 @@ public class FlyWithMe extends Activity implements GoogleApiClient.ConnectionCal
 
     private void replaceFragment(Fragment fragment, String tag) {
         FragmentManager fragmentManager = getFragmentManager();
-        if (fragmentManager.getBackStackEntryCount() > 1)
+        if (fragmentManager.findFragmentByTag(tag) != null) {
             fragmentManager.popBackStack(tag, 0);
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.fragmentContainer, fragment, tag);
-        fragmentTransaction.addToBackStack(tag);
-        fragmentTransaction.commit();
+        } else {
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.fragmentContainer, fragment, tag);
+            fragmentTransaction.addToBackStack(tag);
+            fragmentTransaction.commit();
+        }
     }
 
     private class ImportTakeoffTask extends AsyncTask<Void, Void, Void> {
