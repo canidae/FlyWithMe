@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
+import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceManager;
@@ -106,7 +107,13 @@ public class Preferences extends PreferenceFragment implements SharedPreferences
         }
         EditTextPreference pilotPhone = (EditTextPreference) findPreference("pref_pilot_phone");
         pilotPhone.setSummary(pilotPhone.getText());
+        ListPreference nearTakeoffMaxDistance = (ListPreference) findPreference("pref_near_takeoff_max_distance");
+        nearTakeoffMaxDistance.setSummary(nearTakeoffMaxDistance.getEntry());
+        ListPreference takeoffActivityMaxDistance = (ListPreference) findPreference("pref_takeoff_activity_max_distance");
+        takeoffActivityMaxDistance.setSummary(takeoffActivityMaxDistance.getEntry());
+        /* TODO: replace with more detailed notification settings
         CheckBoxPreference notifications = (CheckBoxPreference) findPreference("pref_notifications");
         notifications.setOnPreferenceChangeListener(preferenceChangeListener);
+        */
     }
 }

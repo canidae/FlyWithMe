@@ -260,7 +260,7 @@ public class FlyWithMe extends Activity implements GoogleApiClient.ConnectionCal
                 }
                 prefs.edit().putLong("pref_last_takeoff_update_timestamp", importTimestamp).apply();
                 while (true) {
-                /* loop breaks once we get an EOFException */
+                    /* loop breaks once we get an EOFException */
                     int takeoffId = inputStream.readShort();
                     String name = inputStream.readUTF();
                     String description = inputStream.readUTF();
@@ -273,7 +273,7 @@ public class FlyWithMe extends Activity implements GoogleApiClient.ConnectionCal
                     database.updateTakeoff(takeoff);
                 }
             } catch (EOFException e) {
-            /* expected to happen when reaching end of file */
+                /* expected to happen when reaching end of file */
             } catch (IOException e) {
                 Log.e(getClass().getName(), "Error when reading file with takeoffs", e);
             } finally {

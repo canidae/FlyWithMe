@@ -31,13 +31,49 @@
 
     <!-- Preferences -->
     <string name="preferences">Preferences</string>
-    <string name="general_settings">General settings</string>
-    <string name="pilot_name">My name</string>
+    <string name="pilot_info">Pilot info</string>
+    <string name="pilot_name">Name</string>
     <string name="pilot_name_description">When scheduling a flight, this name will be shown to other pilots. This field is required (or you won\'t be allowed to schedule flights).</string>
     <string name="pilot_name_please_enter">Please enter your name</string>
-    <string name="pilot_phone">My phone number</string>
+    <string name="pilot_phone">Phone number</string>
     <string name="pilot_phone_description">When scheduling a flight, this phone number will be shown to other pilots. You don\'t have to fill this in, but it is recommended so other pilots can contact you.</string>
-    <string name="notifications">Notifications</string>
+    <string name="notifications">Show notifications</string>
+    <string name="vibrate">Vibrate</string>
+    <string name="max_distance_to_takeoff">Max distance to takeoff</string>
+    <string name="blacklist">Blacklist…</string>
+    <string name="blacklist_remove">Blacklist (click to remove)</string>
+    <string name="near_takeoff">Notifications when near takeoff</string>
+    <string-array name="near_takeoff_max_distance_entries">
+        <item>100m</item>
+        <item>200m</item>
+        <item>500m</item>
+        <item>1km</item>
+        <item>2km</item>
+    </string-array>
+    <string-array name="near_takeoff_max_distance_values" translatable="false">
+        <item>100</item>
+        <item>200</item>
+        <item>500</item>
+        <item>1000</item>
+        <item>2000</item>
+    </string-array>
+    <string name="near_takeoff_max_distance_default_value" translatable="false">500</string>
+    <string name="takeoff_activity">Notifications on takeoff activity</string>
+    <string-array name="takeoff_activity_max_distance_entries">
+        <item>25km</item>
+        <item>50km</item>
+        <item>100km</item>
+        <item>250km</item>
+        <item>500km</item>
+    </string-array>
+    <string-array name="takeoff_activity_max_distance_values" translatable="false">
+        <item>25000</item>
+        <item>50000</item>
+        <item>100000</item>
+        <item>250000</item>
+        <item>500000</item>
+    </string-array>
+    <string name="takeoff_activity_max_distance_default_value" translatable="false">100000</string>
 
     <!-- Meteogram/sounding -->
     <string-array name="meteogram_sounding_forecast_list_keys">
