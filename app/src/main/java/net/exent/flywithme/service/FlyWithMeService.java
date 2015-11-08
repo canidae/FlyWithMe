@@ -118,7 +118,7 @@ public class FlyWithMeService extends IntentService implements GoogleApiClient.C
             List<net.exent.flywithme.bean.Takeoff> takeoffs = database.getTakeoffs(location.getLatitude(), location.getLongitude(), 10, false);
             for (net.exent.flywithme.bean.Takeoff takeoff : takeoffs) {
                 if (location.distanceTo(takeoff.getLocation()) > Long.parseLong(sharedPref.getString("pref_near_takeoff_max_distance", "500")))
-                    return; // takeoff too far away (all subsequent takeoffs will be even further away)
+                    break; // takeoff too far away (all subsequent takeoffs will be even further away)
                 if (dismissedTakeoffsPref.getLong("" + takeoff.getId(), 0) + 21600000 > System.currentTimeMillis())
                     continue; // user dismissed this takeoff less than 6 hours ago, ignore takeoff
                 if (blacklistedTakeoffsPref.contains("" + takeoff.getId()))
