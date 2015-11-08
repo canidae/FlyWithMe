@@ -2,6 +2,7 @@ package net.exent.flywithme.fragment;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import android.content.Context;
 import android.content.Intent;
@@ -14,25 +15,17 @@ import android.preference.Preference;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceFragment;
-import android.widget.ImageButton;
 
 import net.exent.flywithme.R;
 import net.exent.flywithme.data.Airspace;
+import net.exent.flywithme.data.Database;
 import net.exent.flywithme.service.FlyWithMeService;
 
 public class Preferences extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
-    private Preference.OnPreferenceChangeListener preferenceChangeListener = new Preference.OnPreferenceChangeListener() {
-        @Override
-        public boolean onPreferenceChange(Preference preference, Object newValue) {
-            updateDynamicPreferenceScreen();
-            return true;
-        }
-    };
-
     public static void setupDefaultPreferences(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         // setup default airspace map polygons (all shown)
-        ArrayList<String> airspaceList = new ArrayList<>(Airspace.getAirspaceMap(context).keySet());
+        List<String> airspaceList = new ArrayList<>(Airspace.getAirspaceMap(context).keySet());
         for (String key : airspaceList) {
             if (key == null || "".equals(key.trim()))
                 continue;
@@ -49,8 +42,9 @@ public class Preferences extends PreferenceFragment implements SharedPreferences
 
         updateDynamicPreferenceScreen();
 
+        // setup preferences for airspace
         PreferenceCategory showAirspaceTypesCategory = (PreferenceCategory) findPreference("pref_show_airspace_types");
-        ArrayList<String> airspaceList = new ArrayList<>(Airspace.getAirspaceMap(getActivity()).keySet());
+        List<String> airspaceList = new ArrayList<>(Airspace.getAirspaceMap(getActivity()).keySet());
         Collections.sort(airspaceList);
         for (String key : airspaceList) {
             if (key == null || "".equals(key.trim()))
@@ -60,17 +54,6 @@ public class Preferences extends PreferenceFragment implements SharedPreferences
             checkBoxPreference.setTitle(key);
             showAirspaceTypesCategory.addPreference(checkBoxPreference);
         }
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-
-        setRetainInstance(true);
-
-        ((ImageButton) getActivity().findViewById(R.id.fragmentButton1)).setImageDrawable(null);
-        ((ImageButton) getActivity().findViewById(R.id.fragmentButton2)).setImageDrawable(null);
-        ((ImageButton) getActivity().findViewById(R.id.fragmentButton3)).setImageDrawable(null);
     }
 
     /* AAH! (Another Android Hack!): Setting a preference value only updates the preference, not the PreferenceFragment view */
@@ -99,6 +82,9 @@ public class Preferences extends PreferenceFragment implements SharedPreferences
     /* END AAH! */
 
     private void updateDynamicPreferenceScreen() {
+        Database database = new Database(getActivity());
+
+        // pilot info
         EditTextPreference pilotName = (EditTextPreference) findPreference("pref_pilot_name");
         if (pilotName.getText() == null || pilotName.getText().trim().equals("")) {
             pilotName.setSummary(getActivity().getString(R.string.pilot_name_please_enter));
@@ -107,13 +93,53 @@ public class Preferences extends PreferenceFragment implements SharedPreferences
         }
         EditTextPreference pilotPhone = (EditTextPreference) findPreference("pref_pilot_phone");
         pilotPhone.setSummary(pilotPhone.getText());
+
+        // notifications when near takeoff
         ListPreference nearTakeoffMaxDistance = (ListPreference) findPreference("pref_near_takeoff_max_distance");
         nearTakeoffMaxDistance.setSummary(nearTakeoffMaxDistance.getEntry());
+        PreferenceCategory nearTakeoffBlacklistCategory = (PreferenceCategory) findPreference("pref_near_takeoff_blacklist_view");
+        nearTakeoffBlacklistCategory.removeAll();
+        final SharedPreferences nearTakeoffBlacklistPref = getActivity().getSharedPreferences(FlyWithMeService.ACTION_BLACKLIST_TAKEOFF_NOTIFICATION, Context.MODE_PRIVATE);
+        List<String> nearTakeoffBlacklist = new ArrayList<>(nearTakeoffBlacklistPref.getAll().keySet());
+        Collections.sort(nearTakeoffBlacklist);
+        for (final String key : nearTakeoffBlacklist) {
+            if (key == null || "".equals(key.trim()))
+                continue;
+            Preference blacklistPreference = new Preference(getActivity());
+            blacklistPreference.setTitle(database.getTakeoff(Long.parseLong(key)).getName());
+            blacklistPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    nearTakeoffBlacklistPref.edit().remove(key).apply();
+                    updateDynamicPreferenceScreen();
+                    return true;
+                }
+            });
+            nearTakeoffBlacklistCategory.addPreference(blacklistPreference);
+        }
+
+        // notifications on takeoff activity
         ListPreference takeoffActivityMaxDistance = (ListPreference) findPreference("pref_takeoff_activity_max_distance");
         takeoffActivityMaxDistance.setSummary(takeoffActivityMaxDistance.getEntry());
-        /* TODO: replace with more detailed notification settings
-        CheckBoxPreference notifications = (CheckBoxPreference) findPreference("pref_notifications");
-        notifications.setOnPreferenceChangeListener(preferenceChangeListener);
-        */
+        PreferenceCategory takeoffActivityBlacklistCategory = (PreferenceCategory) findPreference("pref_takeoff_activity_blacklist_view");
+        takeoffActivityBlacklistCategory.removeAll();
+        final SharedPreferences takeoffActivityBlacklistPref = getActivity().getSharedPreferences(FlyWithMeService.ACTION_BLACKLIST_ACTIVITY_NOTIFICATION, Context.MODE_PRIVATE);
+        List<String> takeoffActivityBlacklist = new ArrayList<>(takeoffActivityBlacklistPref.getAll().keySet());
+        Collections.sort(takeoffActivityBlacklist);
+        for (final String key : takeoffActivityBlacklist) {
+            if (key == null || "".equals(key.trim()))
+                continue;
+            Preference blacklistPreference = new Preference(getActivity());
+            blacklistPreference.setTitle(database.getTakeoff(Long.parseLong(key)).getName());
+            blacklistPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    takeoffActivityBlacklistPref.edit().remove(key).apply();
+                    updateDynamicPreferenceScreen();
+                    return true;
+                }
+            });
+            takeoffActivityBlacklistCategory.addPreference(blacklistPreference);
+        }
     }
 }

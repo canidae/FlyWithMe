@@ -95,9 +95,7 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
                 @Override
                 public void onClick(View v) {
                     boolean markersEnabled = !prefs.getBoolean("pref_map_show_takeoffs", true);
-                    SharedPreferences.Editor editor = prefs.edit();
-                    editor.putBoolean("pref_map_show_takeoffs", markersEnabled);
-                    editor.apply();
+                    prefs.edit().putBoolean("pref_map_show_takeoffs", markersEnabled).apply();
                     markerButton.setImageResource(markersEnabled ? R.mipmap.takeoffs_enabled : R.mipmap.takeoffs_disabled);
                     drawOverlay(map.getCameraPosition());
                 }
@@ -109,14 +107,11 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
                 @Override
                 public void onClick(View v) {
                     boolean polygonsEnabled = !prefs.getBoolean("pref_map_show_airspace", true);
-                    SharedPreferences.Editor editor = prefs.edit();
-                    editor.putBoolean("pref_map_show_airspace", polygonsEnabled);
-                    editor.apply();
+                    prefs.edit().putBoolean("pref_map_show_airspace", polygonsEnabled).apply();
                     polygonButton.setImageResource(polygonsEnabled ? R.mipmap.airspace_enabled : R.mipmap.airspace_disabled);
                     drawOverlay(map.getCameraPosition());
                 }
             });
-            ((ImageButton) getActivity().findViewById(R.id.fragmentButton3)).setImageDrawable(null);
         } catch (Exception e) {
             Log.w(getClass().getName(), "drawMap() task failed unexpectedly", e);
         }

@@ -168,10 +168,6 @@ public class TakeoffSchedule extends Fragment implements GoogleApiClient.Connect
         if (args != null)
             showTakeoffSchedule((Takeoff) args.getParcelable(ARG_TAKEOFF));
 
-        ((ImageButton) getActivity().findViewById(R.id.fragmentButton1)).setImageDrawable(null);
-        ((ImageButton) getActivity().findViewById(R.id.fragmentButton2)).setImageDrawable(null);
-        ((ImageButton) getActivity().findViewById(R.id.fragmentButton3)).setImageDrawable(null);
-
         // don't show buttons for registering flight if user haven't set a name
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         String pilotName = prefs.getString("pref_pilot_name", "").trim();

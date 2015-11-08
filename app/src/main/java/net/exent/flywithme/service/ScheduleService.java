@@ -129,7 +129,7 @@ public class ScheduleService extends IntentService implements ConnectionCallback
             while (pilotId == 0) {
                 // generate a random ID for identifying the pilot's registrations
                 pilotId = (new Random()).nextLong();
-                prefs.edit().putLong("pref_schedule_pilot_id", pilotId).commit();
+                prefs.edit().putLong("pref_schedule_pilot_id", pilotId).apply();
             }
             String pilotName = prefs.getString("pref_schedule_pilot_name", "").trim();
             String pilotPhone = prefs.getString("pref_schedule_pilot_phone", "").trim();
@@ -237,7 +237,7 @@ public class ScheduleService extends IntentService implements ConnectionCallback
             // no update at this time
             return;
         }
-        prefs.edit().putLong("pref_schedule_last_update", now).commit();
+        prefs.edit().putLong("pref_schedule_last_update", now).apply();
 
         // update schedule in background
         (new UpdateScheduleTask(getApplicationContext(), location)).execute();
@@ -300,7 +300,7 @@ public class ScheduleService extends IntentService implements ConnectionCallback
                 notificationText += "".equals(notificationText) ? takeoff : " | " + takeoff;
             if (notificationText.equals(prefs.getString("pref_schedule_last_notification_text", "")))
                 return; // no changes in upcoming activity
-            prefs.edit().putString("pref_schedule_last_notification_text", notificationText).commit();
+            prefs.edit().putString("pref_schedule_last_notification_text", notificationText).apply();
             if ("".equals(notificationText))
                 return; // no upcoming activity
             // notify the user that people are planning to fly

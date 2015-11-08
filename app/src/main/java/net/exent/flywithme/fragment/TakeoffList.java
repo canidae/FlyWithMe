@@ -78,10 +78,6 @@ public class TakeoffList extends Fragment implements GoogleApiClient.ConnectionC
         /* position list */
         listView.setSelectionFromTop(savedPosition, savedListTop);
 
-        ((ImageButton) getActivity().findViewById(R.id.fragmentButton1)).setImageDrawable(null);
-        ((ImageButton) getActivity().findViewById(R.id.fragmentButton2)).setImageDrawable(null);
-        ((ImageButton) getActivity().findViewById(R.id.fragmentButton3)).setImageDrawable(null);
-
         return view;
     }
 

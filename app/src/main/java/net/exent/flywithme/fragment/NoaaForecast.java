@@ -171,8 +171,6 @@ public class NoaaForecast extends Fragment {
                     }
                 });
             }
-
-            ((ImageButton) getActivity().findViewById(R.id.fragmentButton3)).setImageDrawable(null);
         } catch (Exception e) {
             Log.w(getClass().getName(), "Showing NOAA forecast failed unexpectedly", e);
         }
