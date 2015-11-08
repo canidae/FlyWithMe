@@ -108,38 +108,45 @@ public class FlyWithMeService extends IntentService implements GoogleApiClient.C
             Location location = locationResult.getLastLocation();
             if (location == null)
                 return;
-            Database database = new Database(this);
+            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+            if (!sharedPref.getBoolean("pref_near_takeoff_notifications", true))
+                return; // user don't want notifications when near takeoffs
             SharedPreferences dismissedTakeoffsPref = getSharedPreferences(ACTION_DISMISS_TAKEOFF_NOTIFICATION, Context.MODE_PRIVATE);
             SharedPreferences blacklistedTakeoffsPref = getSharedPreferences(ACTION_BLACKLIST_TAKEOFF_NOTIFICATION, Context.MODE_PRIVATE);
+            Database database = new Database(this);
+            boolean cancelNotification = true;
             List<net.exent.flywithme.bean.Takeoff> takeoffs = database.getTakeoffs(location.getLatitude(), location.getLongitude(), 10, false);
             for (net.exent.flywithme.bean.Takeoff takeoff : takeoffs) {
-                if (location.distanceTo(takeoff.getLocation()) > 12500)
-                    return;
+                if (location.distanceTo(takeoff.getLocation()) > Long.parseLong(sharedPref.getString("pref_near_takeoff_max_distance", "500")))
+                    return; // takeoff too far away (all subsequent takeoffs will be even further away)
                 if (dismissedTakeoffsPref.getLong("" + takeoff.getId(), 0) + 21600000 > System.currentTimeMillis())
                     continue; // user dismissed this takeoff less than 6 hours ago, ignore takeoff
                 if (blacklistedTakeoffsPref.contains("" + takeoff.getId()))
                     continue; // user blacklisted this takeoff, ignore takeoff
-                // TODO: if pilot scheduled for flying here recently, continue
 
                 PendingIntent clickIntent = PendingIntent.getService(this, 0, new Intent(this, FlyWithMeService.class).setAction(ACTION_CLICK_TAKEOFF_NOTIFICATION).putExtra(ARG_TAKEOFF_ID, takeoff.getId()), PendingIntent.FLAG_UPDATE_CURRENT);
                 PendingIntent dismissIntent = PendingIntent.getService(this, 0, new Intent(this, FlyWithMeService.class).setAction(ACTION_DISMISS_TAKEOFF_NOTIFICATION).putExtra(ARG_TAKEOFF_ID, takeoff.getId()), PendingIntent.FLAG_UPDATE_CURRENT);
                 PendingIntent scheduleIntent = PendingIntent.getService(this, 0, new Intent(this, FlyWithMeService.class).setAction(ACTION_SCHEDULE_TAKEOFF_NOTIFICATION).putExtra(ARG_TAKEOFF_ID, takeoff.getId()), PendingIntent.FLAG_UPDATE_CURRENT);
                 PendingIntent blacklistIntent = PendingIntent.getService(this, 0, new Intent(this, FlyWithMeService.class).setAction(ACTION_BLACKLIST_TAKEOFF_NOTIFICATION).putExtra(ARG_TAKEOFF_ID, takeoff.getId()), PendingIntent.FLAG_UPDATE_CURRENT);
-                Notification notification = new Notification.Builder(this)
+                Notification.Builder notificationBuilder = new Notification.Builder(this)
                         .setSmallIcon(R.drawable.notification_icon)
                         .setContentTitle(takeoff.getName())
                         .setContentText(getString(R.string.are_you_flying))
-                        .setVibrate(new long[] {0, 100, 100, 100, 100, 100}) // TODO: setting in preference so users can disable this
                         .setContentIntent(clickIntent)
                         .setDeleteIntent(dismissIntent)
                         .setAutoCancel(true)
                         .addAction(android.R.drawable.ic_input_add, getString(R.string.yes), scheduleIntent)
-                        .addAction(android.R.drawable.ic_dialog_alert, getString(R.string.never_notify_here), blacklistIntent)
-                        .build();
+                        .addAction(android.R.drawable.ic_dialog_alert, getString(R.string.never_notify_here), blacklistIntent);
+                if (sharedPref.getBoolean("pref_near_takeoff_vibrate", true))
+                    notificationBuilder.setVibrate(new long[]{0, 100, 100, 100, 100, 100});
+                Notification notification = notificationBuilder.build();
                 notification.flags |= Notification.FLAG_AUTO_CANCEL;
                 ((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).notify(0, notification);
+                cancelNotification = false;
                 break;
             }
+            if (cancelNotification)
+                ((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).cancel(0); // we're not near any known takeoff, hide notification
         } else if (ACTION_CLICK_TAKEOFF_NOTIFICATION.equals(action)) {
             Intent showTakeoffDetailsIntent = new Intent(this, FlyWithMe.class);
             showTakeoffDetailsIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -154,10 +161,13 @@ public class FlyWithMeService extends IntentService implements GoogleApiClient.C
             // also add takeoff to list of dismissed takeoffs so user won't be bugged again about flying here before another 6 hours has passed
             SharedPreferences prefs = getSharedPreferences(ACTION_DISMISS_TAKEOFF_NOTIFICATION, Context.MODE_PRIVATE);
             prefs.edit().putLong("" + bundle.getLong(ARG_TAKEOFF_ID), System.currentTimeMillis()).apply();
+            // dismiss notification
+            ((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).cancel(0);
         } else if (ACTION_BLACKLIST_TAKEOFF_NOTIFICATION.equals(action)) {
-            // TODO: possible to remove blacklisted takeoffs in preferences fragment
             SharedPreferences prefs = getSharedPreferences(ACTION_BLACKLIST_TAKEOFF_NOTIFICATION, Context.MODE_PRIVATE);
             prefs.edit().putLong("" + bundle.getLong(ARG_TAKEOFF_ID), System.currentTimeMillis()).apply();
+            // dismiss notification
+            ((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).cancel(0);
         } else if (ACTION_REGISTER_PILOT.equals(action)) {
             boolean refreshToken = bundle.getBoolean(ARG_REFRESH_TOKEN, false);
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
