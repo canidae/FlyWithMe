@@ -201,27 +201,8 @@ public class FlyWithMe extends Activity implements GoogleApiClient.ConnectionCal
     @Override
     public void onPause() {
         super.onPause();
-        /* TODO: the next statement failed when clicking on event from locked screen. Stacktrace:
-11-08 00:11:31.673 11348-11348/net.exent.flywithme E/AndroidRuntime: java.lang.IllegalStateException: GoogleApiClient is not connected yet.
-11-08 00:11:31.673 11348-11348/net.exent.flywithme E/AndroidRuntime:     at com.google.android.gms.common.api.zze.zzb(Unknown Source)
-11-08 00:11:31.673 11348-11348/net.exent.flywithme E/AndroidRuntime:     at com.google.android.gms.common.api.zzg.zzb(Unknown Source)
-11-08 00:11:31.673 11348-11348/net.exent.flywithme E/AndroidRuntime:     at com.google.android.gms.location.internal.zzd.removeLocationUpdates(Unknown Source)
-11-08 00:11:31.673 11348-11348/net.exent.flywithme E/AndroidRuntime:     at net.exent.flywithme.FlyWithMe.onPause(FlyWithMe.java:204)
-11-08 00:11:31.673 11348-11348/net.exent.flywithme E/AndroidRuntime:     at android.app.Activity.performPause(Activity.java:6101)
-11-08 00:11:31.673 11348-11348/net.exent.flywithme E/AndroidRuntime:     at android.app.Instrumentation.callActivityOnPause(Instrumentation.java:1310)
-11-08 00:11:31.673 11348-11348/net.exent.flywithme E/AndroidRuntime:     at android.app.ActivityThread.performNewIntents(ActivityThread.java:2521)
-11-08 00:11:31.673 11348-11348/net.exent.flywithme E/AndroidRuntime:     at android.app.ActivityThread.handleNewIntent(ActivityThread.java:2532)
-11-08 00:11:31.673 11348-11348/net.exent.flywithme E/AndroidRuntime:     at android.app.ActivityThread.access$1600(ActivityThread.java:156)
-11-08 00:11:31.673 11348-11348/net.exent.flywithme E/AndroidRuntime:     at android.app.ActivityThread$H.handleMessage(ActivityThread.java:1423)
-11-08 00:11:31.673 11348-11348/net.exent.flywithme E/AndroidRuntime:     at android.os.Handler.dispatchMessage(Handler.java:102)
-11-08 00:11:31.673 11348-11348/net.exent.flywithme E/AndroidRuntime:     at android.os.Looper.loop(Looper.java:211)
-11-08 00:11:31.673 11348-11348/net.exent.flywithme E/AndroidRuntime:     at android.app.ActivityThread.main(ActivityThread.java:5373)
-11-08 00:11:31.673 11348-11348/net.exent.flywithme E/AndroidRuntime:     at java.lang.reflect.Method.invoke(Native Method)
-11-08 00:11:31.673 11348-11348/net.exent.flywithme E/AndroidRuntime:     at java.lang.reflect.Method.invoke(Method.java:372)
-11-08 00:11:31.673 11348-11348/net.exent.flywithme E/AndroidRuntime:     at com.android.internal.os.ZygoteInit$MethodAndArgsCaller.run(ZygoteInit.java:1020)
-11-08 00:11:31.673 11348-11348/net.exent.flywithme E/AndroidRuntime:     at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:815)
-         */
-        LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
+        if (googleApiClient.isConnected())
+            LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
     }
 
     @Override

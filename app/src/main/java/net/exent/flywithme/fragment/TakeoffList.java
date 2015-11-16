@@ -15,7 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -34,8 +33,8 @@ import java.util.List;
 public class TakeoffList extends Fragment implements GoogleApiClient.ConnectionCallbacks, LocationListener {
     public static final String ARG_LOCATION = "location";
 
-    private static int savedPosition; // TODO: not static?
-    private static int savedListTop; // TODO: not static?
+    private static int savedPosition;
+    private static int savedListTop;
     private List<Takeoff> takeoffs = new ArrayList<>();
     private TakeoffArrayAdapter takeoffArrayAdapter;
 
@@ -112,7 +111,8 @@ public class TakeoffList extends Fragment implements GoogleApiClient.ConnectionC
     @Override
     public void onPause() {
         super.onPause();
-        LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
+        if (googleApiClient.isConnected())
+            LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
     }
 
     @Override

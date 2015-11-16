@@ -56,7 +56,6 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
 
     /* we can't use Map<Marker, Takeoff> below, because the Marker may be recreated, invalidating the reference we got to the previous instantiation.
      * instead we'll have to keep the id (String) as a reference to the marker */
-    // TODO: make all these not static?
     private static Map<String, Pair<Marker, Takeoff>> markers = new HashMap<>();
     private static Map<Pair<Polygon, Marker>, Airspace.Zone> zones = new HashMap<>();
     private static Bitmap markerBitmap;
@@ -224,7 +223,8 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
     @Override
     public void onPause() {
         super.onPause();
-        LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
+        if (googleApiClient.isConnected())
+            LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
     }
 
     @Override
