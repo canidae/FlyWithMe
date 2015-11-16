@@ -28,7 +28,7 @@ public class FlightlogCrawler {
 
     private static final String TAKEOFF_URL = "http://flightlog.org/fl.html?l=1&a=22&country_id=160&start_id=";
     private static final Pattern NAME_PATTERN = Pattern.compile(".*<title>.* - .* - .* - (.*)</title>.*", Pattern.DOTALL);
-    private static final Pattern DESCRIPTION_PATTERN = Pattern.compile(".*Description</td>.*>([^>]*)</td></tr>.*Coordinates</td>.*", Pattern.DOTALL);
+    private static final Pattern DESCRIPTION_PATTERN = Pattern.compile(".*Description</td>(.*)</td></tr>.*Coordinates</td>.*", Pattern.DOTALL);
     private static final Pattern ALTITUDE_PATTERN = Pattern.compile(".*Altitude</td><td bgcolor='white'>(\\d+) meters asl Top to bottom (\\d+) meters</td>.*", Pattern.DOTALL);
     private static final Pattern COORD_PATTERN = Pattern.compile(".*Coordinates</td>.*DMS: ([NS]) (\\d+)&deg; (\\d+)&#039; (\\d+)&#039;&#039; &nbsp;([EW]) (\\d+)&deg; (\\d+)&#039; (\\d+)&#039;&#039;.*", Pattern.DOTALL);
     private static final Pattern WINDPAI_PATTERN = Pattern.compile(".*<img src='fl_b5/windpai\\.html\\?[^']*' alt='([^']*)'.*", Pattern.DOTALL);
@@ -85,8 +85,10 @@ public class FlightlogCrawler {
             if (nameMatcher.matches() && coordMatcher.matches()) {
                 String takeoffName = nameMatcher.group(1).trim();
                 String description = "";
-                if (descriptionMatcher.matches())
-                    description = descriptionMatcher.group(1).replace("<br />", "").trim();
+                if (descriptionMatcher.matches()) {
+                    description = descriptionMatcher.group(1).replace("<br />", "\n").trim();
+                    description = description.replaceAll("<[^>]*>", "");
+                }
                 int aboveSeaLevel = 0;
                 int height = 0;
                 if (altitudeMatcher.matches()) {
