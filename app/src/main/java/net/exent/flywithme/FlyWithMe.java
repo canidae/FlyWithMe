@@ -40,8 +40,6 @@ import java.io.IOException;
    - NoaaForecast: Would prefer a better way to transfer data to fragment
    - Use endpoint API for registering planned flight
    - Use endpoint API for fetching planned flights (schedule)
-   - Display notification if user is close to takeoff ("are you flying?")
-     - Must be possible to "blacklist" takeoffs, and somehow remove blacklisting later (in preference window?)
    - Cache forecasts locally for some few hours (fetched timestamp is returned, cache for the same amount of time as server caches the forecast)
    - Implement "Poor Man's SPOT"? Livetracking?
  */

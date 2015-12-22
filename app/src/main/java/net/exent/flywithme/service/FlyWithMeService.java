@@ -58,7 +58,6 @@ public class FlyWithMeService extends IntentService implements GoogleApiClient.C
     public static final String ARG_REFRESH_TOKEN = "refreshToken";
     public static final String ARG_TAKEOFF_ID = "takeoffId";
     public static final String ARG_TIMESTAMP = "timestamp";
-    public static final String ARG_PILOT_ID = "pilotId";
 
     private static final String TAG = FlyWithMeService.class.getName();
     private static final String PROJECT_ID = "586531582715";
@@ -157,10 +156,20 @@ public class FlyWithMeService extends IntentService implements GoogleApiClient.C
             SharedPreferences prefs = getSharedPreferences(ACTION_DISMISS_TAKEOFF_NOTIFICATION, Context.MODE_PRIVATE);
             prefs.edit().putLong("" + bundle.getLong(ARG_TAKEOFF_ID), System.currentTimeMillis()).apply();
         } else if (ACTION_SCHEDULE_TAKEOFF_NOTIFICATION.equals(action)) {
-            // TODO
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+            String pilotId = prefs.getString("token", null);
+            if (pilotId == null) {
+                Log.w(TAG, "Can't schedule flight, pilot not registered");
+                return;
+            }
+            long takeoffId = bundle.getLong(ARG_TAKEOFF_ID);
+            try {
+                getServer().scheduleFlight(pilotId, takeoffId, System.currentTimeMillis() / 900000 * 900000); // rounds down to previous 15th minute
+            } catch (IOException e) {
+                Log.w(TAG, "Scheduling flight failed", e);
+            }
             // also add takeoff to list of dismissed takeoffs so user won't be bugged again about flying here before another 6 hours has passed
-            SharedPreferences prefs = getSharedPreferences(ACTION_DISMISS_TAKEOFF_NOTIFICATION, Context.MODE_PRIVATE);
-            prefs.edit().putLong("" + bundle.getLong(ARG_TAKEOFF_ID), System.currentTimeMillis()).apply();
+            prefs.edit().putLong("" + takeoffId, System.currentTimeMillis()).apply();
             // dismiss notification
             ((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).cancel(0);
         } else if (ACTION_BLACKLIST_TAKEOFF_NOTIFICATION.equals(action)) {
@@ -200,7 +209,12 @@ public class FlyWithMeService extends IntentService implements GoogleApiClient.C
             }
             sendDisplayForecastIntent(takeoffId, forecasts);
         } else if (ACTION_SCHEDULE_FLIGHT.equals(action)) {
-            String pilotId = bundle.getString(ARG_PILOT_ID, "");
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+            String pilotId = prefs.getString("token", null);
+            if (pilotId == null) {
+                Log.w(TAG, "Can't schedule flight, pilot not registered");
+                return;
+            }
             long takeoffId = bundle.getLong(ARG_TAKEOFF_ID, -1);
             long timestamp = bundle.getLong(ARG_TIMESTAMP, -1);
             try {
@@ -209,7 +223,12 @@ public class FlyWithMeService extends IntentService implements GoogleApiClient.C
                 Log.w(TAG, "Scheduling flight failed", e);
             }
         } else if (ACTION_UNSCHEDULE_FLIGHT.equals(action)) {
-            String pilotId = bundle.getString(ARG_PILOT_ID, "");
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+            String pilotId = prefs.getString("token", null);
+            if (pilotId == null) {
+                Log.w(TAG, "Can't unschedule flight, pilot not registered");
+                return;
+            }
             long takeoffId = bundle.getLong(ARG_TAKEOFF_ID, -1);
             long timestamp = bundle.getLong(ARG_TIMESTAMP, -1);
             try {

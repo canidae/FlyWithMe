@@ -15,7 +15,7 @@
     <string name="fetching_noaa_failed">Hente værvarsel feilet</string>
 
     <!-- Flight schedule graph -->
-    <string name="graph_text">Flyplan (klikk for detaljer)</string>
+    <string name="graph_text">Flyplan (klikk for registrering)</string>
     <string name="date">Dato</string>
     <string name="time">Tid</string>
     <string name="no_scheduled_flights">Ingen registrerte flyplaner</string>

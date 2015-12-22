@@ -20,7 +20,7 @@
     <string name="fetching_noaa_failed">Fetching forecast failed</string>
 
     <!-- Flight schedule -->
-    <string name="graph_text">Flight schedule (click for details)</string>
+    <string name="graph_text">Flight schedule (click to schedule)</string>
     <string name="date">Date</string>
     <string name="time">Time</string>
     <string name="no_scheduled_flights">No scheduled flights</string>
