@@ -10,6 +10,7 @@ import net.exent.flywithme.server.bean.Pilot;
 import net.exent.flywithme.server.bean.Schedule;
 import net.exent.flywithme.server.bean.Takeoff;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -22,6 +23,7 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
  */
 public class DataStore {
     private static final Logger log = Logger.getLogger(DataStore.class.getName());
+    private static final String TAKEOFFS_RECENTLY_SCHEDULED_KEY = "takeoffs_recently_scheduled";
     private static final long FORECAST_CACHE_LIFETIME = 21600000; // 6 hours
 
     static {
@@ -99,13 +101,36 @@ public class DataStore {
         ofy().save().entity(schedule).now();
         String key = "schedule_" + schedule.getTakeoffId() + "_" + schedule.getTimestamp();
         memcacheSave(key, schedule);
+        memcacheDelete(TAKEOFFS_RECENTLY_SCHEDULED_KEY); // NOTE: somewhat important
     }
 
     public static List<Schedule> getUpcomingSchedules() {
-        // TODO: memcache (this is a bit tricky)
-        return ofy().load().type(Schedule.class)
+        // NOTE: we must delete the memcache entry when we update the schedule for a takeoff
+        List recentlyScheduled = (List) memcacheLoad(TAKEOFFS_RECENTLY_SCHEDULED_KEY);
+        if (recentlyScheduled != null) {
+            try {
+                List<Schedule> schedules = new ArrayList<>();
+                for (int i = 0; i < recentlyScheduled.size(); i += 2) {
+                    long takeoffId = (Long) recentlyScheduled.get(i);
+                    long timestamp = (Long) recentlyScheduled.get(i + 1);
+                    schedules.add(loadSchedule(takeoffId, timestamp));
+                }
+                return schedules;
+            } catch (Exception e) {
+                log.log(Level.WARNING, "Something's wrong with memcache entry for recently scheduled takeoffs", e);
+            }
+        }
+
+        List<Schedule> schedules = ofy().load().type(Schedule.class)
                 .filter("timestamp >=", System.currentTimeMillis() - 7200000) // 2 hours
                 .list();
+        List<Long> newRecentlyScheduled = new ArrayList<>();
+        for (Schedule schedule : schedules) {
+            newRecentlyScheduled.add(schedule.getTakeoffId());
+            newRecentlyScheduled.add(schedule.getTimestamp());
+        }
+        memcacheSave(TAKEOFFS_RECENTLY_SCHEDULED_KEY, newRecentlyScheduled);
+        return schedules;
     }
 
     public static Forecast loadForecast(long takeoffId, Forecast.ForecastType type, long validFor) {
