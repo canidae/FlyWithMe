@@ -1,9 +1,7 @@
 package net.exent.flywithme.server.servlet;
 
 import com.google.android.gcm.server.Message;
-import com.googlecode.objectify.ObjectifyService;
 
-import net.exent.flywithme.server.bean.Forecast;
 import net.exent.flywithme.server.bean.Takeoff;
 import net.exent.flywithme.server.util.DataStore;
 import net.exent.flywithme.server.util.FlightlogCrawler;
@@ -24,11 +22,6 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class TaskServlet extends HttpServlet {
     private static final Logger log = Logger.getLogger(TaskServlet.class.getName());
-
-    static {
-        ObjectifyService.register(Forecast.class);
-        ObjectifyService.register(Takeoff.class);
-    }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

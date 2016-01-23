@@ -26,6 +26,8 @@ public class DataStore {
     private static final String TAKEOFFS_RECENTLY_SCHEDULED_KEY = "takeoffs_recently_scheduled";
     private static final long FORECAST_CACHE_LIFETIME = 21600000; // 6 hours
 
+    private static List<Pilot> allPilots = new ArrayList<>();
+
     static {
         ObjectifyService.register(Forecast.class);
         ObjectifyService.register(Pilot.class);
@@ -55,7 +57,7 @@ public class DataStore {
     }
 
     public static List<Takeoff> getRecentlyUpdatedTakeoffs(long updatedAfter) {
-        // TODO: memcache (this is a bit tricky)
+        // TODO: memcache (this is a bit tricky, and possibly not that important, called by each users max once a day)
         return ofy().load().type(Takeoff.class).filter("lastUpdated >=", updatedAfter).list();
     }
 
@@ -70,12 +72,14 @@ public class DataStore {
     }
 
     public static void savePilot(Pilot pilot) {
+        allPilots = new ArrayList<>(); // NOTE: important
         ofy().save().entity(pilot).now();
         String key = "pilot_" + pilot.getId();
         memcacheSave(key, pilot);
     }
 
     public static void deletePilot(String pilotId) {
+        allPilots = new ArrayList<>(); // NOTE: important
         Pilot pilot = loadPilot(pilotId);
         if (pilot == null) {
             return;
@@ -83,6 +87,14 @@ public class DataStore {
         String key = "pilot_" + pilot.getId();
         memcacheDelete(key);
         ofy().delete().entity(pilot).now();
+    }
+
+    public static List<Pilot> getAllPilots() {
+        // this is called each time we send a message, but pilot IDs are possibly too large to use memcache
+        // so we'll use a static member and hope for the best
+        if (allPilots.isEmpty())
+            allPilots = ofy().load().type(Pilot.class).list();
+        return allPilots;
     }
 
     public static Schedule loadSchedule(long takeoffId, long timestamp) {
