@@ -3,13 +3,14 @@ package net.exent.flywithme.server.bean;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 /**
  * Information about a pilot.
  */
 @Entity
-public class Pilot {
+public class Pilot implements Serializable {
     @Id private String id;
     private String name;
     private String phone;

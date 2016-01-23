@@ -4,11 +4,13 @@ import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Index;
 
+import java.io.Serializable;
+
 /**
  * A forecast image, such as meteogram or sounding.
  */
 @Entity
-public class Forecast {
+public class Forecast implements Serializable {
     public enum ForecastType {
         METEOGRAM, PROFILE, THETA, TEXT
     }

@@ -4,6 +4,7 @@ import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Index;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -11,7 +12,7 @@ import java.util.Set;
  * The schedule for future flights.
  */
 @Entity
-public class Schedule {
+public class Schedule implements Serializable {
     @Id private Long id;
     @Index private long takeoffId;
     @Index private long timestamp;

@@ -4,39 +4,27 @@ import com.google.android.gcm.server.Message;
 import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiNamespace;
-import com.googlecode.objectify.ObjectifyService;
 
 import net.exent.flywithme.server.bean.Forecast;
 import net.exent.flywithme.server.bean.Pilot;
 import net.exent.flywithme.server.bean.Schedule;
 import net.exent.flywithme.server.bean.Takeoff;
+import net.exent.flywithme.server.util.DataStore;
 import net.exent.flywithme.server.util.GcmUtil;
 import net.exent.flywithme.server.util.NoaaProxy;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 import javax.inject.Named;
 
-import static com.googlecode.objectify.ObjectifyService.ofy;
-
 /**
- * Created by canidae on 4/4/15.
+ * Endpoint that handles pilot/schedule/forecast/takeoff data transfer between server and device.
  */
 @Api(name = "flyWithMeServer", version = "v1", namespace = @ApiNamespace(ownerDomain = "server.flywithme.exent.net", ownerName = "server.flywithme.exent.net", packagePath = ""))
 public class FlyWithMeEndpoint {
     private static final Logger log = Logger.getLogger(FlyWithMeEndpoint.class.getName());
-
-    public static final long FORECAST_CACHE_LIFETIME = TimeUnit.MILLISECONDS.convert(6, TimeUnit.HOURS);
-
-    static {
-        ObjectifyService.register(Forecast.class);
-        ObjectifyService.register(Pilot.class);
-        ObjectifyService.register(Schedule.class);
-        ObjectifyService.register(Takeoff.class);
-    }
 
     /**
      * Register a pilot to the backend.
@@ -45,11 +33,11 @@ public class FlyWithMeEndpoint {
      */
     @ApiMethod(name = "registerPilot")
     public void registerPilot(@Named("pilotId") String pilotId, @Named("pilotName") String pilotName, @Named("pilotPhone") String pilotPhone) {
-        Pilot pilot = fetchPilot(pilotId);
+        Pilot pilot = DataStore.loadPilot(pilotId);
         if (pilot == null)
             pilot = new Pilot().setId(pilotId);
         pilot.setName(pilotName).setPhone(pilotPhone);
-        ofy().save().entity(pilot).now();
+        DataStore.savePilot(pilot);
     }
 
     /**
@@ -59,12 +47,14 @@ public class FlyWithMeEndpoint {
      */
     @ApiMethod(name = "unregisterPilot")
     public void unregisterPilot(@Named("pilotId") String pilotId) {
-        Pilot pilot = fetchPilot(pilotId);
-        if (pilot == null) {
-            log.info("Pilot " + pilotId + " not registered, skipping unregister");
-            return;
-        }
-        ofy().delete().entity(pilot).now();
+        log.info("Unregistering pilot: " + pilotId);
+        DataStore.deletePilot(pilotId);
+    }
+
+    @ApiMethod(name = "removeMe")
+    public Pilot removeMe() {
+        // TODO: remove, added it to force class "Pilot" to be added to client library
+        return new Pilot();
     }
 
     /**
@@ -76,17 +66,14 @@ public class FlyWithMeEndpoint {
      */
     @ApiMethod(name = "scheduleFlight")
     public void scheduleFlight(@Named("pilotId") String pilotId, @Named("takeoffId") long takeoffId, @Named("timestamp") long timestamp) {
-        Schedule schedule = ofy().load().type(Schedule.class)
-                .filter("takeoffId", takeoffId)
-                .filter("timestamp", timestamp)
-                .first().now();
+        Schedule schedule = DataStore.loadSchedule(takeoffId, timestamp);
         if (schedule == null) {
             schedule = new Schedule();
             schedule.setTimestamp(timestamp);
             schedule.setTakeoffId(takeoffId);
         }
-        schedule.addPilot(fetchPilot(pilotId));
-        ofy().save().entity(schedule).now();
+        schedule.addPilot(DataStore.loadPilot(pilotId));
+        DataStore.saveSchedule(schedule);
         sendActivityUpdate();
     }
 
@@ -99,13 +86,10 @@ public class FlyWithMeEndpoint {
      */
     @ApiMethod(name = "unscheduleFlight")
     public void unscheduleFlight(@Named("pilotId") String pilotId, @Named("takeoffId") long takeoffId, @Named("timestamp") long timestamp) {
-        Schedule schedule = ofy().load().type(Schedule.class)
-                .filter("takeoff", takeoffId)
-                .filter("timestamp", timestamp)
-                .first().now();
+        Schedule schedule = DataStore.loadSchedule(takeoffId, timestamp);
         if (schedule != null) {
-            schedule.removePilot(fetchPilot(pilotId));
-            ofy().save().entity(schedule).now();
+            schedule.removePilot(DataStore.loadPilot(pilotId));
+            DataStore.saveSchedule(schedule);
             sendActivityUpdate();
         }
     }
@@ -118,24 +102,20 @@ public class FlyWithMeEndpoint {
      */
     @ApiMethod(name = "getMeteogram")
     public Forecast getMeteogram(@Named("takeoffId") long takeoffId) {
-        Forecast forecast = ofy().load().type(Forecast.class)
-                .filter("takeoffId", takeoffId)
-                .filter("type", Forecast.ForecastType.METEOGRAM)
-                .filter("lastUpdated >", System.currentTimeMillis() - FORECAST_CACHE_LIFETIME)
-                .first().now();
+        Forecast forecast = DataStore.loadForecast(takeoffId, Forecast.ForecastType.METEOGRAM, 0);
         if (forecast != null) {
             // return forecast to client
             return forecast;
         }
         // need to fetch forecast
-        Takeoff takeoff = fetchTakeoff(takeoffId);
+        Takeoff takeoff = DataStore.loadTakeoff(takeoffId);
         if (takeoff != null) {
             forecast = new Forecast();
             forecast.setTakeoffId(takeoffId);
             forecast.setType(Forecast.ForecastType.METEOGRAM);
             forecast.setLastUpdated(System.currentTimeMillis());
             forecast.setImage(NoaaProxy.fetchMeteogram(takeoff.getLatitude(), takeoff.getLongitude()));
-            ofy().save().entity(forecast).now();
+            DataStore.saveForecast(forecast);
         }
         return forecast;
     }
@@ -150,30 +130,15 @@ public class FlyWithMeEndpoint {
     @ApiMethod(name = "getSounding")
     public List<Forecast> getSounding(@Named("takeoffId") long takeoffId, @Named("timestamp") long timestamp) {
         timestamp = (timestamp / 10800000) * 10800000; // aligns timestamp with valid values for sounding (sounding every 3rd hour)
-        if (timestamp < System.currentTimeMillis() - TimeUnit.MILLISECONDS.convert(1, TimeUnit.DAYS)) {
+        if (timestamp < System.currentTimeMillis() - 86400000) { // 86400000 = 1 day
             log.info("Client tried to retrieve sounding for takeoff '" + takeoffId + "' with timestamp '" + timestamp + "', but that timestamp was a long time ago");
             return null;
         }
-        Forecast profile = ofy().load().type(Forecast.class)
-                .filter("takeoffId", takeoffId)
-                .filter("type", Forecast.ForecastType.PROFILE)
-                .filter("validFor", timestamp)
-                .filter("lastUpdated >", System.currentTimeMillis() - FORECAST_CACHE_LIFETIME)
-                .first().now();
+        Forecast profile = DataStore.loadForecast(takeoffId, Forecast.ForecastType.PROFILE, timestamp);
         if (profile != null) {
-            Forecast theta = ofy().load().type(Forecast.class)
-                    .filter("takeoffId", takeoffId)
-                    .filter("type", Forecast.ForecastType.THETA)
-                    .filter("validFor", timestamp)
-                    .filter("lastUpdated >", System.currentTimeMillis() - FORECAST_CACHE_LIFETIME)
-                    .first().now();
+            Forecast theta = DataStore.loadForecast(takeoffId, Forecast.ForecastType.THETA, timestamp);
             if (theta != null) {
-                Forecast text = ofy().load().type(Forecast.class)
-                        .filter("takeoffId", takeoffId)
-                        .filter("type", Forecast.ForecastType.TEXT)
-                        .filter("validFor", timestamp)
-                        .filter("lastUpdated >", System.currentTimeMillis() - FORECAST_CACHE_LIFETIME)
-                        .first().now();
+                Forecast text = DataStore.loadForecast(takeoffId, Forecast.ForecastType.TEXT, timestamp);
                 if (text != null) {
                     // return forecasts to client
                     return Arrays.asList(profile, theta, text);
@@ -181,7 +146,7 @@ public class FlyWithMeEndpoint {
             }
         }
         // need to fetch sounding, theta and text
-        Takeoff takeoff = fetchTakeoff(takeoffId);
+        Takeoff takeoff = DataStore.loadTakeoff(takeoffId);
         if (takeoff == null)
             return null;
         List<byte[]> images = NoaaProxy.fetchSounding(takeoff.getLatitude(), takeoff.getLongitude(), timestamp);
@@ -194,7 +159,7 @@ public class FlyWithMeEndpoint {
         profile.setLastUpdated(System.currentTimeMillis());
         profile.setValidFor(timestamp);
         profile.setImage(images.get(0));
-        ofy().save().entity(profile).now();
+        DataStore.saveForecast(profile);
         // theta
         Forecast theta = new Forecast();
         theta.setTakeoffId(takeoffId);
@@ -202,7 +167,7 @@ public class FlyWithMeEndpoint {
         theta.setLastUpdated(System.currentTimeMillis());
         theta.setValidFor(timestamp);
         theta.setImage(images.get(1));
-        ofy().save().entity(theta).now();
+        DataStore.saveForecast(theta);
         // text
         Forecast text = new Forecast();
         text.setTakeoffId(takeoffId);
@@ -210,7 +175,7 @@ public class FlyWithMeEndpoint {
         text.setLastUpdated(System.currentTimeMillis());
         text.setValidFor(timestamp);
         text.setImage(images.get(2));
-        ofy().save().entity(text).now();
+        DataStore.saveForecast(text);
         return Arrays.asList(profile, theta, text);
     }
 
@@ -222,25 +187,12 @@ public class FlyWithMeEndpoint {
      */
     @ApiMethod(name = "getUpdatedTakeoffs")
     public List<Takeoff> getUpdatedTakeoffs(@Named("updatedAfter") long updatedAfter) {
-        return ofy().load().type(Takeoff.class).filter("lastUpdated >=", updatedAfter).list();
-    }
-
-    /**
-     * Fetch schedule for the given takeoff.
-     *
-     * @param takeoffId The takeoff ID.
-     */
-    @ApiMethod(name = "getTakeoffSchedules")
-    public Schedule getTakeoffSchedules(@Named("takeoffId") long takeoffId) {
-        return ofy().load().type(Schedule.class).filter("takeoffId", takeoffId).first().now();
+        return DataStore.getRecentlyUpdatedTakeoffs(updatedAfter);
     }
 
     private void sendActivityUpdate() {
         // find takeoffs with activity
-        long currentTimeSeconds = System.currentTimeMillis();
-        List<Schedule> schedules = ofy().load().type(Schedule.class)
-                .filter("timestamp >=", currentTimeSeconds - TimeUnit.MILLISECONDS.convert(2, TimeUnit.HOURS))
-                .list();
+        List<Schedule> schedules = DataStore.getUpcomingSchedules();
         StringBuilder sb = new StringBuilder();
         for (Schedule schedule : schedules)
             sb.append(schedule.getTakeoffId()).append(',');
@@ -255,13 +207,5 @@ public class FlyWithMeEndpoint {
                 .addData("activity", sb.toString())
                 .build();
         GcmUtil.sendToAllClients(msg);
-    }
-
-    private Pilot fetchPilot(String pilotId) {
-        return ofy().load().type(Pilot.class).id(pilotId).now();
-    }
-
-    private Takeoff fetchTakeoff(long takeoffId) {
-        return ofy().load().type(Takeoff.class).id(takeoffId).now();
     }
 }

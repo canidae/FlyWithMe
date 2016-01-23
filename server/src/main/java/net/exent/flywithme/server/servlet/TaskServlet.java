@@ -5,7 +5,7 @@ import com.googlecode.objectify.ObjectifyService;
 
 import net.exent.flywithme.server.bean.Forecast;
 import net.exent.flywithme.server.bean.Takeoff;
-import net.exent.flywithme.server.endpoint.FlyWithMeEndpoint;
+import net.exent.flywithme.server.util.DataStore;
 import net.exent.flywithme.server.util.FlightlogCrawler;
 import net.exent.flywithme.server.util.GcmUtil;
 
@@ -17,8 +17,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import static com.googlecode.objectify.ObjectifyService.ofy;
 
 /**
  * Servlet for handling task work.
@@ -36,7 +34,7 @@ public class TaskServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         switch (req.getPathInfo()) {
             case "/cleanCache":
-                cleanCache();
+                DataStore.cleanCache();
                 break;
 
             case "/updateTakeoffData":
@@ -49,15 +47,11 @@ public class TaskServlet extends HttpServlet {
         }
     }
 
-    private static void cleanCache() {
-        ofy().delete().entities(ofy().load().type(Forecast.class).filter("lastUpdated <=", System.currentTimeMillis() - FlyWithMeEndpoint.FORECAST_CACHE_LIFETIME).list());
-    }
-
     private static void updateTakeoffData() {
         // check for takeoffs updated after the last time we checked a takeoff
-        Takeoff takeoff = ofy().load().type(Takeoff.class).order("-lastChecked").first().now();
+        Takeoff takeoff = DataStore.getLastCheckedTakeoff();
         long lastChecked = takeoff == null ? 0 : takeoff.getLastChecked();
-        long daysToCheck = Math.round((double) (System.currentTimeMillis() - lastChecked) / (double) (1000 * 60 * 60 * 24)) + 1;
+        long daysToCheck = Math.round((double) (System.currentTimeMillis() - lastChecked) / 86400000.0) + 1;
         log.info("Checking for updated takeoffs within the last " + daysToCheck + " days");
 
         for (Long takeoffId : FlightlogCrawler.fetchUpdatedTakeoffs(daysToCheck))
@@ -70,7 +64,7 @@ public class TaskServlet extends HttpServlet {
             Takeoff takeoff = FlightlogCrawler.fetchTakeoff(takeoffId);
             if (takeoff == null)
                 return false;
-            Takeoff existing = ofy().load().type(Takeoff.class).id(takeoffId).now(); // TODO: this increase datastore read ops, is it a problem? can we remove it? "update where new data doesn't match old data"?
+            Takeoff existing = DataStore.loadTakeoff(takeoffId);
             if (existing != null && takeoff.equals(existing)) {
                 takeoff.setLastUpdated(existing.getLastUpdated()); // data not changed, keep "lastUpdated"
             } else {
@@ -83,7 +77,7 @@ public class TaskServlet extends HttpServlet {
                         .build();
                 GcmUtil.sendToAllClients(msg);
             }
-            ofy().save().entity(takeoff).now();
+            DataStore.saveTakeoff(takeoff);
             return true;
         } catch (Exception e) {
             log.log(Level.WARNING, "Unable to update takeoff data", e);

@@ -4,11 +4,13 @@ import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Index;
 
+import java.io.Serializable;
+
 /**
  * Information about a Takeoff.
  */
 @Entity
-public class Takeoff {
+public class Takeoff implements Serializable {
     @Id private long id;
 
     // takeoff data
