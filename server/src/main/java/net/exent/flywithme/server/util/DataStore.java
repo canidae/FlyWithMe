@@ -10,7 +10,6 @@ import net.exent.flywithme.server.bean.Pilot;
 import net.exent.flywithme.server.bean.Schedule;
 import net.exent.flywithme.server.bean.Takeoff;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -23,7 +22,6 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
  */
 public class DataStore {
     private static final Logger log = Logger.getLogger(DataStore.class.getName());
-    private static final String TAKEOFF_RECENTLY_UPDATED_KEY = "takeoff_recently_updated";
     private static final long FORECAST_CACHE_LIFETIME = 21600000; // 6 hours
 
     static {
@@ -44,7 +42,6 @@ public class DataStore {
     }
 
     public static void saveTakeoff(Takeoff takeoff) {
-        memcacheDelete(TAKEOFF_RECENTLY_UPDATED_KEY); // NOTE: important! or users may not receive updated takeoffs
         ofy().save().entity(takeoff).now();
         String key = "takeoff_" + takeoff.getId();
         memcacheSave(key, takeoff);
@@ -56,26 +53,8 @@ public class DataStore {
     }
 
     public static List<Takeoff> getRecentlyUpdatedTakeoffs(long updatedAfter) {
-        // many people are likely to supply the same "updatedAfter" timestamp
-        // so we'll just add a memcache entry with a list of takeoffs updated after the given timestamp
-        // NOTE: we must delete the memcache entry when we update a takeoff
-        List recentlyUpdated = (List) memcacheLoad(TAKEOFF_RECENTLY_UPDATED_KEY);
-        if (recentlyUpdated != null) {
-            try {
-                List<Takeoff> takeoffs = new ArrayList<>();
-                for (Object takeoffId : recentlyUpdated)
-                    takeoffs.add(loadTakeoff((Long) takeoffId));
-                return takeoffs;
-            } catch (Exception e) {
-                log.log(Level.WARNING, "Something's wrong with memcache entry for recently updated takeoffs", e);
-            }
-        }
-        List<Takeoff> takeoffs = ofy().load().type(Takeoff.class).filter("lastUpdated >=", updatedAfter).list();
-        List<Long> newRecentlyUpdated = new ArrayList<>();
-        for (Takeoff takeoff : takeoffs)
-            newRecentlyUpdated.add(takeoff.getId());
-        memcacheSave(TAKEOFF_RECENTLY_UPDATED_KEY, newRecentlyUpdated);
-        return takeoffs;
+        // TODO: memcache (this is a bit tricky)
+        return ofy().load().type(Takeoff.class).filter("lastUpdated >=", updatedAfter).list();
     }
 
     public static Pilot loadPilot(String pilotId) {
@@ -123,11 +102,10 @@ public class DataStore {
     }
 
     public static List<Schedule> getUpcomingSchedules() {
-        // TODO: memcache
-        List<Schedule> schedules = ofy().load().type(Schedule.class)
+        // TODO: memcache (this is a bit tricky)
+        return ofy().load().type(Schedule.class)
                 .filter("timestamp >=", System.currentTimeMillis() - 7200000) // 2 hours
                 .list();
-        return schedules;
     }
 
     public static Forecast loadForecast(long takeoffId, Forecast.ForecastType type, long validFor) {
@@ -154,6 +132,8 @@ public class DataStore {
     public static void cleanCache() {
         // clean forecasts cached in datastore (Memcache cleans itself)
         ofy().delete().entities(ofy().load().type(Forecast.class).filter("lastUpdated <=", System.currentTimeMillis() - FORECAST_CACHE_LIFETIME).list());
+        // clean schedules cached in datastore
+        ofy().delete().entities(ofy().load().type(Schedule.class).filter("timestamp <=", System.currentTimeMillis() - 7200000).list());
     }
 
     private static Object memcacheLoad(String key) {
