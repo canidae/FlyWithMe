@@ -2,6 +2,7 @@ package net.exent.flywithme.server.util;
 
 import com.google.appengine.api.memcache.ErrorHandlers;
 import com.google.appengine.api.memcache.MemcacheService;
+import com.google.appengine.api.memcache.MemcacheServiceException;
 import com.google.appengine.api.memcache.MemcacheServiceFactory;
 import com.googlecode.objectify.ObjectifyService;
 
@@ -24,9 +25,9 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
 public class DataStore {
     private static final Logger log = Logger.getLogger(DataStore.class.getName());
     private static final String TAKEOFFS_RECENTLY_SCHEDULED_KEY = "takeoffs_recently_scheduled";
+    private static final String TAKEOFFS_RECENTLY_UPDATED_KEY_PREFIX = "takeoffs_recently_updated_";
+    private static final String ALL_PILOTS_KEY = "all_pilots";
     private static final long FORECAST_CACHE_LIFETIME = 21600000; // 6 hours
-
-    private static List<Pilot> allPilots = new ArrayList<>();
 
     static {
         ObjectifyService.register(Forecast.class);
@@ -57,8 +58,18 @@ public class DataStore {
     }
 
     public static List<Takeoff> getRecentlyUpdatedTakeoffs(long updatedAfter) {
-        // TODO: memcache (this is a bit tricky, and possibly not that important, called by each users max once a day)
-        return ofy().load().type(Takeoff.class).filter("lastUpdated >=", updatedAfter).list();
+        String key = TAKEOFFS_RECENTLY_UPDATED_KEY_PREFIX + updatedAfter;
+        List<Object> objects = memcacheLoadLargeList(key);
+        List<Takeoff> takeoffs;
+        if (objects == null || objects.isEmpty()) {
+            takeoffs = ofy().load().type(Takeoff.class).filter("lastUpdated >=", updatedAfter).list();
+            memcacheSaveLargeList(key, takeoffs);
+        } else {
+            takeoffs = new ArrayList<>();
+            for (Object object : objects)
+                takeoffs.add((Takeoff) object);
+        }
+        return takeoffs;
     }
 
     public static Pilot loadPilot(String pilotId) {
@@ -72,14 +83,14 @@ public class DataStore {
     }
 
     public static void savePilot(Pilot pilot) {
-        allPilots = new ArrayList<>(); // NOTE: important
+        memcacheDeleteLargeList(ALL_PILOTS_KEY); // NOTE: important
         ofy().save().entity(pilot).now();
         String key = "pilot_" + pilot.getId();
         memcacheSave(key, pilot);
     }
 
     public static void deletePilot(String pilotId) {
-        allPilots = new ArrayList<>(); // NOTE: important
+        memcacheDeleteLargeList(ALL_PILOTS_KEY); // NOTE: important
         Pilot pilot = loadPilot(pilotId);
         if (pilot == null) {
             return;
@@ -90,11 +101,17 @@ public class DataStore {
     }
 
     public static List<Pilot> getAllPilots() {
-        // this is called each time we send a message, but pilot IDs are possibly too large to use memcache
-        // so we'll use a static member and hope for the best
-        if (allPilots.isEmpty())
-            allPilots = ofy().load().type(Pilot.class).list();
-        return allPilots;
+        List<Object> objects = memcacheLoadLargeList(ALL_PILOTS_KEY);
+        List<Pilot> pilots;
+        if (objects == null || objects.isEmpty()) {
+            pilots = ofy().load().type(Pilot.class).list();
+            memcacheSaveLargeList(ALL_PILOTS_KEY, pilots);
+        } else {
+            pilots = new ArrayList<>();
+            for (Object object : objects)
+                pilots.add((Pilot) object);
+        }
+        return pilots;
     }
 
     public static Schedule loadSchedule(long takeoffId, long timestamp) {
@@ -176,7 +193,7 @@ public class DataStore {
     private static Object memcacheLoad(String key) {
         try {
             MemcacheService memcache = MemcacheServiceFactory.getMemcacheService();
-            memcache.setErrorHandler(ErrorHandlers.getConsistentLogAndContinue(Level.INFO));
+            memcache.setErrorHandler(ErrorHandlers.getStrict());
             return memcache.get(key);
         } catch (Exception e) {
             log.log(Level.WARNING, "Unable to load object from memcache. Key: " + key, e);
@@ -187,21 +204,72 @@ public class DataStore {
     private static void memcacheSave(String key, Object object) {
         try {
             MemcacheService memcache = MemcacheServiceFactory.getMemcacheService();
-            memcache.setErrorHandler(ErrorHandlers.getConsistentLogAndContinue(Level.INFO));
+            memcache.setErrorHandler(ErrorHandlers.getStrict());
             memcache.put(key, object);
         } catch (Exception e) {
             log.log(Level.WARNING, "Unable to save object to memcache. Key: " + key, e);
         }
     }
 
-    private static Object memcacheDelete(String key) {
+    private static boolean memcacheDelete(String key) {
         try {
             MemcacheService memcache = MemcacheServiceFactory.getMemcacheService();
-            memcache.setErrorHandler(ErrorHandlers.getConsistentLogAndContinue(Level.INFO));
+            memcache.setErrorHandler(ErrorHandlers.getStrict());
             return memcache.delete(key);
         } catch (Exception e) {
             log.log(Level.WARNING, "Unable to delete object from memcache. Key: " + key, e);
+            return false;
+        }
+    }
+
+    private static List<Object> memcacheLoadLargeList(String keyPrefix) {
+        try {
+            MemcacheService memcache = MemcacheServiceFactory.getMemcacheService();
+            memcache.setErrorHandler(ErrorHandlers.getStrict());
+            List<Object> result = new ArrayList<>();
+            int chunks = (Integer) memcache.get(keyPrefix);
+            for (int chunk = 0; chunk < chunks; ++chunk)
+                result.addAll((List) memcache.get(keyPrefix + chunk));
+            return result;
+        } catch (Exception e) {
+            log.log(Level.WARNING, "Unable to load large list from memcache. Key prefix: " + keyPrefix, e);
             return null;
+        }
+    }
+
+    private static void memcacheSaveLargeList(String keyPrefix, List list) {
+        try {
+            MemcacheService memcache = MemcacheServiceFactory.getMemcacheService();
+            memcache.setErrorHandler(ErrorHandlers.getStrict());
+            int chunks = 1;
+            while (true) {
+                try {
+                    int chunkSize = list.size() / chunks;
+                    for (int i = 0; i < chunks; ++i)
+                        memcache.put(keyPrefix + i, list.subList(i * chunkSize, (i + 1) * chunkSize));
+                    if (list.size() > chunks * chunkSize)
+                        memcache.put(keyPrefix + chunks, list.subList(chunks * chunkSize, list.size()));
+                    memcache.put(keyPrefix, chunks);
+                    break;
+                } catch (MemcacheServiceException e) {
+                    chunks *= 2;
+                    if (chunks >= list.size())
+                        throw e;
+                }
+            }
+        } catch (Exception e) {
+            log.log(Level.WARNING, "Unable to save large list to memcache. Key prefix: " + keyPrefix, e);
+        }
+    }
+
+    private static boolean memcacheDeleteLargeList(String keyPrefix) {
+        try {
+            MemcacheService memcache = MemcacheServiceFactory.getMemcacheService();
+            memcache.setErrorHandler(ErrorHandlers.getStrict());
+            return memcache.delete(keyPrefix); // enough to just delete the entry with chunk size
+        } catch (Exception e) {
+            log.log(Level.WARNING, "Unable to delete large list from memcache. Key prefix: " + keyPrefix, e);
+            return false;
         }
     }
 }
