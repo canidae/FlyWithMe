@@ -12,13 +12,19 @@ public class GcmListenerService extends com.google.android.gms.gcm.GcmListenerSe
 
     @Override
     public void onMessageReceived(String from, Bundle data) {
-        Log.i(TAG, "Received message from: " + from + ". Data: " + data);
+        Log.d(TAG, "Received message from: " + from + ". Data: " + data);
         if (data == null)
             return;
         if (data.containsKey("takeoffUpdated")) {
             // a takeoff was updated or added, retrieve all takeoffs updated after the last updated takeoff stored on device
             Intent intent = new Intent(this, FlyWithMeService.class);
             intent.setAction(FlyWithMeService.ACTION_GET_UPDATED_TAKEOFFS);
+            startService(intent);
+        } else if (data.containsKey("activity")) {
+            // there's activity somewhere
+            Intent intent = new Intent(this, FlyWithMeService.class);
+            intent.setAction(FlyWithMeService.ACTION_CHECK_ACTIVITY);
+            intent.putExtra(FlyWithMeService.ARG_ACTIVITY, data.getString("activity"));
             startService(intent);
         }
     }

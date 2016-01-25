@@ -14,12 +14,14 @@ import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.app.Fragment;
 import android.app.Activity;
+import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -41,10 +43,10 @@ import java.io.IOException;
    - Use endpoint API for registering planned flight
    - Use endpoint API for fetching planned flights (schedule)
    - Cache forecasts locally for some few hours (fetched timestamp is returned, cache for the same amount of time as server caches the forecast)
-   - Implement "Poor Man's SPOT"? Livetracking?
  */
 public class FlyWithMe extends Activity implements GoogleApiClient.ConnectionCallbacks, LocationListener {
     public static final String ACTION_SHOW_FORECAST = "showForecast";
+    public static final String ACTION_SHOW_PREFERENCES = "showPreferences";
     public static final String ACTION_SHOW_TAKEOFF_DETAILS = "showTakeoffDetails";
 
     public static final String ARG_TAKEOFF_ID = "takeoffId";
@@ -160,6 +162,16 @@ public class FlyWithMe extends Activity implements GoogleApiClient.ConnectionCal
     @Override
     public void onConnected(Bundle bundle) {
         LocationRequest locationRequest = LocationRequest.create().setInterval(10000).setFastestInterval(10000).setPriority(LocationRequest.PRIORITY_LOW_POWER);
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
         LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
         location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
     }
@@ -179,12 +191,14 @@ public class FlyWithMe extends Activity implements GoogleApiClient.ConnectionCal
         super.onNewIntent(intent);
         if (ACTION_SHOW_FORECAST.equals(intent.getAction())) {
             showFragment(this, null, NoaaForecast.class, intent.getExtras());
+        } else if (ACTION_SHOW_PREFERENCES.equals(intent.getAction())) {
+            showFragment(this, "preferences", Preferences.class, null);
         } else if (ACTION_SHOW_TAKEOFF_DETAILS.equals(intent.getAction())) {
             Database database = new Database(this);
             Takeoff takeoff = database.getTakeoff(intent.getLongExtra(ARG_TAKEOFF_ID, 0));
             Bundle args = new Bundle();
             args.putParcelable(TakeoffDetails.ARG_TAKEOFF, takeoff);
-            FlyWithMe.showFragment(this, "takeoffDetails," + takeoff.getId(), TakeoffDetails.class, args);
+            showFragment(this, "takeoffDetails," + takeoff.getId(), TakeoffDetails.class, args);
         }
     }
 

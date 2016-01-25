@@ -1,5 +1,6 @@
 package net.exent.flywithme.service;
 
+import android.Manifest;
 import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -7,9 +8,11 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -36,7 +39,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by canidae on 6/23/15.
+ * This class handles Google Cloud Messages to and from server, and displays notifications.
  */
 public class FlyWithMeService extends IntentService implements GoogleApiClient.ConnectionCallbacks {
     public static final String ACTION_REGISTER_PILOT = "registerPilot";
@@ -46,6 +49,7 @@ public class FlyWithMeService extends IntentService implements GoogleApiClient.C
     public static final String ACTION_UNSCHEDULE_FLIGHT = "unscheduleFlight";
     public static final String ACTION_GET_UPDATED_TAKEOFFS = "getUpdatedTakeoffs";
     public static final String ACTION_CHECK_CURRENT_LOCATION = "checkCurrentLocation";
+    public static final String ACTION_CHECK_ACTIVITY = "checkActivity";
     public static final String ACTION_DISMISS_TAKEOFF_NOTIFICATION = "dismissTakeoffNotification";
     public static final String ACTION_CLICK_TAKEOFF_NOTIFICATION = "clickTakeoffNotification";
     public static final String ACTION_SCHEDULE_TAKEOFF_NOTIFICATION = "scheduleTakeoffNotification";
@@ -55,12 +59,15 @@ public class FlyWithMeService extends IntentService implements GoogleApiClient.C
     public static final String ACTION_SCHEDULE_ACTIVITY_NOTIFICATION = "scheduleActivityNotification";
     public static final String ACTION_BLACKLIST_ACTIVITY_NOTIFICATION = "blacklistActivityNotification";
 
+    public static final String ARG_ACTIVITY = "activity";
     public static final String ARG_REFRESH_TOKEN = "refreshToken";
     public static final String ARG_TAKEOFF_ID = "takeoffId";
     public static final String ARG_TIMESTAMP = "timestamp";
 
     private static final String TAG = FlyWithMeService.class.getName();
     private static final String PROJECT_ID = "586531582715";
+    private static final String SERVER_URL = "https://4-dot-flywithme-server.appspot.com/_ah/api/"; // "http://88.95.84.204:8080/_ah/api/"
+    private static final long DISMISS_TIMEOUT = 21600000;
 
     private static GoogleApiClient googleApiClient;
     private static PendingIntent locationIntent;
@@ -86,6 +93,8 @@ public class FlyWithMeService extends IntentService implements GoogleApiClient.C
     public void onConnected(Bundle bundle) {
         Log.d(getClass().getName(), "onConnected(" + bundle + ")");
         LocationRequest locationRequest = LocationRequest.create().setSmallestDisplacement(100).setFastestInterval(300000).setPriority(LocationRequest.PRIORITY_LOW_POWER);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+            return;
         LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, locationIntent);
     }
 
@@ -105,8 +114,6 @@ public class FlyWithMeService extends IntentService implements GoogleApiClient.C
             if (locationResult == null)
                 return;
             Location location = locationResult.getLastLocation();
-            if (location == null)
-                return;
             SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
             if (!sharedPref.getBoolean("pref_near_takeoff_notifications", true))
                 return; // user don't want notifications when near takeoffs
@@ -118,8 +125,8 @@ public class FlyWithMeService extends IntentService implements GoogleApiClient.C
             for (net.exent.flywithme.bean.Takeoff takeoff : takeoffs) {
                 if (location.distanceTo(takeoff.getLocation()) > Long.parseLong(sharedPref.getString("pref_near_takeoff_max_distance", "500")))
                     break; // takeoff too far away (all subsequent takeoffs will be even further away)
-                if (dismissedTakeoffsPref.getLong("" + takeoff.getId(), 0) + 21600000 > System.currentTimeMillis())
-                    continue; // user dismissed this takeoff less than 6 hours ago, ignore takeoff
+                if (dismissedTakeoffsPref.getLong("" + takeoff.getId(), 0) + DISMISS_TIMEOUT > System.currentTimeMillis())
+                    continue; // user dismissed this takeoff recently, ignore takeoff
                 if (blacklistedTakeoffsPref.contains("" + takeoff.getId()))
                     continue; // user blacklisted this takeoff, ignore takeoff
 
@@ -146,6 +153,48 @@ public class FlyWithMeService extends IntentService implements GoogleApiClient.C
             }
             if (cancelNotification)
                 ((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).cancel(0); // we're not near any known takeoff, hide notification
+        } else if (ACTION_CHECK_ACTIVITY.equals(action)) {
+            String rawTakeoffs = bundle.getString(ARG_ACTIVITY);
+            if (rawTakeoffs == null)
+                return;
+            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+            if (!sharedPref.getBoolean("pref_takeoff_activity_notifications", true))
+                return; // user don't want notifications on activity
+            SharedPreferences dismissedActivityPref = getSharedPreferences(ACTION_DISMISS_ACTIVITY_NOTIFICATION, Context.MODE_PRIVATE);
+            SharedPreferences blacklistedActivityPref = getSharedPreferences(ACTION_BLACKLIST_ACTIVITY_NOTIFICATION, Context.MODE_PRIVATE);
+            String[] takeoffIds = rawTakeoffs.split(",");
+            Database database = new Database(this);
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+                return;
+            Location location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
+            for (String takeoffId : takeoffIds) {
+                net.exent.flywithme.bean.Takeoff takeoff = database.getTakeoff(Long.parseLong(takeoffId));
+                if (location.distanceTo(takeoff.getLocation()) > Long.parseLong(sharedPref.getString("pref_takeoff_activity_max_distance", "100000")))
+                    continue;
+                if (dismissedActivityPref.getLong("" + takeoff.getId(), 0) + DISMISS_TIMEOUT > System.currentTimeMillis())
+                    continue; // user dismissed activity for this takeoff recently, ignore takeoff
+                if (blacklistedActivityPref.contains("" + takeoff.getId()))
+                    continue; // user blacklisted activity for this takeoff, ignore takeoff
+                PendingIntent clickIntent = PendingIntent.getService(this, 0, new Intent(this, FlyWithMeService.class).setAction(ACTION_CLICK_ACTIVITY_NOTIFICATION).putExtra(ARG_TAKEOFF_ID, takeoff.getId()), PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent dismissIntent = PendingIntent.getService(this, 0, new Intent(this, FlyWithMeService.class).setAction(ACTION_DISMISS_ACTIVITY_NOTIFICATION).putExtra(ARG_TAKEOFF_ID, takeoff.getId()), PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent scheduleIntent = PendingIntent.getService(this, 0, new Intent(this, FlyWithMeService.class).setAction(ACTION_SCHEDULE_ACTIVITY_NOTIFICATION).putExtra(ARG_TAKEOFF_ID, takeoff.getId()), PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent blacklistIntent = PendingIntent.getService(this, 0, new Intent(this, FlyWithMeService.class).setAction(ACTION_BLACKLIST_ACTIVITY_NOTIFICATION).putExtra(ARG_TAKEOFF_ID, takeoff.getId()), PendingIntent.FLAG_UPDATE_CURRENT);
+                Notification.Builder notificationBuilder = new Notification.Builder(this)
+                        .setSmallIcon(R.drawable.notification_icon)
+                        .setContentTitle(takeoff.getName())
+                        .setContentText(getString(R.string.are_you_flying)) // TODO: another message
+                        .setContentIntent(clickIntent)
+                        .setDeleteIntent(dismissIntent)
+                        .setAutoCancel(true)
+                        .addAction(android.R.drawable.ic_input_add, getString(R.string.yes), scheduleIntent)
+                        .addAction(android.R.drawable.ic_dialog_alert, getString(R.string.never_notify_here), blacklistIntent);
+                if (sharedPref.getBoolean("pref_takeoff_activity_vibrate", true))
+                    notificationBuilder.setVibrate(new long[]{0, 100, 100, 100, 100, 100});
+                Notification notification = notificationBuilder.build();
+                notification.flags |= Notification.FLAG_AUTO_CANCEL;
+                ((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).notify(0, notification);
+                break;
+            }
         } else if (ACTION_CLICK_TAKEOFF_NOTIFICATION.equals(action)) {
             Intent showTakeoffDetailsIntent = new Intent(this, FlyWithMe.class);
             showTakeoffDetailsIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -160,6 +209,10 @@ public class FlyWithMeService extends IntentService implements GoogleApiClient.C
             String pilotId = prefs.getString("token", null);
             if (pilotId == null) {
                 Log.w(TAG, "Can't schedule flight, pilot not registered");
+                Intent showTakeoffDetailsIntent = new Intent(this, FlyWithMe.class);
+                showTakeoffDetailsIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                showTakeoffDetailsIntent.setAction(FlyWithMe.ACTION_SHOW_PREFERENCES);
+                startActivity(showTakeoffDetailsIntent);
                 return;
             }
             long takeoffId = bundle.getLong(ARG_TAKEOFF_ID);
@@ -174,6 +227,43 @@ public class FlyWithMeService extends IntentService implements GoogleApiClient.C
             ((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).cancel(0);
         } else if (ACTION_BLACKLIST_TAKEOFF_NOTIFICATION.equals(action)) {
             SharedPreferences prefs = getSharedPreferences(ACTION_BLACKLIST_TAKEOFF_NOTIFICATION, Context.MODE_PRIVATE);
+            prefs.edit().putLong("" + bundle.getLong(ARG_TAKEOFF_ID), System.currentTimeMillis()).apply();
+            // dismiss notification
+            ((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).cancel(0);
+        } else if (ACTION_CLICK_ACTIVITY_NOTIFICATION.equals(action)) {
+            Intent showTakeoffDetailsIntent = new Intent(this, FlyWithMe.class);
+            showTakeoffDetailsIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            showTakeoffDetailsIntent.setAction(FlyWithMe.ACTION_SHOW_TAKEOFF_DETAILS);
+            showTakeoffDetailsIntent.putExtra(FlyWithMe.ARG_TAKEOFF_ID, bundle.getLong(ARG_TAKEOFF_ID));
+            startActivity(showTakeoffDetailsIntent);
+        } else if (ACTION_DISMISS_ACTIVITY_NOTIFICATION.equals(action)) {
+            SharedPreferences prefs = getSharedPreferences(ACTION_DISMISS_ACTIVITY_NOTIFICATION, Context.MODE_PRIVATE);
+            prefs.edit().putLong("" + bundle.getLong(ARG_TAKEOFF_ID), System.currentTimeMillis()).apply();
+        } else if (ACTION_SCHEDULE_ACTIVITY_NOTIFICATION.equals(action)) {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+            String pilotId = prefs.getString("token", null);
+            if (pilotId == null) {
+                Log.w(TAG, "Can't schedule flight, pilot not registered");
+                Intent showTakeoffDetailsIntent = new Intent(this, FlyWithMe.class);
+                showTakeoffDetailsIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                showTakeoffDetailsIntent.setAction(FlyWithMe.ACTION_SHOW_PREFERENCES);
+                startActivity(showTakeoffDetailsIntent);
+                return;
+            }
+            /* TODO: schedule at correct time
+            long takeoffId = bundle.getLong(ARG_TAKEOFF_ID);
+            try {
+                getServer().scheduleFlight(pilotId, takeoffId, System.currentTimeMillis() / 900000 * 900000); // rounds down to previous 15th minute
+            } catch (IOException e) {
+                Log.w(TAG, "Scheduling flight failed", e);
+            }
+            // also add takeoff to list of dismissed takeoffs so user won't be bugged again about flying here before another 6 hours has passed
+            prefs.edit().putLong("" + takeoffId, System.currentTimeMillis()).apply();
+            */
+            // dismiss notification
+            ((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).cancel(0);
+        } else if (ACTION_BLACKLIST_ACTIVITY_NOTIFICATION.equals(action)) {
+            SharedPreferences prefs = getSharedPreferences(ACTION_BLACKLIST_ACTIVITY_NOTIFICATION, Context.MODE_PRIVATE);
             prefs.edit().putLong("" + bundle.getLong(ARG_TAKEOFF_ID), System.currentTimeMillis()).apply();
             // dismiss notification
             ((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).cancel(0);
@@ -308,18 +398,14 @@ public class FlyWithMeService extends IntentService implements GoogleApiClient.C
 
     private FlyWithMeServer getServer() {
         FlyWithMeServer.Builder builder = new FlyWithMeServer.Builder(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null);
-        // Need setRootUrl and setGoogleClientRequestInitializer only for local testing,
-        // otherwise they can be skipped
         builder.setApplicationName("FlyWithMe");
-        //builder.setRootUrl("http://88.95.84.204:8080/_ah/api/");
-        builder.setRootUrl("https://4-dot-flywithme-server.appspot.com/_ah/api/");
+        builder.setRootUrl(SERVER_URL);
         builder.setGoogleClientRequestInitializer(new GoogleClientRequestInitializer() {
             @Override
             public void initialize(AbstractGoogleClientRequest<?> abstractGoogleClientRequest) throws IOException {
                 abstractGoogleClientRequest.setDisableGZipContent(true);
             }
         });
-        // end of optional local run code
 
         return builder.build();
     }
