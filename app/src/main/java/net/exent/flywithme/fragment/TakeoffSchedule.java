@@ -1,14 +1,17 @@
 package net.exent.flywithme.fragment;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.app.Fragment;
+import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -155,14 +158,13 @@ public class TakeoffSchedule extends Fragment implements GoogleApiClient.Connect
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         if (savedInstanceState != null)
             takeoff = savedInstanceState.getParcelable(ARG_TAKEOFF);
-        setRetainInstance(true);
         return inflater.inflate(R.layout.takeoff_schedule, container, false);
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        googleApiClient.connect();
+        googleApiClient.connect(); // TODO: ditch this, pass current location in bundle instead
 
         Bundle args = getArguments();
         if (args != null)
@@ -195,6 +197,16 @@ public class TakeoffSchedule extends Fragment implements GoogleApiClient.Connect
     @Override
     public void onConnected(Bundle bundle) {
         LocationRequest locationRequest = LocationRequest.create().setInterval(10000).setPriority(LocationRequest.PRIORITY_LOW_POWER);
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
         LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
         location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
     }

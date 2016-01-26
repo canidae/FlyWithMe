@@ -73,7 +73,6 @@ public class TakeoffDetails extends Fragment {
         windroseEast.setVisibility(takeoff.hasEastExit() ? ImageView.VISIBLE : ImageView.INVISIBLE);
         windroseNortheast.setVisibility(takeoff.hasNortheastExit() ? ImageView.VISIBLE : ImageView.INVISIBLE);
 
-
         TextView takeoffName = (TextView) view.findViewById(R.id.takeoffDetailsName);
         TextView takeoffCoordAslHeight = (TextView) view.findViewById(R.id.takeoffDetailsCoordAslHeight);
         TextView takeoffDescription = (TextView) view.findViewById(R.id.takeoffDetailsDescription);

@@ -213,6 +213,11 @@ public class FlyWithMeEndpoint {
      * Sends a message to client about takeoffs with activity in the near future.
      */
     private void sendActivityUpdate() {
+
+        // TODO: need to rethink this:
+        // we don't want users to ask for schedules all the time
+        // and how can we make sure the user won't miss out on any data?
+
         // find takeoffs with activity
         List<Schedule> schedules = DataStore.getUpcomingSchedules();
         StringBuilder sb = new StringBuilder();
