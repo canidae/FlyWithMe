@@ -35,7 +35,10 @@ import net.exent.flywithme.server.flyWithMeServer.model.Forecast;
 import net.exent.flywithme.server.flyWithMeServer.model.Takeoff;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -162,27 +165,31 @@ public class FlyWithMeService extends IntentService implements GoogleApiClient.C
                 return; // user don't want notifications on activity
             SharedPreferences dismissedActivityPref = getSharedPreferences(ACTION_DISMISS_ACTIVITY_NOTIFICATION, Context.MODE_PRIVATE);
             SharedPreferences blacklistedActivityPref = getSharedPreferences(ACTION_BLACKLIST_ACTIVITY_NOTIFICATION, Context.MODE_PRIVATE);
-            String[] takeoffIds = rawTakeoffs.split(",");
+            String[] takeoffIdsAndTimestamps = rawTakeoffs.split(",");
             Database database = new Database(this);
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
                 return;
             Location location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
-            for (String takeoffId : takeoffIds) {
-                net.exent.flywithme.bean.Takeoff takeoff = database.getTakeoff(Long.parseLong(takeoffId));
+            for (String takeoffIdAndTimestamp : takeoffIdsAndTimestamps) {
+                String[] tmp = takeoffIdAndTimestamp.split(":");
+                long takeoffId = Long.parseLong(tmp[0]);
+                long timestamp = Long.parseLong(tmp[1]) * 1000;
+                net.exent.flywithme.bean.Takeoff takeoff = database.getTakeoff(takeoffId);
                 if (location.distanceTo(takeoff.getLocation()) > Long.parseLong(sharedPref.getString("pref_takeoff_activity_max_distance", "100000")))
                     continue;
                 if (dismissedActivityPref.getLong("" + takeoff.getId(), 0) + DISMISS_TIMEOUT > System.currentTimeMillis())
                     continue; // user dismissed activity for this takeoff recently, ignore takeoff
                 if (blacklistedActivityPref.contains("" + takeoff.getId()))
                     continue; // user blacklisted activity for this takeoff, ignore takeoff
-                PendingIntent clickIntent = PendingIntent.getService(this, 0, new Intent(this, FlyWithMeService.class).setAction(ACTION_CLICK_ACTIVITY_NOTIFICATION).putExtra(ARG_TAKEOFF_ID, takeoff.getId()), PendingIntent.FLAG_UPDATE_CURRENT);
-                PendingIntent dismissIntent = PendingIntent.getService(this, 0, new Intent(this, FlyWithMeService.class).setAction(ACTION_DISMISS_ACTIVITY_NOTIFICATION).putExtra(ARG_TAKEOFF_ID, takeoff.getId()), PendingIntent.FLAG_UPDATE_CURRENT);
-                PendingIntent scheduleIntent = PendingIntent.getService(this, 0, new Intent(this, FlyWithMeService.class).setAction(ACTION_SCHEDULE_ACTIVITY_NOTIFICATION).putExtra(ARG_TAKEOFF_ID, takeoff.getId()), PendingIntent.FLAG_UPDATE_CURRENT);
-                PendingIntent blacklistIntent = PendingIntent.getService(this, 0, new Intent(this, FlyWithMeService.class).setAction(ACTION_BLACKLIST_ACTIVITY_NOTIFICATION).putExtra(ARG_TAKEOFF_ID, takeoff.getId()), PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent clickIntent = PendingIntent.getService(this, 0, new Intent(this, FlyWithMeService.class).setAction(ACTION_CLICK_ACTIVITY_NOTIFICATION).putExtra(ARG_TAKEOFF_ID, takeoffId).putExtra(ARG_TIMESTAMP, timestamp), PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent dismissIntent = PendingIntent.getService(this, 0, new Intent(this, FlyWithMeService.class).setAction(ACTION_DISMISS_ACTIVITY_NOTIFICATION).putExtra(ARG_TAKEOFF_ID, takeoffId).putExtra(ARG_TIMESTAMP, timestamp), PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent scheduleIntent = PendingIntent.getService(this, 0, new Intent(this, FlyWithMeService.class).setAction(ACTION_SCHEDULE_ACTIVITY_NOTIFICATION).putExtra(ARG_TAKEOFF_ID, takeoffId).putExtra(ARG_TIMESTAMP, timestamp), PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent blacklistIntent = PendingIntent.getService(this, 0, new Intent(this, FlyWithMeService.class).setAction(ACTION_BLACKLIST_ACTIVITY_NOTIFICATION).putExtra(ARG_TAKEOFF_ID, takeoffId).putExtra(ARG_TIMESTAMP, timestamp), PendingIntent.FLAG_UPDATE_CURRENT);
+                DateFormat dateFormat = SimpleDateFormat.getTimeInstance();
                 Notification.Builder notificationBuilder = new Notification.Builder(this)
                         .setSmallIcon(R.drawable.notification_icon)
-                        .setContentTitle(takeoff.getName())
-                        .setContentText(getString(R.string.are_you_flying)) // TODO: another message
+                        .setContentTitle(dateFormat.format(new Date(timestamp)) + ": " + takeoff.getName())
+                        .setContentText(getString(R.string.will_you_join))
                         .setContentIntent(clickIntent)
                         .setDeleteIntent(dismissIntent)
                         .setAutoCancel(true)
@@ -250,16 +257,15 @@ public class FlyWithMeService extends IntentService implements GoogleApiClient.C
                 startActivity(showTakeoffDetailsIntent);
                 return;
             }
-            /* TODO: schedule at correct time
             long takeoffId = bundle.getLong(ARG_TAKEOFF_ID);
+            long timestamp = bundle.getLong(ARG_TIMESTAMP);
             try {
-                getServer().scheduleFlight(pilotId, takeoffId, System.currentTimeMillis() / 900000 * 900000); // rounds down to previous 15th minute
+                getServer().scheduleFlight(pilotId, takeoffId, timestamp);
             } catch (IOException e) {
                 Log.w(TAG, "Scheduling flight failed", e);
             }
             // also add takeoff to list of dismissed takeoffs so user won't be bugged again about flying here before another 6 hours has passed
             prefs.edit().putLong("" + takeoffId, System.currentTimeMillis()).apply();
-            */
             // dismiss notification
             ((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).cancel(0);
         } else if (ACTION_BLACKLIST_ACTIVITY_NOTIFICATION.equals(action)) {

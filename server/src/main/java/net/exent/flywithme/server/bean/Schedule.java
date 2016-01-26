@@ -43,13 +43,24 @@ public class Schedule implements Serializable {
     public Schedule addPilot(Pilot pilot) {
         if (pilots == null)
             pilots = new HashSet<>();
+        // check that we haven't added pilot already
+        for (Pilot schedulePilot : pilots) {
+            if (schedulePilot.getId().equals(pilot.getId()))
+                return this;
+        }
         pilots.add(pilot);
         return this;
     }
 
     public Schedule removePilot(Pilot pilot) {
-        if (pilots != null)
-            pilots.remove(pilot);
+        if (pilots != null && pilot != null) {
+            for (Pilot schedulePilot : pilots) {
+                if (schedulePilot.getId().equals(pilot.getId())) {
+                    pilots.remove(pilot);
+                    break;
+                }
+            }
+        }
         return this;
     }
 }

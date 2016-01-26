@@ -12,6 +12,7 @@
 
     <!-- Notification -->
     <string name="are_you_flying">Are you here to fly?</string>
+    <string name="will_you_join">Will you come to fly?</string>
     <string name="yes">Yes</string>
     <string name="never_notify_here">Blacklist</string>
 

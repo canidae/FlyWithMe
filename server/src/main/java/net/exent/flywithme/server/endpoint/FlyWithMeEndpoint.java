@@ -14,7 +14,9 @@ import net.exent.flywithme.server.util.GcmUtil;
 import net.exent.flywithme.server.util.NoaaProxy;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.inject.Named;
@@ -51,10 +53,12 @@ public class FlyWithMeEndpoint {
         DataStore.deletePilot(pilotId);
     }
 
-    @ApiMethod(name = "removeMe")
-    public Pilot removeMe() {
-        // TODO: remove, added it to force class "Pilot" to be added to client library
-        return new Pilot();
+    // AAH!
+    // class "Pilot" won't be in client library unless we return it directly
+    // apparently it's not enough that the class is referenced in the Schedule class
+    @ApiMethod(name = "anotherAndroidHack_Pilot")
+    public Pilot anotherAndroidHack_Pilot() {
+        return null;
     }
 
     /**
@@ -92,6 +96,21 @@ public class FlyWithMeEndpoint {
             DataStore.saveSchedule(schedule);
             sendActivityUpdate();
         }
+    }
+
+    @ApiMethod(name = "getTakeoffSchedules")
+    public Map<Long, List<Schedule>> getTakeoffSchedule(@Named("takeoffIds") List<Long> takeoffIds) {
+        Map<Long, List<Schedule>> schedules = new HashMap<>();
+        for (Long takeoffId : takeoffIds) {
+            // we'll scramble pilotIds, only keep the last few characters
+            List<Schedule> tmpSchedule = DataStore.getTakeoffSchedules(takeoffId);
+            for (Schedule schedule : tmpSchedule) {
+                for (Pilot pilot : schedule.getPilots())
+                    pilot.setId(pilot.getId().substring(pilot.getId().length() - 6));
+            }
+            schedules.put(takeoffId, DataStore.getTakeoffSchedules(takeoffId));
+        }
+        return schedules;
     }
 
     /**
@@ -190,12 +209,20 @@ public class FlyWithMeEndpoint {
         return DataStore.getRecentlyUpdatedTakeoffs(updatedAfter);
     }
 
+    /**
+     * Sends a message to client about takeoffs with activity in the near future.
+     */
     private void sendActivityUpdate() {
         // find takeoffs with activity
         List<Schedule> schedules = DataStore.getUpcomingSchedules();
         StringBuilder sb = new StringBuilder();
-        for (Schedule schedule : schedules)
-            sb.append(schedule.getTakeoffId()).append(',');
+        for (Schedule schedule : schedules) {
+            if (sb.length() > 4000) {
+                log.warning("Too much scheduled activity, can't add any more entries");
+                break; // message is getting too large, don't add any more
+            }
+            sb.append(schedule.getTakeoffId()).append(':').append(schedule.getTimestamp()).append(',');
+        }
         if (sb.length() <= 0)
             return; // no activity
         sb.setLength(sb.length() - 1);
