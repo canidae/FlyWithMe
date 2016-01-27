@@ -32,6 +32,7 @@ import net.exent.flywithme.data.Database;
 import net.exent.flywithme.fragment.NoaaForecast;
 import net.exent.flywithme.server.flyWithMeServer.FlyWithMeServer;
 import net.exent.flywithme.server.flyWithMeServer.model.Forecast;
+import net.exent.flywithme.server.flyWithMeServer.model.Schedule;
 import net.exent.flywithme.server.flyWithMeServer.model.Takeoff;
 
 import java.io.IOException;
@@ -319,6 +320,18 @@ public class FlyWithMeService extends IntentService implements GoogleApiClient.C
                 getServer().scheduleFlight(pilotId, takeoffId, timestamp).execute();
             } catch (IOException e) {
                 Log.w(TAG, "Scheduling flight failed", e);
+            }
+            try {
+                List<Schedule> schedules = getServer().getTakeoffSchedule(takeoffId).execute().getItems();
+                Database db = new Database(getApplicationContext());
+                db.updateTakeoffSchedule(takeoffId, schedules);
+                Intent showTakeoffDetailsIntent = new Intent(this, FlyWithMe.class);
+                showTakeoffDetailsIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                showTakeoffDetailsIntent.setAction(FlyWithMe.ACTION_SHOW_TAKEOFF_SCHEDULE);
+                showTakeoffDetailsIntent.putExtra(FlyWithMe.ARG_TAKEOFF_ID, bundle.getLong(ARG_TAKEOFF_ID));
+                startActivity(showTakeoffDetailsIntent);
+            } catch (IOException e) {
+                Log.w(TAG, "Unable to fetch takeoff schedule", e);
             }
         } else if (ACTION_UNSCHEDULE_FLIGHT.equals(action)) {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);

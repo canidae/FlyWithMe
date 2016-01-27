@@ -1,15 +1,11 @@
 package net.exent.flywithme.data;
 
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
 
 import net.exent.flywithme.bean.Takeoff;
 import net.exent.flywithme.server.flyWithMeServer.model.Pilot;
+import net.exent.flywithme.server.flyWithMeServer.model.Schedule;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -26,40 +22,47 @@ public class Database extends SQLiteOpenHelper {
     @Override
     public synchronized void onCreate(SQLiteDatabase db) {
         Log.d(getClass().getName(), "onCreate()");
-        createDatabaseV2(db);
-        upgradeDatabaseToV3(db);
+        createDatabase(db);
     }
 
     @Override
     public synchronized void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         Log.d(getClass().getName(), "onUpgrade(" + oldVersion + ", " + newVersion + ")");
-        if (oldVersion == 1) {
-            createDatabaseV2(db);
+        if (oldVersion == 1)
             upgradeDatabaseToV2(db);
-        }
-        if (oldVersion == 2) {
+        if (oldVersion == 2)
             upgradeDatabaseToV3(db);
-        }
-        if (oldVersion == 3) {
-            //upgradeDatabaseToV4(db); // TODO
-        }
+        if (oldVersion == 3)
+            upgradeDatabaseToV4(db);
     }
 
-    public synchronized Map<Date, Set<Pilot>> getTakeoffSchedule(Takeoff takeoff) {
-        Map<Date, Set<Pilot>> schedule = new TreeMap<>();
+    public synchronized List<Schedule> getTakeoffSchedules(Takeoff takeoff) {
+        List<Schedule> schedules = new ArrayList<>();
         SQLiteDatabase db = getReadableDatabase();
         if (db == null)
             throw new IllegalArgumentException("Unable to get database object");
         try {
-            Cursor cursor = db.query("schedule", new String[]{"timestamp", "pilot_name", "pilot_phone"}, "takeoff_id = " + takeoff.getId() + " and date(schedule.timestamp, 'unixepoch') >= date('now')", null, null, null, "timestamp");
+            Cursor cursor = db.query("schedule", new String[]{"timestamp", "pilot_name", "pilot_phone"}, "takeoff_id = " + takeoff.getId() + " and date(schedule.timestamp, 'unixepoch') >= date('now', '-24 hour')", null, null, null, "timestamp");
             while (cursor.moveToNext()) {
-                Date timestamp = new Date(cursor.getLong(0) * 1000); // we store timestamps in SQLite as seconds since epoch, not milliseconds (which Date use)
+                long timestamp = cursor.getLong(0);
+                Schedule schedule = null;
+                for (Schedule tmpSchedule : schedules) {
+                    if (tmpSchedule.getTimestamp() == timestamp) {
+                        schedule = tmpSchedule;
+                        break;
+                    }
+                }
+                if (schedule == null) {
+                    schedule = new Schedule();
+                    schedules.add(schedule);
+                }
+                schedule.setTimestamp(timestamp);
                 String pilotName = cursor.getString(1);
                 String pilotPhone = cursor.getString(2);
-                Set<Pilot> pilots = schedule.get(timestamp);
+                List<Pilot> pilots = schedule.getPilots();
                 if (pilots == null) {
-                    pilots = new HashSet<>();
-                    schedule.put(timestamp, pilots);
+                    pilots = new ArrayList<>();
+                    schedule.setPilots(pilots);
                 }
                 Pilot pilot = new Pilot();
                 pilot.setName(pilotName);
@@ -67,31 +70,13 @@ public class Database extends SQLiteOpenHelper {
                 pilots.add(pilot);
             }
             cursor.close();
-            return schedule;
+            return schedules;
         } finally {
             db.close();
         }
     }
 
-    public synchronized List<String> getTakeoffsWithUpcomingFlights(String ignorePilot) {
-        // ignorePilot is mainly used to ignore our own registrations
-        // and yes, it will fail when the user change name
-        List<String> takeoffs = new ArrayList<>();
-        SQLiteDatabase db = getReadableDatabase();
-        if (db == null)
-            throw new IllegalArgumentException("Unable to get database object");
-        try {
-            Cursor cursor = db.rawQuery("select distinct takeoff.name from takeoff join schedule on takeoff.takeoff_id = schedule.takeoff_id where datetime(schedule.timestamp, 'unixepoch') >= datetime('now') and datetime(schedule.timestamp, 'unixepoch') <= datetime('now', '+2 days') and schedule.pilot_name != ?", new String[]{ignorePilot});
-            while (cursor.moveToNext())
-                takeoffs.add(cursor.getString(0));
-            cursor.close();
-            return takeoffs;
-        } finally {
-            db.close();
-        }
-    }
-
-    public synchronized void updateTakeoffSchedule(long takeoffId, Map<Long, List<Pilot>> schedule) {
+    public synchronized void updateTakeoffSchedule(long takeoffId, List<Schedule> schedules) {
         SQLiteDatabase db = getWritableDatabase();
         if (db == null)
             throw new IllegalArgumentException("Unable to get database object");
@@ -99,11 +84,11 @@ public class Database extends SQLiteOpenHelper {
             // we'll fully replace the entries for this takeoff
             // we'll also delete old entries to clean up the database
             db.execSQL("delete from schedule where takeoff_id = " + takeoffId + " or date(timestamp, 'unixepoch', '+2 days') < date('now')");
-            for (Map.Entry<Long, List<Pilot>> entry : schedule.entrySet()) {
-                for (Pilot pilot : entry.getValue()) {
+            for (Schedule schedule : schedules) {
+                for (Pilot pilot : schedule.getPilots()) {
                     ContentValues values = new ContentValues();
                     values.put("takeoff_id", takeoffId);
-                    values.put("timestamp", entry.getKey() / 1000); // date/time-functions in SQLite use seconds since epoch, not milliseconds
+                    values.put("timestamp", schedule.getTimestamp());
                     values.put("pilot_name", pilot.getName());
                     values.put("pilot_phone", pilot.getPhone());
                     db.insert("schedule", null, values);
@@ -188,15 +173,21 @@ public class Database extends SQLiteOpenHelper {
         }
     }
 
-    private synchronized void createDatabaseV2(SQLiteDatabase db) {
+    /**
+     * Create the most recent database layout.
+     * This is only called when there's no existing database on device (fresh install).
+     * @param db The SQLite database.
+     */
+    private synchronized void createDatabase(SQLiteDatabase db) {
         db.execSQL("create table schedule(takeoff_id integer not null, timestamp integer not null, pilot_name text not null, pilot_phone text not null)");
-        db.execSQL("create table takeoff(takeoff_id integer primary key, name text not null default '', description text not null default '', asl integer not null default 0, height integer not null default 0, latitude real not null default 0.0, latitude_cos real not null default 0.0, latitude_sin real not null default 0.0, longitude real not null default 0.0, longitude_cos real not null default 0.0, longitude_sin real not null default 0.0, exits integer not null default 0, favourite integer not null default 0)");
-        db.execSQL("create table pilot(pilot_id integer primary key, name text not null, phone text not null default '')");
+        db.execSQL("create table takeoff(takeoff_id integer primary key, last_updated integer not null default current_timestamp, name text not null default '', description text not null default '', asl integer not null default 0, height integer not null default 0, latitude real not null default 0.0, latitude_cos real not null default 0.0, latitude_sin real not null default 0.0, longitude real not null default 0.0, longitude_cos real not null default 0.0, longitude_sin real not null default 0.0, exits integer not null default 0, favourite integer not null default 0)");
     }
 
     private synchronized void upgradeDatabaseToV2(SQLiteDatabase db) {
-        // move favourites
-        db.execSQL("update takeoff set favourite = 1 where takeoff_id in (select takeoff_id from favourite)");
+        // create new tables
+        db.execSQL("create table schedule(takeoff_id integer not null, timestamp integer not null, pilot_name text not null, pilot_phone text not null)");
+        db.execSQL("create table takeoff(takeoff_id integer primary key, name text not null default '', description text not null default '', asl integer not null default 0, height integer not null default 0, latitude real not null default 0.0, latitude_cos real not null default 0.0, latitude_sin real not null default 0.0, longitude real not null default 0.0, longitude_cos real not null default 0.0, longitude_sin real not null default 0.0, exits integer not null default 0, favourite integer not null default 0)");
+        db.execSQL("create table pilot(pilot_id integer primary key, name text not null, phone text not null default '')");
         // drop favourites table
         db.execSQL("drop table favourite");
     }

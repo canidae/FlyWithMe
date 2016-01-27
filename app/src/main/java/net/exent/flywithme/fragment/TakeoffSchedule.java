@@ -16,6 +16,7 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.TableLayout;
 import android.widget.TextView;
 
@@ -23,19 +24,20 @@ import net.exent.flywithme.R;
 import net.exent.flywithme.bean.Takeoff;
 import net.exent.flywithme.data.Database;
 import net.exent.flywithme.server.flyWithMeServer.model.Pilot;
+import net.exent.flywithme.server.flyWithMeServer.model.Schedule;
 import net.exent.flywithme.service.FlyWithMeService;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
 
 public class TakeoffSchedule extends Fragment {
     public static final String ARG_TAKEOFF = "takeoff";
     private Takeoff takeoff;
+    private TakeoffScheduleAdapter scheduleAdapter;
     private Calendar calendar = GregorianCalendar.getInstance();
 
     @Override
@@ -75,13 +77,26 @@ public class TakeoffSchedule extends Fragment {
         }
 
         ExpandableListView scheduleList = (ExpandableListView) getActivity().findViewById(R.id.scheduleRegisteredFlights);
-        TakeoffScheduleAdapter scheduleAdapter = new TakeoffScheduleAdapter();
+        scheduleAdapter = new TakeoffScheduleAdapter();
         scheduleList.setAdapter(scheduleAdapter);
-        // expand all groups by default
-        for (int i = 0; i < scheduleAdapter.getGroupCount(); ++i)
-            scheduleList.expandGroup(i);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        // update schedule list
+        scheduleAdapter.updateData();
+        // expand all groups
+        ExpandableListView scheduleList = (ExpandableListView) getActivity().findViewById(R.id.scheduleRegisteredFlights);
+        for (int i = 0; i < scheduleAdapter.getGroupCount(); ++i)
+            scheduleList.expandGroup(i);
+        // make schedule button clickable again
+        Button scheduleFlight = (Button) getActivity().findViewById(R.id.scheduleFlightButton);
+        scheduleFlight.setText(getString(R.string.scheduling_flight));
+        scheduleFlight.setEnabled(true);
+        ProgressBar progressBar = (ProgressBar) getActivity().findViewById(R.id.scheduleProgressBar);
+        progressBar.setVisibility(View.GONE);
+    }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -209,30 +224,32 @@ public class TakeoffSchedule extends Fragment {
         Button scheduleFlight = (Button) getActivity().findViewById(R.id.scheduleFlightButton);
         scheduleFlight.setText(getString(R.string.scheduling_flight));
         scheduleFlight.setEnabled(false);
+        ProgressBar progressBar = (ProgressBar) getActivity().findViewById(R.id.scheduleProgressBar);
+        progressBar.setVisibility(View.VISIBLE);
 
         Intent intent = new Intent(getActivity(), FlyWithMeService.class);
         intent.setAction(FlyWithMeService.ACTION_SCHEDULE_FLIGHT);
         intent.putExtra(FlyWithMeService.ARG_TAKEOFF_ID, takeoff.getId());
         intent.putExtra(FlyWithMeService.ARG_TIMESTAMP_IN_SECONDS, timestamp / 1000);
         getActivity().startService(intent);
-        // TODO: progress bar?
     }
 
     private void unscheduleFlight(long timestamp) {
         Button scheduleFlight = (Button) getActivity().findViewById(R.id.scheduleFlightButton);
         scheduleFlight.setText(getString(R.string.scheduling_flight));
         scheduleFlight.setEnabled(false);
+        ProgressBar progressBar = (ProgressBar) getActivity().findViewById(R.id.scheduleProgressBar);
+        progressBar.setVisibility(View.VISIBLE);
 
         Intent intent = new Intent(getActivity(), FlyWithMeService.class);
         intent.setAction(FlyWithMeService.ACTION_UNSCHEDULE_FLIGHT);
         intent.putExtra(FlyWithMeService.ARG_TAKEOFF_ID, takeoff.getId());
         intent.putExtra(FlyWithMeService.ARG_TIMESTAMP_IN_SECONDS, timestamp / 1000);
         getActivity().startService(intent);
-        // TODO: progress bar?
     }
 
     private class TakeoffScheduleAdapter extends BaseExpandableListAdapter {
-        private Map<Date, Set<Pilot>> schedule;
+        private List<Schedule> schedules;
         private SimpleDateFormat dateFormatter = new SimpleDateFormat("EEE dd. MMM, HH:mm", Locale.US);
 
         public TakeoffScheduleAdapter() {
@@ -240,23 +257,23 @@ public class TakeoffSchedule extends Fragment {
         }
 
         public void updateData() {
-            schedule = new Database(getActivity()).getTakeoffSchedule(takeoff);
+            schedules = new Database(getActivity()).getTakeoffSchedules(takeoff);
             notifyDataSetChanged();
         }
 
         @Override
         public int getGroupCount() {
-            return schedule.size();
+            return schedules.size();
         }
 
         @Override
         public int getChildrenCount(int groupPosition) {
-            return getEntryGroup(groupPosition).getValue().size();
+            return getEntryGroup(groupPosition).getPilots().size();
         }
 
         @Override
         public Object getGroup(int groupPosition) {
-            return getEntryGroup(groupPosition).getKey();
+            return new Date(getEntryGroup(groupPosition).getTimestamp() * 1000);
         }
 
         @Override
@@ -298,17 +315,17 @@ public class TakeoffSchedule extends Fragment {
             });
             /* END AAH! */
             TextView groupTime = (TextView) convertView.findViewById(R.id.scheduleGroupTime);
-            Map.Entry<Date, Set<Pilot>> entryGroup = getEntryGroup(groupPosition);
-            final Date date = entryGroup.getKey();
+            Schedule schedule = getEntryGroup(groupPosition);
+            final Date date = new Date(schedule.getTimestamp() * 1000);
             groupTime.setText(dateFormatter.format(date));
             TextView groupPilots = (TextView) convertView.findViewById(R.id.scheduleGroupPilots);
-            groupPilots.setText(getString(R.string.pilots) + ": " + entryGroup.getValue().size());
+            groupPilots.setText(getString(R.string.pilots) + ": " + schedule.getPilots().size());
             final ImageButton joinOrLeave = (ImageButton) convertView.findViewById(R.id.joinOrLeaveButton);
 
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
             String pilotName = prefs.getString("pref_schedule_pilot_name", "").trim();
             boolean foundPilot = false;
-            for (Pilot pilot : entryGroup.getValue()) {
+            for (Pilot pilot : schedule.getPilots()) {
                 if (pilotName.equals(pilot.getName())) {
                     foundPilot = true;
                     break;
@@ -371,16 +388,16 @@ public class TakeoffSchedule extends Fragment {
             return false;
         }
 
-        private Map.Entry<Date, Set<Pilot>> getEntryGroup(int group) {
-            for (Map.Entry<Date, Set<Pilot>> entry : schedule.entrySet()) {
+        private Schedule getEntryGroup(int group) {
+            for (Schedule schedule : schedules) {
                 if (group-- <= 0)
-                    return entry;
+                    return schedule;
             }
             return null;
         }
 
         private Pilot getEntryGroupChild(int group, int child) {
-            for (Pilot pilot : getEntryGroup(group).getValue()) {
+            for (Pilot pilot : getEntryGroup(group).getPilots()) {
                 if (child-- <= 0)
                     return pilot;
             }

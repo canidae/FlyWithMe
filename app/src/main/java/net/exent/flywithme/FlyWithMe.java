@@ -7,6 +7,7 @@ import net.exent.flywithme.fragment.TakeoffList;
 import net.exent.flywithme.fragment.TakeoffMap;
 import net.exent.flywithme.bean.Takeoff;
 import net.exent.flywithme.data.Database;
+import net.exent.flywithme.fragment.TakeoffSchedule;
 import net.exent.flywithme.service.FlyWithMeService;
 
 import android.app.FragmentManager;
@@ -38,20 +39,16 @@ import java.io.EOFException;
 import java.io.IOException;
 
 /* TODO:
-   - Replace ScheduleService with FlyWithMeService (remember FlyWithMeBroadcastReceiver and AndroidManifest)
    - NoaaForecast: Would prefer a better way to transfer data to fragment
-   - Use endpoint API for registering planned flight
-   - Use endpoint API for fetching planned flights (schedule)
    - Cache forecasts locally for some few hours (fetched timestamp is returned, cache for the same amount of time as server caches the forecast)
  */
 public class FlyWithMe extends Activity implements GoogleApiClient.ConnectionCallbacks, LocationListener {
     public static final String ACTION_SHOW_FORECAST = "showForecast";
     public static final String ACTION_SHOW_PREFERENCES = "showPreferences";
     public static final String ACTION_SHOW_TAKEOFF_DETAILS = "showTakeoffDetails";
+    public static final String ACTION_SHOW_TAKEOFF_SCHEDULE = "showTakeoffSchedule";
 
     public static final String ARG_TAKEOFF_ID = "takeoffId";
-
-    public static final String SERVER_URL = "http://flywithme-server.appspot.com/fwm";
 
     private GoogleApiClient googleApiClient;
     private Location location;
@@ -61,6 +58,14 @@ public class FlyWithMe extends Activity implements GoogleApiClient.ConnectionCal
         if (tag != null && fragmentManager.findFragmentByTag(tag) != null) {
             fragmentManager.popBackStack(tag, 0);
         } else {
+            // reset right menu icons
+            ((ImageButton) activity.findViewById(R.id.fragmentButton1)).setImageDrawable(null);
+            ((ImageButton) activity.findViewById(R.id.fragmentButton2)).setImageDrawable(null);
+            ((ImageButton) activity.findViewById(R.id.fragmentButton3)).setImageDrawable(null);
+            // and their progress bars
+            activity.findViewById(R.id.progressBar1).setVisibility(View.INVISIBLE);
+            activity.findViewById(R.id.progressBar2).setVisibility(View.INVISIBLE);
+            activity.findViewById(R.id.progressBar3).setVisibility(View.INVISIBLE);
             try {
                 Fragment fragment = fragmentClass.newInstance();
                 if (args != null)
@@ -73,14 +78,6 @@ public class FlyWithMe extends Activity implements GoogleApiClient.ConnectionCal
                 Log.w(FlyWithMe.class.getName(), "Error instantiating class", e);
             }
         }
-        // reset icons
-        ((ImageButton) activity.findViewById(R.id.fragmentButton1)).setImageDrawable(null);
-        ((ImageButton) activity.findViewById(R.id.fragmentButton2)).setImageDrawable(null);
-        ((ImageButton) activity.findViewById(R.id.fragmentButton3)).setImageDrawable(null);
-        // and progress bars
-        activity.findViewById(R.id.progressBar1).setVisibility(View.INVISIBLE);
-        activity.findViewById(R.id.progressBar2).setVisibility(View.INVISIBLE);
-        activity.findViewById(R.id.progressBar3).setVisibility(View.INVISIBLE);
     }
 
     /**
@@ -124,6 +121,14 @@ public class FlyWithMe extends Activity implements GoogleApiClient.ConnectionCal
                 showFragment(activity, "preferences", Preferences.class, null);
             }
         });
+        // reset right menu icons
+        ((ImageButton) activity.findViewById(R.id.fragmentButton1)).setImageDrawable(null);
+        ((ImageButton) activity.findViewById(R.id.fragmentButton2)).setImageDrawable(null);
+        ((ImageButton) activity.findViewById(R.id.fragmentButton3)).setImageDrawable(null);
+        // and their progress bars
+        activity.findViewById(R.id.progressBar1).setVisibility(View.INVISIBLE);
+        activity.findViewById(R.id.progressBar2).setVisibility(View.INVISIBLE);
+        activity.findViewById(R.id.progressBar3).setVisibility(View.INVISIBLE);
 
         /* setup any preferences that needs to be done programmatically */
         Preferences.setupDefaultPreferences(this);
@@ -199,6 +204,12 @@ public class FlyWithMe extends Activity implements GoogleApiClient.ConnectionCal
             Bundle args = new Bundle();
             args.putParcelable(TakeoffDetails.ARG_TAKEOFF, takeoff);
             showFragment(this, "takeoffDetails," + takeoff.getId(), TakeoffDetails.class, args);
+        } else if (ACTION_SHOW_TAKEOFF_SCHEDULE.equals(intent.getAction())) {
+            Database database = new Database(this);
+            Takeoff takeoff = database.getTakeoff(intent.getLongExtra(ARG_TAKEOFF_ID, 0));
+            Bundle args = new Bundle();
+            args.putParcelable(TakeoffSchedule.ARG_TAKEOFF, takeoff);
+            showFragment(this, "takeoffSchedule," + takeoff.getId(), TakeoffSchedule.class, args);
         }
     }
 

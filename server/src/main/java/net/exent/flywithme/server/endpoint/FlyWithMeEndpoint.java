@@ -14,9 +14,7 @@ import net.exent.flywithme.server.util.GcmUtil;
 import net.exent.flywithme.server.util.NoaaProxy;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.inject.Named;
@@ -98,17 +96,13 @@ public class FlyWithMeEndpoint {
         }
     }
 
-    @ApiMethod(name = "getTakeoffSchedules")
-    public Map<Long, List<Schedule>> getTakeoffSchedule(@Named("takeoffIds") List<Long> takeoffIds) {
-        Map<Long, List<Schedule>> schedules = new HashMap<>();
-        for (Long takeoffId : takeoffIds) {
-            // we'll scramble pilotIds, only keep the last few characters
-            List<Schedule> tmpSchedule = DataStore.getTakeoffSchedules(takeoffId);
-            for (Schedule schedule : tmpSchedule) {
-                for (Pilot pilot : schedule.getPilots())
-                    pilot.setId(pilot.getId().substring(pilot.getId().length() - 6));
-            }
-            schedules.put(takeoffId, DataStore.getTakeoffSchedules(takeoffId));
+    @ApiMethod(name = "getTakeoffSchedule")
+    public List<Schedule> getTakeoffSchedule(@Named("takeoffIds") long takeoffId) {
+        // we'll scramble pilotIds, only keep the last few characters
+        List<Schedule> schedules = DataStore.getTakeoffSchedules(takeoffId);
+        for (Schedule schedule : schedules) {
+            for (Pilot pilot : schedule.getPilots())
+                pilot.setId(pilot.getId().substring(pilot.getId().length() - 6));
         }
         return schedules;
     }

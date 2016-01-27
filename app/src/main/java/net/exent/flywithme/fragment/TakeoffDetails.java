@@ -4,7 +4,7 @@ import net.exent.flywithme.FlyWithMe;
 import net.exent.flywithme.R;
 import net.exent.flywithme.bean.Takeoff;
 import net.exent.flywithme.data.Database;
-import net.exent.flywithme.server.flyWithMeServer.model.Pilot;
+import net.exent.flywithme.server.flyWithMeServer.model.Schedule;
 import net.exent.flywithme.service.FlyWithMeService;
 
 import android.content.Intent;
@@ -33,9 +33,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
 
 public class TakeoffDetails extends Fragment {
     public static final String ARG_TAKEOFF = "takeoff";
@@ -156,8 +155,8 @@ public class TakeoffDetails extends Fragment {
         canvas.drawRect(0, bitmap.getHeight() - X_AXIS_HEIGHT + LINE_WIDTH, bitmap.getWidth(), bitmap.getHeight() - X_AXIS_HEIGHT, paint); // lower horizontal axis
 
         // fetch flight schedule for takeoff
-        Map<Date, Set<Pilot>> schedule = new Database(getActivity()).getTakeoffSchedule(takeoff);
-        if (schedule.isEmpty()) {
+        List<Schedule> schedules = new Database(getActivity()).getTakeoffSchedules(takeoff);
+        if (schedules.isEmpty()) {
             // no flights scheduled, don't draw labels, show instead a message
             paint.setColor(Color.YELLOW);
             String text = getActivity().getString(R.string.no_scheduled_flights);
@@ -176,9 +175,9 @@ public class TakeoffDetails extends Fragment {
         String prevDate = "";
         int xPos = Y_AXIS_WIDTH - SCHEDULE_BAR_SPACE;
         Calendar today = GregorianCalendar.getInstance();
-        for (Map.Entry<Date, Set<Pilot>> entry : schedule.entrySet()) {
+        for (Schedule schedule : schedules) {
             Calendar cal = GregorianCalendar.getInstance();
-            cal.setTime(entry.getKey());
+            cal.setTime(new Date(schedule.getTimestamp() * 1000));
             String text;
             if (today.get(Calendar.DAY_OF_YEAR) == cal.get(Calendar.DAY_OF_YEAR) && today.get(Calendar.YEAR) == cal.get(Calendar.YEAR)) {
                 text = getActivity().getString(R.string.today);
@@ -200,7 +199,7 @@ public class TakeoffDetails extends Fragment {
             prevDate = text;
 
             // draw amount of pilots bar
-            int pilots = entry.getValue().size();
+            int pilots = schedule.getPilots().size();
             int barTop = (int) (X_AXIS_HEIGHT + LINE_WIDTH + (bitmap.getHeight() - (X_AXIS_HEIGHT + LINE_WIDTH) * 2) / (pilots + 0.5));
             paint.setColor(Color.GREEN);
             xPos += SCHEDULE_BAR_SPACE;
