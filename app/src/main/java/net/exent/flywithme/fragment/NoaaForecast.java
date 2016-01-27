@@ -139,7 +139,7 @@ public class NoaaForecast extends Fragment {
                                 calendar.set(Calendar.SECOND, 0);
                                 calendar.set(Calendar.MILLISECOND, 0);
                                 calendar.add(Calendar.HOUR_OF_DAY, soundingHourOffset);
-                                intent.putExtra(FlyWithMeService.ARG_TIMESTAMP, calendar.getTimeInMillis());
+                                intent.putExtra(FlyWithMeService.ARG_TIMESTAMP_IN_SECONDS, calendar.getTimeInMillis() / 1000);
                             }
                             intent.putExtra(FlyWithMeService.ARG_TAKEOFF_ID, takeoff.getId());
                             getActivity().startService(intent);

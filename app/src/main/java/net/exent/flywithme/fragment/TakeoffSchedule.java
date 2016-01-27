@@ -1,17 +1,12 @@
 package net.exent.flywithme.fragment;
 
-import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.location.Location;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.app.Fragment;
-import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,16 +19,11 @@ import android.widget.ImageButton;
 import android.widget.TableLayout;
 import android.widget.TextView;
 
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
-
 import net.exent.flywithme.R;
 import net.exent.flywithme.bean.Takeoff;
 import net.exent.flywithme.data.Database;
 import net.exent.flywithme.server.flyWithMeServer.model.Pilot;
-import net.exent.flywithme.service.ScheduleService;
+import net.exent.flywithme.service.FlyWithMeService;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -43,19 +33,64 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-public class TakeoffSchedule extends Fragment implements GoogleApiClient.ConnectionCallbacks, LocationListener {
+public class TakeoffSchedule extends Fragment {
     public static final String ARG_TAKEOFF = "takeoff";
     private Takeoff takeoff;
     private Calendar calendar = GregorianCalendar.getInstance();
-    private TakeoffScheduleAdapter scheduleAdapter;
 
-    private GoogleApiClient googleApiClient;
-    private Location location;
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        if (savedInstanceState != null)
+            takeoff = savedInstanceState.getParcelable(ARG_TAKEOFF);
+        return inflater.inflate(R.layout.takeoff_schedule, container, false);
+    }
 
-    public void showTakeoffSchedule(Takeoff takeoff) {
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        Bundle args = getArguments();
+        if (args != null)
+            takeoff = args.getParcelable(ARG_TAKEOFF);
+        if (takeoff == null) {
+            Log.w(getClass().getName(), "Unable to show schedule, no takeoff supplied");
+            return;
+        }
+
+        // don't show buttons for registering flight if user haven't set a name
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String pilotName = prefs.getString("pref_pilot_name", "").trim();
+        TextView mayNotRegister = (TextView) getActivity().findViewById(R.id.scheduleMayNotRegister);
+        TableLayout flightTime = (TableLayout) getActivity().findViewById(R.id.scheduleFlightTime);
+        Button scheduleFlight = (Button) getActivity().findViewById(R.id.scheduleFlightButton);
+        if ("".equals(pilotName)) {
+            mayNotRegister.setVisibility(View.VISIBLE);
+            flightTime.setVisibility(View.GONE);
+            scheduleFlight.setVisibility(View.GONE);
+        } else {
+            showTakeoffSchedule();
+            mayNotRegister.setVisibility(View.GONE);
+            flightTime.setVisibility(View.VISIBLE);
+            scheduleFlight.setVisibility(View.VISIBLE);
+        }
+
+        ExpandableListView scheduleList = (ExpandableListView) getActivity().findViewById(R.id.scheduleRegisteredFlights);
+        TakeoffScheduleAdapter scheduleAdapter = new TakeoffScheduleAdapter();
+        scheduleList.setAdapter(scheduleAdapter);
+        // expand all groups by default
+        for (int i = 0; i < scheduleAdapter.getGroupCount(); ++i)
+            scheduleList.expandGroup(i);
+    }
+
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(ARG_TAKEOFF, takeoff);
+    }
+
+    private void showTakeoffSchedule() {
         try {
-            this.takeoff = takeoff;
-
             TextView takeoffName = (TextView) getActivity().findViewById(R.id.scheduleTakeoffName);
             takeoffName.setText(takeoff.getName());
 
@@ -132,105 +167,22 @@ public class TakeoffSchedule extends Fragment implements GoogleApiClient.Connect
                 }
             });
 
-            // guesstimate when we're gonna fly by using distance to takeoff
-            // travel time of 12 m/s seems to be a fair rough estimate
-            double travelTime = location.distanceTo(takeoff.getLocation()) / 12;
-            // then round up travel time and current time to nearest 15 minute
-            travelTime = Math.ceil(travelTime / 900.0) * 900.0;
-            calendar.set(Calendar.MINUTE, (int) Math.ceil(calendar.get(Calendar.MINUTE) / 15.0) * 15);
+            // set minutes to the last half hour
+            calendar.set(Calendar.MINUTE, calendar.get(Calendar.MINUTE) / 30 * 30);
             // set seconds and milliseconds to 0
             calendar.set(Calendar.SECOND, 0);
             calendar.set(Calendar.MILLISECOND, 0);
-            // update calendar
-            updateCalendar(Calendar.SECOND, (int) travelTime);
+            // add 30 minutes to the calendar
+            updateCalendar(Calendar.MINUTE, 30);
         } catch (Exception e) {
             Log.w(getClass().getName(), "showTakeoffSchedule() failed unexpectedly", e);
         }
     }
 
-    @Override
-    public void onCreate(Bundle bundle) {
-        super.onCreate(bundle);
-        googleApiClient = new GoogleApiClient.Builder(getActivity()).addApi(LocationServices.API).addConnectionCallbacks(this).build();
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        if (savedInstanceState != null)
-            takeoff = savedInstanceState.getParcelable(ARG_TAKEOFF);
-        return inflater.inflate(R.layout.takeoff_schedule, container, false);
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        googleApiClient.connect(); // TODO: ditch this, pass current location in bundle instead
-
-        Bundle args = getArguments();
-        if (args != null)
-            showTakeoffSchedule((Takeoff) args.getParcelable(ARG_TAKEOFF));
-
-        // don't show buttons for registering flight if user haven't set a name
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        String pilotName = prefs.getString("pref_pilot_name", "").trim();
-        TextView mayNotRegister = (TextView) getActivity().findViewById(R.id.scheduleMayNotRegister);
-        TableLayout flightTime = (TableLayout) getActivity().findViewById(R.id.scheduleFlightTime);
-        Button scheduleFlight = (Button) getActivity().findViewById(R.id.scheduleFlightButton);
-        if ("".equals(pilotName)) {
-            mayNotRegister.setVisibility(View.VISIBLE);
-            flightTime.setVisibility(View.GONE);
-            scheduleFlight.setVisibility(View.GONE);
-        } else {
-            mayNotRegister.setVisibility(View.GONE);
-            flightTime.setVisibility(View.VISIBLE);
-            scheduleFlight.setVisibility(View.VISIBLE);
-        }
-
-        ExpandableListView scheduleList = (ExpandableListView) getActivity().findViewById(R.id.scheduleRegisteredFlights);
-        scheduleAdapter = new TakeoffScheduleAdapter();
-        scheduleList.setAdapter(scheduleAdapter);
-        // expand all groups by default
-        for (int i = 0; i < scheduleAdapter.getGroupCount(); ++i)
-            scheduleList.expandGroup(i);
-    }
-
-    @Override
-    public void onConnected(Bundle bundle) {
-        LocationRequest locationRequest = LocationRequest.create().setInterval(10000).setPriority(LocationRequest.PRIORITY_LOW_POWER);
-        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
-        location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-
-    }
-
-    @Override
-    public void onLocationChanged(Location location) {
-        this.location = location;
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putParcelable(ARG_TAKEOFF, takeoff);
-    }
-
     private void updateCalendar(int field, int value) {
         calendar.add(field, value);
         Calendar tmpCal = GregorianCalendar.getInstance();
-        tmpCal.add(Calendar.HOUR, -6); // we'll allow people to register up to 6 hours into the past
+        tmpCal.add(Calendar.HOUR, -24); // we'll allow people to register up to 24 hours into the past
         if (calendar.before(tmpCal)) {
             // given time is too far back in time, user probably means next year
             calendar.add(Calendar.YEAR, 1);
@@ -258,19 +210,25 @@ public class TakeoffSchedule extends Fragment implements GoogleApiClient.Connect
         scheduleFlight.setText(getString(R.string.scheduling_flight));
         scheduleFlight.setEnabled(false);
 
-        // TODO: currently we need to mark every takeoff we schedule for as favourites
-        //       this is because that's the only way we can fetch schedule for that takeoff if it's far away
-        takeoff.setFavourite(true);
-        new Database(getActivity()).updateFavourite(takeoff);
-
-        new ScheduleFlightTask(ScheduleType.SCHEDULE).execute((long) takeoff.getId(), timestamp);
+        Intent intent = new Intent(getActivity(), FlyWithMeService.class);
+        intent.setAction(FlyWithMeService.ACTION_SCHEDULE_FLIGHT);
+        intent.putExtra(FlyWithMeService.ARG_TAKEOFF_ID, takeoff.getId());
+        intent.putExtra(FlyWithMeService.ARG_TIMESTAMP_IN_SECONDS, timestamp / 1000);
+        getActivity().startService(intent);
+        // TODO: progress bar?
     }
 
     private void unscheduleFlight(long timestamp) {
         Button scheduleFlight = (Button) getActivity().findViewById(R.id.scheduleFlightButton);
         scheduleFlight.setText(getString(R.string.scheduling_flight));
         scheduleFlight.setEnabled(false);
-        new ScheduleFlightTask(ScheduleType.UNSCHEDULE).execute((long) takeoff.getId(), timestamp);
+
+        Intent intent = new Intent(getActivity(), FlyWithMeService.class);
+        intent.setAction(FlyWithMeService.ACTION_UNSCHEDULE_FLIGHT);
+        intent.putExtra(FlyWithMeService.ARG_TAKEOFF_ID, takeoff.getId());
+        intent.putExtra(FlyWithMeService.ARG_TIMESTAMP_IN_SECONDS, timestamp / 1000);
+        getActivity().startService(intent);
+        // TODO: progress bar?
     }
 
     private class TakeoffScheduleAdapter extends BaseExpandableListAdapter {
@@ -427,44 +385,6 @@ public class TakeoffSchedule extends Fragment implements GoogleApiClient.Connect
                     return pilot;
             }
             return null;
-        }
-    }
-
-    private enum ScheduleType {
-        SCHEDULE, UNSCHEDULE
-    }
-
-    private class ScheduleFlightTask extends AsyncTask<Long, Void, Void> {
-        private ScheduleType scheduleType;
-
-        public ScheduleFlightTask(ScheduleType scheduleType) {
-            this.scheduleType = scheduleType;
-        }
-
-        @Override
-        protected Void doInBackground(Long... params) {
-            if (scheduleType == ScheduleType.SCHEDULE)
-                ScheduleService.scheduleFlight(getActivity(), params[0].intValue(), params[1]);
-            else
-                ScheduleService.unscheduleFlight(getActivity(), params[0].intValue(), params[1]);
-            ScheduleService.updateSchedule(getActivity(), location);
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void param) {
-            Button scheduleFlight = (Button) getActivity().findViewById(R.id.scheduleFlightButton);
-            scheduleFlight.setText(getString(R.string.schedule_flight));
-            scheduleFlight.setEnabled(true);
-            ExpandableListView scheduleList = (ExpandableListView) getActivity().findViewById(R.id.scheduleRegisteredFlights);
-            /* AAH! only calling updateData() which signals that data is changed leaves deleted children of groups hanging, but if we collapse group first, then the children disappear */
-            for (int i = 0; i < scheduleAdapter.getGroupCount(); ++i)
-                scheduleList.collapseGroup(i);
-            /* END AAH! */
-            scheduleAdapter.updateData();
-            // expand groups by default
-            for (int i = 0; i < scheduleAdapter.getGroupCount(); ++i)
-                scheduleList.expandGroup(i);
         }
     }
 }

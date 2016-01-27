@@ -150,7 +150,7 @@ public class DataStore {
 
         List<Schedule> schedules = ofy().load().type(Schedule.class)
                 .filter("takeoffId", takeoffId)
-                .filter("timestamp >=", System.currentTimeMillis() - 7200000) // 2 hours into the past
+                .filter("timestamp >=", (System.currentTimeMillis() - 7200000) / 1000) // 2 hours into the past
                 .list();
         List<Long> newTakeoffSchedules = new ArrayList<>();
         for (Schedule schedule : schedules)
@@ -177,8 +177,8 @@ public class DataStore {
         }
 
         List<Schedule> schedules = ofy().load().type(Schedule.class)
-                .filter("timestamp >=", System.currentTimeMillis() - 7200000) // 2 hours into the past
-                .filter("timestamp <=", System.currentTimeMillis() + 43200000) // 12 hours into the future
+                .filter("timestamp >=", (System.currentTimeMillis() - 7200000) / 1000) // 2 hours into the past
+                .filter("timestamp <=", (System.currentTimeMillis() + 43200000) / 1000) // 12 hours into the future
                 .list();
         List<Long> newRecentlyScheduled = new ArrayList<>();
         for (Schedule schedule : schedules) {
@@ -197,7 +197,7 @@ public class DataStore {
                     .filter("takeoffId", takeoffId)
                     .filter("type", type)
                     .filter("validFor", validFor)
-                    .filter("lastUpdated >", System.currentTimeMillis() - FORECAST_CACHE_LIFETIME / 2)
+                    .filter("lastUpdated >", (System.currentTimeMillis() - FORECAST_CACHE_LIFETIME / 2) / 1000)
                     .first().now();
             memcacheSave(key, forecast);
         }
@@ -212,9 +212,9 @@ public class DataStore {
 
     public static void cleanCache() {
         // clean forecasts cached in datastore (Memcache cleans itself)
-        ofy().delete().entities(ofy().load().type(Forecast.class).filter("lastUpdated <=", System.currentTimeMillis() - FORECAST_CACHE_LIFETIME).list());
+        ofy().delete().entities(ofy().load().type(Forecast.class).filter("lastUpdated <=", (System.currentTimeMillis() - FORECAST_CACHE_LIFETIME) / 1000).list());
         // clean schedules cached in datastore
-        ofy().delete().entities(ofy().load().type(Schedule.class).filter("timestamp <=", System.currentTimeMillis() - 7200000).list());
+        ofy().delete().entities(ofy().load().type(Schedule.class).filter("timestamp <=", (System.currentTimeMillis() - 7200000) / 1000).list());
     }
 
     private static Object memcacheLoad(String key) {
@@ -275,9 +275,9 @@ public class DataStore {
                 try {
                     int chunkSize = list.size() / chunks;
                     for (int i = 0; i < chunks; ++i)
-                        memcache.put(keyPrefix + i, list.subList(i * chunkSize, (i + 1) * chunkSize));
+                        memcache.put(keyPrefix + i, new ArrayList<>(list.subList(i * chunkSize, (i + 1) * chunkSize)));
                     if (list.size() > chunks * chunkSize)
-                        memcache.put(keyPrefix + chunks, list.subList(chunks * chunkSize, list.size()));
+                        memcache.put(keyPrefix + chunks, new ArrayList<>(list.subList(chunks * chunkSize, list.size())));
                     memcache.put(keyPrefix, chunks);
                     break;
                 } catch (MemcacheServiceException e) {

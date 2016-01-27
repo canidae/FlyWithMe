@@ -143,13 +143,14 @@ public class FlyWithMeEndpoint {
      * Fetch sounding profile, theta and text for the given takeoff and time.
      *
      * @param takeoffId The takeoff ID.
-     * @param timestamp The timestamp we want sounding for, in milliseconds since epoch.
+     * @param timestamp The timestamp we want sounding for, in seconds since epoch.
      * @return Sounding profile, theta and text for the given takeoff and timestamp.
      */
     @ApiMethod(name = "getSounding")
     public List<Forecast> getSounding(@Named("takeoffId") long takeoffId, @Named("timestamp") long timestamp) {
-        timestamp = (timestamp / 10800000) * 10800000; // aligns timestamp with valid values for sounding (sounding every 3rd hour)
-        if (timestamp < System.currentTimeMillis() - 86400000) { // 86400000 = 1 day
+        timestamp = (timestamp / 10800) * 10800000; // aligns timestamp with valid values for sounding (sounding every 3rd hour) and converts to milliseconds
+        long now = System.currentTimeMillis();
+        if (timestamp < now - 86400000) { // 86400000 = 1 day
             log.info("Client tried to retrieve sounding for takeoff '" + takeoffId + "' with timestamp '" + timestamp + "', but that timestamp was a long time ago");
             return null;
         }
@@ -171,11 +172,14 @@ public class FlyWithMeEndpoint {
         List<byte[]> images = NoaaProxy.fetchSounding(takeoff.getLatitude(), takeoff.getLongitude(), timestamp);
         if (images == null || images.size() != 3)
             return null;
+        // convert "now" and "timestamp" from milliseconds to seconds
+        now /= 1000;
+        timestamp /= 1000;
         // profile
         profile = new Forecast();
         profile.setTakeoffId(takeoffId);
         profile.setType(Forecast.ForecastType.PROFILE);
-        profile.setLastUpdated(System.currentTimeMillis());
+        profile.setLastUpdated(now);
         profile.setValidFor(timestamp);
         profile.setImage(images.get(0));
         DataStore.saveForecast(profile);
@@ -183,7 +187,7 @@ public class FlyWithMeEndpoint {
         Forecast theta = new Forecast();
         theta.setTakeoffId(takeoffId);
         theta.setType(Forecast.ForecastType.THETA);
-        theta.setLastUpdated(System.currentTimeMillis());
+        theta.setLastUpdated(now);
         theta.setValidFor(timestamp);
         theta.setImage(images.get(1));
         DataStore.saveForecast(theta);
@@ -191,7 +195,7 @@ public class FlyWithMeEndpoint {
         Forecast text = new Forecast();
         text.setTakeoffId(takeoffId);
         text.setType(Forecast.ForecastType.TEXT);
-        text.setLastUpdated(System.currentTimeMillis());
+        text.setLastUpdated(now);
         text.setValidFor(timestamp);
         text.setImage(images.get(2));
         DataStore.saveForecast(text);
@@ -233,6 +237,7 @@ public class FlyWithMeEndpoint {
         sb.setLength(sb.length() - 1);
 
         // send message
+        log.info("Sending activity message to clients");
         Message msg = new Message.Builder()
                 .collapseKey("flywithme-takeoff-activity")
                 .delayWhileIdle(true)

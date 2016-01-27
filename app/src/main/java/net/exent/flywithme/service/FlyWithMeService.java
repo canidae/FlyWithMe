@@ -65,12 +65,13 @@ public class FlyWithMeService extends IntentService implements GoogleApiClient.C
     public static final String ARG_ACTIVITY = "activity";
     public static final String ARG_REFRESH_TOKEN = "refreshToken";
     public static final String ARG_TAKEOFF_ID = "takeoffId";
-    public static final String ARG_TIMESTAMP = "timestamp";
+    public static final String ARG_TIMESTAMP_IN_SECONDS = "timestamp";
 
     private static final String TAG = FlyWithMeService.class.getName();
     private static final String PROJECT_ID = "586531582715";
     private static final String SERVER_URL = "https://4-dot-flywithme-server.appspot.com/_ah/api/"; // "http://88.95.84.204:8080/_ah/api/"
     private static final long DISMISS_TIMEOUT = 21600000;
+    private static final long[] VIBRATE_DATA = new long[] {0, 100, 100, 100, 100, 300, 100, 100}; // actually morse for "F"
 
     private static GoogleApiClient googleApiClient;
     private static PendingIntent locationIntent;
@@ -147,7 +148,7 @@ public class FlyWithMeService extends IntentService implements GoogleApiClient.C
                         .addAction(android.R.drawable.ic_input_add, getString(R.string.yes), scheduleIntent)
                         .addAction(android.R.drawable.ic_dialog_alert, getString(R.string.never_notify_here), blacklistIntent);
                 if (sharedPref.getBoolean("pref_near_takeoff_vibrate", true))
-                    notificationBuilder.setVibrate(new long[]{0, 100, 100, 100, 100, 100});
+                    notificationBuilder.setVibrate(VIBRATE_DATA);
                 Notification notification = notificationBuilder.build();
                 notification.flags |= Notification.FLAG_AUTO_CANCEL;
                 ((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).notify(0, notification);
@@ -181,10 +182,10 @@ public class FlyWithMeService extends IntentService implements GoogleApiClient.C
                     continue; // user dismissed activity for this takeoff recently, ignore takeoff
                 if (blacklistedActivityPref.contains("" + takeoff.getId()))
                     continue; // user blacklisted activity for this takeoff, ignore takeoff
-                PendingIntent clickIntent = PendingIntent.getService(this, 0, new Intent(this, FlyWithMeService.class).setAction(ACTION_CLICK_ACTIVITY_NOTIFICATION).putExtra(ARG_TAKEOFF_ID, takeoffId).putExtra(ARG_TIMESTAMP, timestamp), PendingIntent.FLAG_UPDATE_CURRENT);
-                PendingIntent dismissIntent = PendingIntent.getService(this, 0, new Intent(this, FlyWithMeService.class).setAction(ACTION_DISMISS_ACTIVITY_NOTIFICATION).putExtra(ARG_TAKEOFF_ID, takeoffId).putExtra(ARG_TIMESTAMP, timestamp), PendingIntent.FLAG_UPDATE_CURRENT);
-                PendingIntent scheduleIntent = PendingIntent.getService(this, 0, new Intent(this, FlyWithMeService.class).setAction(ACTION_SCHEDULE_ACTIVITY_NOTIFICATION).putExtra(ARG_TAKEOFF_ID, takeoffId).putExtra(ARG_TIMESTAMP, timestamp), PendingIntent.FLAG_UPDATE_CURRENT);
-                PendingIntent blacklistIntent = PendingIntent.getService(this, 0, new Intent(this, FlyWithMeService.class).setAction(ACTION_BLACKLIST_ACTIVITY_NOTIFICATION).putExtra(ARG_TAKEOFF_ID, takeoffId).putExtra(ARG_TIMESTAMP, timestamp), PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent clickIntent = PendingIntent.getService(this, 0, new Intent(this, FlyWithMeService.class).setAction(ACTION_CLICK_ACTIVITY_NOTIFICATION).putExtra(ARG_TAKEOFF_ID, takeoffId).putExtra(ARG_TIMESTAMP_IN_SECONDS, timestamp), PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent dismissIntent = PendingIntent.getService(this, 0, new Intent(this, FlyWithMeService.class).setAction(ACTION_DISMISS_ACTIVITY_NOTIFICATION).putExtra(ARG_TAKEOFF_ID, takeoffId).putExtra(ARG_TIMESTAMP_IN_SECONDS, timestamp), PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent scheduleIntent = PendingIntent.getService(this, 0, new Intent(this, FlyWithMeService.class).setAction(ACTION_SCHEDULE_ACTIVITY_NOTIFICATION).putExtra(ARG_TAKEOFF_ID, takeoffId).putExtra(ARG_TIMESTAMP_IN_SECONDS, timestamp), PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent blacklistIntent = PendingIntent.getService(this, 0, new Intent(this, FlyWithMeService.class).setAction(ACTION_BLACKLIST_ACTIVITY_NOTIFICATION).putExtra(ARG_TAKEOFF_ID, takeoffId).putExtra(ARG_TIMESTAMP_IN_SECONDS, timestamp), PendingIntent.FLAG_UPDATE_CURRENT);
                 DateFormat dateFormat = SimpleDateFormat.getTimeInstance();
                 Notification.Builder notificationBuilder = new Notification.Builder(this)
                         .setSmallIcon(R.drawable.notification_icon)
@@ -196,7 +197,7 @@ public class FlyWithMeService extends IntentService implements GoogleApiClient.C
                         .addAction(android.R.drawable.ic_input_add, getString(R.string.yes), scheduleIntent)
                         .addAction(android.R.drawable.ic_dialog_alert, getString(R.string.never_notify_here), blacklistIntent);
                 if (sharedPref.getBoolean("pref_takeoff_activity_vibrate", true))
-                    notificationBuilder.setVibrate(new long[]{0, 100, 100, 100, 100, 100});
+                    notificationBuilder.setVibrate(VIBRATE_DATA);
                 Notification notification = notificationBuilder.build();
                 notification.flags |= Notification.FLAG_AUTO_CANCEL;
                 ((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).notify(0, notification);
@@ -258,9 +259,9 @@ public class FlyWithMeService extends IntentService implements GoogleApiClient.C
                 return;
             }
             long takeoffId = bundle.getLong(ARG_TAKEOFF_ID);
-            long timestamp = bundle.getLong(ARG_TIMESTAMP);
+            long timestamp = bundle.getLong(ARG_TIMESTAMP_IN_SECONDS);
             try {
-                getServer().scheduleFlight(pilotId, takeoffId, timestamp);
+                getServer().scheduleFlight(pilotId, takeoffId, timestamp).execute();
             } catch (IOException e) {
                 Log.w(TAG, "Scheduling flight failed", e);
             }
@@ -296,7 +297,7 @@ public class FlyWithMeService extends IntentService implements GoogleApiClient.C
             sendDisplayForecastIntent(takeoffId, forecasts);
         } else if (ACTION_GET_SOUNDING.equals(action)) {
             long takeoffId = bundle.getLong(ARG_TAKEOFF_ID, -1);
-            long timestamp = bundle.getLong(ARG_TIMESTAMP, -1);
+            long timestamp = bundle.getLong(ARG_TIMESTAMP_IN_SECONDS, -1);
             List<Forecast> forecasts = null;
             try {
                 forecasts = getServer().getSounding(takeoffId, timestamp).execute().getItems();
@@ -312,9 +313,10 @@ public class FlyWithMeService extends IntentService implements GoogleApiClient.C
                 return;
             }
             long takeoffId = bundle.getLong(ARG_TAKEOFF_ID, -1);
-            long timestamp = bundle.getLong(ARG_TIMESTAMP, -1);
+            long timestamp = bundle.getLong(ARG_TIMESTAMP_IN_SECONDS, -1);
             try {
-                getServer().scheduleFlight(pilotId, takeoffId, timestamp);
+                Log.i(TAG, "Scheduling: " + takeoffId + " - " + timestamp);
+                getServer().scheduleFlight(pilotId, takeoffId, timestamp).execute();
             } catch (IOException e) {
                 Log.w(TAG, "Scheduling flight failed", e);
             }
@@ -326,9 +328,9 @@ public class FlyWithMeService extends IntentService implements GoogleApiClient.C
                 return;
             }
             long takeoffId = bundle.getLong(ARG_TAKEOFF_ID, -1);
-            long timestamp = bundle.getLong(ARG_TIMESTAMP, -1);
+            long timestamp = bundle.getLong(ARG_TIMESTAMP_IN_SECONDS, -1);
             try {
-                getServer().unscheduleFlight(pilotId, takeoffId, timestamp);
+                getServer().unscheduleFlight(pilotId, takeoffId, timestamp).execute();
             } catch (IOException e) {
                 Log.w(TAG, "Unscheduling flight failed", e);
             }

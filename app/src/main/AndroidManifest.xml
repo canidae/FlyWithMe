@@ -18,11 +18,9 @@
         android:glEsVersion="0x00020000"
         android:required="true" />
 
-
     <permission
         android:name="com.example.gcm.permission.C2D_MESSAGE"
         android:protectionLevel="signature" />
-
 
     <application
         android:allowBackup="true"
@@ -35,16 +33,6 @@
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyDxop_2QoIHu-zgof2EhWMC6f5gxAZQOpI" />
-
-        <receiver
-            android:name="net.exent.flywithme.service.FlyWithMeBroadcastReceiver"
-            android:permission="com.google.android.c2dm.permission.SEND">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
-                <category android:name="net.exent.flywithme" />
-            </intent-filter>
-        </receiver>
 
         <receiver
             android:name="com.google.android.gms.gcm.GcmReceiver"
