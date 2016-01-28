@@ -24,9 +24,8 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
  */
 public class DataStore {
     private static final Logger log = Logger.getLogger(DataStore.class.getName());
-    private static final String TAKEOFF_SCHEDULES_KEY_PREFIX = "takeoff_schedules_";
-    private static final String TAKEOFFS_RECENTLY_SCHEDULED_KEY = "takeoffs_recently_scheduled";
     private static final String TAKEOFFS_RECENTLY_UPDATED_KEY_PREFIX = "takeoffs_recently_updated_";
+    private static final String ALL_SCHEDULES_KEY = "all_schedules";
     private static final String ALL_PILOTS_KEY = "all_pilots";
     private static final long FORECAST_CACHE_LIFETIME = 21600000; // 6 hours
 
@@ -84,21 +83,21 @@ public class DataStore {
     }
 
     public static void savePilot(Pilot pilot) {
-        memcacheDeleteLargeList(ALL_PILOTS_KEY); // NOTE: important
         ofy().save().entity(pilot).now();
         String key = "pilot_" + pilot.getId();
         memcacheSave(key, pilot);
+        memcacheDeleteLargeList(ALL_PILOTS_KEY); // NOTE: important
     }
 
     public static void deletePilot(String pilotId) {
-        memcacheDeleteLargeList(ALL_PILOTS_KEY); // NOTE: important
         Pilot pilot = loadPilot(pilotId);
         if (pilot == null) {
             return;
         }
         String key = "pilot_" + pilot.getId();
-        memcacheDelete(key);
         ofy().delete().entity(pilot).now();
+        memcacheDelete(key);
+        memcacheDeleteLargeList(ALL_PILOTS_KEY); // NOTE: important
     }
 
     public static List<Pilot> getAllPilots() {
@@ -131,17 +130,16 @@ public class DataStore {
         ofy().save().entity(schedule).now();
         String key = "schedule_" + schedule.getTakeoffId() + "_" + schedule.getTimestamp();
         memcacheSave(key, schedule);
-        memcacheDelete(TAKEOFFS_RECENTLY_SCHEDULED_KEY); // NOTE: somewhat important
-        memcacheDelete(TAKEOFF_SCHEDULES_KEY_PREFIX + schedule.getTakeoffId()); // NOTE: somewhat important
+        memcacheDeleteLargeList(ALL_SCHEDULES_KEY); // NOTE: important
     }
 
-    public static List<Schedule> getTakeoffSchedules(long takeoffId) {
-        List takeoffSchedules = (List) memcacheLoad(TAKEOFF_SCHEDULES_KEY_PREFIX + takeoffId);
-        if (takeoffSchedules != null) {
+    public static List<Schedule> getAllSchedules() {
+        List cachedSchedules = (List) memcacheLoadLargeList(ALL_SCHEDULES_KEY);
+        if (cachedSchedules != null) {
             try {
                 List<Schedule> schedules = new ArrayList<>();
-                for (Object object : takeoffSchedules)
-                    schedules.add(loadSchedule(takeoffId, (Long) object));
+                for (Object object : cachedSchedules)
+                    schedules.add((Schedule) object);
                 return schedules;
             } catch (Exception e) {
                 log.log(Level.WARNING, "Something's wrong with memcache entry for recently scheduled takeoffs", e);
@@ -149,43 +147,10 @@ public class DataStore {
         }
 
         List<Schedule> schedules = ofy().load().type(Schedule.class)
-                .filter("takeoffId", takeoffId)
-                .filter("timestamp >=", (System.currentTimeMillis() - 7200000) / 1000) // 2 hours into the past
+                .filter("timestamp >=", (System.currentTimeMillis() - 7200000) / 1000) // 6 hours into the past
+                .order("-timestamp")
                 .list();
-        List<Long> newTakeoffSchedules = new ArrayList<>();
-        for (Schedule schedule : schedules)
-            newTakeoffSchedules.add(schedule.getTimestamp());
-        memcacheSave(TAKEOFF_SCHEDULES_KEY_PREFIX + takeoffId, newTakeoffSchedules);
-        return schedules;
-    }
-
-    public static List<Schedule> getUpcomingSchedules() {
-        // NOTE: we must delete the memcache entry when we update the schedule for a takeoff
-        List recentlyScheduled = (List) memcacheLoad(TAKEOFFS_RECENTLY_SCHEDULED_KEY);
-        if (recentlyScheduled != null) {
-            try {
-                List<Schedule> schedules = new ArrayList<>();
-                for (int i = 0; i < recentlyScheduled.size(); i += 2) {
-                    long takeoffId = (Long) recentlyScheduled.get(i);
-                    long timestamp = (Long) recentlyScheduled.get(i + 1);
-                    schedules.add(loadSchedule(takeoffId, timestamp));
-                }
-                return schedules;
-            } catch (Exception e) {
-                log.log(Level.WARNING, "Something's wrong with memcache entry for recently scheduled takeoffs", e);
-            }
-        }
-
-        List<Schedule> schedules = ofy().load().type(Schedule.class)
-                .filter("timestamp >=", (System.currentTimeMillis() - 7200000) / 1000) // 2 hours into the past
-                .filter("timestamp <=", (System.currentTimeMillis() + 43200000) / 1000) // 12 hours into the future
-                .list();
-        List<Long> newRecentlyScheduled = new ArrayList<>();
-        for (Schedule schedule : schedules) {
-            newRecentlyScheduled.add(schedule.getTakeoffId());
-            newRecentlyScheduled.add(schedule.getTimestamp());
-        }
-        memcacheSave(TAKEOFFS_RECENTLY_SCHEDULED_KEY, newRecentlyScheduled);
+        memcacheSaveLargeList(ALL_SCHEDULES_KEY, schedules);
         return schedules;
     }
 
@@ -257,8 +222,14 @@ public class DataStore {
             Integer chunks = (Integer) memcache.get(keyPrefix);
             if (chunks == null)
                 return null;
-            for (int chunk = 0; chunk < chunks; ++chunk)
-                result.addAll((List) memcache.get(keyPrefix + chunk));
+            for (int chunk = 0; chunk < chunks; ++chunk) {
+                List subList = (List) memcache.get(keyPrefix + chunk);
+                if (subList == null) {
+                    log.warning("Seems like we're missing some chunks, must read again from datastore");
+                    return null;
+                }
+                result.addAll(subList);
+            }
             return result;
         } catch (Exception e) {
             log.log(Level.WARNING, "Unable to load large list from memcache. Key prefix: " + keyPrefix, e);
@@ -276,8 +247,10 @@ public class DataStore {
                     int chunkSize = list.size() / chunks;
                     for (int i = 0; i < chunks; ++i)
                         memcache.put(keyPrefix + i, new ArrayList<>(list.subList(i * chunkSize, (i + 1) * chunkSize)));
-                    if (list.size() > chunks * chunkSize)
+                    if (list.size() > chunks * chunkSize) {
                         memcache.put(keyPrefix + chunks, new ArrayList<>(list.subList(chunks * chunkSize, list.size())));
+                        ++chunks;
+                    }
                     memcache.put(keyPrefix, chunks);
                     break;
                 } catch (MemcacheServiceException e) {

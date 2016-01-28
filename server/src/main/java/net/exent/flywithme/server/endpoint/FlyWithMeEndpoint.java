@@ -14,7 +14,11 @@ import net.exent.flywithme.server.util.GcmUtil;
 import net.exent.flywithme.server.util.NoaaProxy;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 import java.util.logging.Logger;
 
 import javax.inject.Named;
@@ -96,10 +100,10 @@ public class FlyWithMeEndpoint {
         }
     }
 
-    @ApiMethod(name = "getTakeoffSchedule")
-    public List<Schedule> getTakeoffSchedule(@Named("takeoffIds") long takeoffId) {
-        // we'll scramble pilotIds, only keep the last few characters
-        List<Schedule> schedules = DataStore.getTakeoffSchedules(takeoffId);
+    @ApiMethod(name = "getSchedules")
+    public List<Schedule> getSchedules() {
+        List<Schedule> schedules = DataStore.getAllSchedules();
+        // we'll scramble pilotIds, only keep the last few characters for identification
         for (Schedule schedule : schedules) {
             for (Pilot pilot : schedule.getPilots())
                 pilot.setId(pilot.getId().substring(pilot.getId().length() - 6));
@@ -211,24 +215,34 @@ public class FlyWithMeEndpoint {
      * Sends a message to client about takeoffs with activity in the near future.
      */
     private void sendActivityUpdate() {
-
-        // TODO: need to rethink this:
-        // we don't want users to ask for schedules all the time
-        // and how can we make sure the user won't miss out on any data?
-
         // find takeoffs with activity
-        List<Schedule> schedules = DataStore.getUpcomingSchedules();
-        StringBuilder sb = new StringBuilder();
+        List<Schedule> schedules = DataStore.getAllSchedules();
+        Map<Long, Set<Long>> activity = new TreeMap<>(); // Map<timestamp, Set<takeoffId>>
         for (Schedule schedule : schedules) {
-            if (sb.length() > 4000) {
-                log.warning("Too much scheduled activity, can't add any more entries");
-                break; // message is getting too large, don't add any more
+            Set<Long> takeoffs = activity.get(schedule.getTimestamp());
+            if (takeoffs == null) {
+                takeoffs = new HashSet<>();
+                activity.put(schedule.getTimestamp(), takeoffs);
             }
-            sb.append(schedule.getTakeoffId()).append(':').append(schedule.getTimestamp()).append(',');
+            takeoffs.add(schedule.getTakeoffId());
+        }
+        // create message, format is: <timestamp>:<takeoffId>,<takeoffId>,...;<timestamp>:<takeoffId>,...;...
+        StringBuilder sb = new StringBuilder();
+        for (Map.Entry<Long, Set<Long>> entry : activity.entrySet()) {
+            sb.append(entry.getKey()).append(':'); // "<timestamp>:"
+            for (Long takeoffId : entry.getValue())
+                sb.append(takeoffId).append(','); // "<takeoffId>,"
+            sb.setLength(sb.length() - 1); // remove the trailing ","
+            sb.append(';');
         }
         if (sb.length() <= 0)
             return; // no activity
-        sb.setLength(sb.length() - 1);
+        sb.setLength(sb.length() - 1); // remove trailing ";"
+        if (sb.length() > 4000) {
+            log.warning("Too much scheduled activity, trimming away activity farthest into the future");
+            while (sb.length() > 4000)
+                sb.setLength(sb.lastIndexOf(",")); // remove one takeoff at the time, starting from the end
+        }
 
         // send message
         log.info("Sending activity message to clients");

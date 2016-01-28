@@ -62,7 +62,6 @@ public class TakeoffList extends Fragment implements GoogleApiClient.ConnectionC
 
         View view = inflater.inflate(R.layout.takeoff_list, container, false);
         takeoffArrayAdapter = new TakeoffArrayAdapter(getActivity());
-        updateTakeoffList(location);
         ListView listView = (ListView) view.findViewById(R.id.takeoffListView);
         listView.setAdapter(takeoffArrayAdapter);
         listView.setOnItemClickListener(new OnItemClickListener() {
@@ -71,6 +70,7 @@ public class TakeoffList extends Fragment implements GoogleApiClient.ConnectionC
                 Takeoff takeoff = takeoffs.get(position);
                 Bundle args = new Bundle();
                 args.putParcelable(TakeoffDetails.ARG_TAKEOFF, takeoff);
+                // TODO: replace with intent?
                 FlyWithMe.showFragment(getActivity(), "takeoffDetails," + takeoff.getId(), TakeoffDetails.class, args);
             }
         });
@@ -84,6 +84,9 @@ public class TakeoffList extends Fragment implements GoogleApiClient.ConnectionC
     public void onStart() {
         super.onStart();
         googleApiClient.connect();
+
+        // update takeoff list
+        updateTakeoffList(location);
     }
 
     @Override

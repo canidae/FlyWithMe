@@ -46,7 +46,7 @@ public class FlyWithMe extends Activity implements GoogleApiClient.ConnectionCal
     public static final String ACTION_SHOW_FORECAST = "showForecast";
     public static final String ACTION_SHOW_PREFERENCES = "showPreferences";
     public static final String ACTION_SHOW_TAKEOFF_DETAILS = "showTakeoffDetails";
-    public static final String ACTION_SHOW_TAKEOFF_SCHEDULE = "showTakeoffSchedule";
+    public static final String ACTION_UPDATE_SCHEDULE_DATA = "updateScheduleData";
 
     public static final String ARG_TAKEOFF_ID = "takeoffId";
 
@@ -54,6 +54,14 @@ public class FlyWithMe extends Activity implements GoogleApiClient.ConnectionCal
     private Location location;
 
     public static void showFragment(Activity activity, String tag, Class<? extends Fragment> fragmentClass, Bundle args) {
+        /* first check if schedules needs to be refreshed */
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(activity);
+        if (sharedPref.getBoolean("pref_schedule_needs_update", true)) {
+            Intent intent = new Intent(activity, FlyWithMeService.class);
+            intent.setAction(FlyWithMeService.ACTION_GET_SCHEDULES);
+            activity.startService(intent);
+        }
+        /* then display the fragment requested */
         FragmentManager fragmentManager = activity.getFragmentManager();
         if (tag != null && fragmentManager.findFragmentByTag(tag) != null) {
             fragmentManager.popBackStack(tag, 0);
@@ -191,29 +199,6 @@ public class FlyWithMe extends Activity implements GoogleApiClient.ConnectionCal
     }
 
     @Override
-    protected void onNewIntent(Intent intent) {
-        Log.d(getClass().getName(), "onNewIntent(" + intent + ")");
-        super.onNewIntent(intent);
-        if (ACTION_SHOW_FORECAST.equals(intent.getAction())) {
-            showFragment(this, null, NoaaForecast.class, intent.getExtras());
-        } else if (ACTION_SHOW_PREFERENCES.equals(intent.getAction())) {
-            showFragment(this, "preferences", Preferences.class, null);
-        } else if (ACTION_SHOW_TAKEOFF_DETAILS.equals(intent.getAction())) {
-            Database database = new Database(this);
-            Takeoff takeoff = database.getTakeoff(intent.getLongExtra(ARG_TAKEOFF_ID, 0));
-            Bundle args = new Bundle();
-            args.putParcelable(TakeoffDetails.ARG_TAKEOFF, takeoff);
-            showFragment(this, "takeoffDetails," + takeoff.getId(), TakeoffDetails.class, args);
-        } else if (ACTION_SHOW_TAKEOFF_SCHEDULE.equals(intent.getAction())) {
-            Database database = new Database(this);
-            Takeoff takeoff = database.getTakeoff(intent.getLongExtra(ARG_TAKEOFF_ID, 0));
-            Bundle args = new Bundle();
-            args.putParcelable(TakeoffSchedule.ARG_TAKEOFF, takeoff);
-            showFragment(this, "takeoffSchedule," + takeoff.getId(), TakeoffSchedule.class, args);
-        }
-    }
-
-    @Override
     public void onBackPressed() {
         if (getFragmentManager().getBackStackEntryCount() <= 1)
             finish();
@@ -232,6 +217,31 @@ public class FlyWithMe extends Activity implements GoogleApiClient.ConnectionCal
     public void onStop() {
         super.onStop();
         googleApiClient.disconnect();
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        Log.d(getClass().getName(), "onNewIntent(" + intent + ")");
+        super.onNewIntent(intent);
+        if (ACTION_SHOW_FORECAST.equals(intent.getAction())) {
+            showFragment(this, null, NoaaForecast.class, intent.getExtras());
+        } else if (ACTION_SHOW_PREFERENCES.equals(intent.getAction())) {
+            showFragment(this, "preferences", Preferences.class, null);
+        } else if (ACTION_SHOW_TAKEOFF_DETAILS.equals(intent.getAction())) {
+            Database database = new Database(this);
+            Takeoff takeoff = database.getTakeoff(intent.getLongExtra(ARG_TAKEOFF_ID, 0));
+            Bundle args = new Bundle();
+            args.putParcelable(TakeoffDetails.ARG_TAKEOFF, takeoff);
+            showFragment(this, "takeoffDetails," + takeoff.getId(), TakeoffDetails.class, args);
+        } else if (ACTION_UPDATE_SCHEDULE_DATA.equals(intent.getAction())) {
+            refreshCurrentFragment();
+        }
+    }
+
+    private void refreshCurrentFragment() {
+        Fragment fragment = getFragmentManager().findFragmentById(R.id.fragmentContainer);
+        if (fragment != null)
+            getFragmentManager().beginTransaction().detach(fragment).attach(fragment).commit();
     }
 
     private class ImportTakeoffTask extends AsyncTask<Void, Void, Void> {
@@ -256,16 +266,7 @@ public class FlyWithMe extends Activity implements GoogleApiClient.ConnectionCal
             statusText.setVisibility(View.GONE);
 
             // update list/map if user is looking at either
-            Fragment fragment = getFragmentManager().findFragmentById(R.id.fragmentContainer);
-            if (fragment != null) {
-                if (fragment instanceof TakeoffList) {
-                    TakeoffList takeoffList = (TakeoffList) fragment;
-                    takeoffList.onStart();
-                } else if (fragment instanceof TakeoffMap) {
-                    TakeoffMap takeoffMap = (TakeoffMap) fragment;
-                    takeoffMap.drawMap();
-                }
-            }
+            refreshCurrentFragment();
         }
 
         private void importTakeoffs() {

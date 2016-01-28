@@ -37,8 +37,17 @@ import java.util.Locale;
 public class TakeoffSchedule extends Fragment {
     public static final String ARG_TAKEOFF = "takeoff";
     private Takeoff takeoff;
-    private TakeoffScheduleAdapter scheduleAdapter;
     private Calendar calendar = GregorianCalendar.getInstance();
+
+    public TakeoffSchedule() {
+        // set minutes to the last half hour
+        calendar.set(Calendar.MINUTE, calendar.get(Calendar.MINUTE) / 30 * 30);
+        // set seconds and milliseconds to 0
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        // add 30 minutes to the calendar
+        calendar.add(Calendar.MINUTE, 30);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -77,22 +86,15 @@ public class TakeoffSchedule extends Fragment {
         }
 
         ExpandableListView scheduleList = (ExpandableListView) getActivity().findViewById(R.id.scheduleRegisteredFlights);
-        scheduleAdapter = new TakeoffScheduleAdapter();
+        TakeoffScheduleAdapter scheduleAdapter = new TakeoffScheduleAdapter();
         scheduleList.setAdapter(scheduleAdapter);
-    }
 
-    @Override
-    public void onResume() {
-        super.onResume();
         // update schedule list
         scheduleAdapter.updateData();
         // expand all groups
-        ExpandableListView scheduleList = (ExpandableListView) getActivity().findViewById(R.id.scheduleRegisteredFlights);
         for (int i = 0; i < scheduleAdapter.getGroupCount(); ++i)
             scheduleList.expandGroup(i);
         // make schedule button clickable again
-        Button scheduleFlight = (Button) getActivity().findViewById(R.id.scheduleFlightButton);
-        scheduleFlight.setText(getString(R.string.scheduling_flight));
         scheduleFlight.setEnabled(true);
         ProgressBar progressBar = (ProgressBar) getActivity().findViewById(R.id.scheduleProgressBar);
         progressBar.setVisibility(View.GONE);
@@ -181,14 +183,6 @@ public class TakeoffSchedule extends Fragment {
                     scheduleFlight(calendar.getTimeInMillis());
                 }
             });
-
-            // set minutes to the last half hour
-            calendar.set(Calendar.MINUTE, calendar.get(Calendar.MINUTE) / 30 * 30);
-            // set seconds and milliseconds to 0
-            calendar.set(Calendar.SECOND, 0);
-            calendar.set(Calendar.MILLISECOND, 0);
-            // add 30 minutes to the calendar
-            updateCalendar(Calendar.MINUTE, 30);
         } catch (Exception e) {
             Log.w(getClass().getName(), "showTakeoffSchedule() failed unexpectedly", e);
         }
@@ -222,7 +216,6 @@ public class TakeoffSchedule extends Fragment {
 
     private void scheduleFlight(long timestamp) {
         Button scheduleFlight = (Button) getActivity().findViewById(R.id.scheduleFlightButton);
-        scheduleFlight.setText(getString(R.string.scheduling_flight));
         scheduleFlight.setEnabled(false);
         ProgressBar progressBar = (ProgressBar) getActivity().findViewById(R.id.scheduleProgressBar);
         progressBar.setVisibility(View.VISIBLE);
@@ -236,7 +229,6 @@ public class TakeoffSchedule extends Fragment {
 
     private void unscheduleFlight(long timestamp) {
         Button scheduleFlight = (Button) getActivity().findViewById(R.id.scheduleFlightButton);
-        scheduleFlight.setText(getString(R.string.scheduling_flight));
         scheduleFlight.setEnabled(false);
         ProgressBar progressBar = (ProgressBar) getActivity().findViewById(R.id.scheduleProgressBar);
         progressBar.setVisibility(View.VISIBLE);

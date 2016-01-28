@@ -37,6 +37,10 @@ public class Database extends SQLiteOpenHelper {
     }
 
     public synchronized List<Schedule> getTakeoffSchedules(Takeoff takeoff) {
+        if (takeoff == null) {
+            Log.w(getClass().getName(), "Unable to get takeoff schedules, argument is null");
+            return null;
+        }
         List<Schedule> schedules = new ArrayList<>();
         SQLiteDatabase db = getReadableDatabase();
         if (db == null)
@@ -76,18 +80,20 @@ public class Database extends SQLiteOpenHelper {
         }
     }
 
-    public synchronized void updateTakeoffSchedule(long takeoffId, List<Schedule> schedules) {
+    public synchronized void updateSchedules(List<Schedule> schedules) {
+        if (schedules == null) {
+            Log.w(getClass().getName(), "Unable to update schedules, argument is null");
+            return;
+        }
         SQLiteDatabase db = getWritableDatabase();
         if (db == null)
             throw new IllegalArgumentException("Unable to get database object");
         try {
-            // we'll fully replace the entries for this takeoff
-            // we'll also delete old entries to clean up the database
-            db.execSQL("delete from schedule where takeoff_id = " + takeoffId + " or date(timestamp, 'unixepoch', '+2 days') < date('now')");
+            db.execSQL("delete from schedule");
             for (Schedule schedule : schedules) {
                 for (Pilot pilot : schedule.getPilots()) {
                     ContentValues values = new ContentValues();
-                    values.put("takeoff_id", takeoffId);
+                    values.put("takeoff_id", schedule.getTakeoffId());
                     values.put("timestamp", schedule.getTimestamp());
                     values.put("pilot_name", pilot.getName());
                     values.put("pilot_phone", pilot.getPhone());
@@ -117,6 +123,10 @@ public class Database extends SQLiteOpenHelper {
     }
 
     public synchronized void updateTakeoff(Takeoff takeoff) {
+        if (takeoff == null) {
+            Log.w(getClass().getName(), "Unable to update takeoff, argument is null");
+            return;
+        }
         SQLiteDatabase db = getWritableDatabase();
         if (db == null)
             throw new IllegalArgumentException("Unable to get database object");
@@ -161,11 +171,15 @@ public class Database extends SQLiteOpenHelper {
     }
 
     public synchronized void updateFavourite(Takeoff takeoff) {
-        ContentValues contentValues = new ContentValues();
-        contentValues.put("favourite", takeoff.isFavourite() ? 1 : 0);
+        if (takeoff == null) {
+            Log.w(getClass().getName(), "Unable to update takeoff, argument is null");
+            return;
+        }
         SQLiteDatabase db = getWritableDatabase();
         if (db == null)
             throw new IllegalArgumentException("Unable to get database object");
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("favourite", takeoff.isFavourite() ? 1 : 0);
         try {
             db.update("takeoff", contentValues, "takeoff_id = " + takeoff.getId(), null);
         } finally {

@@ -41,16 +41,18 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * This class handles Google Cloud Messages to and from server, and displays notifications.
  */
 public class FlyWithMeService extends IntentService implements GoogleApiClient.ConnectionCallbacks {
     public static final String ACTION_REGISTER_PILOT = "registerPilot";
-    public static final String ACTION_GET_METEOGRAM = "getMeteogram";
-    public static final String ACTION_GET_SOUNDING = "getSounding";
     public static final String ACTION_SCHEDULE_FLIGHT = "scheduleFlight";
     public static final String ACTION_UNSCHEDULE_FLIGHT = "unscheduleFlight";
+    public static final String ACTION_GET_METEOGRAM = "getMeteogram";
+    public static final String ACTION_GET_SOUNDING = "getSounding";
+    public static final String ACTION_GET_SCHEDULES = "getSchedules";
     public static final String ACTION_GET_UPDATED_TAKEOFFS = "getUpdatedTakeoffs";
     public static final String ACTION_CHECK_CURRENT_LOCATION = "checkCurrentLocation";
     public static final String ACTION_CHECK_ACTIVITY = "checkActivity";
@@ -125,10 +127,12 @@ public class FlyWithMeService extends IntentService implements GoogleApiClient.C
             SharedPreferences dismissedTakeoffsPref = getSharedPreferences(ACTION_DISMISS_TAKEOFF_NOTIFICATION, Context.MODE_PRIVATE);
             SharedPreferences blacklistedTakeoffsPref = getSharedPreferences(ACTION_BLACKLIST_TAKEOFF_NOTIFICATION, Context.MODE_PRIVATE);
             Database database = new Database(this);
+            long takeoffMaxDistance = Long.parseLong(sharedPref.getString("pref_near_takeoff_max_distance", "500"));
+            boolean vibrate = sharedPref.getBoolean("pref_near_takeoff_vibrate", true);
             boolean cancelNotification = true;
             List<net.exent.flywithme.bean.Takeoff> takeoffs = database.getTakeoffs(location.getLatitude(), location.getLongitude(), 10, false);
             for (net.exent.flywithme.bean.Takeoff takeoff : takeoffs) {
-                if (location.distanceTo(takeoff.getLocation()) > Long.parseLong(sharedPref.getString("pref_near_takeoff_max_distance", "500")))
+                if (location.distanceTo(takeoff.getLocation()) > takeoffMaxDistance)
                     break; // takeoff too far away (all subsequent takeoffs will be even further away)
                 if (dismissedTakeoffsPref.getLong("" + takeoff.getId(), 0) + DISMISS_TIMEOUT > System.currentTimeMillis())
                     continue; // user dismissed this takeoff recently, ignore takeoff
@@ -148,7 +152,7 @@ public class FlyWithMeService extends IntentService implements GoogleApiClient.C
                         .setAutoCancel(true)
                         .addAction(android.R.drawable.ic_input_add, getString(R.string.yes), scheduleIntent)
                         .addAction(android.R.drawable.ic_dialog_alert, getString(R.string.never_notify_here), blacklistIntent);
-                if (sharedPref.getBoolean("pref_near_takeoff_vibrate", true))
+                if (vibrate)
                     notificationBuilder.setVibrate(VIBRATE_DATA);
                 Notification notification = notificationBuilder.build();
                 notification.flags |= Notification.FLAG_AUTO_CANCEL;
@@ -159,50 +163,67 @@ public class FlyWithMeService extends IntentService implements GoogleApiClient.C
             if (cancelNotification)
                 ((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).cancel(0); // we're not near any known takeoff, hide notification
         } else if (ACTION_CHECK_ACTIVITY.equals(action)) {
-            String rawTakeoffs = bundle.getString(ARG_ACTIVITY);
-            if (rawTakeoffs == null)
+            String message = bundle.getString(ARG_ACTIVITY);
+            if (message == null)
                 return;
             SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+            sharedPref.edit().putBoolean("pref_schedule_needs_update", true).apply();
             if (!sharedPref.getBoolean("pref_takeoff_activity_notifications", true))
                 return; // user don't want notifications on activity
-            SharedPreferences dismissedActivityPref = getSharedPreferences(ACTION_DISMISS_ACTIVITY_NOTIFICATION, Context.MODE_PRIVATE);
-            SharedPreferences blacklistedActivityPref = getSharedPreferences(ACTION_BLACKLIST_ACTIVITY_NOTIFICATION, Context.MODE_PRIVATE);
-            String[] takeoffIdsAndTimestamps = rawTakeoffs.split(",");
-            Database database = new Database(this);
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
                 return;
             Location location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
-            for (String takeoffIdAndTimestamp : takeoffIdsAndTimestamps) {
-                String[] tmp = takeoffIdAndTimestamp.split(":");
-                long takeoffId = Long.parseLong(tmp[0]);
-                long timestamp = Long.parseLong(tmp[1]) * 1000;
-                net.exent.flywithme.bean.Takeoff takeoff = database.getTakeoff(takeoffId);
-                if (location.distanceTo(takeoff.getLocation()) > Long.parseLong(sharedPref.getString("pref_takeoff_activity_max_distance", "100000")))
-                    continue;
-                if (dismissedActivityPref.getLong("" + takeoff.getId(), 0) + DISMISS_TIMEOUT > System.currentTimeMillis())
-                    continue; // user dismissed activity for this takeoff recently, ignore takeoff
-                if (blacklistedActivityPref.contains("" + takeoff.getId()))
-                    continue; // user blacklisted activity for this takeoff, ignore takeoff
-                PendingIntent clickIntent = PendingIntent.getService(this, 0, new Intent(this, FlyWithMeService.class).setAction(ACTION_CLICK_ACTIVITY_NOTIFICATION).putExtra(ARG_TAKEOFF_ID, takeoffId).putExtra(ARG_TIMESTAMP_IN_SECONDS, timestamp), PendingIntent.FLAG_UPDATE_CURRENT);
-                PendingIntent dismissIntent = PendingIntent.getService(this, 0, new Intent(this, FlyWithMeService.class).setAction(ACTION_DISMISS_ACTIVITY_NOTIFICATION).putExtra(ARG_TAKEOFF_ID, takeoffId).putExtra(ARG_TIMESTAMP_IN_SECONDS, timestamp), PendingIntent.FLAG_UPDATE_CURRENT);
-                PendingIntent scheduleIntent = PendingIntent.getService(this, 0, new Intent(this, FlyWithMeService.class).setAction(ACTION_SCHEDULE_ACTIVITY_NOTIFICATION).putExtra(ARG_TAKEOFF_ID, takeoffId).putExtra(ARG_TIMESTAMP_IN_SECONDS, timestamp), PendingIntent.FLAG_UPDATE_CURRENT);
-                PendingIntent blacklistIntent = PendingIntent.getService(this, 0, new Intent(this, FlyWithMeService.class).setAction(ACTION_BLACKLIST_ACTIVITY_NOTIFICATION).putExtra(ARG_TAKEOFF_ID, takeoffId).putExtra(ARG_TIMESTAMP_IN_SECONDS, timestamp), PendingIntent.FLAG_UPDATE_CURRENT);
-                DateFormat dateFormat = SimpleDateFormat.getTimeInstance();
-                Notification.Builder notificationBuilder = new Notification.Builder(this)
-                        .setSmallIcon(R.drawable.notification_icon)
-                        .setContentTitle(dateFormat.format(new Date(timestamp)) + ": " + takeoff.getName())
-                        .setContentText(getString(R.string.will_you_join))
-                        .setContentIntent(clickIntent)
-                        .setDeleteIntent(dismissIntent)
-                        .setAutoCancel(true)
-                        .addAction(android.R.drawable.ic_input_add, getString(R.string.yes), scheduleIntent)
-                        .addAction(android.R.drawable.ic_dialog_alert, getString(R.string.never_notify_here), blacklistIntent);
-                if (sharedPref.getBoolean("pref_takeoff_activity_vibrate", true))
-                    notificationBuilder.setVibrate(VIBRATE_DATA);
-                Notification notification = notificationBuilder.build();
-                notification.flags |= Notification.FLAG_AUTO_CANCEL;
-                ((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).notify(0, notification);
-                break;
+            SharedPreferences dismissedActivityPref = getSharedPreferences(ACTION_DISMISS_ACTIVITY_NOTIFICATION, Context.MODE_PRIVATE);
+            SharedPreferences blacklistedActivityPref = getSharedPreferences(ACTION_BLACKLIST_ACTIVITY_NOTIFICATION, Context.MODE_PRIVATE);
+            long activityMaxDistance = Long.parseLong(sharedPref.getString("pref_takeoff_activity_max_distance", "100000"));
+            boolean vibrate = sharedPref.getBoolean("pref_takeoff_activity_vibrate", true);
+            String[] timestampsAndTakeoffIdsList = message.split(";");
+            Database database = new Database(this);
+            DateFormat dateFormat = new SimpleDateFormat("HH:mm", Locale.US);
+            boolean breakLoop = false;
+            for (String timestampsAndTakeoffIds : timestampsAndTakeoffIdsList) {
+                String[] tmp = timestampsAndTakeoffIds.split(":");
+                long timestamp = Long.parseLong(tmp[0]) * 1000;
+                for (String takeoffIdString : tmp[1].split(",")) {
+                    long takeoffId = Long.parseLong(takeoffIdString);
+                    if (dismissedActivityPref.getLong("" + takeoffId, 0) + DISMISS_TIMEOUT > System.currentTimeMillis())
+                        continue; // user dismissed activity for this takeoff recently, ignore takeoff
+                    if (blacklistedActivityPref.contains("" + takeoffId))
+                        continue; // user blacklisted activity for this takeoff, ignore takeoff
+                    net.exent.flywithme.bean.Takeoff takeoff = database.getTakeoff(takeoffId);
+                    if (location.distanceTo(takeoff.getLocation()) > activityMaxDistance)
+                        continue;
+                    PendingIntent clickIntent = PendingIntent.getService(this, 0, new Intent(this, FlyWithMeService.class).setAction(ACTION_CLICK_ACTIVITY_NOTIFICATION).putExtra(ARG_TAKEOFF_ID, takeoffId).putExtra(ARG_TIMESTAMP_IN_SECONDS, timestamp), PendingIntent.FLAG_UPDATE_CURRENT);
+                    PendingIntent dismissIntent = PendingIntent.getService(this, 0, new Intent(this, FlyWithMeService.class).setAction(ACTION_DISMISS_ACTIVITY_NOTIFICATION).putExtra(ARG_TAKEOFF_ID, takeoffId).putExtra(ARG_TIMESTAMP_IN_SECONDS, timestamp), PendingIntent.FLAG_UPDATE_CURRENT);
+                    PendingIntent scheduleIntent = PendingIntent.getService(this, 0, new Intent(this, FlyWithMeService.class).setAction(ACTION_SCHEDULE_ACTIVITY_NOTIFICATION).putExtra(ARG_TAKEOFF_ID, takeoffId).putExtra(ARG_TIMESTAMP_IN_SECONDS, timestamp), PendingIntent.FLAG_UPDATE_CURRENT);
+                    PendingIntent blacklistIntent = PendingIntent.getService(this, 0, new Intent(this, FlyWithMeService.class).setAction(ACTION_BLACKLIST_ACTIVITY_NOTIFICATION).putExtra(ARG_TAKEOFF_ID, takeoffId).putExtra(ARG_TIMESTAMP_IN_SECONDS, timestamp), PendingIntent.FLAG_UPDATE_CURRENT);
+                    /* XXX:
+                     * 1. user receives activity for one place
+                     * 2. user is not watching phone and ignores the notification
+                     * 3. user receives activity for another place, further away than first place
+                     * 4. notification for first place i still shown, user dismiss this notification
+                     * 5. no notification will be displayed for the second place (until someone schedules something anywhere)
+                     * this is probably not a big deal
+                     */
+                    Notification.Builder notificationBuilder = new Notification.Builder(this)
+                            .setSmallIcon(R.drawable.notification_icon)
+                            .setContentTitle(dateFormat.format(new Date(timestamp)) + " - " + takeoff.getName())
+                            .setContentText(getString(R.string.will_you_join))
+                            .setContentIntent(clickIntent)
+                            .setDeleteIntent(dismissIntent)
+                            .setAutoCancel(true)
+                            .addAction(android.R.drawable.ic_input_add, getString(R.string.yes), scheduleIntent)
+                            .addAction(android.R.drawable.ic_dialog_alert, getString(R.string.never_notify_here), blacklistIntent);
+                    if (vibrate)
+                        notificationBuilder.setVibrate(VIBRATE_DATA);
+                    Notification notification = notificationBuilder.build();
+                    notification.flags |= Notification.FLAG_AUTO_CANCEL;
+                    ((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).notify(0, notification);
+                    breakLoop = true;
+                    break;
+                }
+                if (breakLoop)
+                    break;
             }
         } else if (ACTION_CLICK_TAKEOFF_NOTIFICATION.equals(action)) {
             Intent showTakeoffDetailsIntent = new Intent(this, FlyWithMe.class);
@@ -306,6 +327,8 @@ public class FlyWithMeService extends IntentService implements GoogleApiClient.C
                 Log.w(TAG, "Fetching sounding failed", e);
             }
             sendDisplayForecastIntent(takeoffId, forecasts);
+        } else if (ACTION_GET_SCHEDULES.equals(action)) {
+            getSchedulesAndRefreshView();
         } else if (ACTION_SCHEDULE_FLIGHT.equals(action)) {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
             String pilotId = prefs.getString("token", null);
@@ -321,18 +344,7 @@ public class FlyWithMeService extends IntentService implements GoogleApiClient.C
             } catch (IOException e) {
                 Log.w(TAG, "Scheduling flight failed", e);
             }
-            try {
-                List<Schedule> schedules = getServer().getTakeoffSchedule(takeoffId).execute().getItems();
-                Database db = new Database(getApplicationContext());
-                db.updateTakeoffSchedule(takeoffId, schedules);
-                Intent showTakeoffDetailsIntent = new Intent(this, FlyWithMe.class);
-                showTakeoffDetailsIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                showTakeoffDetailsIntent.setAction(FlyWithMe.ACTION_SHOW_TAKEOFF_SCHEDULE);
-                showTakeoffDetailsIntent.putExtra(FlyWithMe.ARG_TAKEOFF_ID, bundle.getLong(ARG_TAKEOFF_ID));
-                startActivity(showTakeoffDetailsIntent);
-            } catch (IOException e) {
-                Log.w(TAG, "Unable to fetch takeoff schedule", e);
-            }
+            getSchedulesAndRefreshView();
         } else if (ACTION_UNSCHEDULE_FLIGHT.equals(action)) {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
             String pilotId = prefs.getString("token", null);
@@ -387,6 +399,23 @@ public class FlyWithMeService extends IntentService implements GoogleApiClient.C
         } catch (IOException e) {
             Log.w(TAG, "Registering pilot failed", e);
         }
+    }
+
+    private void getSchedulesAndRefreshView() {
+        Log.i(TAG, "Fetching schedules and updating view");
+        try {
+            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+            sharedPref.edit().putBoolean("pref_schedule_needs_update", false).apply();
+            List<Schedule> schedules = getServer().getSchedules().execute().getItems();
+            Database db = new Database(getApplicationContext());
+            db.updateSchedules(schedules);
+        } catch (IOException e) {
+            Log.w(TAG, "Fetching schedules failed", e);
+        }
+        Intent showTakeoffDetailsIntent = new Intent(this, FlyWithMe.class);
+        showTakeoffDetailsIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        showTakeoffDetailsIntent.setAction(FlyWithMe.ACTION_UPDATE_SCHEDULE_DATA);
+        startActivity(showTakeoffDetailsIntent);
     }
 
     private void sendDisplayForecastIntent(long takeoffId, List<Forecast> forecasts) {

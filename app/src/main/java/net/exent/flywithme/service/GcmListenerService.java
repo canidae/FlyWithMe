@@ -26,6 +26,8 @@ public class GcmListenerService extends com.google.android.gms.gcm.GcmListenerSe
             intent.setAction(FlyWithMeService.ACTION_CHECK_ACTIVITY);
             intent.putExtra(FlyWithMeService.ARG_ACTIVITY, data.getString("activity"));
             startService(intent);
+        } else {
+            Log.w(TAG, "Message not handled!");
         }
     }
 }
