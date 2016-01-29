@@ -86,7 +86,7 @@ public class TakeoffList extends Fragment implements GoogleApiClient.ConnectionC
         googleApiClient.connect();
 
         // update takeoff list
-        updateTakeoffList(location);
+        takeoffArrayAdapter.notifyDataSetChanged();
     }
 
     @Override

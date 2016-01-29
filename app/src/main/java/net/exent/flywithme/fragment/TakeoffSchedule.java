@@ -39,16 +39,6 @@ public class TakeoffSchedule extends Fragment {
     private Takeoff takeoff;
     private Calendar calendar = GregorianCalendar.getInstance();
 
-    public TakeoffSchedule() {
-        // set minutes to the last half hour
-        calendar.set(Calendar.MINUTE, calendar.get(Calendar.MINUTE) / 30 * 30);
-        // set seconds and milliseconds to 0
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-        // add 30 minutes to the calendar
-        calendar.add(Calendar.MINUTE, 30);
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         if (savedInstanceState != null)
@@ -98,6 +88,14 @@ public class TakeoffSchedule extends Fragment {
         scheduleFlight.setEnabled(true);
         ProgressBar progressBar = (ProgressBar) getActivity().findViewById(R.id.scheduleProgressBar);
         progressBar.setVisibility(View.GONE);
+
+        // set minutes to the last quarter
+        calendar.set(Calendar.MINUTE, calendar.get(Calendar.MINUTE) / 15 * 15);
+        // set seconds and milliseconds to 0
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        // add 15 minutes and update UI
+        updateCalendar(Calendar.MINUTE, 15);
     }
 
     @Override
@@ -205,7 +203,7 @@ public class TakeoffSchedule extends Fragment {
 
         // update labels
         TextView dayText = (TextView) getActivity().findViewById(R.id.scheduleDay);
-        dayText.setText(new SimpleDateFormat("d.", Locale.US).format(calendar.getTime()));
+        dayText.setText(new SimpleDateFormat("dd.", Locale.US).format(calendar.getTime()));
         TextView monthText = (TextView) getActivity().findViewById(R.id.scheduleMonth);
         monthText.setText(new SimpleDateFormat("MMM", Locale.US).format(calendar.getTime()));
         TextView hourText = (TextView) getActivity().findViewById(R.id.scheduleHour);
