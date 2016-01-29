@@ -90,12 +90,12 @@ public class TakeoffSchedule extends Fragment {
         progressBar.setVisibility(View.GONE);
 
         // set minutes to the last quarter
-        calendar.set(Calendar.MINUTE, calendar.get(Calendar.MINUTE) / 15 * 15);
+        calendar.set(Calendar.MINUTE, (int) (Math.ceil(calendar.get(Calendar.MINUTE) / 15.0)) * 15);
         // set seconds and milliseconds to 0
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
-        // add 15 minutes and update UI
-        updateCalendar(Calendar.MINUTE, 15);
+        // update UI
+        updateCalendar(Calendar.MINUTE, 0);
     }
 
     @Override
@@ -313,15 +313,15 @@ public class TakeoffSchedule extends Fragment {
             final ImageButton joinOrLeave = (ImageButton) convertView.findViewById(R.id.joinOrLeaveButton);
 
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-            String pilotName = prefs.getString("pref_schedule_pilot_name", "").trim();
+            String pilotId = prefs.getString("token", "").trim();
             boolean foundPilot = false;
             for (Pilot pilot : schedule.getPilots()) {
-                if (pilotName.equals(pilot.getName())) {
+                if (pilot != null && pilot.getId() != null && pilotId.endsWith(pilot.getId())) {
                     foundPilot = true;
                     break;
                 }
             }
-            if ("".equals(pilotName)) {
+            if ("".equals(pilotId)) {
                 joinOrLeave.setVisibility(View.GONE);
             } else {
                 joinOrLeave.setVisibility(View.VISIBLE);

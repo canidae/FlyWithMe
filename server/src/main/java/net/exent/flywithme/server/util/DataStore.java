@@ -40,6 +40,7 @@ public class DataStore {
         String key = "takeoff_" + takeoffId;
         Takeoff takeoff = (Takeoff) memcacheLoad(key);
         if (takeoff == null) {
+            log.info("Loading takeoff from datastore");
             takeoff = ofy().load().type(Takeoff.class).id(takeoffId).now();
             memcacheSave(key, takeoff);
         }
@@ -47,6 +48,7 @@ public class DataStore {
     }
 
     public static void saveTakeoff(Takeoff takeoff) {
+        log.info("Saving takeoff to datastore");
         ofy().save().entity(takeoff).now();
         String key = "takeoff_" + takeoff.getId();
         memcacheSave(key, takeoff);
@@ -54,21 +56,28 @@ public class DataStore {
 
     public static Takeoff getLastCheckedTakeoff() {
         // this is only called when updating takeoffs (not very often), no need to memcache
+        log.info("Loading last checked takeoff from datastore");
         return ofy().load().type(Takeoff.class).order("-lastChecked").first().now();
     }
 
     public static List<Takeoff> getRecentlyUpdatedTakeoffs(long updatedAfter) {
         String key = TAKEOFFS_RECENTLY_UPDATED_KEY_PREFIX + updatedAfter;
-        List<Object> objects = memcacheLoadLargeList(key);
-        List<Takeoff> takeoffs;
-        if (objects == null || objects.isEmpty()) {
-            takeoffs = ofy().load().type(Takeoff.class).filter("lastUpdated >=", updatedAfter).list();
-            memcacheSaveLargeList(key, takeoffs);
-        } else {
-            takeoffs = new ArrayList<>();
-            for (Object object : objects)
-                takeoffs.add((Takeoff) object);
+        List<Object> cachedTakeoffs = memcacheLoadLargeList(key);
+        if (cachedTakeoffs != null) {
+            try {
+                List<Takeoff> takeoffs = new ArrayList<>();
+                for (Object object : cachedTakeoffs)
+                    takeoffs.add((Takeoff) object);
+                return takeoffs;
+            } catch (Exception e) {
+                log.log(Level.WARNING, "Something's wrong with memcache entry for recently updated takeoffs", e);
+            }
         }
+        log.info("Loading recently updated takeoffs from datastore");
+        List<Takeoff> takeoffs = ofy().load().type(Takeoff.class)
+                .filter("lastUpdated >=", updatedAfter)
+                .list();
+        memcacheSaveLargeList(key, takeoffs);
         return takeoffs;
     }
 
@@ -76,6 +85,7 @@ public class DataStore {
         String key = "pilot_" + pilotId;
         Pilot pilot = (Pilot) memcacheLoad(key);
         if (pilot == null) {
+            log.info("Loading pilot from datastore");
             pilot = ofy().load().type(Pilot.class).id(pilotId).now();
             memcacheSave(key, pilot);
         }
@@ -83,6 +93,7 @@ public class DataStore {
     }
 
     public static void savePilot(Pilot pilot) {
+        log.info("Saving pilot to datastore");
         ofy().save().entity(pilot).now();
         String key = "pilot_" + pilot.getId();
         memcacheSave(key, pilot);
@@ -95,22 +106,27 @@ public class DataStore {
             return;
         }
         String key = "pilot_" + pilot.getId();
+        log.info("Deleting pilot from datastore");
         ofy().delete().entity(pilot).now();
         memcacheDelete(key);
         memcacheDeleteLargeList(ALL_PILOTS_KEY); // NOTE: important
     }
 
     public static List<Pilot> getAllPilots() {
-        List<Object> objects = memcacheLoadLargeList(ALL_PILOTS_KEY);
-        List<Pilot> pilots;
-        if (objects == null || objects.isEmpty()) {
-            pilots = ofy().load().type(Pilot.class).list();
-            memcacheSaveLargeList(ALL_PILOTS_KEY, pilots);
-        } else {
-            pilots = new ArrayList<>();
-            for (Object object : objects)
-                pilots.add((Pilot) object);
+        List<Object> cachedPilots = memcacheLoadLargeList(ALL_PILOTS_KEY);
+        if (cachedPilots != null) {
+            try {
+                List<Pilot> pilots = new ArrayList<>();
+                for (Object object : cachedPilots)
+                    pilots.add((Pilot) object);
+                return pilots;
+            } catch (Exception e) {
+                log.log(Level.WARNING, "Something's wrong with memcache entry for all pilots", e);
+            }
         }
+        log.info("Loading all pilots from datastore");
+        List<Pilot> pilots = ofy().load().type(Pilot.class).list();
+        memcacheSaveLargeList(ALL_PILOTS_KEY, pilots);
         return pilots;
     }
 
@@ -118,6 +134,7 @@ public class DataStore {
         String key = "schedule_" + takeoffId + "_" + timestamp;
         Schedule schedule = (Schedule) memcacheLoad(key);
         if (schedule == null) {
+            log.info("Loading schedule from datastore");
             schedule = ofy().load().type(Schedule.class)
                     .filter("takeoffId", takeoffId)
                     .filter("timestamp", timestamp)
@@ -127,6 +144,7 @@ public class DataStore {
     }
 
     public static void saveSchedule(Schedule schedule) {
+        log.info("Saving schedule to datastore");
         ofy().save().entity(schedule).now();
         String key = "schedule_" + schedule.getTakeoffId() + "_" + schedule.getTimestamp();
         memcacheSave(key, schedule);
@@ -138,14 +156,19 @@ public class DataStore {
         if (cachedSchedules != null) {
             try {
                 List<Schedule> schedules = new ArrayList<>();
-                for (Object object : cachedSchedules)
-                    schedules.add((Schedule) object);
+                for (Object object : cachedSchedules) {
+                    Schedule schedule = (Schedule) object;
+                    if (schedule == null || schedule.getPilots() == null || schedule.getPilots().isEmpty())
+                        continue; // skip schedules where there are no pilots (also a work-around for dodgy behaviour from memcache)
+                    schedules.add(schedule);
+                }
                 return schedules;
             } catch (Exception e) {
                 log.log(Level.WARNING, "Something's wrong with memcache entry for recently scheduled takeoffs", e);
             }
         }
 
+        log.info("Loading all schedules from datastore");
         List<Schedule> schedules = ofy().load().type(Schedule.class)
                 .filter("timestamp >=", (System.currentTimeMillis() - 7200000) / 1000) // 6 hours into the past
                 .order("-timestamp")
@@ -158,6 +181,7 @@ public class DataStore {
         String key = "forecast_" + takeoffId + "_" + type + "_" + System.currentTimeMillis() / FORECAST_CACHE_LIFETIME + "_" + validFor;
         Forecast forecast = (Forecast) memcacheLoad(key);
         if (forecast == null) {
+            log.info("Loading forecast from datastore");
             forecast = ofy().load().type(Forecast.class)
                     .filter("takeoffId", takeoffId)
                     .filter("type", type)
@@ -170,6 +194,7 @@ public class DataStore {
     }
 
     public static void saveForecast(Forecast forecast) {
+        log.info("Saving forecast to datastore");
         ofy().save().entity(forecast).now();
         String key = "forecast_" + forecast.getTakeoffId() + "_" + forecast.getType() + "_" + System.currentTimeMillis() / FORECAST_CACHE_LIFETIME + "_" + forecast.getValidFor();
         memcacheSave(key, forecast);

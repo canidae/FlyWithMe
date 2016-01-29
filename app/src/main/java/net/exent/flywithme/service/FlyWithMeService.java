@@ -339,8 +339,14 @@ public class FlyWithMeService extends IntentService implements GoogleApiClient.C
             long takeoffId = bundle.getLong(ARG_TAKEOFF_ID, -1);
             long timestamp = bundle.getLong(ARG_TIMESTAMP_IN_SECONDS, -1);
             try {
-                Log.i(TAG, "Scheduling: " + takeoffId + " - " + timestamp);
                 getServer().scheduleFlight(pilotId, takeoffId, timestamp).execute();
+                // TODO: replace stuff below by checking if we've scheduled activity at takeoff
+                // add takeoff to dismissedTakeoffsPref so we won't get notification when we get to the takeoff
+                SharedPreferences dismissedTakeoffsPref = getSharedPreferences(ACTION_DISMISS_TAKEOFF_NOTIFICATION, Context.MODE_PRIVATE);
+                dismissedTakeoffsPref.edit().putLong("" + takeoffId, System.currentTimeMillis()).apply();
+                // add takeoff to dismissedActivityPref so we won't get notification for our own or someone else's registration
+                SharedPreferences dismissedActivityPref = getSharedPreferences(ACTION_DISMISS_ACTIVITY_NOTIFICATION, Context.MODE_PRIVATE);
+                dismissedActivityPref.edit().putLong("" + takeoffId, System.currentTimeMillis()).apply();
             } catch (IOException e) {
                 Log.w(TAG, "Scheduling flight failed", e);
             }
@@ -359,6 +365,7 @@ public class FlyWithMeService extends IntentService implements GoogleApiClient.C
             } catch (IOException e) {
                 Log.w(TAG, "Unscheduling flight failed", e);
             }
+            getSchedulesAndRefreshView();
         } else if (ACTION_GET_UPDATED_TAKEOFFS.equals(action)) {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
             long timestamp = prefs.getLong("pref_last_takeoff_update_timestamp", 0);

@@ -85,15 +85,21 @@ public class TakeoffList extends Fragment implements GoogleApiClient.ConnectionC
         super.onStart();
         googleApiClient.connect();
 
+        if (location == null) {
+            // no location set, let's pretend we're at the Rikssenter :)
+            location = new Location(LocationManager.PASSIVE_PROVIDER);
+            location.setLatitude(61.874655);
+            location.setLongitude(9.154848);
+        }
+
         // update takeoff list
-        takeoffArrayAdapter.notifyDataSetChanged();
+        updateTakeoffList(location, true);
     }
 
     @Override
     public void onConnected(Bundle bundle) {
         LocationRequest locationRequest = LocationRequest.create().setInterval(10000).setFastestInterval(10000).setPriority(LocationRequest.PRIORITY_LOW_POWER);
         LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
-        updateTakeoffList(LocationServices.FusedLocationApi.getLastLocation(googleApiClient));
     }
 
     @Override
@@ -102,7 +108,7 @@ public class TakeoffList extends Fragment implements GoogleApiClient.ConnectionC
 
     @Override
     public void onLocationChanged(Location location) {
-        updateTakeoffList(location);
+        updateTakeoffList(location, false);
     }
 
     @Override
@@ -130,21 +136,19 @@ public class TakeoffList extends Fragment implements GoogleApiClient.ConnectionC
         savedListTop = (firstVisibleView == null) ? 0 : firstVisibleView.getTop();
     }
 
-    private void updateTakeoffList(Location newLocation) {
-        if (location == null && newLocation == null) {
-            // no location set, let's pretend we're at the Rikssenter :)
-            location = new Location(LocationManager.PASSIVE_PROVIDER);
-            location.setLatitude(61.874655);
-            location.setLongitude(9.154848);
-        } else if (newLocation == null) {
-            // null location received? that's odd, do nothing
-            return;
-        } else if (location != null && !takeoffs.isEmpty() && location.distanceTo(newLocation) < 100) {
-            // we're within 100 meters from the last place we updated the list and we got a list of takeoffs, do nothing
-            return;
-        } else {
-            // no previous location set, we've moved 100 meters or more, or we don't have a list of takeoffs
-            location = newLocation;
+    private void updateTakeoffList(Location newLocation, boolean skipLocationCheck) {
+        if (!skipLocationCheck) {
+            // unless we skip location check, only update if location changed significantly
+            if (newLocation == null) {
+                // null location received? that's odd, do nothing
+                return;
+            } else if (location != null && !takeoffs.isEmpty() && location.distanceTo(newLocation) < 100) {
+                // we're within 100 meters from the last place we updated the list and we got a list of takeoffs, do nothing
+                return;
+            } else {
+                // no previous location set, we've moved 100 meters or more, or we don't have a list of takeoffs
+                location = newLocation;
+            }
         }
         takeoffs = new Database(getActivity()).getTakeoffs(location.getLatitude(), location.getLongitude(), 100, true);
         Collections.sort(takeoffs, new Comparator<Takeoff>() {

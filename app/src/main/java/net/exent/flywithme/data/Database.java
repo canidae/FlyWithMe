@@ -16,7 +16,7 @@ import android.util.Log;
 
 public class Database extends SQLiteOpenHelper {
     public Database(Context context) {
-        super(context, "flywithme", null, 3);
+        super(context, "flywithme", null, 4);
     }
 
     @Override
@@ -46,7 +46,7 @@ public class Database extends SQLiteOpenHelper {
         if (db == null)
             throw new IllegalArgumentException("Unable to get database object");
         try {
-            Cursor cursor = db.query("schedule", new String[]{"timestamp", "pilot_name", "pilot_phone"}, "takeoff_id = " + takeoff.getId() + " and date(schedule.timestamp, 'unixepoch') >= date('now', '-24 hour')", null, null, null, "timestamp");
+            Cursor cursor = db.query("schedule", new String[]{"timestamp", "pilot_name", "pilot_phone", "pilot_id"}, "takeoff_id = " + takeoff.getId() + " and date(schedule.timestamp, 'unixepoch') >= date('now', '-24 hour')", null, null, null, "timestamp");
             while (cursor.moveToNext()) {
                 long timestamp = cursor.getLong(0);
                 Schedule schedule = null;
@@ -63,6 +63,7 @@ public class Database extends SQLiteOpenHelper {
                 schedule.setTimestamp(timestamp);
                 String pilotName = cursor.getString(1);
                 String pilotPhone = cursor.getString(2);
+                String pilotId = cursor.getString(3);
                 List<Pilot> pilots = schedule.getPilots();
                 if (pilots == null) {
                     pilots = new ArrayList<>();
@@ -71,6 +72,7 @@ public class Database extends SQLiteOpenHelper {
                 Pilot pilot = new Pilot();
                 pilot.setName(pilotName);
                 pilot.setPhone(pilotPhone);
+                pilot.setId(pilotId);
                 pilots.add(pilot);
             }
             cursor.close();
@@ -97,6 +99,7 @@ public class Database extends SQLiteOpenHelper {
                     values.put("timestamp", schedule.getTimestamp());
                     values.put("pilot_name", pilot.getName());
                     values.put("pilot_phone", pilot.getPhone());
+                    values.put("pilot_id", pilot.getId());
                     db.insert("schedule", null, values);
                 }
             }
@@ -215,6 +218,7 @@ public class Database extends SQLiteOpenHelper {
     }
 
     private synchronized void upgradeDatabaseToV4(SQLiteDatabase db) {
+        db.execSQL("alter table schedule add column pilot_id text not null default ''");
         db.execSQL("drop table pilot");
     }
 
