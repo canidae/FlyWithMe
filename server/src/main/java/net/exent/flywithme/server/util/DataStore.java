@@ -148,29 +148,17 @@ public class DataStore {
         ofy().save().entity(schedule).now();
         String key = "schedule_" + schedule.getTakeoffId() + "_" + schedule.getTimestamp();
         memcacheSave(key, schedule);
-        memcacheDeleteLargeList(ALL_SCHEDULES_KEY); // NOTE: important
+        updateAllSchedulesInMemcache(schedule); // NOTE: important
     }
 
     public static List<Schedule> getAllSchedules() {
-        List cachedSchedules = (List) memcacheLoadLargeList(ALL_SCHEDULES_KEY);
-        if (cachedSchedules != null) {
-            try {
-                List<Schedule> schedules = new ArrayList<>();
-                for (Object object : cachedSchedules) {
-                    Schedule schedule = (Schedule) object;
-                    if (schedule == null || schedule.getPilots() == null || schedule.getPilots().isEmpty())
-                        continue; // skip schedules where there are no pilots (also a work-around for dodgy behaviour from memcache)
-                    schedules.add(schedule);
-                }
-                return schedules;
-            } catch (Exception e) {
-                log.log(Level.WARNING, "Something's wrong with memcache entry for recently scheduled takeoffs", e);
-            }
-        }
+        List<Schedule> schedules = getAllSchedulesFromMemcache();
+        if (schedules != null)
+            return schedules;
 
         log.info("Loading all schedules from datastore");
-        List<Schedule> schedules = ofy().load().type(Schedule.class)
-                .filter("timestamp >=", (System.currentTimeMillis() - 7200000) / 1000) // 6 hours into the past
+        schedules = ofy().load().type(Schedule.class)
+                .filter("timestamp >=", getScheduleExpireTime())
                 .order("-timestamp")
                 .list();
         memcacheSaveLargeList(ALL_SCHEDULES_KEY, schedules);
@@ -204,7 +192,58 @@ public class DataStore {
         // clean forecasts cached in datastore (Memcache cleans itself)
         ofy().delete().entities(ofy().load().type(Forecast.class).filter("lastUpdated <=", (System.currentTimeMillis() - FORECAST_CACHE_LIFETIME) / 1000).list());
         // clean schedules cached in datastore
-        ofy().delete().entities(ofy().load().type(Schedule.class).filter("timestamp <=", (System.currentTimeMillis() - 7200000) / 1000).list());
+        ofy().delete().entities(ofy().load().type(Schedule.class).filter("timestamp <=", getScheduleExpireTime()).list());
+    }
+
+    private static long getScheduleExpireTime() {
+        return (System.currentTimeMillis() - 86400000) / 1000; // 24 hours into the past
+    }
+
+    private static List<Schedule> getAllSchedulesFromMemcache() {
+        List cachedSchedules = (List) memcacheLoadLargeList(ALL_SCHEDULES_KEY);
+        if (cachedSchedules != null) {
+            try {
+                List<Schedule> schedules = new ArrayList<>();
+                for (Object object : cachedSchedules) {
+                    Schedule schedule = (Schedule) object;
+                    if (schedule == null || schedule.getPilots() == null || schedule.getPilots().isEmpty())
+                        continue; // skip schedules where there are no pilots (also a work-around for dodgy behaviour from memcache)
+                    schedules.add(schedule);
+                }
+                return schedules;
+            } catch (Exception e) {
+                log.log(Level.WARNING, "Something's wrong with memcache entry for recently scheduled takeoffs", e);
+            }
+        }
+        return null;
+    }
+
+    private static void updateAllSchedulesInMemcache(Schedule schedule) {
+        // schedule is our most complex data structure and the most used one
+        // we'll try to keep memcache entry for all schedules in sync with datastore without loading from datastore each time we modify a schedule
+        List<Schedule> cachedSchedules = getAllSchedulesFromMemcache();
+        if (cachedSchedules != null) {
+            List<Schedule> allSchedules = new ArrayList<>();
+            boolean scheduleAdded = false;
+            for (Schedule cachedSchedule : cachedSchedules) {
+                if (cachedSchedule.getTimestamp() < getScheduleExpireTime())
+                    continue; // schedule is too old, remove from memcached list of schedules
+                if (cachedSchedule.getTakeoffId() == schedule.getTakeoffId() && cachedSchedule.getTimestamp() == schedule.getTimestamp()) {
+                    // schedule already in list of cached schedules, replace the cached one with the new schedule
+                    allSchedules.add(schedule);
+                } else if (cachedSchedule.getTimestamp() > schedule.getTimestamp()) {
+                    // schedule not in list of cached schedules, add it at the right place (list is ordered by timestamp)
+                    allSchedules.add(schedule);
+                    allSchedules.add(cachedSchedule); // keep the cached schedule
+                    scheduleAdded = true;
+                } else {
+                    allSchedules.add(cachedSchedule); // keep the cached schedule
+                }
+            }
+            if (!scheduleAdded)
+                allSchedules.add(schedule); // schedule not in cached list, and it is scheduled after all the cached schedules
+            memcacheSaveLargeList(ALL_SCHEDULES_KEY, allSchedules);
+        }
     }
 
     private static Object memcacheLoad(String key) {
