@@ -233,6 +233,7 @@ public class DataStore {
                 if (cachedSchedule.getTakeoffId() == schedule.getTakeoffId() && cachedSchedule.getTimestamp() == schedule.getTimestamp()) {
                     // schedule already in list of cached schedules, replace the cached one with the new schedule
                     allSchedules.add(schedule);
+                    scheduleAdded = true;
                 } else if (cachedSchedule.getTimestamp() > schedule.getTimestamp()) {
                     // schedule not in list of cached schedules, add it at the right place (list is ordered by timestamp)
                     allSchedules.add(schedule);
