@@ -1,6 +1,5 @@
 package net.exent.flywithme.service;
 
-import android.Manifest;
 import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -8,11 +7,9 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
@@ -339,8 +336,6 @@ public class FlyWithMeService extends IntentService {
         }
         if (!sharedPref.getBoolean("pref_takeoff_activity_notifications", true))
             return; // user don't want notifications on activity
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
-            return;
         Location location = LocationApi.getCachedLocation(getApplicationContext());
         SharedPreferences dismissedActivityPref = getSharedPreferences(ACTION_DISMISS_ACTIVITY_NOTIFICATION, Context.MODE_PRIVATE);
         SharedPreferences blacklistedActivityPref = getSharedPreferences(ACTION_BLACKLIST_ACTIVITY_NOTIFICATION, Context.MODE_PRIVATE);
