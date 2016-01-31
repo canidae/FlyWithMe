@@ -46,7 +46,7 @@ public class Database extends SQLiteOpenHelper {
         if (db == null)
             throw new IllegalArgumentException("Unable to get database object");
         try {
-            Cursor cursor = db.query("schedule", new String[]{"timestamp", "pilot_name", "pilot_phone", "pilot_id"}, "takeoff_id = " + takeoff.getId() + " and date(schedule.timestamp, 'unixepoch') >= date('now', '-24 hour')", null, null, null, "timestamp");
+            Cursor cursor = db.query("schedule", new String[]{"timestamp", "pilot_name", "pilot_phone", "pilot_id"}, "takeoff_id = " + takeoff.getId() + " and datetime(schedule.timestamp, 'unixepoch', 'localtime') >= datetime('now', '-6 hour', 'localtime')", null, null, null, "timestamp");
             while (cursor.moveToNext()) {
                 long timestamp = cursor.getLong(0);
                 Schedule schedule = null;
