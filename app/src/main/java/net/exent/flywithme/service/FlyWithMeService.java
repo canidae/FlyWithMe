@@ -301,6 +301,9 @@ public class FlyWithMeService extends IntentService {
             return; // user dismissed this takeoff recently, ignore takeoff
         if (blacklistedTakeoffsPref.contains("" + takeoff.getId()))
             return; // user blacklisted this takeoff, ignore takeoff
+        String pilotId = sharedPref.getString("pilot_id", null);
+        if (database.isPilotScheduledToday(pilotId, takeoff.getId()))
+            return; // don't show notifications for takeoff where pilot is already scheduled
 
         PendingIntent clickIntent = PendingIntent.getService(this, 0, new Intent(this, FlyWithMeService.class).setAction(ACTION_CLICK_TAKEOFF_NOTIFICATION).putExtra(ARG_TAKEOFF_ID, takeoff.getId()), PendingIntent.FLAG_UPDATE_CURRENT);
         PendingIntent dismissIntent = PendingIntent.getService(this, 0, new Intent(this, FlyWithMeService.class).setAction(ACTION_DISMISS_TAKEOFF_NOTIFICATION).putExtra(ARG_TAKEOFF_ID, takeoff.getId()), PendingIntent.FLAG_UPDATE_CURRENT);
@@ -315,11 +318,8 @@ public class FlyWithMeService extends IntentService {
                 .setAutoCancel(true)
                 .addAction(android.R.drawable.ic_input_add, getString(R.string.yes), scheduleIntent)
                 .addAction(android.R.drawable.ic_dialog_alert, getString(R.string.never_notify_here), blacklistIntent);
-        if (sharedPref.getBoolean("pref_near_takeoff_vibrate", true)) {
-            String pilotId = sharedPref.getString("pilot_id", null);
-            if (!database.isPilotScheduledToday(pilotId))
-                notificationBuilder.setVibrate(VIBRATE_DATA);
-        }
+        if (sharedPref.getBoolean("pref_near_takeoff_vibrate", true) && !database.isPilotScheduledToday(pilotId, null))
+            notificationBuilder.setVibrate(VIBRATE_DATA);
         Notification notification = notificationBuilder.build();
         notification.flags |= Notification.FLAG_AUTO_CANCEL;
         ((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).notify(0, notification);
@@ -361,6 +361,9 @@ public class FlyWithMeService extends IntentService {
                 net.exent.flywithme.bean.Takeoff takeoff = database.getTakeoff(takeoffId);
                 if (location.distanceTo(takeoff.getLocation()) > activityMaxDistance)
                     continue;
+                String pilotId = sharedPref.getString("pilot_id", null);
+                if (database.isPilotScheduledToday(pilotId, takeoffId))
+                    continue; // don't show notifications for takeoff where pilot is already scheduled
                 PendingIntent clickIntent = PendingIntent.getService(this, 0, new Intent(this, FlyWithMeService.class).setAction(ACTION_CLICK_ACTIVITY_NOTIFICATION).putExtra(ARG_TAKEOFF_ID, takeoffId).putExtra(ARG_TIMESTAMP_IN_SECONDS, timestamp), PendingIntent.FLAG_UPDATE_CURRENT);
                 PendingIntent dismissIntent = PendingIntent.getService(this, 0, new Intent(this, FlyWithMeService.class).setAction(ACTION_DISMISS_ACTIVITY_NOTIFICATION).putExtra(ARG_TAKEOFF_ID, takeoffId).putExtra(ARG_TIMESTAMP_IN_SECONDS, timestamp), PendingIntent.FLAG_UPDATE_CURRENT);
                 PendingIntent scheduleIntent = PendingIntent.getService(this, 0, new Intent(this, FlyWithMeService.class).setAction(ACTION_SCHEDULE_ACTIVITY_NOTIFICATION).putExtra(ARG_TAKEOFF_ID, takeoffId).putExtra(ARG_TIMESTAMP_IN_SECONDS, timestamp), PendingIntent.FLAG_UPDATE_CURRENT);
@@ -382,11 +385,8 @@ public class FlyWithMeService extends IntentService {
                         .setAutoCancel(true)
                         .addAction(android.R.drawable.ic_input_add, getString(R.string.yes), scheduleIntent)
                         .addAction(android.R.drawable.ic_dialog_alert, getString(R.string.never_notify_here), blacklistIntent);
-                if (sharedPref.getBoolean("pref_takeoff_activity_vibrate", false)) {
-                    String pilotId = sharedPref.getString("pilot_id", null);
-                    if (!database.isPilotScheduledToday(pilotId))
-                        notificationBuilder.setVibrate(VIBRATE_DATA);
-                }
+                if (sharedPref.getBoolean("pref_takeoff_activity_vibrate", false) && !database.isPilotScheduledToday(pilotId, null))
+                    notificationBuilder.setVibrate(VIBRATE_DATA);
                 Notification notification = notificationBuilder.build();
                 notification.flags |= Notification.FLAG_AUTO_CANCEL;
                 ((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).notify(0, notification);

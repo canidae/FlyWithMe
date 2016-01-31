@@ -82,13 +82,20 @@ public class Database extends SQLiteOpenHelper {
         }
     }
 
-    public synchronized boolean isPilotScheduledToday(String pilotId) {
+    /**
+     * Check whether pilot is scheduled today, optionally at a given takeoff.
+     *
+     * @param pilotId The pilot ID.
+     * @param takeoffId Optional takeoff ID, if <code>null</code> then it will check if pilot is scheduled anywhere today.
+     * @return <code>true</code> if pilot is scheduled today, <code>false</code> otherwise.
+     */
+    public synchronized boolean isPilotScheduledToday(String pilotId, Long takeoffId) {
         SQLiteDatabase db = getReadableDatabase();
         if (db == null)
             throw new IllegalArgumentException("Unable to get database object");
         Cursor cursor = null;
         try {
-            cursor = db.query("schedule", new String[]{"timestamp"}, "? like '%' || pilot_id and date(schedule.timestamp, 'unixepoch', 'localtime') = date('now', 'localtime')", new String[]{pilotId}, null, null, null);
+            cursor = db.query("schedule", new String[]{"timestamp"}, "? like '%' || pilot_id" + (takeoffId == null ? "" : " and takeoff_id = " + takeoffId) + " and date(schedule.timestamp, 'unixepoch', 'localtime') = date('now', 'localtime')", new String[]{pilotId}, null, null, null);
             return cursor.getCount() > 0;
         } finally {
             if (cursor != null)
