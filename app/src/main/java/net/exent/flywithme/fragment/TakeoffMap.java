@@ -71,48 +71,7 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
     private static Bitmap markerExclamationYellow;
 
     private GoogleMap map;
-    private CameraPosition cameraPosition;
-
-    public void drawMap() {
-        try {
-            /* need to do this here or it'll end up with a reference to an old instance of "this", somehow */
-            map.setInfoWindowAdapter(new TakeoffMapMarkerInfo(getActivity().getLayoutInflater()));
-            map.setOnInfoWindowClickListener(this);
-            map.setOnCameraChangeListener(this);
-            /* clear map */
-            map.clear();
-            markers.clear();
-            zones.clear();
-            /* add icons */
-            final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
-            boolean showTakeoffs = sharedPref.getBoolean("pref_map_show_takeoffs", true);
-            final ImageButton markerButton = (ImageButton) getActivity().findViewById(R.id.fragmentButton1);
-            markerButton.setImageResource(showTakeoffs ? R.mipmap.takeoffs_enabled : R.mipmap.takeoffs_disabled);
-            markerButton.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    boolean markersEnabled = !sharedPref.getBoolean("pref_map_show_takeoffs", true);
-                    sharedPref.edit().putBoolean("pref_map_show_takeoffs", markersEnabled).apply();
-                    markerButton.setImageResource(markersEnabled ? R.mipmap.takeoffs_enabled : R.mipmap.takeoffs_disabled);
-                    drawOverlay(map.getCameraPosition());
-                }
-            });
-            boolean showAirspace = sharedPref.getBoolean("pref_map_show_airspaces", true);
-            final ImageButton polygonButton = (ImageButton) getActivity().findViewById(R.id.fragmentButton2);
-            polygonButton.setImageResource(showAirspace ? R.mipmap.airspace_enabled : R.mipmap.airspace_disabled);
-            polygonButton.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    boolean polygonsEnabled = !sharedPref.getBoolean("pref_map_show_airspace", true);
-                    sharedPref.edit().putBoolean("pref_map_show_airspace", polygonsEnabled).apply();
-                    polygonButton.setImageResource(polygonsEnabled ? R.mipmap.airspace_enabled : R.mipmap.airspace_disabled);
-                    drawOverlay(map.getCameraPosition());
-                }
-            });
-        } catch (Exception e) {
-            Log.w(getClass().getName(), "drawMap() task failed unexpectedly", e);
-        }
-    }
+    private static CameraPosition cameraPosition;
 
     @Override
     public void onCreate(Bundle bundle) {
@@ -189,7 +148,7 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
     }
 
     public void onCameraChange(CameraPosition cameraPosition) {
-        this.cameraPosition = cameraPosition;
+        TakeoffMap.cameraPosition = cameraPosition;
         drawOverlay(cameraPosition);
     }
 
@@ -197,6 +156,47 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable(ARG_CAMERA_POSITION, cameraPosition);
+    }
+
+    private void drawMap() {
+        try {
+            /* need to do this here or it'll end up with a reference to an old instance of "this", somehow */
+            map.setInfoWindowAdapter(new TakeoffMapMarkerInfo(getActivity().getLayoutInflater()));
+            map.setOnInfoWindowClickListener(this);
+            map.setOnCameraChangeListener(this);
+            /* clear map */
+            map.clear();
+            markers.clear();
+            zones.clear();
+            /* add icons */
+            final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            boolean showTakeoffs = sharedPref.getBoolean("pref_map_show_takeoffs", true);
+            final ImageButton markerButton = (ImageButton) getActivity().findViewById(R.id.fragmentButton1);
+            markerButton.setImageResource(showTakeoffs ? R.mipmap.takeoffs_enabled : R.mipmap.takeoffs_disabled);
+            markerButton.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    boolean markersEnabled = !sharedPref.getBoolean("pref_map_show_takeoffs", true);
+                    sharedPref.edit().putBoolean("pref_map_show_takeoffs", markersEnabled).apply();
+                    markerButton.setImageResource(markersEnabled ? R.mipmap.takeoffs_enabled : R.mipmap.takeoffs_disabled);
+                    drawOverlay(map.getCameraPosition());
+                }
+            });
+            boolean showAirspace = sharedPref.getBoolean("pref_map_show_airspaces", true);
+            final ImageButton polygonButton = (ImageButton) getActivity().findViewById(R.id.fragmentButton2);
+            polygonButton.setImageResource(showAirspace ? R.mipmap.airspace_enabled : R.mipmap.airspace_disabled);
+            polygonButton.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    boolean polygonsEnabled = !sharedPref.getBoolean("pref_map_show_airspace", true);
+                    sharedPref.edit().putBoolean("pref_map_show_airspace", polygonsEnabled).apply();
+                    polygonButton.setImageResource(polygonsEnabled ? R.mipmap.airspace_enabled : R.mipmap.airspace_disabled);
+                    drawOverlay(map.getCameraPosition());
+                }
+            });
+        } catch (Exception e) {
+            Log.w(getClass().getName(), "drawMap() task failed unexpectedly", e);
+        }
     }
 
     private void drawOverlay(CameraPosition cameraPosition) {
