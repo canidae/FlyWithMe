@@ -100,110 +100,12 @@ public class FlyWithMeService extends IntentService {
                 return;
             Location location = locationResult.getLastLocation();
             LocationApi.setCachedLocation(getApplicationContext(), location);
-            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-            if (!sharedPref.getBoolean("pref_near_takeoff_notifications", true))
-                return; // user don't want notifications when near takeoffs
-            SharedPreferences dismissedTakeoffsPref = getSharedPreferences(ACTION_DISMISS_TAKEOFF_NOTIFICATION, Context.MODE_PRIVATE);
-            SharedPreferences blacklistedTakeoffsPref = getSharedPreferences(ACTION_BLACKLIST_TAKEOFF_NOTIFICATION, Context.MODE_PRIVATE);
-            Database database = new Database(this);
-            long takeoffMaxDistance = Long.parseLong(sharedPref.getString("pref_near_takeoff_max_distance", "500"));
-            boolean vibrate = sharedPref.getBoolean("pref_near_takeoff_vibrate", true);
-            boolean cancelNotification = true;
-            List<net.exent.flywithme.bean.Takeoff> takeoffs = database.getTakeoffs(location.getLatitude(), location.getLongitude(), 10, false);
-            for (net.exent.flywithme.bean.Takeoff takeoff : takeoffs) {
-                if (location.distanceTo(takeoff.getLocation()) > takeoffMaxDistance)
-                    break; // takeoff too far away (all subsequent takeoffs will be even further away)
-                if (dismissedTakeoffsPref.getLong("" + takeoff.getId(), 0) + DISMISS_TIMEOUT > System.currentTimeMillis())
-                    continue; // user dismissed this takeoff recently, ignore takeoff
-                if (blacklistedTakeoffsPref.contains("" + takeoff.getId()))
-                    continue; // user blacklisted this takeoff, ignore takeoff
-
-                PendingIntent clickIntent = PendingIntent.getService(this, 0, new Intent(this, FlyWithMeService.class).setAction(ACTION_CLICK_TAKEOFF_NOTIFICATION).putExtra(ARG_TAKEOFF_ID, takeoff.getId()), PendingIntent.FLAG_UPDATE_CURRENT);
-                PendingIntent dismissIntent = PendingIntent.getService(this, 0, new Intent(this, FlyWithMeService.class).setAction(ACTION_DISMISS_TAKEOFF_NOTIFICATION).putExtra(ARG_TAKEOFF_ID, takeoff.getId()), PendingIntent.FLAG_UPDATE_CURRENT);
-                PendingIntent scheduleIntent = PendingIntent.getService(this, 0, new Intent(this, FlyWithMeService.class).setAction(ACTION_SCHEDULE_TAKEOFF_NOTIFICATION).putExtra(ARG_TAKEOFF_ID, takeoff.getId()), PendingIntent.FLAG_UPDATE_CURRENT);
-                PendingIntent blacklistIntent = PendingIntent.getService(this, 0, new Intent(this, FlyWithMeService.class).setAction(ACTION_BLACKLIST_TAKEOFF_NOTIFICATION).putExtra(ARG_TAKEOFF_ID, takeoff.getId()), PendingIntent.FLAG_UPDATE_CURRENT);
-                Notification.Builder notificationBuilder = new Notification.Builder(this)
-                        .setSmallIcon(R.drawable.notification_icon)
-                        .setContentTitle(takeoff.getName())
-                        .setContentText(getString(R.string.are_you_flying))
-                        .setContentIntent(clickIntent)
-                        .setDeleteIntent(dismissIntent)
-                        .setAutoCancel(true)
-                        .addAction(android.R.drawable.ic_input_add, getString(R.string.yes), scheduleIntent)
-                        .addAction(android.R.drawable.ic_dialog_alert, getString(R.string.never_notify_here), blacklistIntent);
-                if (vibrate)
-                    notificationBuilder.setVibrate(VIBRATE_DATA);
-                Notification notification = notificationBuilder.build();
-                notification.flags |= Notification.FLAG_AUTO_CANCEL;
-                ((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).notify(0, notification);
-                cancelNotification = false;
-                break;
-            }
-            if (cancelNotification)
-                ((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).cancel(0); // we're not near any known takeoff, hide notification
+            checkCurrentLocation(location);
         } else if (ACTION_CHECK_ACTIVITY.equals(action)) {
             String message = bundle.getString(ARG_ACTIVITY);
             if (message == null)
                 return;
-            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-            sharedPref.edit().putBoolean("pref_schedule_needs_update", true).apply();
-            if (!sharedPref.getBoolean("pref_takeoff_activity_notifications", true))
-                return; // user don't want notifications on activity
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
-                return;
-            Location location = LocationApi.getCachedLocation(getApplicationContext());
-            SharedPreferences dismissedActivityPref = getSharedPreferences(ACTION_DISMISS_ACTIVITY_NOTIFICATION, Context.MODE_PRIVATE);
-            SharedPreferences blacklistedActivityPref = getSharedPreferences(ACTION_BLACKLIST_ACTIVITY_NOTIFICATION, Context.MODE_PRIVATE);
-            long activityMaxDistance = Long.parseLong(sharedPref.getString("pref_takeoff_activity_max_distance", "100000"));
-            boolean vibrate = sharedPref.getBoolean("pref_takeoff_activity_vibrate", true);
-            String[] timestampsAndTakeoffIdsList = message.split(";");
-            Database database = new Database(this);
-            DateFormat dateFormat = new SimpleDateFormat("HH:mm", Locale.US);
-            boolean breakLoop = false;
-            for (String timestampsAndTakeoffIds : timestampsAndTakeoffIdsList) {
-                String[] tmp = timestampsAndTakeoffIds.split(":");
-                long timestamp = Long.parseLong(tmp[0]) * 1000;
-                for (String takeoffIdString : tmp[1].split(",")) {
-                    long takeoffId = Long.parseLong(takeoffIdString);
-                    if (dismissedActivityPref.getLong("" + takeoffId, 0) + DISMISS_TIMEOUT > System.currentTimeMillis())
-                        continue; // user dismissed activity for this takeoff recently, ignore takeoff
-                    if (blacklistedActivityPref.contains("" + takeoffId))
-                        continue; // user blacklisted activity for this takeoff, ignore takeoff
-                    net.exent.flywithme.bean.Takeoff takeoff = database.getTakeoff(takeoffId);
-                    if (location.distanceTo(takeoff.getLocation()) > activityMaxDistance)
-                        continue;
-                    PendingIntent clickIntent = PendingIntent.getService(this, 0, new Intent(this, FlyWithMeService.class).setAction(ACTION_CLICK_ACTIVITY_NOTIFICATION).putExtra(ARG_TAKEOFF_ID, takeoffId).putExtra(ARG_TIMESTAMP_IN_SECONDS, timestamp), PendingIntent.FLAG_UPDATE_CURRENT);
-                    PendingIntent dismissIntent = PendingIntent.getService(this, 0, new Intent(this, FlyWithMeService.class).setAction(ACTION_DISMISS_ACTIVITY_NOTIFICATION).putExtra(ARG_TAKEOFF_ID, takeoffId).putExtra(ARG_TIMESTAMP_IN_SECONDS, timestamp), PendingIntent.FLAG_UPDATE_CURRENT);
-                    PendingIntent scheduleIntent = PendingIntent.getService(this, 0, new Intent(this, FlyWithMeService.class).setAction(ACTION_SCHEDULE_ACTIVITY_NOTIFICATION).putExtra(ARG_TAKEOFF_ID, takeoffId).putExtra(ARG_TIMESTAMP_IN_SECONDS, timestamp), PendingIntent.FLAG_UPDATE_CURRENT);
-                    PendingIntent blacklistIntent = PendingIntent.getService(this, 0, new Intent(this, FlyWithMeService.class).setAction(ACTION_BLACKLIST_ACTIVITY_NOTIFICATION).putExtra(ARG_TAKEOFF_ID, takeoffId).putExtra(ARG_TIMESTAMP_IN_SECONDS, timestamp), PendingIntent.FLAG_UPDATE_CURRENT);
-                    /* XXX:
-                     * 1. user receives activity for one place
-                     * 2. user is not watching phone and ignores the notification
-                     * 3. user receives activity for another place, further away than first place
-                     * 4. notification for first place i still shown, user dismiss this notification
-                     * 5. no notification will be displayed for the second place (until someone schedules something anywhere)
-                     * this is probably not a big deal
-                     */
-                    Notification.Builder notificationBuilder = new Notification.Builder(this)
-                            .setSmallIcon(R.drawable.notification_icon)
-                            .setContentTitle(dateFormat.format(new Date(timestamp)) + " - " + takeoff.getName())
-                            .setContentText(getString(R.string.will_you_join))
-                            .setContentIntent(clickIntent)
-                            .setDeleteIntent(dismissIntent)
-                            .setAutoCancel(true)
-                            .addAction(android.R.drawable.ic_input_add, getString(R.string.yes), scheduleIntent)
-                            .addAction(android.R.drawable.ic_dialog_alert, getString(R.string.never_notify_here), blacklistIntent);
-                    if (vibrate)
-                        notificationBuilder.setVibrate(VIBRATE_DATA);
-                    Notification notification = notificationBuilder.build();
-                    notification.flags |= Notification.FLAG_AUTO_CANCEL;
-                    ((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).notify(0, notification);
-                    breakLoop = true;
-                    break;
-                }
-                if (breakLoop)
-                    break;
-            }
+            checkActivity(message);
         } else if (ACTION_CLICK_TAKEOFF_NOTIFICATION.equals(action)) {
             Intent showTakeoffDetailsIntent = new Intent(this, FlyWithMe.class);
             showTakeoffDetailsIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -370,6 +272,113 @@ public class FlyWithMeService extends IntentService {
             }
         } else {
             Log.w(TAG, "Unknown action: " + intent.getAction());
+        }
+    }
+
+    private void checkCurrentLocation(Location location) {
+        // TODO (but here?): ACTION_CHECK_ACTIVITY (in case nobody registers a new schedule and there's one stored in the future)
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        if (!sharedPref.getBoolean("pref_near_takeoff_notifications", true))
+            return; // user don't want notifications when near takeoffs
+        SharedPreferences dismissedTakeoffsPref = getSharedPreferences(ACTION_DISMISS_TAKEOFF_NOTIFICATION, Context.MODE_PRIVATE);
+        SharedPreferences blacklistedTakeoffsPref = getSharedPreferences(ACTION_BLACKLIST_TAKEOFF_NOTIFICATION, Context.MODE_PRIVATE);
+        Database database = new Database(this);
+        long takeoffMaxDistance = Long.parseLong(sharedPref.getString("pref_near_takeoff_max_distance", "500"));
+        boolean vibrate = sharedPref.getBoolean("pref_near_takeoff_vibrate", true);
+        boolean cancelNotification = true;
+        List<net.exent.flywithme.bean.Takeoff> takeoffs = database.getTakeoffs(location.getLatitude(), location.getLongitude(), 10, false, false);
+        for (net.exent.flywithme.bean.Takeoff takeoff : takeoffs) {
+            if (location.distanceTo(takeoff.getLocation()) > takeoffMaxDistance)
+                break; // takeoff too far away (all subsequent takeoffs will be even further away)
+            if (dismissedTakeoffsPref.getLong("" + takeoff.getId(), 0) + DISMISS_TIMEOUT > System.currentTimeMillis())
+                continue; // user dismissed this takeoff recently, ignore takeoff
+            if (blacklistedTakeoffsPref.contains("" + takeoff.getId()))
+                continue; // user blacklisted this takeoff, ignore takeoff
+
+            PendingIntent clickIntent = PendingIntent.getService(this, 0, new Intent(this, FlyWithMeService.class).setAction(ACTION_CLICK_TAKEOFF_NOTIFICATION).putExtra(ARG_TAKEOFF_ID, takeoff.getId()), PendingIntent.FLAG_UPDATE_CURRENT);
+            PendingIntent dismissIntent = PendingIntent.getService(this, 0, new Intent(this, FlyWithMeService.class).setAction(ACTION_DISMISS_TAKEOFF_NOTIFICATION).putExtra(ARG_TAKEOFF_ID, takeoff.getId()), PendingIntent.FLAG_UPDATE_CURRENT);
+            PendingIntent scheduleIntent = PendingIntent.getService(this, 0, new Intent(this, FlyWithMeService.class).setAction(ACTION_SCHEDULE_TAKEOFF_NOTIFICATION).putExtra(ARG_TAKEOFF_ID, takeoff.getId()), PendingIntent.FLAG_UPDATE_CURRENT);
+            PendingIntent blacklistIntent = PendingIntent.getService(this, 0, new Intent(this, FlyWithMeService.class).setAction(ACTION_BLACKLIST_TAKEOFF_NOTIFICATION).putExtra(ARG_TAKEOFF_ID, takeoff.getId()), PendingIntent.FLAG_UPDATE_CURRENT);
+            Notification.Builder notificationBuilder = new Notification.Builder(this)
+                    .setSmallIcon(R.drawable.notification_icon)
+                    .setContentTitle(takeoff.getName())
+                    .setContentText(getString(R.string.are_you_flying))
+                    .setContentIntent(clickIntent)
+                    .setDeleteIntent(dismissIntent)
+                    .setAutoCancel(true)
+                    .addAction(android.R.drawable.ic_input_add, getString(R.string.yes), scheduleIntent)
+                    .addAction(android.R.drawable.ic_dialog_alert, getString(R.string.never_notify_here), blacklistIntent);
+            if (vibrate)
+                notificationBuilder.setVibrate(VIBRATE_DATA);
+            Notification notification = notificationBuilder.build();
+            notification.flags |= Notification.FLAG_AUTO_CANCEL;
+            ((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).notify(0, notification);
+            cancelNotification = false;
+            break;
+        }
+        if (cancelNotification)
+            ((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).cancel(0); // we're not near any known takeoff, hide notification
+    }
+
+    private void checkActivity(String message) {
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        sharedPref.edit().putBoolean("pref_schedule_needs_update", true).apply();
+        if (!sharedPref.getBoolean("pref_takeoff_activity_notifications", true))
+            return; // user don't want notifications on activity
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+            return;
+        Location location = LocationApi.getCachedLocation(getApplicationContext());
+        SharedPreferences dismissedActivityPref = getSharedPreferences(ACTION_DISMISS_ACTIVITY_NOTIFICATION, Context.MODE_PRIVATE);
+        SharedPreferences blacklistedActivityPref = getSharedPreferences(ACTION_BLACKLIST_ACTIVITY_NOTIFICATION, Context.MODE_PRIVATE);
+        long activityMaxDistance = Long.parseLong(sharedPref.getString("pref_takeoff_activity_max_distance", "100000"));
+        boolean vibrate = sharedPref.getBoolean("pref_takeoff_activity_vibrate", true);
+        String[] timestampsAndTakeoffIdsList = message.split(";");
+        Database database = new Database(this);
+        DateFormat dateFormat = new SimpleDateFormat("HH:mm", Locale.US);
+        boolean breakLoop = false;
+        for (String timestampsAndTakeoffIds : timestampsAndTakeoffIdsList) {
+            String[] tmp = timestampsAndTakeoffIds.split(":");
+            long timestamp = Long.parseLong(tmp[0]) * 1000;
+            for (String takeoffIdString : tmp[1].split(",")) {
+                long takeoffId = Long.parseLong(takeoffIdString);
+                if (dismissedActivityPref.getLong("" + takeoffId, 0) + DISMISS_TIMEOUT > System.currentTimeMillis())
+                    continue; // user dismissed activity for this takeoff recently, ignore takeoff
+                if (blacklistedActivityPref.contains("" + takeoffId))
+                    continue; // user blacklisted activity for this takeoff, ignore takeoff
+                net.exent.flywithme.bean.Takeoff takeoff = database.getTakeoff(takeoffId);
+                if (location.distanceTo(takeoff.getLocation()) > activityMaxDistance)
+                    continue;
+                PendingIntent clickIntent = PendingIntent.getService(this, 0, new Intent(this, FlyWithMeService.class).setAction(ACTION_CLICK_ACTIVITY_NOTIFICATION).putExtra(ARG_TAKEOFF_ID, takeoffId).putExtra(ARG_TIMESTAMP_IN_SECONDS, timestamp), PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent dismissIntent = PendingIntent.getService(this, 0, new Intent(this, FlyWithMeService.class).setAction(ACTION_DISMISS_ACTIVITY_NOTIFICATION).putExtra(ARG_TAKEOFF_ID, takeoffId).putExtra(ARG_TIMESTAMP_IN_SECONDS, timestamp), PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent scheduleIntent = PendingIntent.getService(this, 0, new Intent(this, FlyWithMeService.class).setAction(ACTION_SCHEDULE_ACTIVITY_NOTIFICATION).putExtra(ARG_TAKEOFF_ID, takeoffId).putExtra(ARG_TIMESTAMP_IN_SECONDS, timestamp), PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent blacklistIntent = PendingIntent.getService(this, 0, new Intent(this, FlyWithMeService.class).setAction(ACTION_BLACKLIST_ACTIVITY_NOTIFICATION).putExtra(ARG_TAKEOFF_ID, takeoffId).putExtra(ARG_TIMESTAMP_IN_SECONDS, timestamp), PendingIntent.FLAG_UPDATE_CURRENT);
+                    /* XXX:
+                     * 1. user receives activity for one place
+                     * 2. user is not watching phone and ignores the notification
+                     * 3. user receives activity for another place, further away than first place
+                     * 4. notification for first place i still shown, user dismiss this notification
+                     * 5. no notification will be displayed for the second place (until someone schedules something anywhere)
+                     * this is probably not a big deal
+                     */
+                Notification.Builder notificationBuilder = new Notification.Builder(this)
+                        .setSmallIcon(R.drawable.notification_icon)
+                        .setContentTitle(dateFormat.format(new Date(timestamp)) + " - " + takeoff.getName())
+                        .setContentText(getString(R.string.will_you_join))
+                        .setContentIntent(clickIntent)
+                        .setDeleteIntent(dismissIntent)
+                        .setAutoCancel(true)
+                        .addAction(android.R.drawable.ic_input_add, getString(R.string.yes), scheduleIntent)
+                        .addAction(android.R.drawable.ic_dialog_alert, getString(R.string.never_notify_here), blacklistIntent);
+                if (vibrate)
+                    notificationBuilder.setVibrate(VIBRATE_DATA);
+                Notification notification = notificationBuilder.build();
+                notification.flags |= Notification.FLAG_AUTO_CANCEL;
+                ((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).notify(0, notification);
+                breakLoop = true;
+                break;
+            }
+            if (breakLoop)
+                break;
         }
     }
 

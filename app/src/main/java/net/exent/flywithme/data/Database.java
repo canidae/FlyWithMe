@@ -144,7 +144,7 @@ public class Database extends SQLiteOpenHelper {
         }
     }
 
-    public synchronized List<Takeoff> getTakeoffs(double latitude, double longitude, int maxResult, boolean includeFavourites) {
+    public synchronized List<Takeoff> getTakeoffs(double latitude, double longitude, int maxResult, boolean includeFavourites, boolean includeActivity) {
         List<Takeoff> takeoffs = new ArrayList<>();
         if (maxResult <= 0)
             return takeoffs;
@@ -157,13 +157,15 @@ public class Database extends SQLiteOpenHelper {
         double longitudeSin = Math.sin(longitudeRadians);
         String orderBy = includeFavourites ? "favourite desc, " : "";
         orderBy += "(" + latitudeCos + " * latitude_cos * (longitude_cos * " + longitudeCos + " + longitude_sin * " + longitudeSin + ") + " + latitudeSin + " * latitude_sin) desc";
+        String pilotsToday = includeActivity ? "(select count(*) from schedule where schedule.takeoff_id = takeoff.takeoff_id and date(schedule.timestamp, 'unixepoch', 'localtime') = date('now', 'localtime'))" : "0";
+        String pilotsLater = includeActivity ? "(select count(*) from schedule where schedule.takeoff_id = takeoff.takeoff_id and date(schedule.timestamp, 'unixepoch', 'localtime') > date('now', 'localtime'))" : "0";
 
         // execute the query
         SQLiteDatabase db = getReadableDatabase();
         if (db == null)
             throw new IllegalArgumentException("Unable to get database object");
         try {
-            Cursor cursor = db.rawQuery("select *, (select count(*) from schedule where schedule.takeoff_id = takeoff.takeoff_id and date(schedule.timestamp, 'unixepoch', 'localtime') = date('now', 'localtime')) as pilots_today, (select count(*) from schedule where schedule.takeoff_id = takeoff.takeoff_id and date(schedule.timestamp, 'unixepoch', 'localtime') > date('now', 'localtime')) as pilots_later from takeoff order by " + orderBy + " limit " + maxResult, null);
+            Cursor cursor = db.rawQuery("select *, " + pilotsToday + " as pilots_today, " + pilotsLater + " as pilots_later from takeoff order by " + orderBy + " limit " + maxResult, null);
             while (cursor.moveToNext())
                 takeoffs.add(Takeoff.create(new ImprovedCursor(cursor)));
             cursor.close();
