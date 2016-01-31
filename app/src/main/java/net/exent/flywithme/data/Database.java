@@ -82,16 +82,29 @@ public class Database extends SQLiteOpenHelper {
         }
     }
 
-    public synchronized void updateSchedules(List<Schedule> schedules) {
-        if (schedules == null) {
-            Log.w(getClass().getName(), "Unable to update schedules, argument is null");
-            return;
+    public synchronized boolean isPilotScheduledToday(String pilotId) {
+        SQLiteDatabase db = getReadableDatabase();
+        if (db == null)
+            throw new IllegalArgumentException("Unable to get database object");
+        Cursor cursor = null;
+        try {
+            cursor = db.query("schedule", new String[]{"timestamp"}, "? like '%' || pilot_id and date(schedule.timestamp, 'unixepoch', 'localtime') = date('now', 'localtime')", new String[]{pilotId}, null, null, null);
+            return cursor.getCount() > 0;
+        } finally {
+            if (cursor != null)
+                cursor.close();
+            db.close();
         }
+    }
+
+    public synchronized void updateSchedules(List<Schedule> schedules) {
         SQLiteDatabase db = getWritableDatabase();
         if (db == null)
             throw new IllegalArgumentException("Unable to get database object");
         try {
             db.execSQL("delete from schedule");
+            if (schedules == null)
+                return;
             for (Schedule schedule : schedules) {
                 for (Pilot pilot : schedule.getPilots()) {
                     ContentValues values = new ContentValues();

@@ -306,19 +306,22 @@ public class TakeoffSchedule extends Fragment {
             /* END AAH! */
             TextView groupTime = (TextView) convertView.findViewById(R.id.scheduleGroupTime);
             Schedule schedule = getEntryGroup(groupPosition);
-            final Date date = new Date(schedule.getTimestamp() * 1000);
+            final Date date = new Date(schedule == null ? 0 : schedule.getTimestamp() * 1000);
             groupTime.setText(dateFormatter.format(date));
             TextView groupPilots = (TextView) convertView.findViewById(R.id.scheduleGroupPilots);
-            groupPilots.setText(getString(R.string.pilots) + ": " + schedule.getPilots().size());
+            String text = getString(R.string.pilots) + ": " + (schedule == null ? 0 : schedule.getPilots().size());
+            groupPilots.setText(text);
             final ImageButton joinOrLeave = (ImageButton) convertView.findViewById(R.id.joinOrLeaveButton);
 
             SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
-            String pilotId = sharedPref.getString("token", "").trim();
+            String pilotId = sharedPref.getString("pilot_id", "").trim();
             boolean foundPilot = false;
-            for (Pilot pilot : schedule.getPilots()) {
-                if (pilot != null && pilot.getId() != null && pilotId.endsWith(pilot.getId())) {
-                    foundPilot = true;
-                    break;
+            if (schedule != null) {
+                for (Pilot pilot : schedule.getPilots()) {
+                    if (pilot != null && pilot.getId() != null && pilotId.endsWith(pilot.getId())) {
+                        foundPilot = true;
+                        break;
+                    }
                 }
             }
             if ("".equals(pilotId)) {
@@ -354,18 +357,20 @@ public class TakeoffSchedule extends Fragment {
             }
             final Pilot pilot = getEntryGroupChild(groupPosition, childPosition);
             TextView entryPilotName = (TextView) convertView.findViewById(R.id.scheduleEntryPilotName);
-            entryPilotName.setText(pilot.getName());
+            entryPilotName.setText(pilot == null ? "<Error>" : pilot.getName());
             TextView entryPilotPhone = (TextView) convertView.findViewById(R.id.scheduleEntryPilotPhone);
-            entryPilotPhone.setText(pilot.getPhone());
+            entryPilotPhone.setText(pilot == null ? "<Error>" : pilot.getPhone());
             ImageButton entryCallButton = (ImageButton) convertView.findViewById(R.id.scheduleEntryCallButton);
-            if ("".equals(pilot.getPhone()) || pilot.getPhone().equals(PreferenceManager.getDefaultSharedPreferences(getActivity()).getString("pref_pilot_phone", null))) {
+            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            String pilotId = sharedPref.getString("pilot_id", "").trim();
+            if (pilotId.endsWith(pilot == null ? "<Error>" : pilot.getId())) {
                 entryCallButton.setVisibility(View.INVISIBLE);
             } else {
                 entryCallButton.setVisibility(View.VISIBLE);
                 entryCallButton.setOnClickListener(new OnClickListener() {
                     public void onClick(View v) {
                         Intent callIntent = new Intent(Intent.ACTION_DIAL);
-                        callIntent.setData(Uri.parse("tel:" + pilot.getPhone()));
+                        callIntent.setData(Uri.parse("tel:" + (pilot == null ? "<Error>" : pilot.getPhone())));
                         startActivity(callIntent);
                     }
                 });

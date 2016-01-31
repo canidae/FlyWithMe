@@ -124,7 +124,7 @@ public class FlyWithMeService extends IntentService {
             prefs.edit().putLong("" + bundle.getLong(ARG_TAKEOFF_ID), now).apply();
         } else if (ACTION_SCHEDULE_TAKEOFF_NOTIFICATION.equals(action)) {
             SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-            String pilotId = sharedPref.getString("token", null);
+            String pilotId = sharedPref.getString("pilot_id", null);
             if (pilotId == null) {
                 Log.w(TAG, "Can't schedule flight, pilot not registered");
                 Intent showTakeoffDetailsIntent = new Intent(this, FlyWithMe.class);
@@ -159,7 +159,7 @@ public class FlyWithMeService extends IntentService {
             prefs.edit().putLong("" + bundle.getLong(ARG_TAKEOFF_ID), now).apply();
         } else if (ACTION_SCHEDULE_ACTIVITY_NOTIFICATION.equals(action)) {
             SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-            String pilotId = sharedPref.getString("token", null);
+            String pilotId = sharedPref.getString("pilot_id", null);
             if (pilotId == null) {
                 Log.w(TAG, "Can't schedule flight, pilot not registered");
                 Intent showTakeoffDetailsIntent = new Intent(this, FlyWithMe.class);
@@ -219,7 +219,7 @@ public class FlyWithMeService extends IntentService {
             getSchedulesAndRefreshView();
         } else if (ACTION_SCHEDULE_FLIGHT.equals(action)) {
             SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-            String pilotId = sharedPref.getString("token", null);
+            String pilotId = sharedPref.getString("pilot_id", null);
             if (pilotId == null) {
                 Log.w(TAG, "Can't schedule flight, pilot not registered");
                 return;
@@ -234,7 +234,7 @@ public class FlyWithMeService extends IntentService {
             getSchedulesAndRefreshView();
         } else if (ACTION_UNSCHEDULE_FLIGHT.equals(action)) {
             SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-            String pilotId = sharedPref.getString("token", null);
+            String pilotId = sharedPref.getString("pilot_id", null);
             if (pilotId == null) {
                 Log.w(TAG, "Can't unschedule flight, pilot not registered");
                 return;
@@ -315,8 +315,11 @@ public class FlyWithMeService extends IntentService {
                 .setAutoCancel(true)
                 .addAction(android.R.drawable.ic_input_add, getString(R.string.yes), scheduleIntent)
                 .addAction(android.R.drawable.ic_dialog_alert, getString(R.string.never_notify_here), blacklistIntent);
-        if (sharedPref.getBoolean("pref_near_takeoff_vibrate", true))
-            notificationBuilder.setVibrate(VIBRATE_DATA); // TODO: check if user is scheduled for activity something something, then don't vibrate
+        if (sharedPref.getBoolean("pref_near_takeoff_vibrate", true)) {
+            String pilotId = sharedPref.getString("pilot_id", null);
+            if (!database.isPilotScheduledToday(pilotId))
+                notificationBuilder.setVibrate(VIBRATE_DATA);
+        }
         Notification notification = notificationBuilder.build();
         notification.flags |= Notification.FLAG_AUTO_CANCEL;
         ((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).notify(0, notification);
@@ -379,8 +382,11 @@ public class FlyWithMeService extends IntentService {
                         .setAutoCancel(true)
                         .addAction(android.R.drawable.ic_input_add, getString(R.string.yes), scheduleIntent)
                         .addAction(android.R.drawable.ic_dialog_alert, getString(R.string.never_notify_here), blacklistIntent);
-                if (sharedPref.getBoolean("pref_takeoff_activity_vibrate", false))
-                    notificationBuilder.setVibrate(VIBRATE_DATA);
+                if (sharedPref.getBoolean("pref_takeoff_activity_vibrate", false)) {
+                    String pilotId = sharedPref.getString("pilot_id", null);
+                    if (!database.isPilotScheduledToday(pilotId))
+                        notificationBuilder.setVibrate(VIBRATE_DATA);
+                }
                 Notification notification = notificationBuilder.build();
                 notification.flags |= Notification.FLAG_AUTO_CANCEL;
                 ((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).notify(0, notification);
@@ -394,13 +400,13 @@ public class FlyWithMeService extends IntentService {
 
     private void registerPilot(boolean refreshToken, String name, String phone) {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-        String token = sharedPref.getString("token", null);
+        String pilotId = sharedPref.getString("pilot_id", null);
         try {
-            if (refreshToken || token == null) {
-                token = InstanceID.getInstance(this).getToken(PROJECT_ID, GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
-                sharedPref.edit().putString("token", token).apply();
+            if (refreshToken || pilotId == null) {
+                pilotId = InstanceID.getInstance(this).getToken(PROJECT_ID, GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
+                sharedPref.edit().putString("pilot_id", pilotId).apply();
             }
-            getServer().registerPilot(token, name, phone).execute();
+            getServer().registerPilot(pilotId, name, phone).execute();
         } catch (IOException e) {
             Log.w(TAG, "Registering pilot failed", e);
         }

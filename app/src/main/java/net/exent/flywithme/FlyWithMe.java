@@ -123,7 +123,7 @@ public class FlyWithMe extends Activity {
 
         /* register pilot if we haven't done so already */
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        if (sharedPref.getString("token", null) == null) {
+        if (sharedPref.getString("pilot_id", null) == null) {
             intent = new Intent(this, FlyWithMeService.class);
             intent.setAction(FlyWithMeService.ACTION_REGISTER_PILOT);
             startService(intent);
