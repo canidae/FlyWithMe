@@ -59,8 +59,8 @@ public class TakeoffSchedule extends Fragment {
         }
 
         // don't show buttons for registering flight if user haven't set a name
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        String pilotName = prefs.getString("pref_pilot_name", "").trim();
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String pilotName = sharedPref.getString("pref_pilot_name", "").trim();
         TextView mayNotRegister = (TextView) getActivity().findViewById(R.id.scheduleMayNotRegister);
         TableLayout flightTime = (TableLayout) getActivity().findViewById(R.id.scheduleFlightTime);
         Button scheduleFlight = (Button) getActivity().findViewById(R.id.scheduleFlightButton);
@@ -312,8 +312,8 @@ public class TakeoffSchedule extends Fragment {
             groupPilots.setText(getString(R.string.pilots) + ": " + schedule.getPilots().size());
             final ImageButton joinOrLeave = (ImageButton) convertView.findViewById(R.id.joinOrLeaveButton);
 
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-            String pilotId = prefs.getString("token", "").trim();
+            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            String pilotId = sharedPref.getString("token", "").trim();
             boolean foundPilot = false;
             for (Pilot pilot : schedule.getPilots()) {
                 if (pilot != null && pilot.getId() != null && pilotId.endsWith(pilot.getId())) {
@@ -358,7 +358,7 @@ public class TakeoffSchedule extends Fragment {
             TextView entryPilotPhone = (TextView) convertView.findViewById(R.id.scheduleEntryPilotPhone);
             entryPilotPhone.setText(pilot.getPhone());
             ImageButton entryCallButton = (ImageButton) convertView.findViewById(R.id.scheduleEntryCallButton);
-            if ("".equals(pilot.getPhone()) || pilot.getPhone().equals(PreferenceManager.getDefaultSharedPreferences(getActivity()).getString("pref_schedule_pilot_phone", null))) {
+            if ("".equals(pilot.getPhone()) || pilot.getPhone().equals(PreferenceManager.getDefaultSharedPreferences(getActivity()).getString("pref_pilot_phone", null))) {
                 entryCallButton.setVisibility(View.INVISIBLE);
             } else {
                 entryCallButton.setVisibility(View.VISIBLE);

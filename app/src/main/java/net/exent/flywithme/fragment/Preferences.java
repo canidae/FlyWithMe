@@ -23,14 +23,14 @@ import net.exent.flywithme.service.FlyWithMeService;
 
 public class Preferences extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
     public static void setupDefaultPreferences(Context context) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
         // setup default airspace map polygons (all shown)
         List<String> airspaceList = new ArrayList<>(Airspace.getAirspaceMap(context).keySet());
         for (String key : airspaceList) {
             if (key == null || "".equals(key.trim()))
                 continue;
-            if (!prefs.contains("pref_airspace_enabled_" + key))
-                prefs.edit().putBoolean("pref_airspace_enabled_" + key, true).apply();
+            if (!sharedPref.contains("pref_airspace_enabled_" + key))
+                sharedPref.edit().putBoolean("pref_airspace_enabled_" + key, true).apply();
         }
     }
 

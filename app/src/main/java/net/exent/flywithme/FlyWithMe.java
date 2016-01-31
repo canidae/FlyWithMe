@@ -44,7 +44,7 @@ public class FlyWithMe extends Activity {
     public static void showFragment(Activity activity, String tag, Class<? extends Fragment> fragmentClass, Bundle args) {
         /* first check if schedules needs to be refreshed */
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(activity);
-        if (sharedPref.getBoolean("pref_schedule_needs_update", true)) {
+        if (sharedPref.getBoolean("activity_schedule_needs_update", true)) {
             Intent intent = new Intent(activity, FlyWithMeService.class);
             intent.setAction(FlyWithMeService.ACTION_GET_SCHEDULES);
             activity.startService(intent);
@@ -122,8 +122,8 @@ public class FlyWithMe extends Activity {
         startService(intent);
 
         /* register pilot if we haven't done so already */
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        if (prefs.getString("token", null) == null) {
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        if (sharedPref.getString("token", null) == null) {
             intent = new Intent(this, FlyWithMeService.class);
             intent.setAction(FlyWithMeService.ACTION_REGISTER_PILOT);
             startService(intent);
@@ -134,7 +134,7 @@ public class FlyWithMe extends Activity {
 
         /* show preferences if we haven't set pilot name, otherwise takeoff list */
         if (savedInstanceState == null) {
-            String pilotName = prefs.getString("pref_pilot_name", null);
+            String pilotName = sharedPref.getString("pref_pilot_name", null);
             if (pilotName == null || pilotName.trim().equals("")) {
                 showFragment(this, "preferences", Preferences.class, null);
             } else {
@@ -209,13 +209,13 @@ public class FlyWithMe extends Activity {
                 Database database = new Database(context);
                 inputStream = new DataInputStream(context.getResources().openRawResource(R.raw.flywithme));
                 long importTimestamp = inputStream.readLong();
-                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-                long previousImportTimestamp = prefs.getLong("pref_last_takeoff_update_timestamp", 0);
+                SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+                long previousImportTimestamp = sharedPref.getLong("takeoff_last_update_timestamp", 0);
                 if (importTimestamp <= previousImportTimestamp) {
                     Log.d(getClass().getName(), "No need to import, already up to date");
                     return; // no need to import, already updated
                 }
-                prefs.edit().putLong("pref_last_takeoff_update_timestamp", importTimestamp).apply();
+                sharedPref.edit().putLong("takeoff_last_update_timestamp", importTimestamp).apply();
                 while (true) {
                     /* loop breaks once we get an EOFException */
                     int takeoffId = inputStream.readShort();

@@ -84,27 +84,27 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
             markers.clear();
             zones.clear();
             /* add icons */
-            final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-            boolean showTakeoffs = prefs.getBoolean("pref_map_show_takeoffs", true);
+            final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            boolean showTakeoffs = sharedPref.getBoolean("pref_map_show_takeoffs", true);
             final ImageButton markerButton = (ImageButton) getActivity().findViewById(R.id.fragmentButton1);
             markerButton.setImageResource(showTakeoffs ? R.mipmap.takeoffs_enabled : R.mipmap.takeoffs_disabled);
             markerButton.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    boolean markersEnabled = !prefs.getBoolean("pref_map_show_takeoffs", true);
-                    prefs.edit().putBoolean("pref_map_show_takeoffs", markersEnabled).apply();
+                    boolean markersEnabled = !sharedPref.getBoolean("pref_map_show_takeoffs", true);
+                    sharedPref.edit().putBoolean("pref_map_show_takeoffs", markersEnabled).apply();
                     markerButton.setImageResource(markersEnabled ? R.mipmap.takeoffs_enabled : R.mipmap.takeoffs_disabled);
                     drawOverlay(map.getCameraPosition());
                 }
             });
-            boolean showAirspace = prefs.getBoolean("pref_map_show_airspaces", true);
+            boolean showAirspace = sharedPref.getBoolean("pref_map_show_airspaces", true);
             final ImageButton polygonButton = (ImageButton) getActivity().findViewById(R.id.fragmentButton2);
             polygonButton.setImageResource(showAirspace ? R.mipmap.airspace_enabled : R.mipmap.airspace_disabled);
             polygonButton.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    boolean polygonsEnabled = !prefs.getBoolean("pref_map_show_airspace", true);
-                    prefs.edit().putBoolean("pref_map_show_airspace", polygonsEnabled).apply();
+                    boolean polygonsEnabled = !sharedPref.getBoolean("pref_map_show_airspace", true);
+                    sharedPref.edit().putBoolean("pref_map_show_airspace", polygonsEnabled).apply();
                     polygonButton.setImageResource(polygonsEnabled ? R.mipmap.airspace_enabled : R.mipmap.airspace_disabled);
                     drawOverlay(map.getCameraPosition());
                 }
@@ -214,8 +214,8 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
             try {
                 final Map<Takeoff, MarkerOptions> addMarkers = new HashMap<>();
 
-                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-                if (prefs.getBoolean("pref_map_show_takeoffs", true)) {
+                SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                if (sharedPref.getBoolean("pref_map_show_takeoffs", true)) {
                     LatLng latLng = cameraPositions[0].target;
                     Location mapLocation = new Location(LocationManager.PASSIVE_PROVIDER);
                     mapLocation.setLatitude(latLng.latitude);
@@ -305,15 +305,15 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
         protected Runnable doInBackground(CameraPosition... cameraPositions) {
             try {
                 final Set<Airspace.Zone> showZones = new HashSet<>();
-                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-                if (prefs.getBoolean("pref_map_show_airspace", true)) {
+                SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                if (sharedPref.getBoolean("pref_map_show_airspace", true)) {
                     LatLng latLng = cameraPositions[0].target;
                     Location mapLocation = new Location(LocationManager.PASSIVE_PROVIDER);
                     mapLocation.setLatitude(latLng.latitude);
                     mapLocation.setLongitude(latLng.longitude);
 
                     for (Map.Entry<String, List<Airspace.Zone>> entry : Airspace.getAirspaceMap(getActivity()).entrySet()) {
-                        if (entry.getKey() == null || !prefs.getBoolean("pref_airspace_enabled_" + entry.getKey().trim(), true))
+                        if (entry.getKey() == null || !sharedPref.getBoolean("pref_airspace_enabled_" + entry.getKey().trim(), true))
                             continue;
                         for (Airspace.Zone zone : entry.getValue()) {
                             // show zones within (sort of) 100km
@@ -325,7 +325,7 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
 
                 /* in case user disabled while we were figuring out which zones to show.
                  * it's not thread safe, so it's technically possibly to make it show zones even though it was disabled, but it's unlikely to happen */
-                if (!prefs.getBoolean("pref_map_show_airspace", true))
+                if (!sharedPref.getBoolean("pref_map_show_airspace", true))
                     showZones.clear();
                 return new Runnable() {
                     @Override

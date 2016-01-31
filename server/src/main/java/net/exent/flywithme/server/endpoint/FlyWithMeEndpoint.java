@@ -105,7 +105,7 @@ public class FlyWithMeEndpoint {
         List<Schedule> schedules = DataStore.getAllSchedules();
         // we'll scramble pilotIds, only keep the last few characters for identification
         for (Schedule schedule : schedules) {
-            for (Pilot pilot : schedule.getPilots())
+            for (Pilot pilot : schedule.getPilots()) // TODO: why was this null? (01:55:47)
                 pilot.setId(pilot.getId().substring(pilot.getId().length() - 6));
         }
         return schedules;
