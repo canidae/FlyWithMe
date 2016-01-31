@@ -72,7 +72,8 @@ public class FlyWithMeService extends IntentService {
     private static final String TAG = FlyWithMeService.class.getName();
     private static final String PROJECT_ID = "586531582715";
     private static final String SERVER_URL = "https://4-dot-flywithme-server.appspot.com/_ah/api/"; // "http://88.95.84.204:8080/_ah/api/"
-    private static final long DISMISS_TIMEOUT = 21600000;
+    private static final long DISMISS_TIMEOUT = 21600000; // 6 hours
+    private static final long PERIODIC_ACTIVITY_CHECK_INTERVAL = 3600000; // 1 hour
     private static final long[] VIBRATE_DATA = new long[] {0, 100, 100, 100, 100, 300, 100, 100}; // actually morse for "F"
 
     private static boolean initialized = false;
@@ -86,6 +87,7 @@ public class FlyWithMeService extends IntentService {
         Log.d(getClass().getName(), "onHandleIntent(" + intent + ")");
         String action = intent.getAction();
         Bundle bundle = intent.getExtras();
+        long now = System.currentTimeMillis();
         if (bundle == null)
             bundle = new Bundle();
         if (ACTION_INIT.equals(action)) {
@@ -112,7 +114,7 @@ public class FlyWithMeService extends IntentService {
             startActivity(showTakeoffDetailsIntent);
         } else if (ACTION_DISMISS_TAKEOFF_NOTIFICATION.equals(action)) {
             SharedPreferences prefs = getSharedPreferences(ACTION_DISMISS_TAKEOFF_NOTIFICATION, Context.MODE_PRIVATE);
-            prefs.edit().putLong("" + bundle.getLong(ARG_TAKEOFF_ID), System.currentTimeMillis()).apply();
+            prefs.edit().putLong("" + bundle.getLong(ARG_TAKEOFF_ID), now).apply();
         } else if (ACTION_SCHEDULE_TAKEOFF_NOTIFICATION.equals(action)) {
             SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
             String pilotId = sharedPref.getString("token", null);
@@ -126,17 +128,17 @@ public class FlyWithMeService extends IntentService {
             }
             long takeoffId = bundle.getLong(ARG_TAKEOFF_ID);
             try {
-                getServer().scheduleFlight(pilotId, takeoffId, System.currentTimeMillis() / 900000 * 900000); // rounds down to previous 15th minute
+                getServer().scheduleFlight(pilotId, takeoffId, now / 900000 * 900000); // rounds down to previous 15th minute
             } catch (IOException e) {
                 Log.w(TAG, "Scheduling flight failed", e);
             }
             // also add takeoff to list of dismissed takeoffs so user won't be bugged again about flying here before another 6 hours has passed
-            sharedPref.edit().putLong("" + takeoffId, System.currentTimeMillis()).apply();
+            sharedPref.edit().putLong("" + takeoffId, now).apply();
             // dismiss notification
             ((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).cancel(0);
         } else if (ACTION_BLACKLIST_TAKEOFF_NOTIFICATION.equals(action)) {
             SharedPreferences prefs = getSharedPreferences(ACTION_BLACKLIST_TAKEOFF_NOTIFICATION, Context.MODE_PRIVATE);
-            prefs.edit().putLong("" + bundle.getLong(ARG_TAKEOFF_ID), System.currentTimeMillis()).apply();
+            prefs.edit().putLong("" + bundle.getLong(ARG_TAKEOFF_ID), now).apply();
             // dismiss notification
             ((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).cancel(0);
         } else if (ACTION_CLICK_ACTIVITY_NOTIFICATION.equals(action)) {
@@ -147,7 +149,7 @@ public class FlyWithMeService extends IntentService {
             startActivity(showTakeoffDetailsIntent);
         } else if (ACTION_DISMISS_ACTIVITY_NOTIFICATION.equals(action)) {
             SharedPreferences prefs = getSharedPreferences(ACTION_DISMISS_ACTIVITY_NOTIFICATION, Context.MODE_PRIVATE);
-            prefs.edit().putLong("" + bundle.getLong(ARG_TAKEOFF_ID), System.currentTimeMillis()).apply();
+            prefs.edit().putLong("" + bundle.getLong(ARG_TAKEOFF_ID), now).apply();
         } else if (ACTION_SCHEDULE_ACTIVITY_NOTIFICATION.equals(action)) {
             SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
             String pilotId = sharedPref.getString("token", null);
@@ -167,12 +169,12 @@ public class FlyWithMeService extends IntentService {
                 Log.w(TAG, "Scheduling flight failed", e);
             }
             // also add takeoff to list of dismissed takeoffs so user won't be bugged again about flying here before another 6 hours has passed
-            sharedPref.edit().putLong("" + takeoffId, System.currentTimeMillis()).apply();
+            sharedPref.edit().putLong("" + takeoffId, now).apply();
             // dismiss notification
             ((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).cancel(0);
         } else if (ACTION_BLACKLIST_ACTIVITY_NOTIFICATION.equals(action)) {
             SharedPreferences prefs = getSharedPreferences(ACTION_BLACKLIST_ACTIVITY_NOTIFICATION, Context.MODE_PRIVATE);
-            prefs.edit().putLong("" + bundle.getLong(ARG_TAKEOFF_ID), System.currentTimeMillis()).apply();
+            prefs.edit().putLong("" + bundle.getLong(ARG_TAKEOFF_ID), now).apply();
             // dismiss notification
             ((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).cancel(0);
         } else if (ACTION_REGISTER_PILOT.equals(action)) {
@@ -222,10 +224,10 @@ public class FlyWithMeService extends IntentService {
                 // TODO: replace stuff below by checking if we've scheduled activity at takeoff
                 // add takeoff to dismissedTakeoffsPref so we won't get notification when we get to the takeoff
                 SharedPreferences dismissedTakeoffsPref = getSharedPreferences(ACTION_DISMISS_TAKEOFF_NOTIFICATION, Context.MODE_PRIVATE);
-                dismissedTakeoffsPref.edit().putLong("" + takeoffId, System.currentTimeMillis()).apply();
+                dismissedTakeoffsPref.edit().putLong("" + takeoffId, now).apply();
                 // add takeoff to dismissedActivityPref so we won't get notification for our own or someone else's registration
                 SharedPreferences dismissedActivityPref = getSharedPreferences(ACTION_DISMISS_ACTIVITY_NOTIFICATION, Context.MODE_PRIVATE);
-                dismissedActivityPref.edit().putLong("" + takeoffId, System.currentTimeMillis()).apply();
+                dismissedActivityPref.edit().putLong("" + takeoffId, now).apply();
             } catch (IOException e) {
                 Log.w(TAG, "Scheduling flight failed", e);
             }
@@ -274,8 +276,13 @@ public class FlyWithMeService extends IntentService {
     }
 
     private void checkCurrentLocation(Location location) {
-        // TODO (but here?): ACTION_CHECK_ACTIVITY (in case nobody registers a new schedule and there's one stored in the future)
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        long now = System.currentTimeMillis();
+        if (now - sharedPref.getLong("activity_last_check", 0) > PERIODIC_ACTIVITY_CHECK_INTERVAL) {
+            // periodically check activity in case of no new schedules and we're closing up on an upcoming schedule
+            sharedPref.edit().putLong("activity_last_check", now).apply();
+            checkActivity(null);
+        }
         if (!sharedPref.getBoolean("pref_near_takeoff_notifications", true))
             return; // user don't want notifications when near takeoffs
         SharedPreferences dismissedTakeoffsPref = getSharedPreferences(ACTION_DISMISS_TAKEOFF_NOTIFICATION, Context.MODE_PRIVATE);
@@ -288,7 +295,7 @@ public class FlyWithMeService extends IntentService {
         for (net.exent.flywithme.bean.Takeoff takeoff : takeoffs) {
             if (location.distanceTo(takeoff.getLocation()) > takeoffMaxDistance)
                 break; // takeoff too far away (all subsequent takeoffs will be even further away)
-            if (dismissedTakeoffsPref.getLong("" + takeoff.getId(), 0) + DISMISS_TIMEOUT > System.currentTimeMillis())
+            if (dismissedTakeoffsPref.getLong("" + takeoff.getId(), 0) + DISMISS_TIMEOUT > now)
                 continue; // user dismissed this takeoff recently, ignore takeoff
             if (blacklistedTakeoffsPref.contains("" + takeoff.getId()))
                 continue; // user blacklisted this takeoff, ignore takeoff

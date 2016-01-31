@@ -166,7 +166,8 @@ public class DataStore {
     }
 
     public static Forecast loadForecast(long takeoffId, Forecast.ForecastType type, long validFor) {
-        String key = "forecast_" + takeoffId + "_" + type + "_" + System.currentTimeMillis() / FORECAST_CACHE_LIFETIME + "_" + validFor;
+        long now = System.currentTimeMillis();
+        String key = "forecast_" + takeoffId + "_" + type + "_" + now / FORECAST_CACHE_LIFETIME + "_" + validFor;
         Forecast forecast = (Forecast) memcacheLoad(key);
         if (forecast == null) {
             log.info("Loading forecast from datastore");
@@ -174,7 +175,7 @@ public class DataStore {
                     .filter("takeoffId", takeoffId)
                     .filter("type", type)
                     .filter("validFor", validFor)
-                    .filter("lastUpdated >", (System.currentTimeMillis() - FORECAST_CACHE_LIFETIME / 2) / 1000)
+                    .filter("lastUpdated >", (now - FORECAST_CACHE_LIFETIME / 2) / 1000)
                     .first().now();
             memcacheSave(key, forecast);
         }
