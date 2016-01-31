@@ -4,12 +4,13 @@ import net.exent.flywithme.FlyWithMe;
 import net.exent.flywithme.R;
 import net.exent.flywithme.bean.Takeoff;
 import net.exent.flywithme.data.Database;
+import net.exent.flywithme.util.LocationApi;
+
+import android.app.Fragment;
 import android.content.Context;
 import android.graphics.Color;
 import android.location.Location;
-import android.location.LocationManager;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,46 +21,21 @@ import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.TextView;
 
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-public class TakeoffList extends Fragment implements GoogleApiClient.ConnectionCallbacks, LocationListener {
-    public static final String ARG_LOCATION = "location";
-
+public class TakeoffList extends Fragment implements LocationApi.Callback {
     private static int savedPosition;
     private static int savedListTop;
     private List<Takeoff> takeoffs = new ArrayList<>();
     private TakeoffArrayAdapter takeoffArrayAdapter;
-
-    private GoogleApiClient googleApiClient;
-    private Location location;
-
-    @Override
-    public void onCreate(Bundle bundle) {
-        super.onCreate(bundle);
-        googleApiClient = new GoogleApiClient.Builder(getActivity()).addApi(LocationServices.API).addConnectionCallbacks(this).build();
-    }
+    private LocationApi locationApi;
+    private Location oldLocation;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
-        if (getArguments() != null) {
-            Location location = getArguments().getParcelable(ARG_LOCATION);
-            if (location != null)
-                this.location = location;
-        }
-        if (bundle != null) {
-            Location location = bundle.getParcelable(ARG_LOCATION);
-            if (location != null)
-                this.location = location;
-        }
-
         View view = inflater.inflate(R.layout.takeoff_list, container, false);
         takeoffArrayAdapter = new TakeoffArrayAdapter(getActivity());
         ListView listView = (ListView) view.findViewById(R.id.takeoffListView);
@@ -70,12 +46,13 @@ public class TakeoffList extends Fragment implements GoogleApiClient.ConnectionC
                 Takeoff takeoff = takeoffs.get(position);
                 Bundle args = new Bundle();
                 args.putParcelable(TakeoffDetails.ARG_TAKEOFF, takeoff);
-                // TODO: replace with intent?
                 FlyWithMe.showFragment(getActivity(), "takeoffDetails," + takeoff.getId(), TakeoffDetails.class, args);
             }
         });
         /* position list */
         listView.setSelectionFromTop(savedPosition, savedListTop);
+
+        locationApi = new LocationApi(getActivity(), null, null, null);
 
         return view;
     }
@@ -83,51 +60,26 @@ public class TakeoffList extends Fragment implements GoogleApiClient.ConnectionC
     @Override
     public void onStart() {
         super.onStart();
-        googleApiClient.connect();
 
-        if (location == null) {
-            // no location set, let's pretend we're at the Rikssenter :)
-            location = new Location(LocationManager.PASSIVE_PROVIDER);
-            location.setLatitude(61.874655);
-            location.setLongitude(9.154848);
-        }
+        // start locationApi
+        locationApi.onStart();
 
         // update takeoff list
-        updateTakeoffList(location, true);
+        updateTakeoffList(true);
     }
 
-    @Override
-    public void onConnected(Bundle bundle) {
-        LocationRequest locationRequest = LocationRequest.create().setInterval(10000).setFastestInterval(10000).setPriority(LocationRequest.PRIORITY_LOW_POWER);
-        LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
-    }
 
     @Override
-    public void onConnectionSuspended(int i) {
-    }
-
-    @Override
-    public void onLocationChanged(Location location) {
-        updateTakeoffList(location, false);
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putParcelable(ARG_LOCATION, location);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        if (googleApiClient.isConnected())
-            LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
+    public void locationChanged(Location newLocation, Location previousLocation) {
+        updateTakeoffList(false);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        googleApiClient.disconnect();
+
+        // stop locationApi
+        locationApi.onStop();
 
         /* remember position in list */
         ListView listView = (ListView) getActivity().findViewById(R.id.takeoffListView);
@@ -136,20 +88,16 @@ public class TakeoffList extends Fragment implements GoogleApiClient.ConnectionC
         savedListTop = (firstVisibleView == null) ? 0 : firstVisibleView.getTop();
     }
 
-    private void updateTakeoffList(Location newLocation, boolean skipLocationCheck) {
+    private void updateTakeoffList(boolean skipLocationCheck) {
+        final Location location = locationApi.getLocation();
         if (!skipLocationCheck) {
             // unless we skip location check, only update if location changed significantly
-            if (newLocation == null) {
-                // null location received? that's odd, do nothing
-                return;
-            } else if (location != null && !takeoffs.isEmpty() && location.distanceTo(newLocation) < 100) {
+            if (oldLocation != null && !takeoffs.isEmpty() && location.distanceTo(oldLocation) < 100) {
                 // we're within 100 meters from the last place we updated the list and we got a list of takeoffs, do nothing
                 return;
-            } else {
-                // no previous location set, we've moved 100 meters or more, or we don't have a list of takeoffs
-                location = newLocation;
             }
         }
+        oldLocation = location;
         takeoffs = new Database(getActivity()).getTakeoffs(location.getLatitude(), location.getLongitude(), 100, true);
         Collections.sort(takeoffs, new Comparator<Takeoff>() {
             public int compare(Takeoff lhs, Takeoff rhs) {
@@ -209,7 +157,7 @@ public class TakeoffList extends Fragment implements GoogleApiClient.ConnectionC
 
             viewHolder.takeoffName.setText(takeoff.toString());
             viewHolder.takeoffName.setTextColor(takeoff.isFavourite() ? Color.CYAN : Color.WHITE);
-            String takeoffIntoText = getContext().getString(R.string.distance) + ": " + (int) location.distanceTo(takeoff.getLocation()) / 1000 + "km";
+            String takeoffIntoText = getContext().getString(R.string.distance) + ": " + (int) locationApi.getLocation().distanceTo(takeoff.getLocation()) / 1000 + "km";
             if (takeoff.getPilotsToday() > 0 || takeoff.getPilotsLater() > 0) {
                 takeoffIntoText += ", " + getContext().getString(R.string.pilots) + ": ";
                 if (takeoff.getPilotsToday() > 0)

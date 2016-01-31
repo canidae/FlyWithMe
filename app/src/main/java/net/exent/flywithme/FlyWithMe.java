@@ -7,7 +7,6 @@ import net.exent.flywithme.fragment.TakeoffList;
 import net.exent.flywithme.fragment.TakeoffMap;
 import net.exent.flywithme.bean.Takeoff;
 import net.exent.flywithme.data.Database;
-import net.exent.flywithme.fragment.TakeoffSchedule;
 import net.exent.flywithme.service.FlyWithMeService;
 
 import android.app.FragmentManager;
@@ -15,24 +14,16 @@ import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.app.Fragment;
 import android.app.Activity;
-import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
 import android.widget.TextView;
-
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
 
 import java.io.DataInputStream;
 import java.io.EOFException;
@@ -42,16 +33,13 @@ import java.io.IOException;
    - NoaaForecast: Would prefer a better way to transfer data to fragment
    - Cache forecasts locally for some few hours (fetched timestamp is returned, cache for the same amount of time as server caches the forecast)
  */
-public class FlyWithMe extends Activity implements GoogleApiClient.ConnectionCallbacks, LocationListener {
+public class FlyWithMe extends Activity {
     public static final String ACTION_SHOW_FORECAST = "showForecast";
     public static final String ACTION_SHOW_PREFERENCES = "showPreferences";
     public static final String ACTION_SHOW_TAKEOFF_DETAILS = "showTakeoffDetails";
     public static final String ACTION_UPDATE_SCHEDULE_DATA = "updateScheduleData";
 
     public static final String ARG_TAKEOFF_ID = "takeoffId";
-
-    private GoogleApiClient googleApiClient;
-    private Location location;
 
     public static void showFragment(Activity activity, String tag, Class<? extends Fragment> fragmentClass, Bundle args) {
         /* first check if schedules needs to be refreshed */
@@ -96,31 +84,18 @@ public class FlyWithMe extends Activity implements GoogleApiClient.ConnectionCal
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fly_with_me);
 
-        /* setup Google API client */
-        googleApiClient = new GoogleApiClient.Builder(this).addApi(LocationServices.API).addConnectionCallbacks(this).build();
-
         /* starting app, setup buttons */
         final Activity activity = this;
         ImageButton fwmButton = (ImageButton) findViewById(R.id.fwmButton);
         fwmButton.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
-                Bundle bundle = null;
-                if (location != null) {
-                    bundle = new Bundle();
-                    bundle.putParcelable(TakeoffList.ARG_LOCATION, location);
-                }
-                showFragment(activity, "takeoffList", TakeoffList.class, bundle);
+                showFragment(activity, "takeoffList", TakeoffList.class, null);
             }
         });
         ImageButton mapButton = (ImageButton) findViewById(R.id.mapButton);
         mapButton.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
-                Bundle bundle = null;
-                if (location != null) {
-                    bundle = new Bundle();
-                    bundle.putParcelable(TakeoffMap.ARG_LOCATION, location);
-                }
-                showFragment(activity, "takeoffMap", TakeoffMap.class, bundle);
+                showFragment(activity, "takeoffMap", TakeoffMap.class, null);
             }
         });
         ImageButton settingsButton = (ImageButton) findViewById(R.id.settingsButton);
@@ -141,16 +116,18 @@ public class FlyWithMe extends Activity implements GoogleApiClient.ConnectionCal
         /* setup any preferences that needs to be done programmatically */
         Preferences.setupDefaultPreferences(this);
 
-        /* start background task */
-        Intent flyWithMeService = new Intent(this, FlyWithMeService.class);
+        /* start FlyWithMeService */
+        Intent intent = new Intent(this, FlyWithMeService.class);
+        intent.setAction(FlyWithMeService.ACTION_INIT);
+        startService(intent);
+
         /* register pilot if we haven't done so already */
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         if (prefs.getString("token", null) == null) {
-            Intent intent = new Intent(this, FlyWithMeService.class);
+            intent = new Intent(this, FlyWithMeService.class);
             intent.setAction(FlyWithMeService.ACTION_REGISTER_PILOT);
+            startService(intent);
         }
-        startService(flyWithMeService);
-
 
         /* start importing takeoffs from files */
         (new ImportTakeoffTask()).execute();
@@ -167,56 +144,11 @@ public class FlyWithMe extends Activity implements GoogleApiClient.ConnectionCal
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        googleApiClient.connect();
-    }
-
-    @Override
-    public void onConnected(Bundle bundle) {
-        LocationRequest locationRequest = LocationRequest.create().setInterval(10000).setFastestInterval(10000).setPriority(LocationRequest.PRIORITY_LOW_POWER);
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
-        location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-    }
-
-    @Override
-    public void onLocationChanged(Location location) {
-        this.location = location;
-    }
-
-    @Override
     public void onBackPressed() {
         if (getFragmentManager().getBackStackEntryCount() <= 1)
             finish();
         else
             super.onBackPressed();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        if (googleApiClient.isConnected())
-            LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        googleApiClient.disconnect();
     }
 
     @Override

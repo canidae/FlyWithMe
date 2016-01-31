@@ -12,11 +12,8 @@ import net.exent.flywithme.R;
 import net.exent.flywithme.bean.Takeoff;
 import net.exent.flywithme.data.Airspace;
 import net.exent.flywithme.data.Database;
+import net.exent.flywithme.util.LocationApi;
 
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
@@ -31,17 +28,21 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.PolygonOptions;
 
+import android.Manifest;
+import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.app.Fragment;
+import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
@@ -50,8 +51,7 @@ import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
 
-public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, OnCameraChangeListener, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, LocationListener {
-    public static final String ARG_LOCATION = "location";
+public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, OnCameraChangeListener, OnMapReadyCallback {
     public static final String ARG_CAMERA_POSITION = "cameraPosition";
 
     /* we can't use Map<Marker, Takeoff> below, because the Marker may be recreated, invalidating the reference we got to the previous instantiation.
@@ -70,9 +70,7 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
     private static Bitmap markerExclamation;
     private static Bitmap markerExclamationYellow;
 
-    private GoogleApiClient googleApiClient;
     private GoogleMap map;
-    private Location location;
     private CameraPosition cameraPosition;
 
     public void drawMap() {
@@ -119,7 +117,6 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
     @Override
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
-        googleApiClient = new GoogleApiClient.Builder(getActivity()).addApi(LocationServices.API).addConnectionCallbacks(this).build();
 
         markerBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.mapmarker);
         markerNorthBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.mapmarker_octant_n);
@@ -136,17 +133,12 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
+        Location location = LocationApi.getCachedLocation(getActivity());
         if (getArguments() != null) {
-            Location location = getArguments().getParcelable(ARG_LOCATION);
-            if (location != null)
-                this.location = location;
-            if (this.cameraPosition == null)
+            if (cameraPosition == null)
                 cameraPosition = getArguments().getParcelable(ARG_CAMERA_POSITION);
         }
         if (bundle != null) {
-            Location location = bundle.getParcelable(ARG_LOCATION);
-            if (location != null)
-                this.location = location;
             if (cameraPosition == null)
                 cameraPosition = bundle.getParcelable(ARG_CAMERA_POSITION);
         }
@@ -166,28 +158,20 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        googleApiClient.connect();
-    }
-
-    @Override
-    public void onConnected(Bundle bundle) {
-        LocationRequest locationRequest = LocationRequest.create().setInterval(1000).setPriority(LocationRequest.PRIORITY_LOW_POWER);
-        LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
-        location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
-    }
-
-    @Override
     public void onMapReady(GoogleMap map) {
         this.map = map;
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
         this.map.setMyLocationEnabled(true);
         drawMap();
-    }
-
-    @Override
-    public void onLocationChanged(Location location) {
-        this.location = location;
     }
 
     @Override
@@ -198,7 +182,6 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
             Takeoff takeoff = pair.second;
             Bundle args = new Bundle();
             args.putParcelable(TakeoffDetails.ARG_TAKEOFF, takeoff);
-            // TODO: replace with intent?
             FlyWithMe.showFragment(getActivity(), "takeoffDetails," + takeoff.getId(), TakeoffDetails.class, args);
         } else {
             Log.w(getClass().getName(), "Strange, could not find takeoff for marker");
@@ -211,27 +194,9 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
     }
 
     @Override
-    public void onConnectionSuspended(int i) {
-    }
-
-    @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelable(ARG_LOCATION, location);
         outState.putParcelable(ARG_CAMERA_POSITION, cameraPosition);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        if (googleApiClient.isConnected())
-            LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        googleApiClient.disconnect();
     }
 
     private void drawOverlay(CameraPosition cameraPosition) {
@@ -252,13 +217,12 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
                 if (prefs.getBoolean("pref_map_show_takeoffs", true)) {
                     LatLng latLng = cameraPositions[0].target;
-                    if (latLng.latitude != 0.0 && latLng.longitude != 0.0) {
-                        location.setLatitude(latLng.latitude);
-                        location.setLongitude(latLng.longitude);
-                    }
+                    Location mapLocation = new Location(LocationManager.PASSIVE_PROVIDER);
+                    mapLocation.setLatitude(latLng.latitude);
+                    mapLocation.setLongitude(latLng.longitude);
 
                     /* get the 25 nearest takeoffs */
-                    List<Takeoff> takeoffs = new Database(getActivity()).getTakeoffs(location.getLatitude(), location.getLongitude(), 25, false);
+                    List<Takeoff> takeoffs = new Database(getActivity()).getTakeoffs(latLng.latitude, latLng.longitude, 25, false);
 
                     /* add markers */
                     for (Takeoff takeoff : takeoffs) {
@@ -288,7 +252,7 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
                             canvas.drawBitmap(markerExclamation, 0, 0, paint);
                         else if (takeoff.getPilotsLater() > 0)
                             canvas.drawBitmap(markerExclamationYellow, 0, 0, paint);
-                        String snippet = getString(R.string.height) + ": " + takeoff.getHeight() + "m\n" + getString(R.string.distance) + ": " + (int) location.distanceTo(takeoff.getLocation()) / 1000 + "km";
+                        String snippet = getString(R.string.height) + ": " + takeoff.getHeight() + "m\n" + getString(R.string.distance) + ": " + (int) mapLocation.distanceTo(takeoff.getLocation()) / 1000 + "km";
                         MarkerOptions markerOptions = new MarkerOptions().position(new LatLng(takeoff.getLocation().getLatitude(), takeoff.getLocation().getLongitude())).title(takeoff.getName()).snippet(snippet).icon(BitmapDescriptorFactory.fromBitmap(bitmap)).anchor(0.5f, 0.875f);
                         addMarkers.put(takeoff, markerOptions);
                     }
@@ -344,18 +308,16 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
                 if (prefs.getBoolean("pref_map_show_airspace", true)) {
                     LatLng latLng = cameraPositions[0].target;
-                    if (latLng.latitude != 0.0 && latLng.longitude != 0.0) {
-                        location.setLatitude(latLng.latitude);
-                        location.setLongitude(latLng.longitude);
-                    }
-                    Location tmpLocation = new Location(location);
+                    Location mapLocation = new Location(LocationManager.PASSIVE_PROVIDER);
+                    mapLocation.setLatitude(latLng.latitude);
+                    mapLocation.setLongitude(latLng.longitude);
 
                     for (Map.Entry<String, List<Airspace.Zone>> entry : Airspace.getAirspaceMap(getActivity()).entrySet()) {
                         if (entry.getKey() == null || !prefs.getBoolean("pref_airspace_enabled_" + entry.getKey().trim(), true))
                             continue;
                         for (Airspace.Zone zone : entry.getValue()) {
                             // show zones within (sort of) 100km
-                            if (showPolygon(zone.getPolygon(), location, tmpLocation, 100000))
+                            if (showPolygon(zone.getPolygon(), mapLocation, 100000))
                                 showZones.add(zone);
                         }
                     }
@@ -388,15 +350,15 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
          *
          * @param polygon The polygon we want to figure out whether to draw or not.
          * @param myLocation Users current location.
-         * @param tmpLocation Location object only used for determining distance from polygon points to user location.
          * @param maxAirspaceDistance User must be within a polygon or within this distance to one of the polygon points in order to be drawn.
          * @return Whether polygon should be drawn.
          */
-        private boolean showPolygon(PolygonOptions polygon, Location myLocation, Location tmpLocation, int maxAirspaceDistance) {
+        private boolean showPolygon(PolygonOptions polygon, Location myLocation, int maxAirspaceDistance) {
             boolean userSouthOfNorthernmostPoint = false;
             boolean userNorthOfSouthernmostPoint = false;
             boolean userWestOfEasternmostPoint = false;
             boolean userEastOfWesternmostPoint = false;
+            Location tmpLocation = new Location(LocationManager.PASSIVE_PROVIDER);
             for (LatLng loc : polygon.getPoints()) {
                 tmpLocation.setLatitude(loc.latitude);
                 tmpLocation.setLongitude(loc.longitude);

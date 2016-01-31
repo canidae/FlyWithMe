@@ -15,12 +15,9 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.iid.InstanceID;
-import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
-import com.google.android.gms.location.LocationServices;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 import com.google.api.client.googleapis.services.AbstractGoogleClientRequest;
@@ -34,6 +31,7 @@ import net.exent.flywithme.server.flyWithMeServer.FlyWithMeServer;
 import net.exent.flywithme.server.flyWithMeServer.model.Forecast;
 import net.exent.flywithme.server.flyWithMeServer.model.Schedule;
 import net.exent.flywithme.server.flyWithMeServer.model.Takeoff;
+import net.exent.flywithme.util.LocationApi;
 
 import java.io.IOException;
 import java.text.DateFormat;
@@ -46,7 +44,8 @@ import java.util.Locale;
 /**
  * This class handles Google Cloud Messages to and from server, and displays notifications.
  */
-public class FlyWithMeService extends IntentService implements GoogleApiClient.ConnectionCallbacks {
+public class FlyWithMeService extends IntentService {
+    public static final String ACTION_INIT = "init";
     public static final String ACTION_REGISTER_PILOT = "registerPilot";
     public static final String ACTION_SCHEDULE_FLIGHT = "scheduleFlight";
     public static final String ACTION_UNSCHEDULE_FLIGHT = "unscheduleFlight";
@@ -76,37 +75,10 @@ public class FlyWithMeService extends IntentService implements GoogleApiClient.C
     private static final long DISMISS_TIMEOUT = 21600000;
     private static final long[] VIBRATE_DATA = new long[] {0, 100, 100, 100, 100, 300, 100, 100}; // actually morse for "F"
 
-    private static GoogleApiClient googleApiClient;
-    private static PendingIntent locationIntent;
+    private static boolean initialized = false;
 
     public FlyWithMeService() {
         super(TAG);
-    }
-
-    @Override
-    public void onCreate() {
-        Log.d(getClass().getName(), "onCreate()");
-        super.onCreate();
-        if (googleApiClient == null) {
-            Intent intent = new Intent(this, FlyWithMeService.class);
-            intent.setAction(ACTION_CHECK_CURRENT_LOCATION);
-            locationIntent = PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-            googleApiClient = new GoogleApiClient.Builder(this).addApi(LocationServices.API).addConnectionCallbacks(this).build();
-            googleApiClient.connect();
-        }
-    }
-
-    @Override
-    public void onConnected(Bundle bundle) {
-        Log.d(getClass().getName(), "onConnected(" + bundle + ")");
-        LocationRequest locationRequest = LocationRequest.create().setSmallestDisplacement(100).setFastestInterval(300000).setPriority(LocationRequest.PRIORITY_LOW_POWER);
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
-            return;
-        LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, locationIntent);
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
     }
 
     @Override
@@ -116,11 +88,18 @@ public class FlyWithMeService extends IntentService implements GoogleApiClient.C
         Bundle bundle = intent.getExtras();
         if (bundle == null)
             bundle = new Bundle();
-        if (ACTION_CHECK_CURRENT_LOCATION.equals(action)) {
+        if (ACTION_INIT.equals(action)) {
+            if (initialized)
+                return;
+            initialized = true;
+            PendingIntent locationIntent = PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+            new LocationApi(getApplicationContext(), null, null, locationIntent).onStart();
+        } else if (ACTION_CHECK_CURRENT_LOCATION.equals(action)) {
             LocationResult locationResult = LocationResult.extractResult(intent);
             if (locationResult == null)
                 return;
             Location location = locationResult.getLastLocation();
+            LocationApi.setCachedLocation(getApplicationContext(), location);
             SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
             if (!sharedPref.getBoolean("pref_near_takeoff_notifications", true))
                 return; // user don't want notifications when near takeoffs
@@ -172,7 +151,7 @@ public class FlyWithMeService extends IntentService implements GoogleApiClient.C
                 return; // user don't want notifications on activity
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
                 return;
-            Location location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
+            Location location = LocationApi.getCachedLocation(getApplicationContext());
             SharedPreferences dismissedActivityPref = getSharedPreferences(ACTION_DISMISS_ACTIVITY_NOTIFICATION, Context.MODE_PRIVATE);
             SharedPreferences blacklistedActivityPref = getSharedPreferences(ACTION_BLACKLIST_ACTIVITY_NOTIFICATION, Context.MODE_PRIVATE);
             long activityMaxDistance = Long.parseLong(sharedPref.getString("pref_takeoff_activity_max_distance", "100000"));

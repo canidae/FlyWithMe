@@ -94,7 +94,6 @@ public class TakeoffDetails extends Fragment {
                 public void onClick(View v) {
                     Bundle args = new Bundle();
                     args.putParcelable(TakeoffSchedule.ARG_TAKEOFF, takeoff);
-                    // TODO: replace with intent?
                     FlyWithMe.showFragment(getActivity(), "takeoffSchedule," + takeoff.getId(), TakeoffSchedule.class, args);
                 }
             });

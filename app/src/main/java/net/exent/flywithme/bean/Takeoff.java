@@ -36,8 +36,8 @@ public class Takeoff implements Parcelable {
 
     private int exits;
     private boolean favourite;
-    private int pilotsToday; // TODO: remove?
-    private int pilotsLater; // TODO: remove?
+    private int pilotsToday;
+    private int pilotsLater;
 
     /* Should only be used for importing takeoffs from file */
     public Takeoff(long id, long lastUpdated, String name, String description, int asl, int height, float latitude, float longitude, String windpai, boolean favourite) {
@@ -95,6 +95,7 @@ public class Takeoff implements Parcelable {
         }
         takeoff = new Takeoff(cursor);
         takeoff.setPilotsToday(pilotsToday);
+        takeoff.setPilotsLater(pilotsLater);
         takeoffCache.put(takeoffId, takeoff);
         return takeoff;
     }

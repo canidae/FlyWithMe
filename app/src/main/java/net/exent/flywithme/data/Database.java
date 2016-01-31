@@ -163,7 +163,7 @@ public class Database extends SQLiteOpenHelper {
         if (db == null)
             throw new IllegalArgumentException("Unable to get database object");
         try {
-            Cursor cursor = db.rawQuery("select *, (select count(*) from schedule where schedule.takeoff_id = takeoff.takeoff_id and date(schedule.timestamp, 'unixepoch') = date('now')) as pilots_today, (select count(*) from schedule where schedule.takeoff_id = takeoff.takeoff_id and date(schedule.timestamp, 'unixepoch') > date('now')) as pilots_later from takeoff order by " + orderBy + " limit " + maxResult, null);
+            Cursor cursor = db.rawQuery("select *, (select count(*) from schedule where schedule.takeoff_id = takeoff.takeoff_id and date(schedule.timestamp, 'unixepoch', 'localtime') = date('now', 'localtime')) as pilots_today, (select count(*) from schedule where schedule.takeoff_id = takeoff.takeoff_id and date(schedule.timestamp, 'unixepoch', 'localtime') > date('now', 'localtime')) as pilots_later from takeoff order by " + orderBy + " limit " + maxResult, null);
             while (cursor.moveToNext())
                 takeoffs.add(Takeoff.create(new ImprovedCursor(cursor)));
             cursor.close();
