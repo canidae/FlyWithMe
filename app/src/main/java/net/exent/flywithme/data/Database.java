@@ -198,7 +198,7 @@ public class Database extends SQLiteOpenHelper {
      * @param db The SQLite database.
      */
     private synchronized void createDatabase(SQLiteDatabase db) {
-        db.execSQL("create table schedule(takeoff_id integer not null, timestamp integer not null, pilot_name text not null, pilot_phone text not null)");
+        db.execSQL("create table schedule(takeoff_id integer not null, timestamp integer not null, pilot_name text not null, pilot_phone text not null, pilot_id text not null default '')");
         db.execSQL("create table takeoff(takeoff_id integer primary key, last_updated integer not null default current_timestamp, name text not null default '', description text not null default '', asl integer not null default 0, height integer not null default 0, latitude real not null default 0.0, latitude_cos real not null default 0.0, latitude_sin real not null default 0.0, longitude real not null default 0.0, longitude_cos real not null default 0.0, longitude_sin real not null default 0.0, exits integer not null default 0, favourite integer not null default 0)");
     }
 

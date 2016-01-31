@@ -65,7 +65,7 @@
             android:key="pref_takeoff_activity_notifications"
             android:title="@string/notifications" />
         <CheckBoxPreference
-            android:defaultValue="true"
+            android:defaultValue="false"
             android:key="pref_takeoff_activity_vibrate"
             android:title="@string/vibrate" />
         <ListPreference
