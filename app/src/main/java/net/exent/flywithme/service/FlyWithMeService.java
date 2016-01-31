@@ -12,10 +12,12 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.iid.InstanceID;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 import com.google.api.client.googleapis.services.AbstractGoogleClientRequest;
@@ -29,7 +31,6 @@ import net.exent.flywithme.server.flyWithMeServer.FlyWithMeServer;
 import net.exent.flywithme.server.flyWithMeServer.model.Forecast;
 import net.exent.flywithme.server.flyWithMeServer.model.Schedule;
 import net.exent.flywithme.server.flyWithMeServer.model.Takeoff;
-import net.exent.flywithme.util.LocationApi;
 
 import java.io.IOException;
 import java.text.DateFormat;
@@ -75,7 +76,7 @@ public class FlyWithMeService extends IntentService {
     private static final long CHECK_LOCATION_INTERVAL = 1800000; // 30 minutes
     private static final long[] VIBRATE_DATA = new long[] {0, 100, 100, 100, 100, 300, 100, 100}; // actually morse for "F"
 
-    private static boolean initialized = false;
+    private static GoogleApiClient googleApiClient; // android goes absolutely mental if this is not static
 
     public FlyWithMeService() {
         super(TAG);
@@ -90,22 +91,22 @@ public class FlyWithMeService extends IntentService {
         if (bundle == null)
             bundle = new Bundle();
         if (ACTION_INIT.equals(action)) {
-            if (initialized)
+            if (googleApiClient != null && (googleApiClient.isConnected() || googleApiClient.isConnecting()))
                 return;
-            initialized = true;
+            googleApiClient = new GoogleApiClient.Builder(this).addApi(LocationServices.API).build();
+            googleApiClient.blockingConnect();
             PendingIntent locationIntent = PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
             LocationRequest locationRequest = LocationRequest.create()
                     .setSmallestDisplacement((float) 100.0)
                     .setInterval(CHECK_LOCATION_INTERVAL)
                     .setFastestInterval(CHECK_LOCATION_INTERVAL / 2)
                     .setPriority(LocationRequest.PRIORITY_LOW_POWER);
-            new LocationApi(getApplicationContext(), null, locationRequest, locationIntent).onStart();
+            LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, locationIntent);
         } else if (ACTION_CHECK_CURRENT_LOCATION.equals(action)) {
             LocationResult locationResult = LocationResult.extractResult(intent);
             if (locationResult == null)
                 return;
             Location location = locationResult.getLastLocation();
-            LocationApi.setCachedLocation(getApplicationContext(), location);
             checkCurrentLocation(location);
         } else if (ACTION_CHECK_ACTIVITY.equals(action)) {
             String message = bundle.getString(ARG_ACTIVITY);
@@ -336,7 +337,7 @@ public class FlyWithMeService extends IntentService {
         }
         if (!sharedPref.getBoolean("pref_takeoff_activity_notifications", true))
             return; // user don't want notifications on activity
-        Location location = LocationApi.getCachedLocation(getApplicationContext());
+        Location location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
         SharedPreferences dismissedActivityPref = getSharedPreferences(ACTION_DISMISS_ACTIVITY_NOTIFICATION, Context.MODE_PRIVATE);
         SharedPreferences blacklistedActivityPref = getSharedPreferences(ACTION_BLACKLIST_ACTIVITY_NOTIFICATION, Context.MODE_PRIVATE);
         long activityMaxDistance = Long.parseLong(sharedPref.getString("pref_takeoff_activity_max_distance", "100000"));

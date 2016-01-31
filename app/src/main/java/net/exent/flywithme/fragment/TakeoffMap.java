@@ -8,11 +8,11 @@ import java.util.Map;
 import java.util.Set;
 
 import net.exent.flywithme.FlyWithMe;
+import net.exent.flywithme.FlyWithMeActivity;
 import net.exent.flywithme.R;
 import net.exent.flywithme.bean.Takeoff;
 import net.exent.flywithme.data.Airspace;
 import net.exent.flywithme.data.Database;
-import net.exent.flywithme.util.LocationApi;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
@@ -89,7 +89,7 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
-        Location location = LocationApi.getCachedLocation(getActivity());
+        Location location = ((FlyWithMeActivity) getActivity()).getLocation();
         if (getArguments() != null) {
             if (cameraPosition == null)
                 cameraPosition = getArguments().getParcelable(ARG_CAMERA_POSITION);

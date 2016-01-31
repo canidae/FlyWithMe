@@ -14,6 +14,8 @@ import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -25,6 +27,11 @@ import android.view.View.OnClickListener;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+
 import java.io.DataInputStream;
 import java.io.EOFException;
 import java.io.IOException;
@@ -33,7 +40,7 @@ import java.io.IOException;
    - NoaaForecast: Would prefer a better way to transfer data to fragment
    - Cache forecasts locally for some few hours (fetched timestamp is returned, cache for the same amount of time as server caches the forecast)
  */
-public class FlyWithMe extends Activity {
+public class FlyWithMe extends Activity implements GoogleApiClient.ConnectionCallbacks, LocationListener, FlyWithMeActivity {
     public static final String ACTION_SHOW_FORECAST = "showForecast";
     public static final String ACTION_SHOW_PREFERENCES = "showPreferences";
     public static final String ACTION_SHOW_TAKEOFF_DETAILS = "showTakeoffDetails";
@@ -41,6 +48,21 @@ public class FlyWithMe extends Activity {
 
     public static final String ARG_TAKEOFF_ID = "takeoffId";
 
+    private GoogleApiClient googleApiClient;
+
+    @Override
+    public Location getLocation() {
+        Location location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
+        if (location != null)
+            return location;
+        // no known location, return location of the Rikssenter for the time being
+        location = new Location(LocationManager.PASSIVE_PROVIDER);
+        location.setLatitude(61.874655);
+        location.setLongitude(9.154848);
+        return location;
+    }
+
+    // TODO: make part of FlyWithMeActivity interface
     public static void showFragment(Activity activity, String tag, Class<? extends Fragment> fragmentClass, Bundle args) {
         /* first check if schedules needs to be refreshed */
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(activity);
@@ -82,6 +104,16 @@ public class FlyWithMe extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        /* start FlyWithMeService */
+        Intent intent = new Intent(this, FlyWithMeService.class);
+        intent.setAction(FlyWithMeService.ACTION_INIT);
+        startService(intent);
+
+        /* setup Google API client */
+        googleApiClient = new GoogleApiClient.Builder(this).addApi(LocationServices.API).addConnectionCallbacks(this).build();
+
+        /* setup content view */
         setContentView(R.layout.fly_with_me);
 
         /* starting app, setup buttons */
@@ -116,11 +148,6 @@ public class FlyWithMe extends Activity {
         /* setup any preferences that needs to be done programmatically */
         Preferences.setupDefaultPreferences(this);
 
-        /* start FlyWithMeService */
-        Intent intent = new Intent(this, FlyWithMeService.class);
-        intent.setAction(FlyWithMeService.ACTION_INIT);
-        startService(intent);
-
         /* register pilot if we haven't done so already */
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         if (sharedPref.getString("pilot_id", null) == null) {
@@ -144,11 +171,41 @@ public class FlyWithMe extends Activity {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        googleApiClient.connect();
+    }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+        LocationRequest locationRequest = LocationRequest.create()
+                .setSmallestDisplacement((float) 100.0)
+                .setInterval(60000)
+                .setFastestInterval(30000)
+                .setPriority(LocationRequest.PRIORITY_LOW_POWER);
+        LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+    }
+
+    @Override
     public void onBackPressed() {
         if (getFragmentManager().getBackStackEntryCount() <= 1)
             finish();
         else
             super.onBackPressed();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
     }
 
     @Override

@@ -1,10 +1,10 @@
 package net.exent.flywithme.fragment;
 
 import net.exent.flywithme.FlyWithMe;
+import net.exent.flywithme.FlyWithMeActivity;
 import net.exent.flywithme.R;
 import net.exent.flywithme.bean.Takeoff;
 import net.exent.flywithme.data.Database;
-import net.exent.flywithme.util.LocationApi;
 
 import android.app.Fragment;
 import android.content.Context;
@@ -26,13 +26,11 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-public class TakeoffList extends Fragment implements LocationApi.Callback {
+public class TakeoffList extends Fragment {
     private static int savedPosition;
     private static int savedListTop;
     private List<Takeoff> takeoffs = new ArrayList<>();
     private TakeoffArrayAdapter takeoffArrayAdapter;
-    private LocationApi locationApi;
-    private Location oldLocation;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
@@ -52,8 +50,6 @@ public class TakeoffList extends Fragment implements LocationApi.Callback {
         /* position list */
         listView.setSelectionFromTop(savedPosition, savedListTop);
 
-        locationApi = new LocationApi(getActivity(), null, null, null);
-
         return view;
     }
 
@@ -61,25 +57,13 @@ public class TakeoffList extends Fragment implements LocationApi.Callback {
     public void onStart() {
         super.onStart();
 
-        // start locationApi
-        locationApi.onStart();
-
         // update takeoff list
-        updateTakeoffList(true);
-    }
-
-
-    @Override
-    public void locationChanged(Location newLocation, Location previousLocation) {
-        updateTakeoffList(false);
+        updateTakeoffList();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-
-        // stop locationApi
-        locationApi.onStop();
 
         /* remember position in list */
         ListView listView = (ListView) getActivity().findViewById(R.id.takeoffListView);
@@ -88,16 +72,8 @@ public class TakeoffList extends Fragment implements LocationApi.Callback {
         savedListTop = (firstVisibleView == null) ? 0 : firstVisibleView.getTop();
     }
 
-    private void updateTakeoffList(boolean skipLocationCheck) {
-        final Location location = locationApi.getLocation();
-        if (!skipLocationCheck) {
-            // unless we skip location check, only update if location changed significantly
-            if (oldLocation != null && !takeoffs.isEmpty() && location.distanceTo(oldLocation) < 100) {
-                // we're within 100 meters from the last place we updated the list and we got a list of takeoffs, do nothing
-                return;
-            }
-        }
-        oldLocation = location;
+    private void updateTakeoffList() {
+        final Location location = ((FlyWithMeActivity) getActivity()).getLocation();
         takeoffs = new Database(getActivity()).getTakeoffs(location.getLatitude(), location.getLongitude(), 100, true, true); // TODO: can we do this async?
         Collections.sort(takeoffs, new Comparator<Takeoff>() {
             public int compare(Takeoff lhs, Takeoff rhs) {
@@ -157,7 +133,7 @@ public class TakeoffList extends Fragment implements LocationApi.Callback {
 
             viewHolder.takeoffName.setText(takeoff.toString());
             viewHolder.takeoffName.setTextColor(takeoff.isFavourite() ? Color.CYAN : Color.WHITE);
-            String takeoffIntoText = getContext().getString(R.string.distance) + ": " + (int) locationApi.getLocation().distanceTo(takeoff.getLocation()) / 1000 + "km";
+            String takeoffIntoText = getContext().getString(R.string.distance) + ": " + (int) ((FlyWithMeActivity) getActivity()).getLocation().distanceTo(takeoff.getLocation()) / 1000 + "km";
             if (takeoff.getPilotsToday() > 0 || takeoff.getPilotsLater() > 0) {
                 takeoffIntoText += ", " + getContext().getString(R.string.pilots) + ": ";
                 if (takeoff.getPilotsToday() > 0)
