@@ -73,10 +73,10 @@ public class FlyWithMeService extends IntentService {
     private static final String SERVER_URL = "https://4-dot-flywithme-server.appspot.com/_ah/api/"; // "http://88.95.84.204:8080/_ah/api/"
     private static final long DISMISS_TIMEOUT = 21600000; // 6 hours
     private static final long CHECK_ACTIVITY_INTERVAL = 3600000; // 1 hour
-    private static final long CHECK_LOCATION_INTERVAL = 1800000; // 30 minutes
+    private static final long CHECK_LOCATION_INTERVAL = 900000; // 15 minutes
     private static final long[] VIBRATE_DATA = new long[] {0, 100, 100, 100, 100, 300, 100, 100}; // actually morse for "F"
 
-    private static GoogleApiClient googleApiClient; // android goes absolutely mental if this is not static
+    private static GoogleApiClient googleApiClient; // TODO? android goes absolutely mental if this is not static
 
     public FlyWithMeService() {
         super(TAG);
@@ -98,8 +98,8 @@ public class FlyWithMeService extends IntentService {
             PendingIntent locationIntent = PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
             LocationRequest locationRequest = LocationRequest.create()
                     .setSmallestDisplacement((float) 100.0)
-                    .setInterval(CHECK_LOCATION_INTERVAL)
-                    .setFastestInterval(CHECK_LOCATION_INTERVAL / 2)
+                    .setInterval(CHECK_LOCATION_INTERVAL * 2)
+                    .setFastestInterval(CHECK_LOCATION_INTERVAL)
                     .setPriority(LocationRequest.PRIORITY_LOW_POWER);
             LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, locationIntent);
         } else if (ACTION_CHECK_CURRENT_LOCATION.equals(action)) {
@@ -343,14 +343,19 @@ public class FlyWithMeService extends IntentService {
         long activityMaxDistance = Long.parseLong(sharedPref.getString("pref_takeoff_activity_max_distance", "100000"));
         String[] timestampsAndTakeoffIdsList = message.split(";");
         Database database = new Database(this);
-        DateFormat dateFormat = new SimpleDateFormat("HH:mm", Locale.US);
+        DateFormat dateFormat = new SimpleDateFormat("EEE. HH:mm", Locale.US);
         boolean breakLoop = false;
         for (String timestampsAndTakeoffIds : timestampsAndTakeoffIdsList) {
             String[] tmp = timestampsAndTakeoffIds.split(":");
             long timestamp = Long.parseLong(tmp[0]) * 1000;
+            long now = System.currentTimeMillis();
+            if (timestamp > now + 79200000) // 22 hours
+                continue; // activity is too far into the future, don't show notification (yet)
+            else if (timestamp < now - 7200000) // 2 hours
+                continue; // activity is too long ago, don't show notification
             for (String takeoffIdString : tmp[1].split(",")) {
                 long takeoffId = Long.parseLong(takeoffIdString);
-                if (dismissedActivityPref.getLong("" + takeoffId, 0) + DISMISS_TIMEOUT > System.currentTimeMillis())
+                if (dismissedActivityPref.getLong("" + takeoffId, 0) + DISMISS_TIMEOUT > now)
                     continue; // user dismissed activity for this takeoff recently, ignore takeoff
                 if (blacklistedActivityPref.contains("" + takeoffId))
                     continue; // user blacklisted activity for this takeoff, ignore takeoff

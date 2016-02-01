@@ -183,6 +183,7 @@ public class FlyWithMe extends Activity implements GoogleApiClient.ConnectionCal
                 .setFastestInterval(30000)
                 .setPriority(LocationRequest.PRIORITY_LOW_POWER);
         LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
+        refreshCurrentFragment();
     }
 
     @Override

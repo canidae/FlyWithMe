@@ -10,5 +10,4 @@ import android.os.Bundle;
 public interface FlyWithMeActivity {
     void showFragment(String tag, Class<? extends Fragment> fragmentClass, Bundle args);
     Location getLocation();
-    // TODO? setListener, removeListener
 }
