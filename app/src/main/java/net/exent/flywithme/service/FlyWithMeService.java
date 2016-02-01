@@ -72,7 +72,7 @@ public class FlyWithMeService extends IntentService {
     private static final String PROJECT_ID = "586531582715";
     private static final String SERVER_URL = "https://4-dot-flywithme-server.appspot.com/_ah/api/"; // "http://88.95.84.204:8080/_ah/api/"
     private static final long DISMISS_TIMEOUT = 21600000; // 6 hours
-    private static final long PERIODIC_ACTIVITY_CHECK_INTERVAL = 3600000; // 1 hour
+    private static final long CHECK_ACTIVITY_INTERVAL = 3600000; // 1 hour
     private static final long CHECK_LOCATION_INTERVAL = 1800000; // 30 minutes
     private static final long[] VIBRATE_DATA = new long[] {0, 100, 100, 100, 100, 300, 100, 100}; // actually morse for "F"
 
@@ -276,7 +276,7 @@ public class FlyWithMeService extends IntentService {
     private void checkCurrentLocation(Location location) {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         long now = System.currentTimeMillis();
-        if (now - sharedPref.getLong("activity_last_check", 0) > PERIODIC_ACTIVITY_CHECK_INTERVAL) {
+        if (now - sharedPref.getLong("activity_last_check", 0) > CHECK_ACTIVITY_INTERVAL) {
             // periodically check activity in case of no new schedules and we're closing up on an upcoming schedule
             sharedPref.edit().putLong("activity_last_check", now).apply();
             checkActivity(null);

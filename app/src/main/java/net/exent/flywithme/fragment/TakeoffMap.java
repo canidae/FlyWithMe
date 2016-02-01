@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import net.exent.flywithme.FlyWithMe;
 import net.exent.flywithme.FlyWithMeActivity;
 import net.exent.flywithme.R;
 import net.exent.flywithme.bean.Takeoff;
@@ -128,7 +127,7 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
             Takeoff takeoff = pair.second;
             Bundle args = new Bundle();
             args.putParcelable(TakeoffDetails.ARG_TAKEOFF, takeoff);
-            FlyWithMe.showFragment(getActivity(), "takeoffDetails," + takeoff.getId(), TakeoffDetails.class, args);
+            ((FlyWithMeActivity) getActivity()).showFragment("takeoffDetails," + takeoff.getId(), TakeoffDetails.class, args);
         } else {
             Log.w(getClass().getName(), "Strange, could not find takeoff for marker");
         }

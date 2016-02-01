@@ -50,40 +50,27 @@ public class FlyWithMe extends Activity implements GoogleApiClient.ConnectionCal
 
     private GoogleApiClient googleApiClient;
 
-    @Override
-    public Location getLocation() {
-        Location location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
-        if (location != null)
-            return location;
-        // no known location, return location of the Rikssenter for the time being
-        location = new Location(LocationManager.PASSIVE_PROVIDER);
-        location.setLatitude(61.874655);
-        location.setLongitude(9.154848);
-        return location;
-    }
-
-    // TODO: make part of FlyWithMeActivity interface
-    public static void showFragment(Activity activity, String tag, Class<? extends Fragment> fragmentClass, Bundle args) {
+    public void showFragment(String tag, Class<? extends Fragment> fragmentClass, Bundle args) {
         /* first check if schedules needs to be refreshed */
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(activity);
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         if (sharedPref.getBoolean("activity_schedule_needs_update", true)) {
-            Intent intent = new Intent(activity, FlyWithMeService.class);
+            Intent intent = new Intent(this, FlyWithMeService.class);
             intent.setAction(FlyWithMeService.ACTION_GET_SCHEDULES);
-            activity.startService(intent);
+            startService(intent);
         }
         /* then display the fragment requested */
-        FragmentManager fragmentManager = activity.getFragmentManager();
+        FragmentManager fragmentManager = getFragmentManager();
         if (tag != null && fragmentManager.findFragmentByTag(tag) != null) {
             fragmentManager.popBackStack(tag, 0);
         } else {
             // reset right menu icons
-            ((ImageButton) activity.findViewById(R.id.fragmentButton1)).setImageDrawable(null);
-            ((ImageButton) activity.findViewById(R.id.fragmentButton2)).setImageDrawable(null);
-            ((ImageButton) activity.findViewById(R.id.fragmentButton3)).setImageDrawable(null);
+            ((ImageButton) findViewById(R.id.fragmentButton1)).setImageDrawable(null);
+            ((ImageButton) findViewById(R.id.fragmentButton2)).setImageDrawable(null);
+            ((ImageButton) findViewById(R.id.fragmentButton3)).setImageDrawable(null);
             // and their progress bars
-            activity.findViewById(R.id.progressBar1).setVisibility(View.INVISIBLE);
-            activity.findViewById(R.id.progressBar2).setVisibility(View.INVISIBLE);
-            activity.findViewById(R.id.progressBar3).setVisibility(View.INVISIBLE);
+            findViewById(R.id.progressBar1).setVisibility(View.INVISIBLE);
+            findViewById(R.id.progressBar2).setVisibility(View.INVISIBLE);
+            findViewById(R.id.progressBar3).setVisibility(View.INVISIBLE);
             try {
                 Fragment fragment = fragmentClass.newInstance();
                 if (args != null)
@@ -96,6 +83,18 @@ public class FlyWithMe extends Activity implements GoogleApiClient.ConnectionCal
                 Log.w(FlyWithMe.class.getName(), "Error instantiating class", e);
             }
         }
+    }
+
+    @Override
+    public Location getLocation() {
+        Location location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
+        if (location != null)
+            return location;
+        // no known location, return location of the Rikssenter for the time being
+        location = new Location(LocationManager.PASSIVE_PROVIDER);
+        location.setLatitude(61.874655);
+        location.setLongitude(9.154848);
+        return location;
     }
 
     /**
@@ -121,19 +120,19 @@ public class FlyWithMe extends Activity implements GoogleApiClient.ConnectionCal
         ImageButton fwmButton = (ImageButton) findViewById(R.id.fwmButton);
         fwmButton.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
-                showFragment(activity, "takeoffList", TakeoffList.class, null);
+                showFragment("takeoffList", TakeoffList.class, null);
             }
         });
         ImageButton mapButton = (ImageButton) findViewById(R.id.mapButton);
         mapButton.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
-                showFragment(activity, "takeoffMap", TakeoffMap.class, null);
+                showFragment("takeoffMap", TakeoffMap.class, null);
             }
         });
         ImageButton settingsButton = (ImageButton) findViewById(R.id.settingsButton);
         settingsButton.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
-                showFragment(activity, "preferences", Preferences.class, null);
+                showFragment("preferences", Preferences.class, null);
             }
         });
         // reset right menu icons
@@ -163,9 +162,9 @@ public class FlyWithMe extends Activity implements GoogleApiClient.ConnectionCal
         if (savedInstanceState == null) {
             String pilotName = sharedPref.getString("pref_pilot_name", null);
             if (pilotName == null || pilotName.trim().equals("")) {
-                showFragment(this, "preferences", Preferences.class, null);
+                showFragment("preferences", Preferences.class, null);
             } else {
-                showFragment(this, "takeoffList", TakeoffList.class, null);
+                showFragment("takeoffList", TakeoffList.class, null);
             }
         }
     }
@@ -213,15 +212,15 @@ public class FlyWithMe extends Activity implements GoogleApiClient.ConnectionCal
         Log.d(getClass().getName(), "onNewIntent(" + intent + ")");
         super.onNewIntent(intent);
         if (ACTION_SHOW_FORECAST.equals(intent.getAction())) {
-            showFragment(this, null, NoaaForecast.class, intent.getExtras());
+            showFragment(null, NoaaForecast.class, intent.getExtras());
         } else if (ACTION_SHOW_PREFERENCES.equals(intent.getAction())) {
-            showFragment(this, "preferences", Preferences.class, null);
+            showFragment("preferences", Preferences.class, null);
         } else if (ACTION_SHOW_TAKEOFF_DETAILS.equals(intent.getAction())) {
             Database database = new Database(this);
             Takeoff takeoff = database.getTakeoff(intent.getLongExtra(ARG_TAKEOFF_ID, 0));
             Bundle args = new Bundle();
             args.putParcelable(TakeoffDetails.ARG_TAKEOFF, takeoff);
-            showFragment(this, "takeoffDetails," + takeoff.getId(), TakeoffDetails.class, args);
+            showFragment("takeoffDetails," + takeoff.getId(), TakeoffDetails.class, args);
         } else if (ACTION_UPDATE_SCHEDULE_DATA.equals(intent.getAction())) {
             refreshCurrentFragment();
         }

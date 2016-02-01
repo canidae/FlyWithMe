@@ -1,6 +1,6 @@
 package net.exent.flywithme.fragment;
 
-import net.exent.flywithme.FlyWithMe;
+import net.exent.flywithme.FlyWithMeActivity;
 import net.exent.flywithme.R;
 import net.exent.flywithme.bean.Takeoff;
 import net.exent.flywithme.data.Database;
@@ -94,7 +94,7 @@ public class TakeoffDetails extends Fragment {
                 public void onClick(View v) {
                     Bundle args = new Bundle();
                     args.putParcelable(TakeoffSchedule.ARG_TAKEOFF, takeoff);
-                    FlyWithMe.showFragment(getActivity(), "takeoffSchedule," + takeoff.getId(), TakeoffSchedule.class, args);
+                    ((FlyWithMeActivity) getActivity()).showFragment("takeoffSchedule," + takeoff.getId(), TakeoffSchedule.class, args);
                 }
             });
         }

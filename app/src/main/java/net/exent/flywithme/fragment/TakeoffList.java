@@ -1,6 +1,5 @@
 package net.exent.flywithme.fragment;
 
-import net.exent.flywithme.FlyWithMe;
 import net.exent.flywithme.FlyWithMeActivity;
 import net.exent.flywithme.R;
 import net.exent.flywithme.bean.Takeoff;
@@ -44,7 +43,7 @@ public class TakeoffList extends Fragment {
                 Takeoff takeoff = takeoffs.get(position);
                 Bundle args = new Bundle();
                 args.putParcelable(TakeoffDetails.ARG_TAKEOFF, takeoff);
-                FlyWithMe.showFragment(getActivity(), "takeoffDetails," + takeoff.getId(), TakeoffDetails.class, args);
+                ((FlyWithMeActivity) getActivity()).showFragment("takeoffDetails," + takeoff.getId(), TakeoffDetails.class, args);
             }
         });
         /* position list */
