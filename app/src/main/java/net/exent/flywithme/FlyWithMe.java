@@ -58,19 +58,13 @@ public class FlyWithMe extends Activity implements GoogleApiClient.ConnectionCal
             intent.setAction(FlyWithMeService.ACTION_GET_SCHEDULES);
             startService(intent);
         }
+        /* reset right menu */
+        resetRightMenuButtons();
         /* then display the fragment requested */
         FragmentManager fragmentManager = getFragmentManager();
         if (tag != null && fragmentManager.findFragmentByTag(tag) != null) {
             fragmentManager.popBackStack(tag, 0);
         } else {
-            // reset right menu icons
-            ((ImageButton) findViewById(R.id.fragmentButton1)).setImageDrawable(null);
-            ((ImageButton) findViewById(R.id.fragmentButton2)).setImageDrawable(null);
-            ((ImageButton) findViewById(R.id.fragmentButton3)).setImageDrawable(null);
-            // and their progress bars
-            findViewById(R.id.progressBar1).setVisibility(View.INVISIBLE);
-            findViewById(R.id.progressBar2).setVisibility(View.INVISIBLE);
-            findViewById(R.id.progressBar3).setVisibility(View.INVISIBLE);
             try {
                 Fragment fragment = fragmentClass.newInstance();
                 if (args != null)
@@ -196,10 +190,12 @@ public class FlyWithMe extends Activity implements GoogleApiClient.ConnectionCal
 
     @Override
     public void onBackPressed() {
-        if (getFragmentManager().getBackStackEntryCount() <= 1)
+        if (getFragmentManager().getBackStackEntryCount() <= 1) {
             finish();
-        else
+        } else {
+            resetRightMenuButtons();
             super.onBackPressed();
+        }
     }
 
     @Override
@@ -231,6 +227,17 @@ public class FlyWithMe extends Activity implements GoogleApiClient.ConnectionCal
         Fragment fragment = getFragmentManager().findFragmentById(R.id.fragmentContainer);
         if (fragment != null)
             getFragmentManager().beginTransaction().detach(fragment).attach(fragment).commit();
+    }
+
+    private void resetRightMenuButtons() {
+        /* reset right menu icons */
+        ((ImageButton) findViewById(R.id.fragmentButton1)).setImageDrawable(null);
+        ((ImageButton) findViewById(R.id.fragmentButton2)).setImageDrawable(null);
+        ((ImageButton) findViewById(R.id.fragmentButton3)).setImageDrawable(null);
+        /* and their progress bars */
+        findViewById(R.id.progressBar1).setVisibility(View.INVISIBLE);
+        findViewById(R.id.progressBar2).setVisibility(View.INVISIBLE);
+        findViewById(R.id.progressBar3).setVisibility(View.INVISIBLE);
     }
 
     private class ImportTakeoffTask extends AsyncTask<Void, Void, Void> {
