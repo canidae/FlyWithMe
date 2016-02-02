@@ -105,8 +105,13 @@ public class FlyWithMeEndpoint {
         List<Schedule> schedules = DataStore.getAllSchedules();
         // we'll scramble pilotIds, only keep the last few characters for identification
         for (Schedule schedule : schedules) {
-            for (Pilot pilot : schedule.getPilots()) // TODO: why was this null? (01:55:47)
-                pilot.setId(pilot.getId().substring(pilot.getId().length() - 6));
+            if (schedule.getPilots() == null) {
+                // this sometimes happens, i'm currently not entirely sure why. for now log some stuff and return an empty list
+                log.warning("Schedule contains no list with pilots, was it optimized away? Takeoff ID: " + schedule.getTakeoffId() + ", Timestamp: " + schedule.getTimestamp());
+            } else {
+                for (Pilot pilot : schedule.getPilots())
+                    pilot.setId(pilot.getId().substring(pilot.getId().length() - 6));
+            }
         }
         return schedules;
     }

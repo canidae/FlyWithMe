@@ -152,7 +152,6 @@ public class DataStore {
     }
 
     public static List<Schedule> getAllSchedules() {
-        // TODO: this returned an error earlier. figure out why
         List<Schedule> schedules = getAllSchedulesFromMemcache();
         if (schedules != null)
             return schedules;
