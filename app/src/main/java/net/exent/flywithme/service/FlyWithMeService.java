@@ -22,6 +22,8 @@ import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 import com.google.api.client.googleapis.services.AbstractGoogleClientRequest;
 import com.google.api.client.googleapis.services.GoogleClientRequestInitializer;
+import com.google.api.client.http.HttpRequest;
+import com.google.api.client.http.HttpRequestInitializer;
 
 import net.exent.flywithme.FlyWithMe;
 import net.exent.flywithme.R;
@@ -458,7 +460,13 @@ public class FlyWithMeService extends IntentService {
     }
 
     private FlyWithMeServer getServer() {
-        FlyWithMeServer.Builder builder = new FlyWithMeServer.Builder(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null);
+        FlyWithMeServer.Builder builder = new FlyWithMeServer.Builder(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), new HttpRequestInitializer() {
+            @Override
+            public void initialize(HttpRequest request) throws IOException {
+                request.setConnectTimeout(30000);
+                request.setReadTimeout(120000);
+            }
+        });
         builder.setApplicationName("FlyWithMe");
         builder.setRootUrl(SERVER_URL);
         builder.setGoogleClientRequestInitializer(new GoogleClientRequestInitializer() {
