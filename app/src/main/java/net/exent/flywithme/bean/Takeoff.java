@@ -5,7 +5,6 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
 
 import net.exent.flywithme.data.Database;
 
@@ -34,13 +33,11 @@ public class Takeoff implements Parcelable {
 
     private net.exent.flywithme.server.flyWithMeServer.model.Takeoff takeoff = new net.exent.flywithme.server.flyWithMeServer.model.Takeoff();
 
-    private int exits;
     private boolean favourite;
     private int pilotsToday;
     private int pilotsLater;
 
-    /* Should only be used for importing takeoffs from file */
-    public Takeoff(long id, long lastUpdated, String name, String description, int asl, int height, float latitude, float longitude, String windpai, boolean favourite) {
+    public Takeoff(long id, long lastUpdated, String name, String description, int asl, int height, float latitude, float longitude, int exits, boolean favourite) {
         takeoff.setId(id);
         takeoff.setLastUpdated(lastUpdated);
         takeoff.setName(name);
@@ -49,7 +46,7 @@ public class Takeoff implements Parcelable {
         takeoff.setHeight(height);
         takeoff.setLatitude(latitude);
         takeoff.setLongitude(longitude);
-        setExits(windpai);
+        takeoff.setExits(exits);
         this.favourite = favourite;
     }
 
@@ -66,21 +63,8 @@ public class Takeoff implements Parcelable {
         takeoff.setHeight(cursor.getInt("height"));
         takeoff.setLatitude(cursor.getFloat("latitude"));
         takeoff.setLongitude(cursor.getFloat("longitude"));
-        exits = cursor.getInt("exits");
+        takeoff.setExits(cursor.getInt("exits"));
         favourite = cursor.getInt("favourite") == 1;
-    }
-
-    private Takeoff(long id, long lastUpdated, String name, String description, int asl, int height, float latitude, float longitude, int exits, boolean favourite) {
-        takeoff.setId(id);
-        takeoff.setLastUpdated(lastUpdated);
-        takeoff.setName(name);
-        takeoff.setDescription(description);
-        takeoff.setAsl(asl);
-        takeoff.setHeight(height);
-        takeoff.setLatitude(latitude);
-        takeoff.setLongitude(longitude);
-        this.exits = exits;
-        this.favourite = favourite;
     }
 
     public static Takeoff create(Database.ImprovedCursor cursor) {
@@ -101,14 +85,7 @@ public class Takeoff implements Parcelable {
     }
 
     public void setTakeoff(net.exent.flywithme.server.flyWithMeServer.model.Takeoff takeoff) {
-        if (takeoff.getDescription() == null)
-            takeoff.setDescription("");
-        if (takeoff.getName() == null)
-            takeoff.setName("");
-        if (takeoff.getWindpai() == null)
-            takeoff.setWindpai("");
         this.takeoff = takeoff;
-        setExits(takeoff.getWindpai());
     }
 
     public long getId() {
@@ -143,60 +120,39 @@ public class Takeoff implements Parcelable {
     }
 
     public int getExits() {
-        return exits;
+        return takeoff.getExits();
     }
 
     public boolean hasNorthExit() {
-        return (exits & (1 << 8)) != 0;
+        return (takeoff.getExits() & (1 << 8)) != 0;
     }
 
     public boolean hasNortheastExit() {
-        return (exits & (1 << 7)) != 0;
+        return (takeoff.getExits() & (1 << 7)) != 0;
     }
 
     public boolean hasEastExit() {
-        return (exits & (1 << 6)) != 0;
+        return (takeoff.getExits() & (1 << 6)) != 0;
     }
 
     public boolean hasSoutheastExit() {
-        return (exits & (1 << 5)) != 0;
+        return (takeoff.getExits() & (1 << 5)) != 0;
     }
 
     public boolean hasSouthExit() {
-        return (exits & (1 << 4)) != 0;
+        return (takeoff.getExits() & (1 << 4)) != 0;
     }
 
     public boolean hasSouthwestExit() {
-        return (exits & (1 << 3)) != 0;
+        return (takeoff.getExits() & (1 << 3)) != 0;
     }
 
     public boolean hasWestExit() {
-        return (exits & (1 << 2)) != 0;
+        return (takeoff.getExits() & (1 << 2)) != 0;
     }
 
     public boolean hasNorthwestExit() {
-        return (exits & (1 << 1)) != 0;
-    }
-
-    public void setExits(String windpai) {
-        for (String direction : windpai.split(" ")) {
-            if ("N".equals(direction))
-                exits |= 1 << 8;
-            if ("NE".equals(direction))
-                exits |= 1 << 7;
-            if ("E".equals(direction))
-                exits |= 1 << 6;
-            if ("SE".equals(direction))
-                exits |= 1 << 5;
-            if ("S".equals(direction))
-                exits |= 1 << 4;
-            if ("SW".equals(direction))
-                exits |= 1 << 3;
-            if ("W".equals(direction))
-                exits |= 1 << 2;
-            if ("NW".equals(direction))
-                exits |= 1 << 1;
-        }
+        return (takeoff.getExits() & (1 << 1)) != 0;
     }
 
     public void setFavourite(boolean favourite) {
@@ -239,7 +195,7 @@ public class Takeoff implements Parcelable {
         contentValues.put("longitude", takeoff.getLongitude());
         contentValues.put("longitude_cos", Math.cos(longitudeRadians));
         contentValues.put("longitude_sin", Math.sin(longitudeRadians));
-        contentValues.put("exits", exits);
+        contentValues.put("exits", takeoff.getExits());
         // NOTE! Don't add user set data (such as "favourite"). otherwise, when importing takeoffs, this information will be lost
         return contentValues;
     }
@@ -258,7 +214,7 @@ public class Takeoff implements Parcelable {
         dest.writeInt(takeoff.getHeight());
         dest.writeFloat(takeoff.getLatitude());
         dest.writeFloat(takeoff.getLongitude());
-        dest.writeInt(exits);
+        dest.writeInt(takeoff.getExits());
         dest.writeByte((byte) (favourite ? 1 : 0));
     }
 

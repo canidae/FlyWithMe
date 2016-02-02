@@ -141,7 +141,7 @@ public class TakeoffList extends Fragment {
                     takeoffIntoText += (takeoff.getPilotsToday() > 0 ? ", " : "") + takeoff.getPilotsLater() + " " + getContext().getString(R.string.later);
             }
             viewHolder.takeoffInfo.setText(takeoffIntoText);
-            /* windpai */
+            /* exits */
             viewHolder.windroseNorth.setVisibility(takeoff.hasNorthExit() ? ImageView.VISIBLE : ImageView.INVISIBLE);
             viewHolder.windroseNorthwest.setVisibility(takeoff.hasNorthwestExit() ? ImageView.VISIBLE : ImageView.INVISIBLE);
             viewHolder.windroseWest.setVisibility(takeoff.hasWestExit() ? ImageView.VISIBLE : ImageView.INVISIBLE);

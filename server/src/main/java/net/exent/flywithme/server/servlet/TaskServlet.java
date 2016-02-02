@@ -4,10 +4,11 @@ import com.google.android.gcm.server.Message;
 
 import net.exent.flywithme.server.bean.Takeoff;
 import net.exent.flywithme.server.util.DataStore;
-import net.exent.flywithme.server.util.FlightlogCrawler;
+import net.exent.flywithme.server.util.FlightlogProxy;
 import net.exent.flywithme.server.util.GcmUtil;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -47,21 +48,22 @@ public class TaskServlet extends HttpServlet {
         long daysToCheck = Math.round((double) (System.currentTimeMillis() - lastChecked) / 86400000.0) + 1;
         log.info("Checking for updated takeoffs within the last " + daysToCheck + " days");
 
-        for (Long takeoffId : FlightlogCrawler.fetchUpdatedTakeoffs(daysToCheck))
-            updateTakeoff(takeoffId);
+        List<Takeoff> takeoffs = FlightlogProxy.fetchUpdatedTakeoffs(daysToCheck);
+        if (takeoffs != null) {
+            log.info("Found " + takeoffs.size() + " takeoffs updated within the last " + daysToCheck + " days");
+            for (Takeoff updatedTakeoff : takeoffs)
+                updateTakeoff(updatedTakeoff);
+        }
     }
 
-    private static boolean updateTakeoff(long takeoffId) {
-        log.info("Attempting to update takeoff with ID " + takeoffId);
+    private static boolean updateTakeoff(Takeoff takeoff) {
+        log.info("Attempting to update takeoff with ID " + takeoff.getId());
         try {
-            Takeoff takeoff = FlightlogCrawler.fetchTakeoff(takeoffId);
-            if (takeoff == null)
-                return false;
-            Takeoff existing = DataStore.loadTakeoff(takeoffId);
+            Takeoff existing = DataStore.loadTakeoff(takeoff.getId());
             if (existing != null && takeoff.equals(existing)) {
                 takeoff.setLastUpdated(existing.getLastUpdated()); // data not changed, keep "lastUpdated"
             } else {
-                log.info("Updated data for takeoff with ID " + takeoffId);
+                log.info("Updated data for takeoff with ID " + takeoff);
                 // send message to clients, letting them know a takeoff was added/updated
                 Message msg = new Message.Builder()
                         .collapseKey("flywithme-takeoff-updated")

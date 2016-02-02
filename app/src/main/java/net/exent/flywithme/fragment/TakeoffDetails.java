@@ -54,7 +54,7 @@ public class TakeoffDetails extends Fragment {
             takeoff = bundle.getParcelable(ARG_TAKEOFF);
 
         View view = inflater.inflate(R.layout.takeoff_details, container, false);
-        /* windpai */
+        /* exits */
         ImageView windroseNorth = (ImageView) view.findViewById(R.id.takeoffDetailsWindroseNorth);
         ImageView windroseNorthwest = (ImageView) view.findViewById(R.id.takeoffDetailsWindroseNorthwest);
         ImageView windroseWest = (ImageView) view.findViewById(R.id.takeoffDetailsWindroseWest);

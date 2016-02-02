@@ -282,8 +282,8 @@ public class FlyWithMe extends Activity implements GoogleApiClient.ConnectionCal
                     int height = inputStream.readShort();
                     float latitude = inputStream.readFloat();
                     float longitude = inputStream.readFloat();
-                    String windpai = inputStream.readUTF();
-                    Takeoff takeoff = new Takeoff(takeoffId, importTimestamp, name, description, asl, height, latitude, longitude, windpai, false);
+                    int exits = inputStream.readShort();
+                    Takeoff takeoff = new Takeoff(takeoffId, importTimestamp, name, description, asl, height, latitude, longitude, exits, false);
                     database.updateTakeoff(takeoff);
                 }
             } catch (EOFException e) {

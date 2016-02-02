@@ -22,7 +22,7 @@ public class Takeoff implements Serializable {
     private int height;
     private float latitude;
     private float longitude;
-    private String windpai;
+    private int exits;
 
     public long getId() {
         return id;
@@ -105,12 +105,12 @@ public class Takeoff implements Serializable {
         return this;
     }
 
-    public String getWindpai() {
-        return windpai;
+    public int getExits() {
+        return exits;
     }
 
-    public Takeoff setWindpai(String windpai) {
-        this.windpai = windpai;
+    public Takeoff setExits(int exits) {
+        this.exits = exits;
         return this;
     }
 
@@ -121,6 +121,6 @@ public class Takeoff implements Serializable {
         Takeoff takeoff = (Takeoff) object;
         return getId() == takeoff.getId() && getAsl() == takeoff.getAsl() && getHeight() == takeoff.getHeight()
                 && getLatitude() == takeoff.getLatitude() && getLongitude() == takeoff.getLongitude()
-                && getWindpai().equals(takeoff.getWindpai()) && getName().equals(takeoff.getName()) && getDescription().equals(takeoff.getDescription());
+                && getExits() == takeoff.getExits() && getName().equals(takeoff.getName()) && getDescription().equals(takeoff.getDescription());
     }
 }

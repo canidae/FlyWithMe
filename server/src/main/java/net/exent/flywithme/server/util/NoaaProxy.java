@@ -29,7 +29,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Created by canidae on 6/13/14.
+ * Tool for fetching data from ready.noaa.gov.
  */
 public class NoaaProxy {
     private static final Logger log = Logger.getLogger(NoaaProxy.class.getName());
