@@ -7,9 +7,11 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -333,6 +335,8 @@ public class FlyWithMeService extends IntentService {
         }
         if (!sharedPref.getBoolean("pref_takeoff_activity_notifications", true))
             return; // user don't want notifications on activity
+        if (!checkLocationAccessPermission())
+            return;
         Location location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
         if (location == null)
             return;
@@ -461,6 +465,8 @@ public class FlyWithMeService extends IntentService {
     private void initGoogleApiClient() {
         if (googleApiClient != null && googleApiClient.isConnected())
             return;
+        if (!checkLocationAccessPermission())
+            return;
         googleApiClient = new GoogleApiClient.Builder(this).addApi(LocationServices.API).build();
         googleApiClient.blockingConnect();
         Intent locationIntent = new Intent(this, FlyWithMeService.class);
@@ -472,6 +478,12 @@ public class FlyWithMeService extends IntentService {
                 .setFastestInterval(CHECK_LOCATION_INTERVAL)
                 .setPriority(LocationRequest.PRIORITY_LOW_POWER);
         LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, pendingIntent);
+    }
+
+
+    private boolean checkLocationAccessPermission() {
+        return ActivityCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                || ActivityCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
     }
 
     private FlyWithMeServer getServer() {

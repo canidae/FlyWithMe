@@ -23,6 +23,8 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.app.Fragment;
 import android.app.Activity;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -39,6 +41,7 @@ import java.io.EOFException;
 import java.io.IOException;
 
 /* TODO:
+   - Handle runtime permissions in android 6.0 better. It was hacked together just to make it work
    - NoaaForecast: Would prefer a better way to transfer data to fragment
    - Cache forecasts locally for some few hours (fetched timestamp is returned, cache for the same amount of time as server caches the forecast)
  */
@@ -83,11 +86,13 @@ public class FlyWithMe extends Activity implements GoogleApiClient.ConnectionCal
 
     @Override
     public Location getLocation() {
-        Location location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
-        if (location != null)
-            return location;
+        if (checkLocationAccessPermission()) {
+            Location location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
+            if (location != null)
+                return location;
+        }
         // no known location, return location of the Rikssenter for the time being
-        location = new Location(LocationManager.PASSIVE_PROVIDER);
+        Location location = new Location(LocationManager.PASSIVE_PROVIDER);
         location.setLatitude(61.874655);
         location.setLongitude(9.154848);
         return location;
@@ -173,13 +178,11 @@ public class FlyWithMe extends Activity implements GoogleApiClient.ConnectionCal
 
     @Override
     public void onConnected(Bundle bundle) {
-        LocationRequest locationRequest = LocationRequest.create()
-                .setSmallestDisplacement((float) 100.0)
-                .setInterval(60000)
-                .setFastestInterval(30000)
-                .setPriority(LocationRequest.PRIORITY_LOW_POWER);
-        LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
-        refreshCurrentFragment();
+        if (!checkLocationAccessPermission()) {
+            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, 0);
+            return;
+        }
+        setupLocationCallback();
     }
 
     @Override
@@ -188,6 +191,12 @@ public class FlyWithMe extends Activity implements GoogleApiClient.ConnectionCal
 
     @Override
     public void onConnectionSuspended(int i) {
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (permissions.length == 1 && android.Manifest.permission.ACCESS_FINE_LOCATION.equals(permissions[0]) && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+            setupLocationCallback();
     }
 
     @Override
@@ -220,6 +229,23 @@ public class FlyWithMe extends Activity implements GoogleApiClient.ConnectionCal
             args.putParcelable(TakeoffDetails.ARG_TAKEOFF, takeoff);
             showFragment("takeoffDetails," + takeoff.getId(), TakeoffDetails.class, args);
         } else if (ACTION_UPDATE_SCHEDULE_DATA.equals(intent.getAction())) {
+            refreshCurrentFragment();
+        }
+    }
+
+    private boolean checkLocationAccessPermission() {
+        return ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                || ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void setupLocationCallback() {
+        if (checkLocationAccessPermission()) {
+            LocationRequest locationRequest = LocationRequest.create()
+                    .setSmallestDisplacement((float) 100.0)
+                    .setInterval(60000)
+                    .setFastestInterval(30000)
+                    .setPriority(LocationRequest.PRIORITY_LOW_POWER);
+            LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
             refreshCurrentFragment();
         }
     }

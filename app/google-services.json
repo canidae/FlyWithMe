@@ -8,10 +8,10 @@
     {
       "client_info": {
         "mobilesdk_app_id": "1:650451827361:android:27d689d63f1b7a06",
-        "client_id": "android:com.google.samples.quickstart.signin",
+        "client_id": "android:net.exent.flywithme",
         "client_type": 1,
         "android_client_info": {
-          "package_name": "com.google.samples.quickstart.signin"
+          "package_name": "net.exent.flywithme"
         }
       },
       "oauth_client": [

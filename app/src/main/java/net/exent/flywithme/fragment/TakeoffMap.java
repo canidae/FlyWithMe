@@ -30,6 +30,7 @@ import com.google.android.gms.maps.model.PolygonOptions;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -39,6 +40,7 @@ import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
@@ -115,7 +117,8 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
     @Override
     public void onMapReady(GoogleMap map) {
         this.map = map;
-        this.map.setMyLocationEnabled(true);
+        if (checkLocationAccessPermission())
+            this.map.setMyLocationEnabled(true);
         drawMap();
     }
 
@@ -142,6 +145,11 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable(ARG_CAMERA_POSITION, cameraPosition);
+    }
+
+    private boolean checkLocationAccessPermission() {
+        return ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                || ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
     }
 
     private void drawMap() {
