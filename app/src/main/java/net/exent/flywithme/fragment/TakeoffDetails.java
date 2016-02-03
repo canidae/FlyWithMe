@@ -156,7 +156,7 @@ public class TakeoffDetails extends Fragment {
 
         // fetch flight schedule for takeoff
         List<Schedule> schedules = Database.getTakeoffSchedules(getActivity(), takeoff);
-        if (schedules.isEmpty()) {
+        if (schedules == null || schedules.isEmpty()) {
             // no flights scheduled, don't draw labels, show instead a message
             paint.setColor(Color.YELLOW);
             String text = getActivity().getString(R.string.no_scheduled_flights);

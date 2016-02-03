@@ -357,21 +357,20 @@ public class TakeoffSchedule extends Fragment {
             }
             final Pilot pilot = getEntryGroupChild(groupPosition, childPosition);
             TextView entryPilotName = (TextView) convertView.findViewById(R.id.scheduleEntryPilotName);
-            entryPilotName.setText(pilot == null ? "<Error>" : pilot.getName());
+            String pilotName = pilot == null ? "<unknown>" : pilot.getName();
+            entryPilotName.setText(pilotName);
             TextView entryPilotPhone = (TextView) convertView.findViewById(R.id.scheduleEntryPilotPhone);
-            entryPilotPhone.setText(pilot == null ? "<Error>" : pilot.getPhone());
+            final String pilotPhone = pilot == null ? "<unknown>" : (pilot.getPhone() == null ? "<unknown>" : pilot.getPhone());
+            entryPilotPhone.setText(pilotPhone);
             ImageButton entryCallButton = (ImageButton) convertView.findViewById(R.id.scheduleEntryCallButton);
-            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
-            String pilotId = sharedPref.getString("pilot_id", "").trim();
-            if (pilotId.endsWith(pilot == null ? "<Error>" : pilot.getId())) {
+            if (!pilotPhone.matches("[0-9+\\-\\(\\) ]")) {
                 entryCallButton.setVisibility(View.INVISIBLE);
             } else {
                 entryCallButton.setVisibility(View.VISIBLE);
                 entryCallButton.setOnClickListener(new OnClickListener() {
                     public void onClick(View v) {
                         Intent callIntent = new Intent(Intent.ACTION_DIAL);
-                        // TODO: only call if pilot phone match "+-()" and "0-9"
-                        callIntent.setData(Uri.parse("tel:" + (pilot == null ? "<Error>" : pilot.getPhone())));
+                        callIntent.setData(Uri.parse("tel:" + pilotPhone));
                         startActivity(callIntent);
                     }
                 });

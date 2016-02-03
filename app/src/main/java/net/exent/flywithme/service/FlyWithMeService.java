@@ -140,8 +140,7 @@ public class FlyWithMeService extends IntentService {
             } catch (IOException e) {
                 Log.w(TAG, "Scheduling flight failed", e);
             }
-            // also add takeoff to list of dismissed takeoffs so user won't be bugged again about flying here before another 6 hours has passed
-            sharedPref.edit().putLong("" + takeoffId, now).apply();
+            updateSchedules();
             // dismiss notification
             ((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).cancel(0);
         } else if (ACTION_BLACKLIST_TAKEOFF_NOTIFICATION.equals(action)) {
@@ -176,8 +175,7 @@ public class FlyWithMeService extends IntentService {
             } catch (IOException e) {
                 Log.w(TAG, "Scheduling flight failed", e);
             }
-            // also add takeoff to list of dismissed takeoffs so user won't be bugged again about flying here before another 6 hours has passed
-            sharedPref.edit().putLong("" + takeoffId, now).apply();
+            updateSchedules();
             // dismiss notification
             ((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).cancel(0);
         } else if (ACTION_BLACKLIST_ACTIVITY_NOTIFICATION.equals(action)) {
@@ -219,7 +217,8 @@ public class FlyWithMeService extends IntentService {
             }
             sendDisplayForecastIntent(takeoffId, forecasts);
         } else if (ACTION_GET_SCHEDULES.equals(action)) {
-            getSchedulesAndRefreshView();
+            updateSchedules();
+            refreshFragment();
         } else if (ACTION_SCHEDULE_FLIGHT.equals(action)) {
             SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
             String pilotId = sharedPref.getString("pilot_id", null);
@@ -234,7 +233,8 @@ public class FlyWithMeService extends IntentService {
             } catch (IOException e) {
                 Log.w(TAG, "Scheduling flight failed", e);
             }
-            getSchedulesAndRefreshView();
+            updateSchedules();
+            refreshFragment();
         } else if (ACTION_UNSCHEDULE_FLIGHT.equals(action)) {
             SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
             String pilotId = sharedPref.getString("pilot_id", null);
@@ -249,7 +249,8 @@ public class FlyWithMeService extends IntentService {
             } catch (IOException e) {
                 Log.w(TAG, "Unscheduling flight failed", e);
             }
-            getSchedulesAndRefreshView();
+            updateSchedules();
+            refreshFragment();
         } else if (ACTION_GET_UPDATED_TAKEOFFS.equals(action)) {
             SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
             long timestamp = sharedPref.getLong("takeoff_last_update_timestamp", 0);
@@ -371,10 +372,10 @@ public class FlyWithMeService extends IntentService {
                 String pilotId = sharedPref.getString("pilot_id", null);
                 if (Database.isPilotScheduledToday(getApplicationContext(), pilotId, takeoffId))
                     continue; // don't show notifications for takeoff where pilot is already scheduled
-                PendingIntent clickIntent = PendingIntent.getService(this, 0, new Intent(this, FlyWithMeService.class).setAction(ACTION_CLICK_ACTIVITY_NOTIFICATION).putExtra(ARG_TAKEOFF_ID, takeoffId).putExtra(ARG_TIMESTAMP_IN_SECONDS, timestamp), PendingIntent.FLAG_UPDATE_CURRENT);
-                PendingIntent dismissIntent = PendingIntent.getService(this, 0, new Intent(this, FlyWithMeService.class).setAction(ACTION_DISMISS_ACTIVITY_NOTIFICATION).putExtra(ARG_TAKEOFF_ID, takeoffId).putExtra(ARG_TIMESTAMP_IN_SECONDS, timestamp), PendingIntent.FLAG_UPDATE_CURRENT);
-                PendingIntent scheduleIntent = PendingIntent.getService(this, 0, new Intent(this, FlyWithMeService.class).setAction(ACTION_SCHEDULE_ACTIVITY_NOTIFICATION).putExtra(ARG_TAKEOFF_ID, takeoffId).putExtra(ARG_TIMESTAMP_IN_SECONDS, timestamp), PendingIntent.FLAG_UPDATE_CURRENT);
-                PendingIntent blacklistIntent = PendingIntent.getService(this, 0, new Intent(this, FlyWithMeService.class).setAction(ACTION_BLACKLIST_ACTIVITY_NOTIFICATION).putExtra(ARG_TAKEOFF_ID, takeoffId).putExtra(ARG_TIMESTAMP_IN_SECONDS, timestamp), PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent clickIntent = PendingIntent.getService(this, 0, new Intent(this, FlyWithMeService.class).setAction(ACTION_CLICK_ACTIVITY_NOTIFICATION).putExtra(ARG_TAKEOFF_ID, takeoffId).putExtra(ARG_TIMESTAMP_IN_SECONDS, timestamp / 1000), PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent dismissIntent = PendingIntent.getService(this, 0, new Intent(this, FlyWithMeService.class).setAction(ACTION_DISMISS_ACTIVITY_NOTIFICATION).putExtra(ARG_TAKEOFF_ID, takeoffId).putExtra(ARG_TIMESTAMP_IN_SECONDS, timestamp / 1000), PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent scheduleIntent = PendingIntent.getService(this, 0, new Intent(this, FlyWithMeService.class).setAction(ACTION_SCHEDULE_ACTIVITY_NOTIFICATION).putExtra(ARG_TAKEOFF_ID, takeoffId).putExtra(ARG_TIMESTAMP_IN_SECONDS, timestamp / 1000), PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent blacklistIntent = PendingIntent.getService(this, 0, new Intent(this, FlyWithMeService.class).setAction(ACTION_BLACKLIST_ACTIVITY_NOTIFICATION).putExtra(ARG_TAKEOFF_ID, takeoffId).putExtra(ARG_TIMESTAMP_IN_SECONDS, timestamp / 1000), PendingIntent.FLAG_UPDATE_CURRENT);
                     /* XXX:
                      * 1. user receives activity for one place
                      * 2. user is not watching phone and ignores the notification
@@ -419,7 +420,7 @@ public class FlyWithMeService extends IntentService {
         }
     }
 
-    private void getSchedulesAndRefreshView() {
+    private void updateSchedules() {
         try {
             SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
             sharedPref.edit().putBoolean("activity_schedule_needs_update", false).apply();
@@ -428,10 +429,13 @@ public class FlyWithMeService extends IntentService {
         } catch (IOException e) {
             Log.w(TAG, "Fetching schedules failed", e);
         }
-        Intent showTakeoffDetailsIntent = new Intent(this, FlyWithMe.class);
-        showTakeoffDetailsIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        showTakeoffDetailsIntent.setAction(FlyWithMe.ACTION_UPDATE_SCHEDULE_DATA);
-        startActivity(showTakeoffDetailsIntent);
+    }
+
+    private void refreshFragment() {
+        Intent updateScheduleDataIntent = new Intent(this, FlyWithMe.class);
+        updateScheduleDataIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        updateScheduleDataIntent.setAction(FlyWithMe.ACTION_UPDATE_SCHEDULE_DATA);
+        startActivity(updateScheduleDataIntent);
     }
 
     private void sendDisplayForecastIntent(long takeoffId, List<Forecast> forecasts) {
