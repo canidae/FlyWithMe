@@ -2,6 +2,8 @@ package net.exent.flywithme.data;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import net.exent.flywithme.bean.Takeoff;
 import net.exent.flywithme.server.flyWithMeServer.model.Pilot;
@@ -15,18 +17,21 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 public class Database extends SQLiteOpenHelper {
-    public Database(Context context) {
+    private static Lock databaseLock = new ReentrantLock();
+    private static Database instance;
+
+    private Database(Context context) {
         super(context, "flywithme", null, 4);
     }
 
     @Override
-    public synchronized void onCreate(SQLiteDatabase db) {
+    public void onCreate(SQLiteDatabase db) {
         Log.d(getClass().getName(), "onCreate()");
         createDatabase(db);
     }
 
     @Override
-    public synchronized void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         Log.d(getClass().getName(), "onUpgrade(" + oldVersion + ", " + newVersion + ")");
         if (oldVersion == 1)
             upgradeDatabaseToV2(db);
@@ -36,16 +41,16 @@ public class Database extends SQLiteOpenHelper {
             upgradeDatabaseToV4(db);
     }
 
-    public synchronized List<Schedule> getTakeoffSchedules(Takeoff takeoff) {
+    public static List<Schedule> getTakeoffSchedules(Context context, Takeoff takeoff) {
         if (takeoff == null) {
-            Log.w(getClass().getName(), "Unable to get takeoff schedules, argument is null");
+            Log.w("Database", "Unable to get takeoff schedules, argument is null");
             return null;
         }
         List<Schedule> schedules = new ArrayList<>();
-        SQLiteDatabase db = getReadableDatabase();
-        if (db == null)
-            throw new IllegalArgumentException("Unable to get database object");
         try {
+            SQLiteDatabase db = aquire(context).getReadableDatabase();
+            if (db == null)
+                throw new IllegalArgumentException("Unable to get database object");
             Cursor cursor = db.query("schedule", new String[]{"timestamp", "pilot_name", "pilot_phone", "pilot_id"}, "takeoff_id = " + takeoff.getId() + " and datetime(schedule.timestamp, 'unixepoch', 'localtime') >= datetime('now', '-6 hour', 'localtime')", null, null, null, "timestamp");
             while (cursor.moveToNext()) {
                 long timestamp = cursor.getLong(0);
@@ -76,10 +81,11 @@ public class Database extends SQLiteOpenHelper {
                 pilots.add(pilot);
             }
             cursor.close();
-            return schedules;
-        } finally {
             db.close();
+        } finally {
+            release();
         }
+        return schedules;
     }
 
     /**
@@ -89,26 +95,27 @@ public class Database extends SQLiteOpenHelper {
      * @param takeoffId Optional takeoff ID, if <code>null</code> then it will check if pilot is scheduled anywhere today.
      * @return <code>true</code> if pilot is scheduled today, <code>false</code> otherwise.
      */
-    public synchronized boolean isPilotScheduledToday(String pilotId, Long takeoffId) {
-        SQLiteDatabase db = getReadableDatabase();
-        if (db == null)
-            throw new IllegalArgumentException("Unable to get database object");
-        Cursor cursor = null;
+    public static boolean isPilotScheduledToday(Context context, String pilotId, Long takeoffId) {
+        boolean pilotScheduledToday = false;
         try {
-            cursor = db.query("schedule", new String[]{"timestamp"}, "? like '%' || pilot_id" + (takeoffId == null ? "" : " and takeoff_id = " + takeoffId) + " and date(schedule.timestamp, 'unixepoch', 'localtime') = date('now', 'localtime')", new String[]{pilotId}, null, null, null);
-            return cursor.getCount() > 0;
-        } finally {
-            if (cursor != null)
-                cursor.close();
+            SQLiteDatabase db = aquire(context).getReadableDatabase();
+            if (db == null)
+                throw new IllegalArgumentException("Unable to get database object");
+            Cursor cursor = db.query("schedule", new String[]{"timestamp"}, "? like '%' || pilot_id" + (takeoffId == null ? "" : " and takeoff_id = " + takeoffId) + " and date(schedule.timestamp, 'unixepoch', 'localtime') = date('now', 'localtime')", new String[]{pilotId}, null, null, null);
+            pilotScheduledToday = cursor.getCount() > 0;
+            cursor.close();
             db.close();
+        } finally {
+            release();
         }
+        return pilotScheduledToday;
     }
 
-    public synchronized void updateSchedules(List<Schedule> schedules) {
-        SQLiteDatabase db = getWritableDatabase();
-        if (db == null)
-            throw new IllegalArgumentException("Unable to get database object");
+    public static void updateSchedules(Context context, List<Schedule> schedules) {
         try {
+            SQLiteDatabase db = aquire(context).getWritableDatabase();
+            if (db == null)
+                throw new IllegalArgumentException("Unable to get database object");
             db.execSQL("delete from schedule");
             if (schedules == null)
                 return;
@@ -123,48 +130,50 @@ public class Database extends SQLiteOpenHelper {
                     db.insert("schedule", null, values);
                 }
             }
-        } finally {
             db.close();
+        } finally {
+            release();
         }
     }
 
-    public synchronized Takeoff getTakeoff(long takeoffId) {
-        SQLiteDatabase db = getReadableDatabase();
-        if (db == null)
-            throw new IllegalArgumentException("Unable to get database object");
-        Cursor cursor = null;
+    public static Takeoff getTakeoff(Context context, long takeoffId) {
+        Takeoff takeoff = null;
         try {
-            cursor = db.query("takeoff", Takeoff.COLUMNS, "takeoff_id = " + takeoffId, null, null, null, null);
+            SQLiteDatabase db = aquire(context).getReadableDatabase();
+            if (db == null)
+                throw new IllegalArgumentException("Unable to get database object");
+            Cursor cursor = db.query("takeoff", Takeoff.COLUMNS, "takeoff_id = " + takeoffId, null, null, null, null);
             if (cursor.moveToNext())
-                return Takeoff.create(new ImprovedCursor(cursor));
-            return null;
-        } finally {
-            if (cursor != null)
-                cursor.close();
+                takeoff = Takeoff.create(new ImprovedCursor(cursor));
+            cursor.close();
             db.close();
+        } finally {
+            release();
         }
+        return takeoff;
     }
 
-    public synchronized void updateTakeoff(Takeoff takeoff) {
+    public static void updateTakeoff(Context context, Takeoff takeoff) {
         if (takeoff == null) {
-            Log.w(getClass().getName(), "Unable to update takeoff, argument is null");
+            Log.w("Database", "Unable to update takeoff, argument is null");
             return;
         }
-        SQLiteDatabase db = getWritableDatabase();
-        if (db == null)
-            throw new IllegalArgumentException("Unable to get database object");
         try {
+            SQLiteDatabase db = aquire(context).getWritableDatabase();
+            if (db == null)
+                throw new IllegalArgumentException("Unable to get database object");
             ContentValues contentValues = takeoff.getContentValues();
             if (db.update("takeoff", contentValues, "takeoff_id = " + takeoff.getId(), null) <= 0) {
                 // no rows updated, insert instead
                 db.insert("takeoff", null, contentValues);
             }
-        } finally {
             db.close();
+        } finally {
+            release();
         }
     }
 
-    public synchronized List<Takeoff> getTakeoffs(double latitude, double longitude, int maxResult, boolean includeFavourites, boolean includeActivity) {
+    public static List<Takeoff> getTakeoffs(Context context, double latitude, double longitude, int maxResult, boolean includeFavourites, boolean includeActivity) {
         List<Takeoff> takeoffs = new ArrayList<>();
         if (maxResult <= 0)
             return takeoffs;
@@ -181,35 +190,48 @@ public class Database extends SQLiteOpenHelper {
         String pilotsLater = includeActivity ? "(select count(*) from schedule where schedule.takeoff_id = takeoff.takeoff_id and date(schedule.timestamp, 'unixepoch', 'localtime') > date('now', 'localtime'))" : "0";
 
         // execute the query
-        SQLiteDatabase db = getReadableDatabase();
-        if (db == null)
-            throw new IllegalArgumentException("Unable to get database object");
         try {
+            SQLiteDatabase db = aquire(context).getReadableDatabase();
+            if (db == null)
+                throw new IllegalArgumentException("Unable to get database object");
             Cursor cursor = db.rawQuery("select *, " + pilotsToday + " as pilots_today, " + pilotsLater + " as pilots_later from takeoff order by " + orderBy + " limit " + maxResult, null);
             while (cursor.moveToNext())
                 takeoffs.add(Takeoff.create(new ImprovedCursor(cursor)));
             cursor.close();
-            return takeoffs;
-        } finally {
             db.close();
+        } finally {
+            release();
+        }
+        return takeoffs;
+    }
+
+    public static void updateFavourite(Context context, Takeoff takeoff) {
+        if (takeoff == null) {
+            Log.w("Database", "Unable to update takeoff, argument is null");
+            return;
+        }
+        try {
+            SQLiteDatabase db = aquire(context).getWritableDatabase();
+            if (db == null)
+                throw new IllegalArgumentException("Unable to get database object");
+            ContentValues contentValues = new ContentValues();
+            contentValues.put("favourite", takeoff.isFavourite() ? 1 : 0);
+            db.update("takeoff", contentValues, "takeoff_id = " + takeoff.getId(), null);
+            db.close();
+        } finally {
+            release();
         }
     }
 
-    public synchronized void updateFavourite(Takeoff takeoff) {
-        if (takeoff == null) {
-            Log.w(getClass().getName(), "Unable to update takeoff, argument is null");
-            return;
-        }
-        SQLiteDatabase db = getWritableDatabase();
-        if (db == null)
-            throw new IllegalArgumentException("Unable to get database object");
-        ContentValues contentValues = new ContentValues();
-        contentValues.put("favourite", takeoff.isFavourite() ? 1 : 0);
-        try {
-            db.update("takeoff", contentValues, "takeoff_id = " + takeoff.getId(), null);
-        } finally {
-            db.close();
-        }
+    private static Database aquire(Context context) {
+        databaseLock.lock();
+        if (instance == null)
+            instance = new Database(context);
+        return instance;
+    }
+
+    private static void release() {
+        databaseLock.unlock();
     }
 
     /**

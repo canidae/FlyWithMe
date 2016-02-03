@@ -51,7 +51,7 @@ public class NoaaForecast extends Fragment {
             final ListView forecastList = ((ListView) view.findViewById(R.id.noaaForecastList));
             final GestureImageView forecastImage = ((GestureImageView) view.findViewById(R.id.noaaForecastImage));
             final TextView noaaForecastErrorMessage = (TextView) view.findViewById(R.id.noaaForecastErrorMessage);
-            final Takeoff takeoff = new Database(getActivity()).getTakeoff((int) args.getLong(ARG_TAKEOFF_ID));
+            final Takeoff takeoff = Database.getTakeoff(getActivity(), (int) args.getLong(ARG_TAKEOFF_ID));
 
             int width = 0;
             int height = 0;

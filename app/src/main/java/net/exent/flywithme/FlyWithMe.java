@@ -14,6 +14,8 @@ import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.AsyncTask;
@@ -213,8 +215,7 @@ public class FlyWithMe extends Activity implements GoogleApiClient.ConnectionCal
         } else if (ACTION_SHOW_PREFERENCES.equals(intent.getAction())) {
             showFragment("preferences", Preferences.class, null);
         } else if (ACTION_SHOW_TAKEOFF_DETAILS.equals(intent.getAction())) {
-            Database database = new Database(this);
-            Takeoff takeoff = database.getTakeoff(intent.getLongExtra(ARG_TAKEOFF_ID, 0));
+            Takeoff takeoff = Database.getTakeoff(getApplicationContext(), intent.getLongExtra(ARG_TAKEOFF_ID, 0));
             Bundle args = new Bundle();
             args.putParcelable(TakeoffDetails.ARG_TAKEOFF, takeoff);
             showFragment("takeoffDetails," + takeoff.getId(), TakeoffDetails.class, args);
@@ -268,18 +269,21 @@ public class FlyWithMe extends Activity implements GoogleApiClient.ConnectionCal
         private void importTakeoffs() {
             Log.d(getClass().getName(), "Importing takeoffs from file");
             DataInputStream inputStream = null;
+            Context context = getApplicationContext();
+            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+            long updateTimestamp = 0;
+            long updateVersion = 0;
             try {
-                Context context = getApplicationContext();
-                Database database = new Database(context);
                 inputStream = new DataInputStream(context.getResources().openRawResource(R.raw.flywithme));
-                long importTimestamp = inputStream.readLong();
-                SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
-                long previousImportTimestamp = sharedPref.getLong("takeoff_last_update_timestamp", 0);
-                if (importTimestamp <= previousImportTimestamp) {
+                updateTimestamp = inputStream.readLong();
+                long previousUpdateTimestamp = sharedPref.getLong("takeoff_last_update_timestamp", 0);
+                PackageInfo packageInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+                updateVersion = packageInfo.versionCode;
+                long previousUpdateVersion = sharedPref.getLong("takeoff_last_update_version", 0);
+                if (updateTimestamp <= previousUpdateTimestamp && previousUpdateVersion == updateVersion) {
                     Log.d(getClass().getName(), "No need to import, already up to date");
                     return; // no need to import, already updated
                 }
-                sharedPref.edit().putLong("takeoff_last_update_timestamp", importTimestamp).apply();
                 while (true) {
                     /* loop breaks once we get an EOFException */
                     int takeoffId = inputStream.readShort();
@@ -290,13 +294,17 @@ public class FlyWithMe extends Activity implements GoogleApiClient.ConnectionCal
                     float latitude = inputStream.readFloat();
                     float longitude = inputStream.readFloat();
                     int exits = inputStream.readShort();
-                    Takeoff takeoff = new Takeoff(takeoffId, importTimestamp, name, description, asl, height, latitude, longitude, exits, false);
-                    database.updateTakeoff(takeoff);
+                    Takeoff takeoff = new Takeoff(takeoffId, updateTimestamp, name, description, asl, height, latitude, longitude, exits, false);
+                    Database.updateTakeoff(getApplicationContext(), takeoff);
                 }
             } catch (EOFException e) {
                 /* expected to happen when reaching end of file */
+                sharedPref.edit().putLong("takeoff_last_update_timestamp", updateTimestamp).apply();
+                sharedPref.edit().putLong("takeoff_last_update_version", updateVersion).apply();
             } catch (IOException e) {
                 Log.e(getClass().getName(), "Error when reading file with takeoffs", e);
+            } catch (PackageManager.NameNotFoundException e) {
+                Log.e(getClass().getName(), "Error when fetching app version", e);
             } finally {
                 try {
                     if (inputStream != null)

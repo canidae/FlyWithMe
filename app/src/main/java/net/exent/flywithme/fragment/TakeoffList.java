@@ -73,7 +73,7 @@ public class TakeoffList extends Fragment {
 
     private void updateTakeoffList() {
         final Location location = ((FlyWithMeActivity) getActivity()).getLocation();
-        takeoffs = new Database(getActivity()).getTakeoffs(location.getLatitude(), location.getLongitude(), 100, true, true); // TODO: can we do this async?
+        takeoffs = Database.getTakeoffs(getActivity(), location.getLatitude(), location.getLongitude(), 100, true, true); // TODO: can we do this async?
         Collections.sort(takeoffs, new Comparator<Takeoff>() {
             public int compare(Takeoff lhs, Takeoff rhs) {
                 if (!lhs.isFavourite() && rhs.isFavourite())

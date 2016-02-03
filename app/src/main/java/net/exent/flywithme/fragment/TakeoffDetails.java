@@ -128,7 +128,7 @@ public class TakeoffDetails extends Fragment {
             @Override
             public void onClick(View v) {
                 takeoff.setFavourite(!takeoff.isFavourite());
-                new Database(getActivity()).updateFavourite(takeoff);
+                Database.updateFavourite(getActivity(), takeoff);
                 favouriteButton.setImageResource(takeoff.isFavourite() ? R.mipmap.favourite_enabled : R.mipmap.favourite_disabled);
             }
         });
@@ -155,7 +155,7 @@ public class TakeoffDetails extends Fragment {
         canvas.drawRect(0, bitmap.getHeight() - X_AXIS_HEIGHT + LINE_WIDTH, bitmap.getWidth(), bitmap.getHeight() - X_AXIS_HEIGHT, paint); // lower horizontal axis
 
         // fetch flight schedule for takeoff
-        List<Schedule> schedules = new Database(getActivity()).getTakeoffSchedules(takeoff);
+        List<Schedule> schedules = Database.getTakeoffSchedules(getActivity(), takeoff);
         if (schedules.isEmpty()) {
             // no flights scheduled, don't draw labels, show instead a message
             paint.setColor(Color.YELLOW);

@@ -247,7 +247,7 @@ public class TakeoffSchedule extends Fragment {
         }
 
         public void updateData() {
-            schedules = new Database(getActivity()).getTakeoffSchedules(takeoff);
+            schedules = Database.getTakeoffSchedules(getActivity(), takeoff);
             notifyDataSetChanged();
         }
 
@@ -370,6 +370,7 @@ public class TakeoffSchedule extends Fragment {
                 entryCallButton.setOnClickListener(new OnClickListener() {
                     public void onClick(View v) {
                         Intent callIntent = new Intent(Intent.ACTION_DIAL);
+                        // TODO: only call if pilot phone match "+-()" and "0-9"
                         callIntent.setData(Uri.parse("tel:" + (pilot == null ? "<Error>" : pilot.getPhone())));
                         startActivity(callIntent);
                     }

@@ -82,8 +82,6 @@ public class Preferences extends PreferenceFragment implements SharedPreferences
     /* END AAH! */
 
     private void updateDynamicPreferenceScreen() {
-        Database database = new Database(getActivity());
-
         // pilot info
         EditTextPreference pilotName = (EditTextPreference) findPreference("pref_pilot_name");
         if (pilotName.getText() == null || pilotName.getText().trim().equals("")) {
@@ -106,7 +104,7 @@ public class Preferences extends PreferenceFragment implements SharedPreferences
             if (key == null || "".equals(key.trim()))
                 continue;
             Preference blacklistPreference = new Preference(getActivity());
-            blacklistPreference.setTitle(database.getTakeoff(Long.parseLong(key)).getName());
+            blacklistPreference.setTitle(Database.getTakeoff(getActivity(), Long.parseLong(key)).getName());
             blacklistPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
@@ -130,7 +128,7 @@ public class Preferences extends PreferenceFragment implements SharedPreferences
             if (key == null || "".equals(key.trim()))
                 continue;
             Preference blacklistPreference = new Preference(getActivity());
-            blacklistPreference.setTitle(database.getTakeoff(Long.parseLong(key)).getName());
+            blacklistPreference.setTitle(Database.getTakeoff(getActivity(), Long.parseLong(key)).getName());
             blacklistPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {

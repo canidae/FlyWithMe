@@ -208,7 +208,7 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
                     mapLocation.setLongitude(latLng.longitude);
 
                     /* get the 25 nearest takeoffs */
-                    List<Takeoff> takeoffs = new Database(getActivity()).getTakeoffs(latLng.latitude, latLng.longitude, 25, false, true);
+                    List<Takeoff> takeoffs = Database.getTakeoffs(getActivity(), latLng.latitude, latLng.longitude, 25, false, true);
 
                     /* add markers */
                     for (Takeoff takeoff : takeoffs) {

@@ -31,6 +31,7 @@ import net.exent.flywithme.data.Database;
 import net.exent.flywithme.fragment.NoaaForecast;
 import net.exent.flywithme.server.flyWithMeServer.FlyWithMeServer;
 import net.exent.flywithme.server.flyWithMeServer.model.Forecast;
+import net.exent.flywithme.server.flyWithMeServer.model.ForecastCollection;
 import net.exent.flywithme.server.flyWithMeServer.model.Schedule;
 import net.exent.flywithme.server.flyWithMeServer.model.Takeoff;
 
@@ -210,7 +211,9 @@ public class FlyWithMeService extends IntentService {
             long timestamp = bundle.getLong(ARG_TIMESTAMP_IN_SECONDS, -1);
             List<Forecast> forecasts = null;
             try {
-                forecasts = getServer().getSounding(takeoffId, timestamp).execute().getItems();
+                ForecastCollection forecastCollection = getServer().getSounding(takeoffId, timestamp).execute();
+                if (forecastCollection != null)
+                    forecasts = forecastCollection.getItems();
             } catch (IOException e) {
                 Log.w(TAG, "Fetching sounding failed", e);
             }
@@ -252,19 +255,18 @@ public class FlyWithMeService extends IntentService {
             long timestamp = sharedPref.getLong("takeoff_last_update_timestamp", 0);
             try {
                 List<Takeoff> updatedTakeoffs = getServer().getUpdatedTakeoffs(timestamp).execute().getItems();
-                Database database = new Database(this);
                 long lastUpdated = timestamp;
                 for (Takeoff takeoff : updatedTakeoffs) {
                     Log.i(TAG, "Updating takeoff with ID: " + takeoff.getId());
                     if (takeoff.getLastUpdated() > lastUpdated)
                         lastUpdated = takeoff.getLastUpdated();
-                    net.exent.flywithme.bean.Takeoff updatedTakeoff = database.getTakeoff(takeoff.getId());
+                    net.exent.flywithme.bean.Takeoff updatedTakeoff = Database.getTakeoff(getApplicationContext(), takeoff.getId());
                     if (updatedTakeoff != null) {
                         updatedTakeoff.setTakeoff(takeoff);
                     } else {
                         updatedTakeoff = new net.exent.flywithme.bean.Takeoff(takeoff);
                     }
-                    database.updateTakeoff(updatedTakeoff);
+                    Database.updateTakeoff(getApplicationContext(), updatedTakeoff);
                 }
                 sharedPref.edit().putLong("takeoff_last_update_timestamp", lastUpdated).apply();
             } catch (IOException e) {
@@ -287,9 +289,8 @@ public class FlyWithMeService extends IntentService {
             return; // user don't want notifications when near takeoffs
         SharedPreferences dismissedTakeoffsPref = getSharedPreferences(ACTION_DISMISS_TAKEOFF_NOTIFICATION, Context.MODE_PRIVATE);
         SharedPreferences blacklistedTakeoffsPref = getSharedPreferences(ACTION_BLACKLIST_TAKEOFF_NOTIFICATION, Context.MODE_PRIVATE);
-        Database database = new Database(this);
         long takeoffMaxDistance = Long.parseLong(sharedPref.getString("pref_near_takeoff_max_distance", "500"));
-        List<net.exent.flywithme.bean.Takeoff> takeoffs = database.getTakeoffs(location.getLatitude(), location.getLongitude(), 1, false, false);
+        List<net.exent.flywithme.bean.Takeoff> takeoffs = Database.getTakeoffs(getApplicationContext(), location.getLatitude(), location.getLongitude(), 1, false, false);
         if (takeoffs.isEmpty())
             return;
         net.exent.flywithme.bean.Takeoff takeoff = takeoffs.get(0);
@@ -302,7 +303,7 @@ public class FlyWithMeService extends IntentService {
         if (blacklistedTakeoffsPref.contains("" + takeoff.getId()))
             return; // user blacklisted this takeoff, ignore takeoff
         String pilotId = sharedPref.getString("pilot_id", null);
-        if (database.isPilotScheduledToday(pilotId, takeoff.getId()))
+        if (Database.isPilotScheduledToday(getApplicationContext(), pilotId, takeoff.getId()))
             return; // don't show notifications for takeoff where pilot is already scheduled
 
         PendingIntent clickIntent = PendingIntent.getService(this, 0, new Intent(this, FlyWithMeService.class).setAction(ACTION_CLICK_TAKEOFF_NOTIFICATION).putExtra(ARG_TAKEOFF_ID, takeoff.getId()), PendingIntent.FLAG_UPDATE_CURRENT);
@@ -318,7 +319,7 @@ public class FlyWithMeService extends IntentService {
                 .setAutoCancel(true)
                 .addAction(android.R.drawable.ic_input_add, getString(R.string.yes), scheduleIntent)
                 .addAction(android.R.drawable.ic_dialog_alert, getString(R.string.never_notify_here), blacklistIntent);
-        if (sharedPref.getBoolean("pref_near_takeoff_vibrate", true) && !database.isPilotScheduledToday(pilotId, null))
+        if (sharedPref.getBoolean("pref_near_takeoff_vibrate", true) && !Database.isPilotScheduledToday(getApplicationContext(), pilotId, null))
             notificationBuilder.setVibrate(VIBRATE_DATA);
         Notification notification = notificationBuilder.build();
         notification.flags |= Notification.FLAG_AUTO_CANCEL;
@@ -340,11 +341,12 @@ public class FlyWithMeService extends IntentService {
         if (!sharedPref.getBoolean("pref_takeoff_activity_notifications", true))
             return; // user don't want notifications on activity
         Location location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
+        if (location == null)
+            return;
         SharedPreferences dismissedActivityPref = getSharedPreferences(ACTION_DISMISS_ACTIVITY_NOTIFICATION, Context.MODE_PRIVATE);
         SharedPreferences blacklistedActivityPref = getSharedPreferences(ACTION_BLACKLIST_ACTIVITY_NOTIFICATION, Context.MODE_PRIVATE);
         long activityMaxDistance = Long.parseLong(sharedPref.getString("pref_takeoff_activity_max_distance", "100000"));
         String[] timestampsAndTakeoffIdsList = message.split(";");
-        Database database = new Database(this);
         DateFormat dateFormat = new SimpleDateFormat("EEE. HH:mm", Locale.US);
         boolean breakLoop = false;
         for (String timestampsAndTakeoffIds : timestampsAndTakeoffIdsList) {
@@ -361,11 +363,13 @@ public class FlyWithMeService extends IntentService {
                     continue; // user dismissed activity for this takeoff recently, ignore takeoff
                 if (blacklistedActivityPref.contains("" + takeoffId))
                     continue; // user blacklisted activity for this takeoff, ignore takeoff
-                net.exent.flywithme.bean.Takeoff takeoff = database.getTakeoff(takeoffId);
+                net.exent.flywithme.bean.Takeoff takeoff = Database.getTakeoff(getApplicationContext(), takeoffId);
+                if (takeoff == null)
+                    continue;
                 if (location.distanceTo(takeoff.getLocation()) > activityMaxDistance)
                     continue;
                 String pilotId = sharedPref.getString("pilot_id", null);
-                if (database.isPilotScheduledToday(pilotId, takeoffId))
+                if (Database.isPilotScheduledToday(getApplicationContext(), pilotId, takeoffId))
                     continue; // don't show notifications for takeoff where pilot is already scheduled
                 PendingIntent clickIntent = PendingIntent.getService(this, 0, new Intent(this, FlyWithMeService.class).setAction(ACTION_CLICK_ACTIVITY_NOTIFICATION).putExtra(ARG_TAKEOFF_ID, takeoffId).putExtra(ARG_TIMESTAMP_IN_SECONDS, timestamp), PendingIntent.FLAG_UPDATE_CURRENT);
                 PendingIntent dismissIntent = PendingIntent.getService(this, 0, new Intent(this, FlyWithMeService.class).setAction(ACTION_DISMISS_ACTIVITY_NOTIFICATION).putExtra(ARG_TAKEOFF_ID, takeoffId).putExtra(ARG_TIMESTAMP_IN_SECONDS, timestamp), PendingIntent.FLAG_UPDATE_CURRENT);
@@ -388,7 +392,7 @@ public class FlyWithMeService extends IntentService {
                         .setAutoCancel(true)
                         .addAction(android.R.drawable.ic_input_add, getString(R.string.yes), scheduleIntent)
                         .addAction(android.R.drawable.ic_dialog_alert, getString(R.string.never_notify_here), blacklistIntent);
-                if (sharedPref.getBoolean("pref_takeoff_activity_vibrate", false) && !database.isPilotScheduledToday(pilotId, null))
+                if (sharedPref.getBoolean("pref_takeoff_activity_vibrate", false) && !Database.isPilotScheduledToday(getApplicationContext(), pilotId, null))
                     notificationBuilder.setVibrate(VIBRATE_DATA);
                 Notification notification = notificationBuilder.build();
                 notification.flags |= Notification.FLAG_AUTO_CANCEL;
@@ -420,8 +424,7 @@ public class FlyWithMeService extends IntentService {
             SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
             sharedPref.edit().putBoolean("activity_schedule_needs_update", false).apply();
             List<Schedule> schedules = getServer().getSchedules().execute().getItems();
-            Database db = new Database(getApplicationContext());
-            db.updateSchedules(schedules);
+            Database.updateSchedules(getApplicationContext(), schedules);
         } catch (IOException e) {
             Log.w(TAG, "Fetching schedules failed", e);
         }
