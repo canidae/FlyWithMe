@@ -76,10 +76,10 @@ public class FlyWithMeService extends IntentService {
     private static final String SERVER_URL = "https://4-dot-flywithme-server.appspot.com/_ah/api/"; // "http://88.95.84.204:8080/_ah/api/"
     private static final long DISMISS_TIMEOUT = 21600000; // 6 hours
     private static final long CHECK_ACTIVITY_INTERVAL = 3600000; // 1 hour
-    private static final long CHECK_LOCATION_INTERVAL = 900000; // 15 minutes
+    private static final long CHECK_LOCATION_INTERVAL = 600000; // 10 minutes
     private static final long[] VIBRATE_DATA = new long[] {0, 100, 100, 100, 100, 300, 100, 100}; // actually morse for "F"
 
-    private static GoogleApiClient googleApiClient; // TODO? android goes absolutely mental if this is not static
+    private GoogleApiClient googleApiClient;
 
     public FlyWithMeService() {
         super(TAG);
@@ -94,17 +94,7 @@ public class FlyWithMeService extends IntentService {
         if (bundle == null)
             bundle = new Bundle();
         if (ACTION_INIT.equals(action)) {
-            if (googleApiClient != null && (googleApiClient.isConnected() || googleApiClient.isConnecting()))
-                return;
-            googleApiClient = new GoogleApiClient.Builder(this).addApi(LocationServices.API).build();
-            googleApiClient.blockingConnect();
-            PendingIntent locationIntent = PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-            LocationRequest locationRequest = LocationRequest.create()
-                    .setSmallestDisplacement((float) 100.0)
-                    .setInterval(CHECK_LOCATION_INTERVAL * 2)
-                    .setFastestInterval(CHECK_LOCATION_INTERVAL)
-                    .setPriority(LocationRequest.PRIORITY_LOW_POWER);
-            LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, locationIntent);
+            initGoogleApiClient();
         } else if (ACTION_CHECK_CURRENT_LOCATION.equals(action)) {
             LocationResult locationResult = LocationResult.extractResult(intent);
             if (locationResult == null)
@@ -329,7 +319,7 @@ public class FlyWithMeService extends IntentService {
 
     private void checkActivity(String message) {
         if (googleApiClient == null || !googleApiClient.isConnected())
-            return; // Google API Client not yet connected
+            initGoogleApiClient(); // Google API Client not yet connected
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         if (message == null) {
             message = sharedPref.getString("activity_last_message", null);
@@ -466,6 +456,22 @@ public class FlyWithMeService extends IntentService {
         intent.putExtra(NoaaForecast.ARG_TAKEOFF_ID, forecasts.get(0).getTakeoffId());
         intent.putExtra(NoaaForecast.ARG_VALID_FOR, forecasts.get(0).getValidFor());
         startActivity(intent);
+    }
+
+    private void initGoogleApiClient() {
+        if (googleApiClient != null && googleApiClient.isConnected())
+            return;
+        googleApiClient = new GoogleApiClient.Builder(this).addApi(LocationServices.API).build();
+        googleApiClient.blockingConnect();
+        Intent locationIntent = new Intent(this, FlyWithMeService.class);
+        locationIntent.setAction(ACTION_CHECK_CURRENT_LOCATION);
+        PendingIntent pendingIntent = PendingIntent.getService(this, 0, locationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        LocationRequest locationRequest = LocationRequest.create()
+                .setSmallestDisplacement((float) 100.0)
+                .setInterval(CHECK_LOCATION_INTERVAL * 2)
+                .setFastestInterval(CHECK_LOCATION_INTERVAL)
+                .setPriority(LocationRequest.PRIORITY_LOW_POWER);
+        LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, pendingIntent);
     }
 
     private FlyWithMeServer getServer() {
