@@ -328,7 +328,7 @@ public class FlyWithMeService extends IntentService {
     }
 
     private void checkActivity(String message) {
-        if (!googleApiClient.isConnected())
+        if (googleApiClient == null || !googleApiClient.isConnected())
             return; // Google API Client not yet connected
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         if (message == null) {
