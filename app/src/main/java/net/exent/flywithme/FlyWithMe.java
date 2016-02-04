@@ -42,6 +42,8 @@ import java.io.IOException;
 
 /* TODO:
    - Handle runtime permissions in android 6.0 better. It was hacked together just to make it work
+   - Cache location so it won't always show Rikssenteret at start
+   - When scheduling activity we fetch the schedule twice, don't do that
    - NoaaForecast: Would prefer a better way to transfer data to fragment
    - Cache forecasts locally for some few hours (fetched timestamp is returned, cache for the same amount of time as server caches the forecast)
  */
