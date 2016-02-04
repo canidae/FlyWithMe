@@ -292,7 +292,7 @@ public class FlyWithMeService extends IntentService {
             return; // user don't want notifications when near takeoffs
         SharedPreferences dismissedTakeoffsPref = getSharedPreferences(ACTION_DISMISS_TAKEOFF_NOTIFICATION, Context.MODE_PRIVATE);
         SharedPreferences blacklistedTakeoffsPref = getSharedPreferences(ACTION_BLACKLIST_TAKEOFF_NOTIFICATION, Context.MODE_PRIVATE);
-        long takeoffMaxDistance = Long.parseLong(sharedPref.getString("pref_near_takeoff_max_distance", "500"));
+        long takeoffMaxDistance = Long.parseLong(sharedPref.getString("pref_near_takeoff_max_distance", "200"));
         List<net.exent.flywithme.bean.Takeoff> takeoffs = Database.getTakeoffs(getApplicationContext(), location.getLatitude(), location.getLongitude(), 1, false, false);
         if (takeoffs.isEmpty())
             return;

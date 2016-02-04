@@ -58,7 +58,7 @@
         <item>1000</item>
         <item>2000</item>
     </string-array>
-    <string name="near_takeoff_max_distance_default_value" translatable="false">500</string>
+    <string name="near_takeoff_max_distance_default_value" translatable="false">200</string>
     <string name="takeoff_activity">Notifications on takeoff activity</string>
     <string-array name="takeoff_activity_max_distance_entries">
         <item>25km</item>
