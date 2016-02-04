@@ -22,6 +22,9 @@ import net.exent.flywithme.data.Database;
 import net.exent.flywithme.service.FlyWithMeService;
 
 public class Preferences extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
+    private String previousPilotName;
+    private String previousPilotPhone;
+
     public static void setupDefaultPreferences(Context context) {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
         // setup default airspace map polygons (all shown)
@@ -39,6 +42,11 @@ public class Preferences extends PreferenceFragment implements SharedPreferences
         super.onCreate(savedInstanceState);
 
         addPreferencesFromResource(R.xml.preferences);
+
+        // remember the previous pilot name and phone, update pilot registration if either change
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        previousPilotName = sharedPref.getString("pref_pilot_name", "<unknown>").trim();
+        previousPilotPhone = sharedPref.getString("pref_pilot_phone", "<unknown>").trim();
 
         updateDynamicPreferenceScreen();
 
@@ -74,10 +82,13 @@ public class Preferences extends PreferenceFragment implements SharedPreferences
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         updateDynamicPreferenceScreen();
 
-        // register new pilot name/phone
-        Intent intent = new Intent(getActivity(), FlyWithMeService.class);
-        intent.setAction(FlyWithMeService.ACTION_REGISTER_PILOT);
-        getActivity().startService(intent);
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        if (!previousPilotName.equals(sharedPref.getString("pref_pilot_name", "<unknown>").trim()) || !previousPilotPhone.equals(sharedPref.getString("pref_pilot_phone", "<unknown>").trim())) {
+            // register new pilot name/phone
+            Intent intent = new Intent(getActivity(), FlyWithMeService.class);
+            intent.setAction(FlyWithMeService.ACTION_REGISTER_PILOT);
+            getActivity().startService(intent);
+        }
     }
     /* END AAH! */
 

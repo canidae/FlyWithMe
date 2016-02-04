@@ -251,9 +251,13 @@ public class FlyWithMe extends Activity implements GoogleApiClient.ConnectionCal
     }
 
     private void refreshCurrentFragment() {
-        Fragment fragment = getFragmentManager().findFragmentById(R.id.fragmentContainer);
-        if (fragment != null)
-            getFragmentManager().beginTransaction().detach(fragment).attach(fragment).commit();
+        try {
+            Fragment fragment = getFragmentManager().findFragmentById(R.id.fragmentContainer);
+            if (fragment != null)
+                getFragmentManager().beginTransaction().detach(fragment).attach(fragment).commit();
+        } catch (IllegalStateException e) {
+            Log.i(getClass().getName(), "Attempted to refresh fragment after it was hidden (probably)", e);
+        }
     }
 
     private void resetRightMenuButtons() {
