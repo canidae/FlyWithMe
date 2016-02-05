@@ -190,7 +190,7 @@ public class DataStore {
     }
 
     public static void cleanCache() {
-        // clean forecasts cached in datastore (Memcache cleans itself)
+        // clean forecasts cached in datastore
         ofy().delete().entities(ofy().load().type(Forecast.class).filter("lastUpdated <=", (System.currentTimeMillis() - FORECAST_CACHE_LIFETIME) / 1000).list());
         // clean schedules cached in datastore
         ofy().delete().entities(ofy().load().type(Schedule.class).filter("timestamp <=", getScheduleExpireTime()).list());

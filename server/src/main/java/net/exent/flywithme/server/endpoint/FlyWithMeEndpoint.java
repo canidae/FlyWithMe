@@ -135,7 +135,7 @@ public class FlyWithMeEndpoint {
             forecast = new Forecast();
             forecast.setTakeoffId(takeoffId);
             forecast.setType(Forecast.ForecastType.METEOGRAM);
-            forecast.setLastUpdated(System.currentTimeMillis());
+            forecast.setLastUpdated(System.currentTimeMillis() / 1000);
             forecast.setImage(NoaaProxy.fetchMeteogram(takeoff.getLatitude(), takeoff.getLongitude()));
             DataStore.saveForecast(forecast);
         }
