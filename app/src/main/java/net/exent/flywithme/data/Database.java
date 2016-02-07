@@ -48,7 +48,7 @@ public class Database extends SQLiteOpenHelper {
         }
         List<Schedule> schedules = new ArrayList<>();
         try {
-            SQLiteDatabase db = aquire(context).getReadableDatabase();
+            SQLiteDatabase db = acquire(context).getReadableDatabase();
             if (db == null)
                 throw new IllegalArgumentException("Unable to get database object");
             Cursor cursor = db.query("schedule", new String[]{"timestamp", "pilot_name", "pilot_phone", "pilot_id"}, "takeoff_id = " + takeoff.getId() + " and datetime(schedule.timestamp, 'unixepoch', 'localtime') >= datetime('now', '-6 hour', 'localtime')", null, null, null, "timestamp");
@@ -98,7 +98,7 @@ public class Database extends SQLiteOpenHelper {
     public static boolean isPilotScheduledToday(Context context, String pilotId, Long takeoffId) {
         boolean pilotScheduledToday = false;
         try {
-            SQLiteDatabase db = aquire(context).getReadableDatabase();
+            SQLiteDatabase db = acquire(context).getReadableDatabase();
             if (db == null)
                 throw new IllegalArgumentException("Unable to get database object");
             Cursor cursor = db.query("schedule", new String[]{"timestamp"}, "? like '%' || pilot_id" + (takeoffId == null ? "" : " and takeoff_id = " + takeoffId) + " and date(schedule.timestamp, 'unixepoch', 'localtime') = date('now', 'localtime')", new String[]{pilotId}, null, null, null);
@@ -113,7 +113,7 @@ public class Database extends SQLiteOpenHelper {
 
     public static void updateSchedules(Context context, List<Schedule> schedules) {
         try {
-            SQLiteDatabase db = aquire(context).getWritableDatabase();
+            SQLiteDatabase db = acquire(context).getWritableDatabase();
             if (db == null)
                 throw new IllegalArgumentException("Unable to get database object");
             db.execSQL("delete from schedule");
@@ -139,7 +139,7 @@ public class Database extends SQLiteOpenHelper {
     public static Takeoff getTakeoff(Context context, long takeoffId) {
         Takeoff takeoff = null;
         try {
-            SQLiteDatabase db = aquire(context).getReadableDatabase();
+            SQLiteDatabase db = acquire(context).getReadableDatabase();
             if (db == null)
                 throw new IllegalArgumentException("Unable to get database object");
             Cursor cursor = db.query("takeoff", Takeoff.COLUMNS, "takeoff_id = " + takeoffId, null, null, null, null);
@@ -159,7 +159,7 @@ public class Database extends SQLiteOpenHelper {
             return;
         }
         try {
-            SQLiteDatabase db = aquire(context).getWritableDatabase();
+            SQLiteDatabase db = acquire(context).getWritableDatabase();
             if (db == null)
                 throw new IllegalArgumentException("Unable to get database object");
             ContentValues contentValues = takeoff.getContentValues();
@@ -191,7 +191,7 @@ public class Database extends SQLiteOpenHelper {
 
         // execute the query
         try {
-            SQLiteDatabase db = aquire(context).getReadableDatabase();
+            SQLiteDatabase db = acquire(context).getReadableDatabase();
             if (db == null)
                 throw new IllegalArgumentException("Unable to get database object");
             Cursor cursor = db.rawQuery("select *, " + pilotsToday + " as pilots_today, " + pilotsLater + " as pilots_later from takeoff order by " + orderBy + " limit " + maxResult, null);
@@ -211,7 +211,7 @@ public class Database extends SQLiteOpenHelper {
             return;
         }
         try {
-            SQLiteDatabase db = aquire(context).getWritableDatabase();
+            SQLiteDatabase db = acquire(context).getWritableDatabase();
             if (db == null)
                 throw new IllegalArgumentException("Unable to get database object");
             ContentValues contentValues = new ContentValues();
@@ -223,7 +223,7 @@ public class Database extends SQLiteOpenHelper {
         }
     }
 
-    private static Database aquire(Context context) {
+    private static Database acquire(Context context) {
         databaseLock.lock();
         if (instance == null)
             instance = new Database(context);
