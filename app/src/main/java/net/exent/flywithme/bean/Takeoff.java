@@ -124,35 +124,35 @@ public class Takeoff implements Parcelable {
     }
 
     public boolean hasNorthExit() {
-        return (takeoff.getExits() & (1 << 8)) != 0;
-    }
-
-    public boolean hasNortheastExit() {
         return (takeoff.getExits() & (1 << 7)) != 0;
     }
 
-    public boolean hasEastExit() {
+    public boolean hasNortheastExit() {
         return (takeoff.getExits() & (1 << 6)) != 0;
     }
 
-    public boolean hasSoutheastExit() {
+    public boolean hasEastExit() {
         return (takeoff.getExits() & (1 << 5)) != 0;
     }
 
-    public boolean hasSouthExit() {
+    public boolean hasSoutheastExit() {
         return (takeoff.getExits() & (1 << 4)) != 0;
     }
 
-    public boolean hasSouthwestExit() {
+    public boolean hasSouthExit() {
         return (takeoff.getExits() & (1 << 3)) != 0;
     }
 
-    public boolean hasWestExit() {
+    public boolean hasSouthwestExit() {
         return (takeoff.getExits() & (1 << 2)) != 0;
     }
 
-    public boolean hasNorthwestExit() {
+    public boolean hasWestExit() {
         return (takeoff.getExits() & (1 << 1)) != 0;
+    }
+
+    public boolean hasNorthwestExit() {
+        return (takeoff.getExits() & (1 << 0)) != 0;
     }
 
     public void setFavourite(boolean favourite) {
