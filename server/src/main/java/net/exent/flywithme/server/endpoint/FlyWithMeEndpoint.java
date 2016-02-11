@@ -131,14 +131,16 @@ public class FlyWithMeEndpoint {
         }
         // need to fetch forecast
         Takeoff takeoff = DataStore.loadTakeoff(takeoffId);
-        if (takeoff != null) {
-            forecast = new Forecast();
-            forecast.setTakeoffId(takeoffId);
-            forecast.setType(Forecast.ForecastType.METEOGRAM);
-            forecast.setLastUpdated(System.currentTimeMillis() / 1000);
-            forecast.setImage(NoaaProxy.fetchMeteogram(takeoff.getLatitude(), takeoff.getLongitude()));
-            DataStore.saveForecast(forecast);
+        if (takeoff == null) {
+            log.warning("Client asked for meteogram for a takeoff that doesn't seem to exist in our database: " + takeoffId);
+            return null;
         }
+        forecast = new Forecast();
+        forecast.setTakeoffId(takeoffId);
+        forecast.setType(Forecast.ForecastType.METEOGRAM);
+        forecast.setLastUpdated(System.currentTimeMillis() / 1000);
+        forecast.setImage(NoaaProxy.fetchMeteogram(takeoff.getLatitude(), takeoff.getLongitude()));
+        DataStore.saveForecast(forecast);
         return forecast;
     }
 
@@ -170,8 +172,10 @@ public class FlyWithMeEndpoint {
         }
         // need to fetch sounding, theta and text
         Takeoff takeoff = DataStore.loadTakeoff(takeoffId);
-        if (takeoff == null)
+        if (takeoff == null) {
+            log.warning("Client asked for sounding for a takeoff that doesn't seem to exist in our database: " + takeoffId);
             return null;
+        }
         List<byte[]> images = NoaaProxy.fetchSounding(takeoff.getLatitude(), takeoff.getLongitude(), timestamp);
         if (images == null || images.size() != 3)
             return null;
