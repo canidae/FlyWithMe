@@ -120,6 +120,8 @@ public class Database extends SQLiteOpenHelper {
             if (schedules == null)
                 return;
             for (Schedule schedule : schedules) {
+                if (schedule.getPilots() == null)
+                    continue;
                 for (Pilot pilot : schedule.getPilots()) {
                     ContentValues values = new ContentValues();
                     values.put("takeoff_id", schedule.getTakeoffId());
