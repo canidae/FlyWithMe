@@ -163,9 +163,10 @@ public class NoaaForecast extends Fragment {
                         String title = takeoff.getName() + " (" + takeoff.getLocation().getLatitude() + ", " + takeoff.getLocation().getLongitude() + ")";
                         String url = MediaStore.Images.Media.insertImage(getActivity().getContentResolver(), image, title, null);
 
+                        // TODO: url may be null, how to alert user?
                         Intent sharingIntent = new Intent(Intent.ACTION_SEND);
                         sharingIntent.setType("image/*");
-                        sharingIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse(url));
+                        sharingIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse(url)); // TODO: throws exception if url is null
                         sharingIntent.putExtra(Intent.EXTRA_TEXT, title);
                         startActivity(Intent.createChooser(sharingIntent, null));
                     }
@@ -181,6 +182,7 @@ public class NoaaForecast extends Fragment {
     public void onSaveInstanceState(Bundle outState) {
         Log.d(getClass().getName(), "onSaveInstanceState(" + outState + ")");
         super.onSaveInstanceState(outState);
-        outState.putAll(args);
+        if (args != null)
+            outState.putAll(args);
     }
 }
