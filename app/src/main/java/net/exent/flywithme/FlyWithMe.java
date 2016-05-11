@@ -214,7 +214,8 @@ public class FlyWithMe extends Activity implements GoogleApiClient.ConnectionCal
     @Override
     public void onStop() {
         super.onStop();
-        LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
+        if (googleApiClient != null && googleApiClient.isConnected())
+            LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
     }
 
     @Override

@@ -208,6 +208,7 @@ public class Takeoff implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeLong(takeoff.getId());
+        dest.writeLong(takeoff.getLastUpdated());
         dest.writeString(takeoff.getName());
         dest.writeString(takeoff.getDescription());
         dest.writeInt(takeoff.getAsl());
