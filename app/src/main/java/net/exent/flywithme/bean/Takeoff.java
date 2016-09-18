@@ -183,8 +183,14 @@ public class Takeoff implements Parcelable {
         ContentValues contentValues = new ContentValues();
         contentValues.put("takeoff_id", takeoff.getId());
         contentValues.put("last_updated", takeoff.getLastUpdated());
-        contentValues.put("name", takeoff.getName());
-        contentValues.put("description", takeoff.getDescription());
+        String name = takeoff.getName();
+        if (name == null)
+            name = "";
+        contentValues.put("name", name);
+        String description = takeoff.getDescription();
+        if (description == null)
+            description = "";
+        contentValues.put("description", description);
         contentValues.put("asl", takeoff.getAsl());
         contentValues.put("height", takeoff.getHeight());
         double latitudeRadians = takeoff.getLatitude() * Math.PI / 180.0;
