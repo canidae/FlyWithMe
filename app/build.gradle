@@ -1,15 +1,18 @@
 apply plugin: 'com.android.application'
 
+sourceCompatibility = JavaVersion.VERSION_1_7
+targetCompatibility = JavaVersion.VERSION_1_7
+
 android {
-    compileSdkVersion 23
+    compileSdkVersion 24
     buildToolsVersion "22.0.1"
 
     defaultConfig {
         applicationId "net.exent.flywithme"
         minSdkVersion 17
-        targetSdkVersion 23
-        versionCode 4100
-        versionName "4.1"
+        targetSdkVersion 24
+        versionCode 40101
+        versionName "4.1.1"
     }
     signingConfigs {
         release {
