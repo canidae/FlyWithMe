@@ -89,29 +89,9 @@ public class NoaaProxy {
         }
     }
 
-    /**
-     * Fetch CAPTCHA image to solve before fetching meteogram and sounding.
-     *
-     * @param latitude The latitude of the location we want forecast for.
-     * @param longitude The longitude of the location we want forecast for.
-     */
-    public static void updateFieldsAndCaptcha(float latitude, float longitude) {
-        noaaCaptcha = null;
-        for (int a = 0; a < 3 && noaaCaptcha == null; ++a) {
-            try {
-                noaaUserId = getOne(fetchPageContent(NOAA_URL + "/ready2-bin/main.pl?Lat=" + latitude + "&Lon=" + longitude), NOAA_USERID_PATTERN);
-                String content = fetchPageContent(NOAA_URL + "/ready2-bin/metcycle.pl?product=metgram1&userid=" + noaaUserId + "&metdata=GFS&mdatacfg=GFS&Lat=" + latitude + "&Lon=" + longitude);
-                noaaMetCyc = getOne(content, NOAA_METCYC_PATTERN).replace(' ', '+');
-                content = fetchPageContent(NOAA_URL + "/ready2-bin/metgram1.pl?userid=" + noaaUserId + "&metdata=GFS&mdatacfg=GFS&Lat=" + latitude + "&Lon=" + longitude + "&metext=gfsf&metcyc=" + noaaMetCyc);
-                noaaMetDir = getOne(content, NOAA_METDIR_PATTERN);
-                noaaMetFil = getOne(content, NOAA_METFIL_PATTERN);
-                noaaMetDates = getAll(content, NOAA_METDATE_PATTERN);
-                noaaProc = getOne(content, NOAA_PROC_PATTERN);
-                noaaCaptcha = solveCaptcha(fetchImage(NOAA_URL + getOne(content, NOAA_CAPTCHA_URL_PATTERN)));
-            } catch (Exception e) {
-                log.log(Level.WARNING, "Failed fetching CAPTCHA image", e);
-            }
-        }
+    public static void main(String... args) {
+        System.out.println(System.getProperty("user.dir"));
+        fetchMeteogram(63.0f, 10.0f);
     }
 
     /**
@@ -181,6 +161,31 @@ public class NoaaProxy {
             updateFieldsAndCaptcha(latitude, longitude);
         }
         return null;
+    }
+
+    /**
+     * Fetch CAPTCHA image to solve before fetching meteogram and sounding.
+     *
+     * @param latitude The latitude of the location we want forecast for.
+     * @param longitude The longitude of the location we want forecast for.
+     */
+    private static void updateFieldsAndCaptcha(float latitude, float longitude) {
+        noaaCaptcha = null;
+        for (int a = 0; a < 3 && noaaCaptcha == null; ++a) {
+            try {
+                noaaUserId = getOne(fetchPageContent(NOAA_URL + "/ready2-bin/main.pl?Lat=" + latitude + "&Lon=" + longitude), NOAA_USERID_PATTERN);
+                String content = fetchPageContent(NOAA_URL + "/ready2-bin/metcycle.pl?product=metgram1&userid=" + noaaUserId + "&metdata=GFS&mdatacfg=GFS&Lat=" + latitude + "&Lon=" + longitude);
+                noaaMetCyc = getOne(content, NOAA_METCYC_PATTERN).replace(' ', '+');
+                content = fetchPageContent(NOAA_URL + "/ready2-bin/metgram1.pl?userid=" + noaaUserId + "&metdata=GFS&mdatacfg=GFS&Lat=" + latitude + "&Lon=" + longitude + "&metext=gfsf&metcyc=" + noaaMetCyc);
+                noaaMetDir = getOne(content, NOAA_METDIR_PATTERN);
+                noaaMetFil = getOne(content, NOAA_METFIL_PATTERN);
+                noaaMetDates = getAll(content, NOAA_METDATE_PATTERN);
+                noaaProc = getOne(content, NOAA_PROC_PATTERN);
+                noaaCaptcha = solveCaptcha(fetchImage(NOAA_URL + getOne(content, NOAA_CAPTCHA_URL_PATTERN)));
+            } catch (Exception e) {
+                log.log(Level.WARNING, "Failed fetching CAPTCHA image", e);
+            }
+        }
     }
 
     private static URLConnection fetchPage(String url) {
@@ -256,38 +261,7 @@ public class NoaaProxy {
     private static String solveCaptcha(byte[] captchaImage) throws Exception {
         log.info("CAPTCHA image size: " + captchaImage.length);
         GifDecoder.GifImage image = GifDecoder.read(captchaImage);
-        int startX = 0;
-        int stopX = image.getWidth() / 4;
-        int goBackXOffset = 6;
-        int goForwardXOffset = 12;
-        List<CaptchaStringMatch> possibleMatches = new ArrayList<>();
-        for (CaptchaCharacterMatch c1 : findNextPossibleCaptchaCharacters(image, startX, stopX)) {
-            startX = c1.xOffset + c1.width - goBackXOffset;
-            stopX = c1.xOffset + c1.width + goForwardXOffset;
-            for (CaptchaCharacterMatch c2 : findNextPossibleCaptchaCharacters(image, startX, stopX)) {
-                startX = c2.xOffset + c2.width - goBackXOffset;
-                stopX = c2.xOffset + c2.width + goForwardXOffset;
-                for (CaptchaCharacterMatch c3 : findNextPossibleCaptchaCharacters(image, startX, stopX)) {
-                    startX = c3.xOffset + c3.width - goBackXOffset;
-                    stopX = c3.xOffset + c3.width + goForwardXOffset;
-                    for (CaptchaCharacterMatch c4 : findNextPossibleCaptchaCharacters(image, startX, stopX)) {
-                        startX = c4.xOffset + c4.width - goBackXOffset;
-                        stopX = c4.xOffset + c4.width + goForwardXOffset;
-                        for (CaptchaCharacterMatch c5 : findNextPossibleCaptchaCharacters(image, startX, stopX)) {
-                            startX = c5.xOffset + c5.width - goBackXOffset;
-                            stopX = c5.xOffset + c5.width + goForwardXOffset;
-                            for (CaptchaCharacterMatch c6 : findNextPossibleCaptchaCharacters(image, startX, stopX)) {
-                                CaptchaStringMatch match = new CaptchaStringMatch();
-                                match.captcha = c1.character + "" + c2.character + "" + c3.character + "" + c4.character + "" + c5.character + "" + c6.character;
-                                match.matchingPixels = c1.matchingPixels + c2.matchingPixels + c3.matchingPixels + c4.matchingPixels + c5.matchingPixels + c6.matchingPixels;
-                                match.totalPixels = c1.totalPixels + c2.totalPixels + c3.totalPixels + c4.totalPixels + c5.totalPixels + c6.totalPixels;
-                                possibleMatches.add(match);
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        List<CaptchaStringMatch> possibleMatches = findPossibleCaptchas(image, 0, image.getWidth() / 4, new ArrayList<CaptchaCharacterMatch>());
         Collections.sort(possibleMatches, new Comparator<CaptchaStringMatch>() {
             @Override
             public int compare(CaptchaStringMatch c1, CaptchaStringMatch c2) {
@@ -303,6 +277,27 @@ public class NoaaProxy {
             log.info("Unable to solve this CAPTCHA");
             return null;
         }
+    }
+
+    private static List<CaptchaStringMatch> findPossibleCaptchas(GifDecoder.GifImage image, int startX, int stopX, List<CaptchaCharacterMatch> characterMatches) {
+        List<CaptchaStringMatch> matches = new ArrayList<>();
+        List<CaptchaCharacterMatch> possibleCaptchaCharacters = findNextPossibleCaptchaCharacters(image, startX, stopX);
+        if (possibleCaptchaCharacters.isEmpty()) {
+            CaptchaStringMatch match = new CaptchaStringMatch();
+            for (CaptchaCharacterMatch character : characterMatches) {
+                match.captcha = match.captcha + character.character;
+                match.matchingPixels += character.matchingPixels;
+                match.totalPixels += character.totalPixels;
+            }
+            matches.add(match);
+        } else {
+            for (CaptchaCharacterMatch character : possibleCaptchaCharacters) {
+                characterMatches.add(character);
+                matches.addAll(findPossibleCaptchas(image, character.xOffset + character.width - 6, character.xOffset + character.width + 12, characterMatches));
+                characterMatches.remove(characterMatches.size() - 1);
+            }
+        }
+        return matches;
     }
 
     private static List<CaptchaCharacterMatch> findNextPossibleCaptchaCharacters(GifDecoder.GifImage image, int startX, int stopX) {
@@ -349,7 +344,7 @@ public class NoaaProxy {
     }
 
     private static class CaptchaStringMatch {
-        private String captcha;
+        private String captcha = "";
         private int matchingPixels;
         private int totalPixels;
 
