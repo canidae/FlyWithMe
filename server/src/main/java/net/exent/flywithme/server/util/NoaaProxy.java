@@ -34,7 +34,7 @@ import java.util.regex.Pattern;
 public class NoaaProxy {
     private static final Logger log = Logger.getLogger(NoaaProxy.class.getName());
 
-    private static final int CAPTCHA_Y_OFFSET = 38;
+    private static final int CAPTCHA_Y_OFFSET = 36;
     private static final int BLACK = -16777216;
 
     private static final String NOAA_URL = "http://www.ready.noaa.gov";
@@ -102,7 +102,6 @@ public class NoaaProxy {
      * @return The meteogram image.
      */
     public static byte[] fetchMeteogram(float latitude, float longitude) {
-        // TODO (medium): we need to handle when NOAA becomes unavailable much better (app just hangs with loading animation)
         if (noaaCaptcha == null)
             updateFieldsAndCaptcha(latitude, longitude);
         for (int a = 0; a < 2; ++a) {
@@ -258,7 +257,7 @@ public class NoaaProxy {
         return null;
     }
 
-    private static String solveCaptcha(byte[] captchaImage) throws Exception {
+    public static String solveCaptcha(byte[] captchaImage) throws Exception {
         log.info("CAPTCHA image size: " + captchaImage.length);
         GifDecoder.GifImage image = GifDecoder.read(captchaImage);
         List<CaptchaStringMatch> possibleMatches = findPossibleCaptchas(image, 0, image.getWidth() / 4, new ArrayList<CaptchaCharacterMatch>());
@@ -281,15 +280,17 @@ public class NoaaProxy {
 
     private static List<CaptchaStringMatch> findPossibleCaptchas(GifDecoder.GifImage image, int startX, int stopX, List<CaptchaCharacterMatch> characterMatches) {
         List<CaptchaStringMatch> matches = new ArrayList<>();
-        List<CaptchaCharacterMatch> possibleCaptchaCharacters = findNextPossibleCaptchaCharacters(image, startX, stopX);
+        List<CaptchaCharacterMatch> possibleCaptchaCharacters = characterMatches.size() == 7 ? new ArrayList<CaptchaCharacterMatch>() : findNextPossibleCaptchaCharacters(image, startX, stopX);
         if (possibleCaptchaCharacters.isEmpty()) {
-            CaptchaStringMatch match = new CaptchaStringMatch();
-            for (CaptchaCharacterMatch character : characterMatches) {
-                match.captcha = match.captcha + character.character;
-                match.matchingPixels += character.matchingPixels;
-                match.totalPixels += character.totalPixels;
+            if (characterMatches.size() == 7) {
+                CaptchaStringMatch match = new CaptchaStringMatch();
+                for (CaptchaCharacterMatch character : characterMatches) {
+                    match.captcha = match.captcha + character.character;
+                    match.matchingPixels += character.matchingPixels;
+                    match.totalPixels += character.totalPixels;
+                }
+                matches.add(match);
             }
-            matches.add(match);
         } else {
             for (CaptchaCharacterMatch character : possibleCaptchaCharacters) {
                 characterMatches.add(character);
@@ -333,7 +334,6 @@ public class NoaaProxy {
             if (bestMatch.xOffset < minXOffset)
                 minXOffset = bestMatch.xOffset;
         }
-        //System.out.println(possibleCharacters);
         // remove entries with too high xOffset
         for (Iterator<CaptchaCharacterMatch> iterator = possibleCharacters.iterator(); iterator.hasNext();) {
             CaptchaCharacterMatch possibleCharacter = iterator.next();
