@@ -43,7 +43,6 @@ import java.io.IOException;
 /* TODO:
    - Handle runtime permissions in android 6.0 better. It was hacked together just to make it work
    - Cache location so it won't always show Rikssenteret at start
-   - When scheduling activity we fetch the schedule twice, don't do that
    - NoaaForecast: Would prefer a better way to transfer data to fragment
    - Cache forecasts locally for some few hours (fetched timestamp is returned, cache for the same amount of time as server caches the forecast)
  */
@@ -51,20 +50,12 @@ public class FlyWithMe extends Activity implements GoogleApiClient.ConnectionCal
     public static final String ACTION_SHOW_FORECAST = "showForecast";
     public static final String ACTION_SHOW_PREFERENCES = "showPreferences";
     public static final String ACTION_SHOW_TAKEOFF_DETAILS = "showTakeoffDetails";
-    public static final String ACTION_UPDATE_SCHEDULE_DATA = "updateScheduleData";
 
     public static final String ARG_TAKEOFF_ID = "takeoffId";
 
     private GoogleApiClient googleApiClient;
 
     public void showFragment(String tag, Class<? extends Fragment> fragmentClass, Bundle args) {
-        /* first check if schedules needs to be refreshed */
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-        if (sharedPref.getBoolean("activity_schedule_needs_update", true)) {
-            Intent intent = new Intent(this, FlyWithMeService.class);
-            intent.setAction(FlyWithMeService.ACTION_GET_SCHEDULES);
-            startService(intent);
-        }
         /* reset right menu */
         resetRightMenuButtons();
         /* then display the fragment requested */
@@ -231,8 +222,6 @@ public class FlyWithMe extends Activity implements GoogleApiClient.ConnectionCal
             Bundle args = new Bundle();
             args.putParcelable(TakeoffDetails.ARG_TAKEOFF, takeoff);
             showFragment("takeoffDetails," + takeoff.getId(), TakeoffDetails.class, args);
-        } else if (ACTION_UPDATE_SCHEDULE_DATA.equals(intent.getAction())) {
-            refreshCurrentFragment();
         }
     }
 

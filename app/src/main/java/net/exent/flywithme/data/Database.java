@@ -6,8 +6,6 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import net.exent.flywithme.bean.Takeoff;
-import net.exent.flywithme.server.flyWithMeServer.model.Pilot;
-import net.exent.flywithme.server.flyWithMeServer.model.Schedule;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -39,103 +37,6 @@ public class Database extends SQLiteOpenHelper {
             upgradeDatabaseToV3(db);
         if (oldVersion == 3)
             upgradeDatabaseToV4(db);
-    }
-
-    public static List<Schedule> getTakeoffSchedules(Context context, Takeoff takeoff) {
-        if (takeoff == null) {
-            Log.w("Database", "Unable to get takeoff schedules, argument is null");
-            return null;
-        }
-        List<Schedule> schedules = new ArrayList<>();
-        try {
-            SQLiteDatabase db = acquire(context).getReadableDatabase();
-            if (db == null)
-                throw new IllegalArgumentException("Unable to get database object");
-            Cursor cursor = db.query("schedule", new String[]{"timestamp", "pilot_name", "pilot_phone", "pilot_id"}, "takeoff_id = " + takeoff.getId() + " and datetime(schedule.timestamp, 'unixepoch', 'localtime') >= datetime('now', '-6 hour', 'localtime')", null, null, null, "timestamp");
-            while (cursor.moveToNext()) {
-                long timestamp = cursor.getLong(0);
-                Schedule schedule = null;
-                for (Schedule tmpSchedule : schedules) {
-                    if (tmpSchedule.getTimestamp() == timestamp) {
-                        schedule = tmpSchedule;
-                        break;
-                    }
-                }
-                if (schedule == null) {
-                    schedule = new Schedule();
-                    schedules.add(schedule);
-                }
-                schedule.setTimestamp(timestamp);
-                String pilotName = cursor.getString(1);
-                String pilotPhone = cursor.getString(2);
-                String pilotId = cursor.getString(3);
-                List<Pilot> pilots = schedule.getPilots();
-                if (pilots == null) {
-                    pilots = new ArrayList<>();
-                    schedule.setPilots(pilots);
-                }
-                Pilot pilot = new Pilot();
-                pilot.setName(pilotName);
-                pilot.setPhone(pilotPhone);
-                pilot.setId(pilotId);
-                pilots.add(pilot);
-            }
-            cursor.close();
-            db.close();
-        } finally {
-            release();
-        }
-        return schedules;
-    }
-
-    /**
-     * Check whether pilot is scheduled today, optionally at a given takeoff.
-     *
-     * @param pilotId The pilot ID.
-     * @param takeoffId Optional takeoff ID, if <code>null</code> then it will check if pilot is scheduled anywhere today.
-     * @return <code>true</code> if pilot is scheduled today, <code>false</code> otherwise.
-     */
-    public static boolean isPilotScheduledToday(Context context, String pilotId, Long takeoffId) {
-        boolean pilotScheduledToday = false;
-        try {
-            SQLiteDatabase db = acquire(context).getReadableDatabase();
-            if (db == null)
-                throw new IllegalArgumentException("Unable to get database object");
-            Cursor cursor = db.query("schedule", new String[]{"timestamp"}, "? like '%' || pilot_id" + (takeoffId == null ? "" : " and takeoff_id = " + takeoffId) + " and date(schedule.timestamp, 'unixepoch', 'localtime') = date('now', 'localtime')", new String[]{pilotId}, null, null, null);
-            pilotScheduledToday = cursor.getCount() > 0;
-            cursor.close();
-            db.close();
-        } finally {
-            release();
-        }
-        return pilotScheduledToday;
-    }
-
-    public static void updateSchedules(Context context, List<Schedule> schedules) {
-        try {
-            SQLiteDatabase db = acquire(context).getWritableDatabase();
-            if (db == null)
-                throw new IllegalArgumentException("Unable to get database object");
-            db.execSQL("delete from schedule");
-            if (schedules == null)
-                return;
-            for (Schedule schedule : schedules) {
-                if (schedule.getPilots() == null)
-                    continue;
-                for (Pilot pilot : schedule.getPilots()) {
-                    ContentValues values = new ContentValues();
-                    values.put("takeoff_id", schedule.getTakeoffId());
-                    values.put("timestamp", schedule.getTimestamp());
-                    values.put("pilot_name", pilot.getName());
-                    values.put("pilot_phone", pilot.getPhone());
-                    values.put("pilot_id", pilot.getId());
-                    db.insert("schedule", null, values);
-                }
-            }
-            db.close();
-        } finally {
-            release();
-        }
     }
 
     public static Takeoff getTakeoff(Context context, long takeoffId) {
@@ -175,7 +76,7 @@ public class Database extends SQLiteOpenHelper {
         }
     }
 
-    public static List<Takeoff> getTakeoffs(Context context, double latitude, double longitude, int maxResult, boolean includeFavourites, boolean includeActivity) {
+    public static List<Takeoff> getTakeoffs(Context context, double latitude, double longitude, int maxResult, boolean includeFavourites) {
         List<Takeoff> takeoffs = new ArrayList<>();
         if (maxResult <= 0)
             return takeoffs;
@@ -188,15 +89,13 @@ public class Database extends SQLiteOpenHelper {
         double longitudeSin = Math.sin(longitudeRadians);
         String orderBy = includeFavourites ? "favourite desc, " : "";
         orderBy += "(" + latitudeCos + " * latitude_cos * (longitude_cos * " + longitudeCos + " + longitude_sin * " + longitudeSin + ") + " + latitudeSin + " * latitude_sin) desc";
-        String pilotsToday = includeActivity ? "(select count(*) from schedule where schedule.takeoff_id = takeoff.takeoff_id and date(schedule.timestamp, 'unixepoch', 'localtime') = date('now', 'localtime'))" : "0";
-        String pilotsLater = includeActivity ? "(select count(*) from schedule where schedule.takeoff_id = takeoff.takeoff_id and date(schedule.timestamp, 'unixepoch', 'localtime') > date('now', 'localtime'))" : "0";
 
         // execute the query
         try {
             SQLiteDatabase db = acquire(context).getReadableDatabase();
             if (db == null)
                 throw new IllegalArgumentException("Unable to get database object");
-            Cursor cursor = db.rawQuery("select *, " + pilotsToday + " as pilots_today, " + pilotsLater + " as pilots_later from takeoff order by " + orderBy + " limit " + maxResult, null);
+            Cursor cursor = db.rawQuery("select * from takeoff order by " + orderBy + " limit " + maxResult, null);
             while (cursor.moveToNext())
                 takeoffs.add(Takeoff.create(new ImprovedCursor(cursor)));
             cursor.close();

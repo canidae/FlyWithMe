@@ -10,15 +10,12 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
-import android.preference.ListPreference;
-import android.preference.Preference;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceFragment;
 
 import net.exent.flywithme.R;
 import net.exent.flywithme.data.Airspace;
-import net.exent.flywithme.data.Database;
 import net.exent.flywithme.service.FlyWithMeService;
 
 public class Preferences extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
@@ -102,53 +99,5 @@ public class Preferences extends PreferenceFragment implements SharedPreferences
         }
         EditTextPreference pilotPhone = (EditTextPreference) findPreference("pref_pilot_phone");
         pilotPhone.setSummary(pilotPhone.getText());
-
-        // notifications when near takeoff
-        ListPreference nearTakeoffMaxDistance = (ListPreference) findPreference("pref_near_takeoff_max_distance");
-        nearTakeoffMaxDistance.setSummary(nearTakeoffMaxDistance.getEntry());
-        PreferenceCategory nearTakeoffBlacklistCategory = (PreferenceCategory) findPreference("pref_near_takeoff_blacklist_view");
-        nearTakeoffBlacklistCategory.removeAll();
-        final SharedPreferences nearTakeoffBlacklistPref = getActivity().getSharedPreferences(FlyWithMeService.ACTION_BLACKLIST_TAKEOFF_NOTIFICATION, Context.MODE_PRIVATE);
-        List<String> nearTakeoffBlacklist = new ArrayList<>(nearTakeoffBlacklistPref.getAll().keySet());
-        Collections.sort(nearTakeoffBlacklist);
-        for (final String key : nearTakeoffBlacklist) {
-            if (key == null || "".equals(key.trim()))
-                continue;
-            Preference blacklistPreference = new Preference(getActivity());
-            blacklistPreference.setTitle(Database.getTakeoff(getActivity(), Long.parseLong(key)).getName());
-            blacklistPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-                @Override
-                public boolean onPreferenceClick(Preference preference) {
-                    nearTakeoffBlacklistPref.edit().remove(key).apply();
-                    updateDynamicPreferenceScreen();
-                    return true;
-                }
-            });
-            nearTakeoffBlacklistCategory.addPreference(blacklistPreference);
-        }
-
-        // notifications on takeoff activity
-        ListPreference takeoffActivityMaxDistance = (ListPreference) findPreference("pref_takeoff_activity_max_distance");
-        takeoffActivityMaxDistance.setSummary(takeoffActivityMaxDistance.getEntry());
-        PreferenceCategory takeoffActivityBlacklistCategory = (PreferenceCategory) findPreference("pref_takeoff_activity_blacklist_view");
-        takeoffActivityBlacklistCategory.removeAll();
-        final SharedPreferences takeoffActivityBlacklistPref = getActivity().getSharedPreferences(FlyWithMeService.ACTION_BLACKLIST_ACTIVITY_NOTIFICATION, Context.MODE_PRIVATE);
-        List<String> takeoffActivityBlacklist = new ArrayList<>(takeoffActivityBlacklistPref.getAll().keySet());
-        Collections.sort(takeoffActivityBlacklist);
-        for (final String key : takeoffActivityBlacklist) {
-            if (key == null || "".equals(key.trim()))
-                continue;
-            Preference blacklistPreference = new Preference(getActivity());
-            blacklistPreference.setTitle(Database.getTakeoff(getActivity(), Long.parseLong(key)).getName());
-            blacklistPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-                @Override
-                public boolean onPreferenceClick(Preference preference) {
-                    takeoffActivityBlacklistPref.edit().remove(key).apply();
-                    updateDynamicPreferenceScreen();
-                    return true;
-                }
-            });
-            takeoffActivityBlacklistCategory.addPreference(blacklistPreference);
-        }
     }
 }

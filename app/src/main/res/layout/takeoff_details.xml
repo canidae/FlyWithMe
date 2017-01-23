@@ -113,25 +113,4 @@
         android:layout_toEndOf="@+id/takeoffDetailsName"
         android:src="@mipmap/windrose_circle" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="@string/graph_text"
-        android:id="@+id/scheduleTimeLabel"
-        android:layout_above="@+id/takeoffDetailsFlyScheduleChart"
-        android:layout_alignParentStart="true"
-        android:layout_alignEnd="@+id/takeoffDetailsWindroseNorth"
-        android:gravity="center" />
-
-    <ImageButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/takeoffDetailsFlyScheduleChart"
-        android:background="@null"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentStart="true"
-        android:minHeight="150dp" />
-
 </RelativeLayout>

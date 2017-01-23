@@ -26,66 +26,6 @@
             android:dialogMessage="@string/pilot_phone_description" />
     </PreferenceCategory>
 
-    <!-- Notifications when near takeoff -->
-    <PreferenceCategory
-        android:key="pref_near_takeoff"
-        android:title="@string/near_takeoff">
-        <CheckBoxPreference
-            android:defaultValue="true"
-            android:key="pref_near_takeoff_notifications"
-            android:title="@string/notifications" />
-        <CheckBoxPreference
-            android:defaultValue="true"
-            android:key="pref_near_takeoff_vibrate"
-            android:title="@string/vibrate" />
-        <ListPreference
-            android:key="pref_near_takeoff_max_distance"
-            android:title="@string/max_distance_to_takeoff"
-            android:dialogTitle="@string/max_distance_to_takeoff"
-            android:entries="@array/near_takeoff_max_distance_entries"
-            android:entryValues="@array/near_takeoff_max_distance_values"
-            android:defaultValue="@string/near_takeoff_max_distance_default_value" />
-        <PreferenceScreen
-            android:key="pref_near_takeoff_blacklist"
-            android:title="@string/blacklist">
-            <PreferenceCategory
-                android:key="pref_near_takeoff_blacklist_view"
-                android:title="@string/blacklist_remove">
-                <!-- Filled programmatically -->
-            </PreferenceCategory>
-        </PreferenceScreen>
-    </PreferenceCategory>
-
-    <!-- Notifications on takeoff activity -->
-    <PreferenceCategory
-        android:key="pref_takeoff_activity"
-        android:title="@string/takeoff_activity">
-        <CheckBoxPreference
-            android:defaultValue="true"
-            android:key="pref_takeoff_activity_notifications"
-            android:title="@string/notifications" />
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="pref_takeoff_activity_vibrate"
-            android:title="@string/vibrate" />
-        <ListPreference
-            android:key="pref_takeoff_activity_max_distance"
-            android:title="@string/max_distance_to_takeoff"
-            android:dialogTitle="@string/max_distance_to_takeoff"
-            android:entries="@array/takeoff_activity_max_distance_entries"
-            android:entryValues="@array/takeoff_activity_max_distance_values"
-            android:defaultValue="@string/takeoff_activity_max_distance_default_value" />
-        <PreferenceScreen
-            android:key="pref_takeoff_activity_blacklist"
-            android:title="@string/blacklist">
-            <PreferenceCategory
-                android:key="pref_takeoff_activity_blacklist_view"
-                android:title="@string/blacklist_remove">
-                <!-- Filled programmatically -->
-            </PreferenceCategory>
-        </PreferenceScreen>
-    </PreferenceCategory>
-
     <!-- What airspace polygons to show -->
     <PreferenceCategory
         android:key="pref_show_airspace_types"

@@ -20,12 +20,6 @@ public class GcmListenerService extends com.google.android.gms.gcm.GcmListenerSe
             Intent intent = new Intent(this, FlyWithMeService.class);
             intent.setAction(FlyWithMeService.ACTION_GET_UPDATED_TAKEOFFS);
             startService(intent);
-        } else if (data.containsKey("activity")) {
-            // there's activity somewhere
-            Intent intent = new Intent(this, FlyWithMeService.class);
-            intent.setAction(FlyWithMeService.ACTION_CHECK_ACTIVITY);
-            intent.putExtra(FlyWithMeService.ARG_ACTIVITY, data.getString("activity"));
-            startService(intent);
         } else {
             Log.w(TAG, "Message not handled!");
         }

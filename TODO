@@ -5,9 +5,7 @@ Bugs:
 Features:
 - Refresh forecast button in forecast view
 - Search after takeoffs (text in name or description)
-- Push messages for schedule registrations
 - Crawl flightlog (and possibly other sites with takeoff database), clients can download updates (or push messages)
 - Height limits with airspace polygons
-- Web page for those without Android to register/view schedule?
 - When clicking on map icon while viewing a takeoff, zoom to takeoff on map?
 - Add locations of tourist cabins? See "hytter.cup", made by Thomas Hirsch
