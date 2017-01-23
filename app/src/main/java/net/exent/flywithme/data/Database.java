@@ -19,7 +19,7 @@ public class Database extends SQLiteOpenHelper {
     private static Database instance;
 
     private Database(Context context) {
-        super(context, "flywithme", null, 4);
+        super(context, "flywithme", null, 5);
     }
 
     @Override
@@ -37,6 +37,8 @@ public class Database extends SQLiteOpenHelper {
             upgradeDatabaseToV3(db);
         if (oldVersion == 3)
             upgradeDatabaseToV4(db);
+        if (oldVersion == 4)
+            upgradeDatabaseToV5(db);
     }
 
     public static Takeoff getTakeoff(Context context, long takeoffId) {
@@ -141,7 +143,6 @@ public class Database extends SQLiteOpenHelper {
      * @param db The SQLite database.
      */
     private synchronized void createDatabase(SQLiteDatabase db) {
-        db.execSQL("create table schedule(takeoff_id integer not null, timestamp integer not null, pilot_name text not null, pilot_phone text not null, pilot_id text not null default '')");
         db.execSQL("create table takeoff(takeoff_id integer primary key, last_updated integer not null default current_timestamp, name text not null default '', description text not null default '', asl integer not null default 0, height integer not null default 0, latitude real not null default 0.0, latitude_cos real not null default 0.0, latitude_sin real not null default 0.0, longitude real not null default 0.0, longitude_cos real not null default 0.0, longitude_sin real not null default 0.0, exits integer not null default 0, favourite integer not null default 0)");
     }
 
@@ -165,6 +166,10 @@ public class Database extends SQLiteOpenHelper {
     private synchronized void upgradeDatabaseToV4(SQLiteDatabase db) {
         db.execSQL("alter table schedule add column pilot_id text not null default ''");
         db.execSQL("drop table pilot");
+    }
+
+    private synchronized void upgradeDatabaseToV5(SQLiteDatabase db) {
+        db.execSQL("drop table schedule");
     }
 
     public static class ImprovedCursor {
