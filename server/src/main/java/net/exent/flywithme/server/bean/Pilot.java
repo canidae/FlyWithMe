@@ -12,8 +12,6 @@ import java.util.Objects;
 @Entity
 public class Pilot implements Serializable {
     @Id private String id;
-    private String name;
-    private String phone;
 
     public String getId() {
         return id;
@@ -21,24 +19,6 @@ public class Pilot implements Serializable {
 
     public Pilot setId(String id) {
         this.id = id;
-        return this;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public Pilot setName(String name) {
-        this.name = name;
-        return this;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public Pilot setPhone(String phone) {
-        this.phone = phone;
         return this;
     }
 
