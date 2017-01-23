@@ -35,14 +35,6 @@
             android:value="AIzaSyDxop_2QoIHu-zgof2EhWMC6f5gxAZQOpI" />
 
         <receiver
-            android:name="net.exent.flywithme.service.BootReceiver">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <category android:name="net.exent.flywithme" />
-            </intent-filter>
-        </receiver>
-
-        <receiver
             android:name="com.google.android.gms.gcm.GcmReceiver"
             android:exported="true"
             android:permission="com.google.android.c2dm.permission.SEND" >
