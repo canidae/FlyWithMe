@@ -34,8 +34,6 @@ public class Takeoff implements Parcelable {
     private net.exent.flywithme.server.flyWithMeServer.model.Takeoff takeoff = new net.exent.flywithme.server.flyWithMeServer.model.Takeoff();
 
     private boolean favourite;
-    private int pilotsToday;
-    private int pilotsLater;
 
     public Takeoff(long id, long lastUpdated, String name, String description, int asl, int height, float latitude, float longitude, int exits, boolean favourite) {
         takeoff.setId(id);
@@ -69,17 +67,10 @@ public class Takeoff implements Parcelable {
 
     public static Takeoff create(Database.ImprovedCursor cursor) {
         int takeoffId = cursor.getIntOrThrow("takeoff_id");
-        int pilotsToday = cursor.getInt("pilots_today");
-        int pilotsLater = cursor.getInt("pilots_later");
         Takeoff takeoff = takeoffCache.get(takeoffId);
-        if (takeoff != null) {
-            takeoff.setPilotsToday(pilotsToday);
-            takeoff.setPilotsLater(pilotsLater);
+        if (takeoff != null)
             return takeoff;
-        }
         takeoff = new Takeoff(cursor);
-        takeoff.setPilotsToday(pilotsToday);
-        takeoff.setPilotsLater(pilotsLater);
         takeoffCache.put(takeoffId, takeoff);
         return takeoff;
     }
@@ -161,22 +152,6 @@ public class Takeoff implements Parcelable {
 
     public boolean isFavourite() {
         return favourite;
-    }
-
-    public int getPilotsToday() {
-        return pilotsToday;
-    }
-
-    public void setPilotsToday(int pilotsToday) {
-        this.pilotsToday = pilotsToday;
-    }
-
-    public int getPilotsLater() {
-        return pilotsLater;
-    }
-
-    public void setPilotsLater(int pilotsLater) {
-        this.pilotsLater = pilotsLater;
     }
 
     public ContentValues getContentValues() {

@@ -242,10 +242,6 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
                             canvas.drawBitmap(markerWestBitmap, 0, 0, paint);
                         if (takeoff.hasNorthwestExit())
                             canvas.drawBitmap(markerNorthwestBitmap, 0, 0, paint);
-                        if (takeoff.getPilotsToday() > 0)
-                            canvas.drawBitmap(markerExclamation, 0, 0, paint);
-                        else if (takeoff.getPilotsLater() > 0)
-                            canvas.drawBitmap(markerExclamationYellow, 0, 0, paint);
                         String snippet = getString(R.string.height) + ": " + takeoff.getHeight() + "m\n" + getString(R.string.distance) + ": " + (int) mapLocation.distanceTo(takeoff.getLocation()) / 1000 + "km";
                         MarkerOptions markerOptions = new MarkerOptions().position(new LatLng(takeoff.getLocation().getLatitude(), takeoff.getLocation().getLongitude())).title(takeoff.getName()).snippet(snippet).icon(BitmapDescriptorFactory.fromBitmap(bitmap)).anchor(0.5f, 0.875f);
                         addMarkers.put(takeoff, markerOptions);

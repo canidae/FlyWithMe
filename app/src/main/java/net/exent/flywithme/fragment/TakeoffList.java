@@ -80,17 +80,7 @@ public class TakeoffList extends Fragment {
                     return 1;
                 else if (lhs.isFavourite() && !rhs.isFavourite())
                     return -1;
-                // both or neither are favourites, sort those with scheduled flights first
-                if (lhs.getPilotsToday() < rhs.getPilotsToday())
-                    return 1;
-                else if (lhs.getPilotsToday() > rhs.getPilotsToday())
-                    return -1;
-                // both or neither have scheduled flights today, sort by those who have flights later
-                if (lhs.getPilotsLater() < rhs.getPilotsLater())
-                    return 1;
-                else if (lhs.getPilotsLater() > rhs.getPilotsLater())
-                    return -1;
-                // both or neither have scheduled flights, sort by distance from user
+                // both or neither are favourites, sort by distance from user
                 if (location.distanceTo(lhs.getLocation()) > location.distanceTo(rhs.getLocation()))
                     return 1;
                 else if (location.distanceTo(lhs.getLocation()) < location.distanceTo(rhs.getLocation()))
@@ -132,15 +122,7 @@ public class TakeoffList extends Fragment {
 
             viewHolder.takeoffName.setText(takeoff.toString());
             viewHolder.takeoffName.setTextColor(takeoff.isFavourite() ? Color.CYAN : Color.WHITE);
-            String takeoffIntoText = getContext().getString(R.string.distance) + ": " + (int) ((FlyWithMeActivity) getActivity()).getLocation().distanceTo(takeoff.getLocation()) / 1000 + "km";
-            if (takeoff.getPilotsToday() > 0 || takeoff.getPilotsLater() > 0) {
-                takeoffIntoText += ", " + getContext().getString(R.string.pilots) + ": ";
-                if (takeoff.getPilotsToday() > 0)
-                    takeoffIntoText += takeoff.getPilotsToday() + " " + getContext().getString(R.string.today);
-                if (takeoff.getPilotsLater() > 0)
-                    takeoffIntoText += (takeoff.getPilotsToday() > 0 ? ", " : "") + takeoff.getPilotsLater() + " " + getContext().getString(R.string.later);
-            }
-            viewHolder.takeoffInfo.setText(takeoffIntoText);
+            viewHolder.takeoffInfo.setText(getContext().getString(R.string.distance) + ": " + (int) ((FlyWithMeActivity) getActivity()).getLocation().distanceTo(takeoff.getLocation()) / 1000 + "km");
             /* exits */
             viewHolder.windroseNorth.setVisibility(takeoff.hasNorthExit() ? ImageView.VISIBLE : ImageView.INVISIBLE);
             viewHolder.windroseNorthwest.setVisibility(takeoff.hasNorthwestExit() ? ImageView.VISIBLE : ImageView.INVISIBLE);
