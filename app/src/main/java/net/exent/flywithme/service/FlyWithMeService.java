@@ -79,7 +79,7 @@ public class FlyWithMeService extends IntentService {
                     pilotId = InstanceID.getInstance(this).getToken(PROJECT_ID, GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
                     sharedPref.edit().putString("pilot_id", pilotId).apply();
                 }
-                getServer().registerPilot(pilotId, "<unknown>", "unknown>").execute();
+                getServer().registerPilot(pilotId).execute();
             } catch (IOException e) {
                 Log.w(TAG, "Registering pilot failed", e);
             }
