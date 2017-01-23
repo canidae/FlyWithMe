@@ -72,12 +72,6 @@ public class FlyWithMeService extends IntentService {
         } else if (ACTION_REGISTER_PILOT.equals(action)) {
             boolean refreshToken = bundle.getBoolean(ARG_REFRESH_TOKEN, false);
             SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-            String pilotName = sharedPref.getString("pref_pilot_name", "<unknown>").trim();
-            if (pilotName.equals(""))
-                pilotName = "<unknown>";
-            String pilotPhone = sharedPref.getString("pref_pilot_phone", "<unknown>").trim();
-            if (pilotPhone.equals(""))
-                pilotPhone = "<unknown>";
 
             String pilotId = sharedPref.getString("pilot_id", null);
             try {
@@ -85,7 +79,7 @@ public class FlyWithMeService extends IntentService {
                     pilotId = InstanceID.getInstance(this).getToken(PROJECT_ID, GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
                     sharedPref.edit().putString("pilot_id", pilotId).apply();
                 }
-                getServer().registerPilot(pilotId, pilotName, pilotPhone).execute();
+                getServer().registerPilot(pilotId, "<unknown>", "unknown>").execute();
             } catch (IOException e) {
                 Log.w(TAG, "Registering pilot failed", e);
             }

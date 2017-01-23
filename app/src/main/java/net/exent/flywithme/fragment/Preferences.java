@@ -5,22 +5,17 @@ import java.util.Collections;
 import java.util.List;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
-import android.preference.EditTextPreference;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceFragment;
 
 import net.exent.flywithme.R;
 import net.exent.flywithme.data.Airspace;
-import net.exent.flywithme.service.FlyWithMeService;
 
-public class Preferences extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
-    private String previousPilotName;
-    private String previousPilotPhone;
+public class Preferences extends PreferenceFragment {
 
     public static void setupDefaultPreferences(Context context) {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
@@ -40,13 +35,6 @@ public class Preferences extends PreferenceFragment implements SharedPreferences
 
         addPreferencesFromResource(R.xml.preferences);
 
-        // remember the previous pilot name and phone, update pilot registration if either change
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        previousPilotName = sharedPref.getString("pref_pilot_name", "<unknown>").trim();
-        previousPilotPhone = sharedPref.getString("pref_pilot_phone", "<unknown>").trim();
-
-        updateDynamicPreferenceScreen();
-
         // setup preferences for airspace
         PreferenceCategory showAirspaceTypesCategory = (PreferenceCategory) findPreference("pref_show_airspace_types");
         List<String> airspaceList = new ArrayList<>(Airspace.getAirspaceMap(getActivity()).keySet());
@@ -59,45 +47,5 @@ public class Preferences extends PreferenceFragment implements SharedPreferences
             checkBoxPreference.setTitle(key);
             showAirspaceTypesCategory.addPreference(checkBoxPreference);
         }
-    }
-
-    /* AAH! (Another Android Hack!): Setting a preference value only updates the preference, not the PreferenceFragment view */
-    /* http://stackoverflow.com/a/15329652/2040995 */
-    @Override
-    public void onResume() {
-        super.onResume();
-        getPreferenceManager().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
-    }
-
-    @Override
-    public void onPause() {
-        getPreferenceManager().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
-        super.onPause();
-    }
-
-    @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        updateDynamicPreferenceScreen();
-
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        if (!previousPilotName.equals(sharedPref.getString("pref_pilot_name", "<unknown>").trim()) || !previousPilotPhone.equals(sharedPref.getString("pref_pilot_phone", "<unknown>").trim())) {
-            // register new pilot name/phone
-            Intent intent = new Intent(getActivity(), FlyWithMeService.class);
-            intent.setAction(FlyWithMeService.ACTION_REGISTER_PILOT);
-            getActivity().startService(intent);
-        }
-    }
-    /* END AAH! */
-
-    private void updateDynamicPreferenceScreen() {
-        // pilot info
-        EditTextPreference pilotName = (EditTextPreference) findPreference("pref_pilot_name");
-        if (pilotName.getText() == null || pilotName.getText().trim().equals("")) {
-            pilotName.setSummary(getActivity().getString(R.string.pilot_name_please_enter));
-        } else {
-            pilotName.setSummary(pilotName.getText());
-        }
-        EditTextPreference pilotPhone = (EditTextPreference) findPreference("pref_pilot_phone");
-        pilotPhone.setSummary(pilotPhone.getText());
     }
 }

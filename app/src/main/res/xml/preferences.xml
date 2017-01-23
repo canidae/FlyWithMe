@@ -4,28 +4,6 @@
     android:layout_height="match_parent"
     android:title="@string/preferences" >
 
-    <!-- General settings -->
-    <PreferenceCategory
-        android:key="pref_general"
-        android:title="@string/pilot_info">
-        <EditTextPreference
-            android:key="pref_pilot_name"
-            android:maxLength="20"
-            android:inputType="textCapWords"
-            android:selectAllOnFocus="true"
-            android:title="@string/pilot_name"
-            android:dialogTitle="@string/pilot_name"
-            android:dialogMessage="@string/pilot_name_description" />
-        <EditTextPreference
-            android:key="pref_pilot_phone"
-            android:maxLength="40"
-            android:inputType="phone"
-            android:selectAllOnFocus="true"
-            android:title="@string/pilot_phone"
-            android:dialogTitle="@string/pilot_phone"
-            android:dialogMessage="@string/pilot_phone_description" />
-    </PreferenceCategory>
-
     <!-- What airspace polygons to show -->
     <PreferenceCategory
         android:key="pref_show_airspace_types"

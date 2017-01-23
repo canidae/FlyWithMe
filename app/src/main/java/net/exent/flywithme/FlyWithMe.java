@@ -152,15 +152,9 @@ public class FlyWithMe extends Activity implements GoogleApiClient.ConnectionCal
         /* start importing takeoffs from files */
         (new ImportTakeoffTask()).execute();
 
-        /* show preferences if we haven't set pilot name, otherwise takeoff list */
-        if (savedInstanceState == null) {
-            String pilotName = sharedPref.getString("pref_pilot_name", null);
-            if (pilotName == null || pilotName.trim().equals("")) {
-                showFragment("preferences", Preferences.class, null);
-            } else {
+        /* show takeoff list */
+        if (savedInstanceState == null)
                 showFragment("takeoffList", TakeoffList.class, null);
-            }
-        }
     }
 
     @Override
