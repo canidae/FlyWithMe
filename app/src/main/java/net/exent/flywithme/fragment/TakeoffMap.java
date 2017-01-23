@@ -65,8 +65,6 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
     private static Bitmap markerSouthwestBitmap;
     private static Bitmap markerWestBitmap;
     private static Bitmap markerNorthwestBitmap;
-    private static Bitmap markerExclamation;
-    private static Bitmap markerExclamationYellow;
 
     private GoogleMap map;
     private static CameraPosition cameraPosition;
@@ -84,8 +82,6 @@ public class TakeoffMap extends Fragment implements OnInfoWindowClickListener, O
         markerSouthwestBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.mapmarker_octant_sw);
         markerWestBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.mapmarker_octant_w);
         markerNorthwestBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.mapmarker_octant_nw);
-        markerExclamation = BitmapFactory.decodeResource(getResources(), R.drawable.mapmarker_exclamation);
-        markerExclamationYellow = BitmapFactory.decodeResource(getResources(), R.drawable.mapmarker_exclamation_yellow);
     }
 
     @Override
