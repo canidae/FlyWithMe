@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -48,6 +49,15 @@ public class TakeoffList extends Fragment {
         });
         /* position list */
         listView.setSelectionFromTop(savedPosition, savedListTop);
+
+        ImageButton searchButton = (ImageButton) getActivity().findViewById(R.id.fragmentButton1);
+        searchButton.setImageResource(R.mipmap.search);
+        searchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            }
+        });
+
 
         return view;
     }
