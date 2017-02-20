@@ -10,6 +10,7 @@ import net.exent.flywithme.bean.Takeoff;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
@@ -89,6 +90,11 @@ public class Database extends SQLiteOpenHelper {
         double longitudeRadians = longitude * Math.PI / 180.0;
         double longitudeCos = Math.cos(longitudeRadians);
         double longitudeSin = Math.sin(longitudeRadians);
+
+        //String where = "exits & " + withExits + " != 0";
+        //textSearch = DatabaseUtils.sqlEscapeString(textSearch);
+        //String where = "name like '%" + textSearch + "%' or description like '%" + textSearch + "%'";
+
         String orderBy = includeFavourites ? "favourite desc, " : "";
         orderBy += "(" + latitudeCos + " * latitude_cos * (longitude_cos * " + longitudeCos + " + longitude_sin * " + longitudeSin + ") + " + latitudeSin + " * latitude_sin) desc";
 

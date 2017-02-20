@@ -55,9 +55,9 @@ public class TakeoffList extends Fragment {
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                ((FlyWithMeActivity) getActivity()).showFragment("takeoffSearch", TakeoffSearch.class, null);
             }
         });
-
 
         return view;
     }

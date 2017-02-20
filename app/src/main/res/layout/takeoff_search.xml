@@ -5,108 +5,116 @@
               android:layout_height="match_parent">
 
     <TextView
-        android:text="Text:"
+        android:text="Takeoff name/description:"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
         android:id="@+id/searchNameLabel"
         android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
-        android:layout_alignBottom="@+id/searchNameText"
         android:gravity="center"/>
 
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
-        android:text="Name"
         android:ems="10"
-        android:layout_alignParentTop="true"
-        android:id="@+id/searchNameText"
-        android:layout_alignParentEnd="true"
-        android:layout_toEndOf="@+id/searchNameLabel"/>
-
-    <TextView
-        android:text="Launch direction:"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:id="@+id/searchTakeoffText"
         android:layout_below="@+id/searchNameLabel"
         android:layout_alignParentStart="true"
-        android:id="@+id/searchLaunchDirLabel"
-        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
         android:layout_alignParentEnd="true"/>
+
+    <TextView
+        android:text="Takeoff direction:"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/searchTakeoffDirLabel"
+        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
+        android:layout_below="@+id/searchTakeoffText"
+        android:layout_alignParentStart="true"/>
 
     <ImageButton
         android:src="@mipmap/windrose_northwest"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/searchLaunchNwButton"
-        android:layout_below="@+id/searchLaunchDirLabel"
-        android:layout_alignParentStart="true"/>
+        android:id="@+id/searchTakeoffNwButton"
+        android:layout_below="@+id/searchTakeoffDirLabel"
+        android:layout_alignParentStart="true"
+        android:background="@null"
+        />
 
     <ImageButton
         android:src="@mipmap/windrose_north"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/searchLaunchNButton"
-        android:layout_below="@+id/searchLaunchDirLabel"
-        android:layout_toEndOf="@+id/searchLaunchWButton"/>
+        android:id="@+id/searchTakeoffNButton"
+        android:layout_below="@+id/searchTakeoffDirLabel"
+        android:layout_toEndOf="@+id/searchTakeoffWButton"
+        android:background="@null"/>
 
     <ImageButton
         android:src="@mipmap/windrose_northeast"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/searchLaunchNeButton"
-        android:layout_below="@+id/searchLaunchDirLabel"
-        android:layout_toEndOf="@+id/searchLaunchNButton"/>
+        android:id="@+id/searchTakeoffNeButton"
+        android:layout_below="@+id/searchTakeoffDirLabel"
+        android:layout_toEndOf="@+id/searchTakeoffNButton"
+        android:background="@null"/>
 
     <ImageButton
         android:src="@mipmap/windrose_west"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/searchLaunchWButton"
-        android:layout_below="@+id/searchLaunchNButton"
-        android:layout_alignParentStart="true"/>
+        android:id="@+id/searchTakeoffWButton"
+        android:layout_below="@+id/searchTakeoffNButton"
+        android:layout_alignParentStart="true"
+        android:background="@null"/>
 
     <ImageButton
         android:src="@mipmap/windrose_circle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/searchLaunchNButton"
-        android:layout_toEndOf="@+id/searchLaunchWButton"
-        android:id="@+id/searchLaunchNoneButton"/>
+        android:layout_below="@+id/searchTakeoffNButton"
+        android:layout_toEndOf="@+id/searchTakeoffWButton"
+        android:id="@+id/searchTakeoffNoneButton"
+        android:background="@null"
+        android:visibility="invisible"/>
 
     <ImageButton
         android:src="@mipmap/windrose_east"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/searchLaunchEButton"
-        android:layout_below="@+id/searchLaunchNeButton"
-        android:layout_toEndOf="@+id/searchLaunchSButton"/>
+        android:id="@+id/searchTakeoffEButton"
+        android:layout_below="@+id/searchTakeoffNeButton"
+        android:layout_toEndOf="@+id/searchTakeoffSButton"
+        android:background="@null"/>
 
     <ImageButton
         android:src="@mipmap/windrose_southwest"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/searchLaunchSwButton"
-        android:layout_below="@+id/searchLaunchWButton"
-        android:layout_alignParentStart="true"/>
+        android:id="@+id/searchTakeoffSwButton"
+        android:layout_below="@+id/searchTakeoffWButton"
+        android:layout_alignParentStart="true"
+        android:background="@null"/>
 
     <ImageButton
         android:src="@mipmap/windrose_south"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/searchLaunchSButton"
-        android:layout_below="@+id/searchLaunchWButton"
-        android:layout_toEndOf="@+id/searchLaunchWButton"/>
+        android:id="@+id/searchTakeoffSButton"
+        android:layout_below="@+id/searchTakeoffWButton"
+        android:layout_toEndOf="@+id/searchTakeoffWButton"
+        android:background="@null"/>
 
     <ImageButton
         android:src="@mipmap/windrose_southeast"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/searchLaunchSeButton"
-        android:layout_below="@+id/searchLaunchNoneButton"
-        android:layout_toEndOf="@+id/searchLaunchNoneButton"/>
+        android:id="@+id/searchTakeoffSeButton"
+        android:layout_below="@+id/searchTakeoffNoneButton"
+        android:layout_toEndOf="@+id/searchTakeoffNoneButton"
+        android:background="@null"/>
 
     <Button
         android:text="OK"
@@ -114,7 +122,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
-        android:id="@+id/searchOkButton"/>
+        android:id="@+id/searchOkButton"
+        android:width="100dp"/>
 
     <Button
         android:text="Reset"
@@ -122,7 +131,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:id="@+id/searchResetButton"/>
+        android:id="@+id/searchResetButton"
+        android:width="100dp"/>
 
     <Button
         android:text="Cancel"
@@ -130,6 +140,7 @@
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/searchOkButton"
         android:layout_alignParentEnd="true"
-        android:id="@+id/searchCancelButton"/>
+        android:id="@+id/searchCancelButton"
+        android:width="100dp"/>
 
 </RelativeLayout>
