@@ -1,6 +1,7 @@
 package net.exent.flywithme.fragment;
 
 import android.app.Fragment;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -22,7 +23,7 @@ public class TakeoffSearch extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
         final View view = inflater.inflate(R.layout.takeoff_search, container, false);
 
-        searchSettings = loadSearchSettings(); // TODO: bundle, resets on screen rotation
+        searchSettings = getSearchSettings(getActivity()); // TODO: bundle, resets on screen rotation
 
         // set up text search and takeoff direction buttons
         EditText textSearch = (EditText) view.findViewById(R.id.searchTakeoffText);
@@ -61,64 +62,52 @@ public class TakeoffSearch extends Fragment {
         return view;
     }
 
+    public static SearchSettings getSearchSettings(Context context) {
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+        SearchSettings searchSettings = new SearchSettings();
+        searchSettings.text = sharedPref.getString("search_text", searchSettings.text);
+        searchSettings.exits = sharedPref.getInt("search_exits", searchSettings.exits);
+        return searchSettings;
+    }
+
     private void setupTakeoffDirButtons(View view) {
+        setupTakeoffDirButton(view, R.id.searchTakeoffNoneButton, 8);
+        setupTakeoffDirButton(view, R.id.searchTakeoffNButton, 7);
+        setupTakeoffDirButton(view, R.id.searchTakeoffNeButton, 6);
+        setupTakeoffDirButton(view, R.id.searchTakeoffEButton, 5);
+        setupTakeoffDirButton(view, R.id.searchTakeoffSwButton, 4);
+        setupTakeoffDirButton(view, R.id.searchTakeoffSButton, 3);
+        setupTakeoffDirButton(view, R.id.searchTakeoffSeButton, 2);
+        setupTakeoffDirButton(view, R.id.searchTakeoffWButton, 1);
         setupTakeoffDirButton(view, R.id.searchTakeoffNwButton, 0);
-        setupTakeoffDirButton(view, R.id.searchTakeoffNButton, 1);
-        setupTakeoffDirButton(view, R.id.searchTakeoffNeButton, 2);
-        setupTakeoffDirButton(view, R.id.searchTakeoffEButton, 3);
-        setupTakeoffDirButton(view, R.id.searchTakeoffNoneButton, 4);
-        setupTakeoffDirButton(view, R.id.searchTakeoffWButton, 5);
-        setupTakeoffDirButton(view, R.id.searchTakeoffSwButton, 6);
-        setupTakeoffDirButton(view, R.id.searchTakeoffSButton, 7);
-        setupTakeoffDirButton(view, R.id.searchTakeoffSeButton, 8);
     }
 
     private void setupTakeoffDirButton(View view, int button, final int dirIndex) {
         final ImageButton dirButton = (ImageButton) view.findViewById(button);
-        dirButton.setColorFilter(searchSettings.dirEnabled[dirIndex] ? Color.argb(0, 0, 0, 0) : Color.argb(255, 64, 64, 64));
+        dirButton.setColorFilter((searchSettings.exits & (1 << dirIndex)) != 0 ? Color.argb(0, 0, 0, 0) : Color.argb(255, 64, 64, 64));
         dirButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                searchSettings.dirEnabled[dirIndex] = !searchSettings.dirEnabled[dirIndex];
-                dirButton.setColorFilter(searchSettings.dirEnabled[dirIndex] ? Color.argb(0, 0, 0, 0) : Color.argb(255, 64, 64, 64));
+                searchSettings.exits ^= 1 << dirIndex;
+                dirButton.setColorFilter((searchSettings.exits & (1 << dirIndex)) != 0 ? Color.argb(0, 0, 0, 0) : Color.argb(255, 64, 64, 64));
             }
         });
-    }
-
-    private SearchSettings loadSearchSettings() {
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        SearchSettings searchSettings = new SearchSettings();
-        searchSettings.text = sharedPref.getString("search_text", searchSettings.text);
-        searchSettings.dirEnabled[0] = sharedPref.getBoolean("search_nw", searchSettings.dirEnabled[0]);
-        searchSettings.dirEnabled[1] = sharedPref.getBoolean("search_n", searchSettings.dirEnabled[1]);
-        searchSettings.dirEnabled[2] = sharedPref.getBoolean("search_ne", searchSettings.dirEnabled[2]);
-        searchSettings.dirEnabled[3] = sharedPref.getBoolean("search_w", searchSettings.dirEnabled[3]);
-        searchSettings.dirEnabled[4] = sharedPref.getBoolean("search_none", searchSettings.dirEnabled[4]);
-        searchSettings.dirEnabled[5] = sharedPref.getBoolean("search_e", searchSettings.dirEnabled[5]);
-        searchSettings.dirEnabled[6] = sharedPref.getBoolean("search_sw", searchSettings.dirEnabled[6]);
-        searchSettings.dirEnabled[7] = sharedPref.getBoolean("search_s", searchSettings.dirEnabled[7]);
-        searchSettings.dirEnabled[8] = sharedPref.getBoolean("search_se", searchSettings.dirEnabled[8]);
-        return searchSettings;
     }
 
     private void saveSearchSettings(SearchSettings searchSettings) {
         PreferenceManager.getDefaultSharedPreferences(getActivity())
                 .edit()
                 .putString("search_text", searchSettings.text)
-                .putBoolean("search_nw", searchSettings.dirEnabled[0])
-                .putBoolean("search_n", searchSettings.dirEnabled[1])
-                .putBoolean("search_ne", searchSettings.dirEnabled[2])
-                .putBoolean("search_w", searchSettings.dirEnabled[3])
-                .putBoolean("search_none", searchSettings.dirEnabled[4])
-                .putBoolean("search_e", searchSettings.dirEnabled[5])
-                .putBoolean("search_sw", searchSettings.dirEnabled[6])
-                .putBoolean("search_s", searchSettings.dirEnabled[7])
-                .putBoolean("search_se", searchSettings.dirEnabled[8])
+                .putInt("search_exits", searchSettings.exits)
                 .apply();
     }
 
-    private class SearchSettings {
+    public static class SearchSettings {
         String text = "";
-        boolean[] dirEnabled = {true, true, true, true, true, true, true, true, true};
+        int exits = 0b11111111;
+
+        public boolean isSearchEnabled() {
+            return !text.isEmpty() || exits != 0b11111111;
+        }
     }
 }

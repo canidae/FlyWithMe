@@ -80,6 +80,10 @@ public class Database extends SQLiteOpenHelper {
     }
 
     public static List<Takeoff> getTakeoffs(Context context, double latitude, double longitude, int maxResult, boolean includeFavourites) {
+        return getTakeoffsFiltered(context, latitude, longitude, maxResult, includeFavourites, -1, null);
+    }
+
+    public static List<Takeoff> getTakeoffsFiltered(Context context, double latitude, double longitude, int maxResult, boolean includeFavourites, int exits, String text) {
         List<Takeoff> takeoffs = new ArrayList<>();
         if (maxResult <= 0)
             return takeoffs;
@@ -91,9 +95,15 @@ public class Database extends SQLiteOpenHelper {
         double longitudeCos = Math.cos(longitudeRadians);
         double longitudeSin = Math.sin(longitudeRadians);
 
-        //String where = "exits & " + withExits + " != 0";
-        //textSearch = DatabaseUtils.sqlEscapeString(textSearch);
-        //String where = "name like '%" + textSearch + "%' or description like '%" + textSearch + "%'";
+        String where = "";
+        if (exits != 0b11111111 || (text != null && !text.isEmpty())) {
+            if (exits != 0b11111111)
+                where = "where exits & " + exits + " != 0";
+            if (text != null && !text.isEmpty()) {
+                text = DatabaseUtils.sqlEscapeString("%" + text.trim() + "%");
+                where += (where.isEmpty() ? "where " : " and ") + "upper(name) like upper(" + text + ") or upper(description) like upper(" + text + ")";
+            }
+        }
 
         String orderBy = includeFavourites ? "favourite desc, " : "";
         orderBy += "(" + latitudeCos + " * latitude_cos * (longitude_cos * " + longitudeCos + " + longitude_sin * " + longitudeSin + ") + " + latitudeSin + " * latitude_sin) desc";
@@ -103,7 +113,7 @@ public class Database extends SQLiteOpenHelper {
             SQLiteDatabase db = acquire(context).getReadableDatabase();
             if (db == null)
                 throw new IllegalArgumentException("Unable to get database object");
-            Cursor cursor = db.rawQuery("select * from takeoff order by " + orderBy + " limit " + maxResult, null);
+            Cursor cursor = db.rawQuery("select * from takeoff " + where + " order by " + orderBy + " limit " + maxResult, null);
             while (cursor.moveToNext())
                 takeoffs.add(Takeoff.create(new ImprovedCursor(cursor)));
             cursor.close();

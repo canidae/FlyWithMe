@@ -71,6 +71,16 @@ public class TakeoffList extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+
+        // check if we're searching
+        ImageButton searchButton = (ImageButton) getActivity().findViewById(R.id.fragmentButton1);
+        TakeoffSearch.SearchSettings searchSettings = TakeoffSearch.getSearchSettings(getActivity());
+        searchButton.setImageResource(searchSettings.isSearchEnabled() ? R.mipmap.search_enabled : R.mipmap.search);
+    }
+
+    @Override
     public void onStop() {
         super.onStop();
 
@@ -83,7 +93,8 @@ public class TakeoffList extends Fragment {
 
     private void updateTakeoffList() {
         final Location location = ((FlyWithMeActivity) getActivity()).getLocation();
-        takeoffs = Database.getTakeoffs(getActivity(), location.getLatitude(), location.getLongitude(), 100, true); // TODO: can we do this async?
+        TakeoffSearch.SearchSettings searchSettings = TakeoffSearch.getSearchSettings(getActivity());
+        takeoffs = Database.getTakeoffsFiltered(getActivity(), location.getLatitude(), location.getLongitude(), 100, true, searchSettings.exits, searchSettings.text); // TODO: can we do this async?
         Collections.sort(takeoffs, new Comparator<Takeoff>() {
             public int compare(Takeoff lhs, Takeoff rhs) {
                 if (!lhs.isFavourite() && rhs.isFavourite())
