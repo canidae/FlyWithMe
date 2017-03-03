@@ -51,7 +51,7 @@ public class FlyWithMeService extends IntentService {
 
     private static final String TAG = FlyWithMeService.class.getName();
     private static final String PROJECT_ID = "586531582715";
-    private static final String SERVER_URL = "https://4-dot-flywithme-server.appspot.com/_ah/api/"; // "http://88.95.84.204:8080/_ah/api/"
+    private static final String SERVER_URL = "https://5-dot-flywithme-160421.appspot.com/_ah/api/";
     private static final long CHECK_LOCATION_INTERVAL = 600000; // 10 minutes
 
     private GoogleApiClient googleApiClient;

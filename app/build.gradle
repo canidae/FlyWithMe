@@ -5,7 +5,7 @@ targetCompatibility = JavaVersion.VERSION_1_7
 
 android {
     compileSdkVersion 25
-    buildToolsVersion "22.0.1"
+    buildToolsVersion '25.0.0'
 
     defaultConfig {
         applicationId "net.exent.flywithme"

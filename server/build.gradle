@@ -26,6 +26,7 @@ dependencies {
     compile 'com.google.appengine:appengine-api-labs:1.9.25'
     compile 'com.google.appengine:appengine-endpoints:1.9.25'
     compile 'com.google.appengine:appengine-endpoints-deps:1.9.25'
+    compile 'com.google.appengine:appengine-remote-api:1.9.25'
     compile 'javax.servlet:servlet-api:2.5'
     compile 'com.googlecode.objectify:objectify:5.0.3'
     compile 'com.ganyo:gcm-server:1.0.2'

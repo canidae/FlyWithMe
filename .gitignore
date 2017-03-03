@@ -1,6 +1,7 @@
 *.apk
 flywithme.keystore
 flywithme.txt
+FlyWithMe-24e9e26a499c.p12
 .gradle
 gradle
 .idea

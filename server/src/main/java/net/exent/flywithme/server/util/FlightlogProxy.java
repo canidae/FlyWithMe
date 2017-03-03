@@ -1,5 +1,13 @@
 package net.exent.flywithme.server.util;
 
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.repackaged.com.google.api.client.util.SecurityUtils;
+import com.google.appengine.tools.remoteapi.RemoteApiInstaller;
+import com.google.appengine.tools.remoteapi.RemoteApiOptions;
+import com.googlecode.objectify.ObjectifyService;
+
 import net.exent.flywithme.server.bean.Takeoff;
 
 import org.xml.sax.Attributes;
@@ -12,7 +20,10 @@ import java.io.DataOutputStream;
 import java.io.EOFException;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.URL;
+import java.security.GeneralSecurityException;
+import java.security.PrivateKey;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -22,6 +33,8 @@ import java.util.regex.Pattern;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+
+import static com.googlecode.objectify.ObjectifyService.ofy;
 
 /**
  * Tool for fetching data from flightlog.org.
@@ -159,26 +172,48 @@ public class FlightlogProxy {
                 outputStream.writeShort(takeoff.getExits());
             }
             outputStream.close();
-        }
 
-        /* test flywithme.dat by reading it (had some unexplainable issues where the file somehow got corrupted) */
-        DataInputStream inputStream = new DataInputStream(new FileInputStream("flywithme.dat"));
-        try {
-            long imported = inputStream.readLong();
-            while (true) {
-                /* loop breaks once we get an EOFException */
-                int takeoffId = inputStream.readShort();
-                String name = inputStream.readUTF();
-                String description = inputStream.readUTF();
-                int asl = inputStream.readShort();
-                int height = inputStream.readShort();
-                float latitude = inputStream.readFloat();
-                float longitude = inputStream.readFloat();
-                int exits = inputStream.readShort();
-                System.out.println("[" + takeoffId + "] " + name + " (ASL: " + asl + ", Height: " + height + ") [" + latitude + "," + longitude + "] <" + exits + ">");
+            /* test flywithme.dat by reading it (had some unexplainable issues where the file somehow got corrupted) */
+            DataInputStream inputStream = new DataInputStream(new FileInputStream("flywithme.dat"));
+            try {
+                long imported = inputStream.readLong();
+                while (true) {
+                    /* loop breaks once we get an EOFException */
+                    int takeoffId = inputStream.readShort();
+                    String name = inputStream.readUTF();
+                    String description = inputStream.readUTF();
+                    int asl = inputStream.readShort();
+                    int height = inputStream.readShort();
+                    float latitude = inputStream.readFloat();
+                    float longitude = inputStream.readFloat();
+                    int exits = inputStream.readShort();
+                    System.out.println("[" + takeoffId + "] " + name + " (ASL: " + asl + ", Height: " + height + ") [" + latitude + "," + longitude + "] <" + exits + ">");
+                }
+            } catch (EOFException e) {
+                // expected
+                System.out.println("Database file tested OK, uploading to GAE...");
+                ObjectifyService.register(Takeoff.class);
+                PrivateKey privateKey = null;
+                try {
+                    privateKey = SecurityUtils.loadPrivateKeyFromKeyStore(SecurityUtils.getPkcs12KeyStore(), new FileInputStream("resources/FlyWithMe-24e9e26a499c.p12"), "notasecret", "privatekey", "notasecret");
+                } catch (GeneralSecurityException | IOException e2) {
+                    e.printStackTrace();
+                }
+
+                RemoteApiInstaller installer = new RemoteApiInstaller();
+                installer.install(new RemoteApiOptions().server("5-dot-flywithme-160421.appspot.com", 443).useServiceAccountCredential("535669012847-compute@developer.gserviceaccount.com", privateKey));
+                try {
+                    DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
+                    for (Takeoff takeoff : takeoffs) {
+                        Entity entity = ofy().save().toEntity(takeoff);
+                        System.out.println("Added takeoff to Datastore: " + ds.put(entity));
+                    }
+                } finally {
+                    installer.uninstall();
+                }
             }
-        } catch (EOFException e) {
-            // expected
+        } else {
+            System.out.println("Unable to fetch takeoffs from server...?");
         }
     }
 }
