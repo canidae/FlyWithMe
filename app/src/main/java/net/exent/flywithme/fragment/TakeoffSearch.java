@@ -75,9 +75,9 @@ public class TakeoffSearch extends Fragment {
         setupTakeoffDirButton(view, R.id.searchTakeoffNButton, 7);
         setupTakeoffDirButton(view, R.id.searchTakeoffNeButton, 6);
         setupTakeoffDirButton(view, R.id.searchTakeoffEButton, 5);
-        setupTakeoffDirButton(view, R.id.searchTakeoffSwButton, 4);
+        setupTakeoffDirButton(view, R.id.searchTakeoffSeButton, 4);
         setupTakeoffDirButton(view, R.id.searchTakeoffSButton, 3);
-        setupTakeoffDirButton(view, R.id.searchTakeoffSeButton, 2);
+        setupTakeoffDirButton(view, R.id.searchTakeoffSwButton, 2);
         setupTakeoffDirButton(view, R.id.searchTakeoffWButton, 1);
         setupTakeoffDirButton(view, R.id.searchTakeoffNwButton, 0);
     }
