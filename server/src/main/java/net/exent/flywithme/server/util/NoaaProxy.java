@@ -109,6 +109,8 @@ public class NoaaProxy {
                 String meteogramUrl = getOne(fetchPageContent(NOAA_URL + "/ready2-bin/metgram2.pl?userid=" + noaaUserId + "&Lat=" + latitude + "&Lon=" + longitude
                         + "&metdir=" + noaaMetDir + "&metcyc=" + noaaMetCyc + "&metdate=" + URLEncoder.encode(noaaMetDates.get(0), "UTF-8") + "&metfil=" + noaaMetFil
                         + "&password1=" + noaaCaptcha + "&proc=" + noaaProc + NOAA_METGRAM_CONF), NOAA_METEOGRAM_PATTERN);
+                if (meteogramUrl == null)
+                    continue;
                 byte[] meteogramImage = fetchImage(NOAA_URL + meteogramUrl);
                 if (meteogramImage != null)
                     return meteogramImage;
@@ -142,6 +144,8 @@ public class NoaaProxy {
                             + "&metdir=" + noaaMetDir + "&metcyc=" + noaaMetCyc + "&metdate=" + URLEncoder.encode(noaaMetdate, "UTF-8") + "&metfil=" + noaaMetFil
                             + "&password1=" + noaaCaptcha + "&proc=" + noaaProc + NOAA_SOUNDING_CONF);
                     String soundingUrl = getOne(pageContent, NOAA_SOUNDING_PROFILE_PATTERN);
+                    if (soundingUrl == null)
+                        continue;
                     byte[] profileImage = fetchImage(NOAA_URL + soundingUrl);
                     if (profileImage != null) {
                         String thetaUrl = getOne(pageContent, NOAA_SOUNDING_THETA_PATTERN);
@@ -180,7 +184,10 @@ public class NoaaProxy {
                 noaaMetFil = getOne(content, NOAA_METFIL_PATTERN);
                 noaaMetDates = getAll(content, NOAA_METDATE_PATTERN);
                 noaaProc = getOne(content, NOAA_PROC_PATTERN);
-                noaaCaptcha = solveCaptcha(fetchImage(NOAA_URL + getOne(content, NOAA_CAPTCHA_URL_PATTERN)));
+                String captchaImageUrl = getOne(content, NOAA_CAPTCHA_URL_PATTERN);
+                if (captchaImageUrl == null)
+                    continue;
+                noaaCaptcha = solveCaptcha(fetchImage(NOAA_URL + captchaImageUrl));
             } catch (Exception e) {
                 log.log(Level.WARNING, "Failed fetching CAPTCHA image", e);
             }
