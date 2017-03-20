@@ -109,11 +109,11 @@ public class NoaaProxy {
                 String meteogramUrl = getOne(fetchPageContent(NOAA_URL + "/ready2-bin/metgram2.pl?userid=" + noaaUserId + "&Lat=" + latitude + "&Lon=" + longitude
                         + "&metdir=" + noaaMetDir + "&metcyc=" + noaaMetCyc + "&metdate=" + URLEncoder.encode(noaaMetDates.get(0), "UTF-8") + "&metfil=" + noaaMetFil
                         + "&password1=" + noaaCaptcha + "&proc=" + noaaProc + NOAA_METGRAM_CONF), NOAA_METEOGRAM_PATTERN);
-                if (meteogramUrl == null)
-                    continue;
-                byte[] meteogramImage = fetchImage(NOAA_URL + meteogramUrl);
-                if (meteogramImage != null)
-                    return meteogramImage;
+                if (meteogramUrl != null) {
+                    byte[] meteogramImage = fetchImage(NOAA_URL + meteogramUrl);
+                    if (meteogramImage != null)
+                        return meteogramImage;
+                }
             } catch (Exception e) {
                 log.log(Level.WARNING, "Failed fetching meteogram image", e);
             }
@@ -144,16 +144,16 @@ public class NoaaProxy {
                             + "&metdir=" + noaaMetDir + "&metcyc=" + noaaMetCyc + "&metdate=" + URLEncoder.encode(noaaMetdate, "UTF-8") + "&metfil=" + noaaMetFil
                             + "&password1=" + noaaCaptcha + "&proc=" + noaaProc + NOAA_SOUNDING_CONF);
                     String soundingUrl = getOne(pageContent, NOAA_SOUNDING_PROFILE_PATTERN);
-                    if (soundingUrl == null)
-                        continue;
-                    byte[] profileImage = fetchImage(NOAA_URL + soundingUrl);
-                    if (profileImage != null) {
-                        String thetaUrl = getOne(pageContent, NOAA_SOUNDING_THETA_PATTERN);
-                        byte[] thetaImage = fetchImage(NOAA_URL + thetaUrl);
-                        if (thetaImage != null) {
-                            String textUrl = getOne(pageContent, NOAA_SOUNDING_TEXT_PATTERN);
-                            byte[] textImage = fetchImage(NOAA_URL + textUrl);
-                            return Arrays.asList(profileImage, thetaImage, textImage);
+                    if (soundingUrl != null) {
+                        byte[] profileImage = fetchImage(NOAA_URL + soundingUrl);
+                        if (profileImage != null) {
+                            String thetaUrl = getOne(pageContent, NOAA_SOUNDING_THETA_PATTERN);
+                            byte[] thetaImage = fetchImage(NOAA_URL + thetaUrl);
+                            if (thetaImage != null) {
+                                String textUrl = getOne(pageContent, NOAA_SOUNDING_TEXT_PATTERN);
+                                byte[] textImage = fetchImage(NOAA_URL + textUrl);
+                                return Arrays.asList(profileImage, thetaImage, textImage);
+                            }
                         }
                     }
                 } catch (Exception e) {
