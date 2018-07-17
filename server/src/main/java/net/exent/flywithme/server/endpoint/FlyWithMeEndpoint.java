@@ -3,6 +3,7 @@ package net.exent.flywithme.server.endpoint;
 import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiNamespace;
+import com.google.api.server.spi.config.Named;
 
 import net.exent.flywithme.server.bean.Forecast;
 import net.exent.flywithme.server.bean.Pilot;
@@ -13,8 +14,6 @@ import net.exent.flywithme.server.util.NoaaProxy;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
-
-import javax.inject.Named;
 
 /**
  * Endpoint that handles pilot/forecast/takeoff data transfer between server and device.
