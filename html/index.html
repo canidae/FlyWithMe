@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <title>Fly With Me!</title>
+    <script src="https://unpkg.com/vue"></script>
+    <style>
+      /* Set the size of the div element that contains the map */
+      #map {
+        height: 400px;
+        width: 400px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="flywithme">
+      <input type="text">
+      <br>
+      <div>
+        <ul>
+          <li v-for="takeoff in takeoffs.slice(0, 10)">
+            <span>{{ takeoff.name }}</span><span>{{ takeoff.id }}</span><button v-on:click="panMap(takeoff.lat, takeoff.lng)">Pan map</button>
+          </li>
+        </ul>
+      </div>
+      <div id="map"></div>
+    </div>
+
+    <script>
+      var app = new Vue({
+        el: '#flywithme',
+        data: {
+          takeoffs: []
+        },
+        methods: {
+          panMap: function(lat, lng) {
+            console.log("Pan to:", lat, lng);
+            this.map.panTo({lat: lat, lng: lng});
+          }
+        }
+      })
+
+      // Initialize and add the map
+      function initMap() {
+        var rikssenter = {lat: 61.87416667, lng: 9.15472222};
+        app.map = new google.maps.Map(document.getElementById('map'), {zoom: 11, center: rikssenter, mapTypeId: 'terrain'});
+
+        var marker = new google.maps.Marker({position: rikssenter, map: app.map});
+      }
+
+      /*
+      navigator.geolocation.getCurrentPosition(function(location) {
+        console.log(location.coords.latitude);
+        console.log(location.coords.longitude);
+        console.log(location.coords.accuracy);
+      });
+      */
+
+      /* test fetch */
+      fetch("./flightlog.org.xml")
+        .then(response => response.text())
+        .then(str => (new window.DOMParser()).parseFromString(str, "text/xml"))
+        .then(data => {
+          var starts = data.getElementsByTagName("start");
+          console.log("Starts: ", starts.length);
+          for (i = 0; i < starts.length; ++i) {
+            app.takeoffs.push({
+              id: starts[i].childNodes[0].textContent,
+              name: starts[i].childNodes[1].textContent,
+              description: starts[i].childNodes[2].textContent,
+              lat: parseFloat(starts[i].childNodes[3].textContent),
+              lng: parseFloat(starts[i].childNodes[4].textContent)
+              wind: parseInt(starts[i].childNodes[5].textContent)
+            });
+          }
+        });
+    </script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCq8s3A3SxPHvjlqagRp_JVcfTgU-lh7mo&callback=initMap"></script>
+    <!--
+    <start>
+    <id><![CDATA[6246]]></id>
+    <name><![CDATA[	Jorde på Løten, Klæpa airport]]></name>
+    <description><![CDATA[.]]></description>
+    <lat><![CDATA[60.79527778]]></lat>
+    <lon><![CDATA[11.34555556]]></lon>
+    <wind><![CDATA[56]]></wind>
+    <country_id><![CDATA[160]]></country_id>
+    <region_id><![CDATA[6]]></region_id>
+    <subregion_id><![CDATA[0]]></subregion_id>
+    <altitude><![CDATA[180]]></altitude>
+    <altitudediff><![CDATA[0]]></altitudediff>
+    <createdtime><![CDATA[2014-09-08 00:08:08]]></createdtime>
+    <updatedtime><![CDATA[2015-02-01 18:55:20]]></updatedtime>
+    </start>
+    -->
+  </body>
+</html>
