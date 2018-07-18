@@ -5,47 +5,107 @@
     <title>Fly With Me!</title>
     <script src="https://unpkg.com/vue"></script>
     <style>
-      /* Set the size of the div element that contains the map */
-      #map {
-        height: 400px;
-        width: 400px;
+      #takeoff-list {
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        width: 500px;
+        margin: 8px;
+      }
+
+      #google-map-view {
+        position: absolute;
+        top: 0;
+        left: 500px;
+        right: 0;
+        bottom: 0;
+        margin: 8px;
+      }
+
+      .takeoff {
+        cursor: pointer;
       }
     </style>
   </head>
   <body>
-    <div id="flywithme">
-      <input type="text">
-      <br>
-      <div>
-        <ul>
-          <li v-for="takeoff in takeoffs.slice(0, 10)">
-            <span>{{ takeoff.name }}</span><span>{{ takeoff.id }}</span><button v-on:click="panMap(takeoff.lat, takeoff.lng)">Pan map</button>
-          </li>
-        </ul>
+    <div id="flywithme"></div>
+
+    <script id="app" type="text/x-template">
+      <div id="main">
+        <div id="takeoff-list">
+          <input type="text">
+          <br>
+          <div v-for="takeoff in takeoffs.slice(0, 10)">
+            <span :id="'takeoff-' + takeoff.id" class="takeoff" @click="panMap(takeoff.lat, takeoff.lng)">{{ takeoff.name }}</span>
+          </div>
+        </div>
+        <div id="google-map-view"></div>
       </div>
-      <div id="map"></div>
-    </div>
+    </script>
 
     <script>
       var app = new Vue({
         el: '#flywithme',
         data: {
-          takeoffs: []
+          takeoffs: localStorage.getItem("flightlog_takeoffs") || [],
+          googleMap: null
         },
+        template: '#app',
         methods: {
+          getFlightlogTakeoffs: function() {
+            var lastUpdated = localStorage.getItem("flightlog_last_updated") || 0;
+            var now = new Date().getTime();
+            var fetchDays = Math.ceil((now - lastUpdated) / 86400000);
+
+            if (fetchDays > 5) {
+              fetch("https://cors-anywhere.herokuapp.com/http://flightlog.org/?returntype=xml&rqtid=12&d=" + fetchDays, {
+                headers: {
+                  "Origin": null
+                }
+              })
+                .then(response => response.text())
+                .then(str => (new window.DOMParser()).parseFromString(str, "text/xml"))
+                .then(data => {
+                  var starts = data.getElementsByTagName("start");
+                  console.log("Updated takeoffs:", starts.length);
+                  var flightlogTakeoffs = [];
+                  for (i = 0; i < starts.length; ++i) {
+                    var takeoffData = {
+                      id: starts[i].childNodes[0].textContent,
+                      name: starts[i].childNodes[1].textContent,
+                      description: starts[i].childNodes[2].textContent,
+                      lat: parseFloat(starts[i].childNodes[3].textContent),
+                      lng: parseFloat(starts[i].childNodes[4].textContent),
+                      wind: parseInt(starts[i].childNodes[5].textContent)
+                    }
+                    flightlogTakeoffs.push(takeoffData);
+                  }
+                  // TODO: this overwrites existing takeoffs
+                  // TODO: we'll also have to handle takeoffs marked as favourites
+                  localStorage.setItem("flightlog_takeoffs", JSON.stringify(flightlogTakeoffs));
+                  localStorage.setItem("flightlog_last_updated", now);
+                  
+                  app.takeoffs = JSON.parse(localStorage.getItem("flightlog_takeoffs"));
+                });
+            }
+
+            app.takeoffs = JSON.parse(localStorage.getItem("flightlog_takeoffs")) || [];
+          },
+
           panMap: function(lat, lng) {
             console.log("Pan to:", lat, lng);
-            this.map.panTo({lat: lat, lng: lng});
+            this.googleMap.panTo({lat: lat, lng: lng});
           }
         }
-      })
+      });
+
+      app.getFlightlogTakeoffs();
 
       // Initialize and add the map
       function initMap() {
-        var rikssenter = {lat: 61.87416667, lng: 9.15472222};
-        app.map = new google.maps.Map(document.getElementById('map'), {zoom: 11, center: rikssenter, mapTypeId: 'terrain'});
-
-        var marker = new google.maps.Marker({position: rikssenter, map: app.map});
+        app.googleMap = new google.maps.Map(document.getElementById('google-map-view'), {zoom: 11, center: {lat: 61.87416667, lng: 9.15472222}, mapTypeId: 'terrain'});
+        //var marker = new google.maps.Marker({position: rikssenter, map: app.googleMap});
       }
 
       /*
@@ -55,25 +115,6 @@
         console.log(location.coords.accuracy);
       });
       */
-
-      /* test fetch */
-      fetch("./flightlog.org.xml")
-        .then(response => response.text())
-        .then(str => (new window.DOMParser()).parseFromString(str, "text/xml"))
-        .then(data => {
-          var starts = data.getElementsByTagName("start");
-          console.log("Starts: ", starts.length);
-          for (i = 0; i < starts.length; ++i) {
-            app.takeoffs.push({
-              id: starts[i].childNodes[0].textContent,
-              name: starts[i].childNodes[1].textContent,
-              description: starts[i].childNodes[2].textContent,
-              lat: parseFloat(starts[i].childNodes[3].textContent),
-              lng: parseFloat(starts[i].childNodes[4].textContent)
-              wind: parseInt(starts[i].childNodes[5].textContent)
-            });
-          }
-        });
     </script>
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCq8s3A3SxPHvjlqagRp_JVcfTgU-lh7mo&callback=initMap"></script>
     <!--
