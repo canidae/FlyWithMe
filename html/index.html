@@ -61,7 +61,7 @@
       var app = new Vue({
         el: '#flywithme',
         data: {
-          takeoffs: JSON.parse(localStorage.getItem("flightlog_takeoffs") || {}),
+          takeoffs: JSON.parse(localStorage.getItem("flightlog_takeoffs") || "{}"),
           googleMap: null
         },
         template: '#app',
@@ -96,7 +96,7 @@
                     takeoffData.lat = parseFloat(starts[i].childNodes[3].textContent),
                     takeoffData.lng = parseFloat(starts[i].childNodes[4].textContent),
                     takeoffData.wind = parseInt(starts[i].childNodes[5].textContent)
-                    this.takeoffs[takeoffData.id] = takeoffData;
+                    Vue.set(this.takeoffs, takeoffData.id, takeoffData);
                   }
                   localStorage.setItem("flightlog_takeoffs", JSON.stringify(this.takeoffs));
                   localStorage.setItem("flightlog_last_updated", now);
