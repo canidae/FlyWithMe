@@ -5,6 +5,10 @@
     <title>Fly With Me!</title>
     <script src="https://unpkg.com/vue"></script>
     <style>
+      * {
+        border: 1px solid;
+      }
+
       #takeoff-list {
         position: absolute;
         top: 0;
@@ -23,11 +27,61 @@
         margin: 8px;
       }
 
-      .takeoff {
+      #takeoff-details {
         position: absolute;
-        margin: 4px;
+          top: 0;
+          left: 0;
+          bottom: 0;
+          width: 500px;
+          margin: 8px;
+      }
+
+      .takeoff-details-name {
+      }
+
+      .takeoff-details-description {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 50px;
+      }
+
+      .takeoff {
+        position: relative;
+          height: 50px;
+      }
+
+      .takeoff-name {
+        position: absolute;
+        left: 50px;
+        height: 50px;
         cursor: pointer;
       }
+
+      .exits-image {
+        position: absolute;
+        width: 50px;
+        height: 50px;
+      }
+
+      .noaa-image {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 50px;
+        height: 50px;
+        cursor: pointer;
+      }
+
+      .gmaps-image {
+        position: absolute;
+        top: 0;
+        right: 50px;
+        width: 50px;
+        height: 50px;
+        cursor: pointer;
+      }
+
     </style>
   </head>
   <body>
@@ -38,8 +92,8 @@
         <div id="takeoff-list">
           <input type="text">
           <br>
-          <div :id="'takeoff-' + takeoff.id" v-for="takeoff in listTakeoffs">
-           <svg viewBox="-105 -105 210 210" height="50" width="50">
+          <div :id="'takeoff-' + takeoff.id" class="takeoff" v-for="takeoff in listTakeoffs">
+           <svg class="exits-image" viewBox="-105 -105 210 210">
               <circle r="104" stroke="black" stroke-width="2" fill="none" />
               <path v-show="(takeoff.wind & (1 << 7)) != 0" class="n" d="M 0 0 L -38.268 -92.388 A 100 100 0 0 1 38.268 -92.388 Z" stroke="none" fill="#05c70f" />
               <path v-show="(takeoff.wind & (1 << 6)) != 0" class="ne" d="M 0 0 L 38.268 -92.388 A 100 100 0 0 1 92.388 -38.268 Z" stroke="none" fill="#05c70f" />
@@ -50,9 +104,17 @@
               <path v-show="(takeoff.wind & (1 << 1)) != 0" class="w" d="M 0 0 L -92.388 38.268 A 100 100 0 0 1 -92.388 -38.268 Z" stroke="none" fill="#05c70f" />
               <path v-show="(takeoff.wind & (1 << 0)) != 0" class="nw" d="M 0 0 L -92.388 -38.268 A 100 100 0 0 1 -38.268 -92.388 Z" stroke="none" fill="#05c70f" />
             </svg>
-            <span class="takeoff" @click="panMap(takeoff.lat, takeoff.lng)">{{ takeoff.name }}</span>
+            <span class="takeoff-name" @click="panMap(takeoff.lat, takeoff.lng)">{{ takeoff.name }}</span>
+            <img class="noaa-image" src="images/NOAA.svg" />
+            <img class="gmaps-image" src="images/GoogleMaps.svg" />
           </div>
         </div>
+
+        <div v-if="takeoff" id="takeoff-details">
+          <span class="takeoff-details-name">{{ takeoff.name }}</span>
+          <span v-html="textToHtml(takeoff.description)"></span>
+        </div>
+
         <div id="google-map-view"></div>
       </div>
     </script>
@@ -62,12 +124,14 @@
         el: '#flywithme',
         data: {
           takeoffs: JSON.parse(localStorage.getItem("flightlog_takeoffs") || "{}"),
+          takeoff: null,
           googleMap: null
         },
         template: '#app',
         computed: {
-          listTakeoffs: function(textFilter, lat, lng) {
-            // TODO: filter on text and/or lat/lng
+          listTakeoffs: function() {
+            // TODO: replace with function to allow filter on text and/or lat/lng
+            this.takeoff = this.takeoffs["4"];
             return Object.values(this.takeoffs).slice(0, 10);
           }
         },
@@ -90,18 +154,30 @@
                   for (i = 0; i < starts.length; ++i) {
                     var takeoffId = starts[i].childNodes[0].textContent;
                     var takeoffData = this.takeoffs[takeoffId] || {};
-                    takeoffData.id = takeoffId,
-                    takeoffData.name = starts[i].childNodes[1].textContent,
-                    takeoffData.description = starts[i].childNodes[2].textContent,
-                    takeoffData.lat = parseFloat(starts[i].childNodes[3].textContent),
-                    takeoffData.lng = parseFloat(starts[i].childNodes[4].textContent),
-                    takeoffData.wind = parseInt(starts[i].childNodes[5].textContent)
+                    takeoffData.id = takeoffId;
+                    takeoffData.name = starts[i].childNodes[1].textContent;
+                    takeoffData.description = starts[i].childNodes[2].textContent;
+                    takeoffData.lat = parseFloat(starts[i].childNodes[3].textContent);
+                    takeoffData.lng = parseFloat(starts[i].childNodes[4].textContent);
+                    takeoffData.wind = parseInt(starts[i].childNodes[5].textContent);
+                    takeoffData.alt = parseInt(starts[i].childNodes[9].textContent);
+                    takeoffData.altdiff = parseInt(starts[i].childNodes[10].textContent);
                     Vue.set(this.takeoffs, takeoffData.id, takeoffData);
                   }
                   localStorage.setItem("flightlog_takeoffs", JSON.stringify(this.takeoffs));
                   localStorage.setItem("flightlog_last_updated", now);
                 });
             }
+          },
+
+          textToHtml: function(text) {
+            // escape dangerous characters
+            text = text.replace(/"/g, "&#34;").replace(/'/g, "&#39;").replace(/</g, "&#60;").replace(/>/g, "&#62;");
+            // replace newlines with <br />
+            text = text.replace(/\n/g, "<br />");
+            // add links to urls
+            text = text.replace(/(http:\/\/[^\s]+)/g, "<a href=\"\$1\">\$1</a>");
+            return text;
           },
 
           panMap: function(lat, lng) {
