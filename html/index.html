@@ -38,7 +38,7 @@
         <div id="takeoff-list">
           <input type="text">
           <br>
-          <div :id="'takeoff-' + takeoff.id" v-for="takeoff in takeoffs.slice(0, 10)">
+          <div :id="'takeoff-' + takeoff.id" v-for="takeoff in listTakeoffs">
            <svg viewBox="-105 -105 210 210" height="50" width="50">
               <circle r="104" stroke="black" stroke-width="2" fill="none" />
               <path v-show="(takeoff.wind & (1 << 7)) != 0" class="n" d="M 0 0 L -38.268 -92.388 A 100 100 0 0 1 38.268 -92.388 Z" stroke="none" fill="#05c70f" />
@@ -61,16 +61,21 @@
       var app = new Vue({
         el: '#flywithme',
         data: {
-          takeoffs: localStorage.getItem("flightlog_takeoffs") || [],
+          takeoffs: JSON.parse(localStorage.getItem("flightlog_takeoffs") || {}),
           googleMap: null
         },
         template: '#app',
+        computed: {
+          listTakeoffs: function(textFilter, lat, lng) {
+            // TODO: filter on text and/or lat/lng
+            return Object.values(this.takeoffs).slice(0, 10);
+          }
+        },
         methods: {
           getFlightlogTakeoffs: function() {
             var lastUpdated = localStorage.getItem("flightlog_last_updated") || 0;
             var now = new Date().getTime();
             var fetchDays = Math.ceil((now - lastUpdated) / 86400000);
-
             if (fetchDays > 5) {
               fetch("https://cors-anywhere.herokuapp.com/http://flightlog.org/?returntype=xml&rqtid=12&d=" + fetchDays, {
                 headers: {
@@ -82,28 +87,21 @@
                 .then(data => {
                   var starts = data.getElementsByTagName("start");
                   console.log("Updated takeoffs:", starts.length);
-                  var flightlogTakeoffs = [];
                   for (i = 0; i < starts.length; ++i) {
-                    var takeoffData = {
-                      id: starts[i].childNodes[0].textContent,
-                      name: starts[i].childNodes[1].textContent,
-                      description: starts[i].childNodes[2].textContent,
-                      lat: parseFloat(starts[i].childNodes[3].textContent),
-                      lng: parseFloat(starts[i].childNodes[4].textContent),
-                      wind: parseInt(starts[i].childNodes[5].textContent)
-                    }
-                    flightlogTakeoffs.push(takeoffData);
+                    var takeoffId = starts[i].childNodes[0].textContent;
+                    var takeoffData = this.takeoffs[takeoffId] || {};
+                    takeoffData.id = takeoffId,
+                    takeoffData.name = starts[i].childNodes[1].textContent,
+                    takeoffData.description = starts[i].childNodes[2].textContent,
+                    takeoffData.lat = parseFloat(starts[i].childNodes[3].textContent),
+                    takeoffData.lng = parseFloat(starts[i].childNodes[4].textContent),
+                    takeoffData.wind = parseInt(starts[i].childNodes[5].textContent)
+                    this.takeoffs[takeoffData.id] = takeoffData;
                   }
-                  // TODO: this overwrites existing takeoffs
-                  // TODO: we'll also have to handle takeoffs marked as favourites
-                  localStorage.setItem("flightlog_takeoffs", JSON.stringify(flightlogTakeoffs));
+                  localStorage.setItem("flightlog_takeoffs", JSON.stringify(this.takeoffs));
                   localStorage.setItem("flightlog_last_updated", now);
-                  
-                  app.takeoffs = JSON.parse(localStorage.getItem("flightlog_takeoffs"));
                 });
             }
-
-            app.takeoffs = JSON.parse(localStorage.getItem("flightlog_takeoffs")) || [];
           },
 
           panMap: function(lat, lng) {
@@ -130,22 +128,5 @@
       */
     </script>
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCq8s3A3SxPHvjlqagRp_JVcfTgU-lh7mo&callback=initMap"></script>
-    <!--
-    <start>
-    <id><![CDATA[6246]]></id>
-    <name><![CDATA[	Jorde på Løten, Klæpa airport]]></name>
-    <description><![CDATA[.]]></description>
-    <lat><![CDATA[60.79527778]]></lat>
-    <lon><![CDATA[11.34555556]]></lon>
-    <wind><![CDATA[56]]></wind>
-    <country_id><![CDATA[160]]></country_id>
-    <region_id><![CDATA[6]]></region_id>
-    <subregion_id><![CDATA[0]]></subregion_id>
-    <altitude><![CDATA[180]]></altitude>
-    <altitudediff><![CDATA[0]]></altitudediff>
-    <createdtime><![CDATA[2014-09-08 00:08:08]]></createdtime>
-    <updatedtime><![CDATA[2015-02-01 18:55:20]]></updatedtime>
-    </start>
-    -->
   </body>
 </html>
