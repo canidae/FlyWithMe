@@ -90,7 +90,7 @@
     <script>
       var takeoffListEntry = {
         view: function(vnode) {
-          var takeoff = vnode.attrs;
+          var takeoff = vnode.attrs.takeoff;
           return m("div", {id: takeoff.id, class: "takeoff"}, [
             m("svg", {class: "exits-image", viewBox: "-105 -105 210 210"}, [
               m("circle", {r: "104", stroke: "black", "stroke-width": "2", fill: "none"}),
@@ -103,7 +103,7 @@
               m("path", {visibility: (takeoff.wind & (1 << 1)) != 0 ? "visible" : "hidden", d: "M 0 0 L -92.388 38.268 A 100 100 0 0 1 -92.388 -38.268 Z", stroke: "none", fill: "#05c70f"}),
               m("path", {visibility: (takeoff.wind & (1 << 0)) != 0 ? "visible" : "hidden", d: "M 0 0 L -92.388 -38.268 A 100 100 0 0 1 -38.268 -92.388 Z", stroke: "none", fill: "#05c70f"})
             ]),
-            m("span", {class: "takeoff-name", onclick: "panMap(takeoff)"}, takeoff.name),
+            m("span", {class: "takeoff-name", onclick: function() {app.panMap(takeoff)}}, takeoff.name),
             m("img", {class: "noaa-image", src: "images/NOAA.svg"}),
             m("img", {class: "gmaps-image", src: "images/GoogleMaps.svg"})
           ]);
@@ -111,211 +111,90 @@
       };
 
       var takeoffList = {
-        view: function() {
-          var takeoffs = getTakeoffData();
+        view: function(vnode) {
+          var takeoffs = app.getTakeoffData();
           return m("div", {id: "takeoff-list"}, [
             m("input", {type: "text"}),
             m("br"),
             m("div", Object.values(takeoffs).slice(0, 10).map(function(takeoff) {
-              return m(takeoffListEntry, takeoff)
+              return m(takeoffListEntry, {key: takeoff.id, takeoff: takeoff})
             }))
           ]);
         }
       };
 
-      var main = {
+      var app = {
         view: function() {
           return m("main", [
             m(takeoffList),
             m("div", {id: "google-map-view"})
           ]);
+        },
+
+        // Get takeoff data, update if necessary
+        getTakeoffData: function() {
+          var lastUpdated = localStorage.getItem("flightlog_last_updated") || 0;
+          var now = new Date().getTime();
+          var fetchDays = Math.ceil((now - lastUpdated) / 86400000);
+          var takeoffs = JSON.parse(localStorage.getItem("flightlog_takeoffs") || "{}");
+          if (fetchDays > 5) {
+            fetch("https://cors-anywhere.herokuapp.com/http://flightlog.org/?returntype=xml&rqtid=12&d=" + fetchDays, {
+              headers: {
+                "Origin": null
+              }
+            })
+              .then(response => response.text())
+              .then(str => (new window.DOMParser()).parseFromString(str, "text/xml"))
+              .then(data => {
+                var starts = data.getElementsByTagName("start");
+                console.log("Updated takeoffs:", starts.length);
+                for (i = 0; i < starts.length; ++i) {
+                  var takeoffId = starts[i].childNodes[0].textContent;
+                  var takeoffData = takeoffs[takeoffId] || {};
+                  takeoffData.id = takeoffId;
+                  takeoffData.name = starts[i].childNodes[1].textContent;
+                  takeoffData.description = starts[i].childNodes[2].textContent;
+                  takeoffData.lat = parseFloat(starts[i].childNodes[3].textContent);
+                  takeoffData.lng = parseFloat(starts[i].childNodes[4].textContent);
+                  takeoffData.wind = parseInt(starts[i].childNodes[5].textContent);
+                  takeoffData.alt = parseInt(starts[i].childNodes[9].textContent);
+                  takeoffData.altdiff = parseInt(starts[i].childNodes[10].textContent);
+                  takeoffs[takeoffId] = takeoffData;
+                }
+                localStorage.setItem("flightlog_takeoffs", JSON.stringify(this.takeoffs));
+                localStorage.setItem("flightlog_last_updated", now);
+              });
+          }
+          return takeoffs;
+        },
+
+        // Convert text to html
+        textToHtml: function(text) {
+          // escape dangerous characters
+          text = text.replace(/"/g, "&#34;").replace(/'/g, "&#39;").replace(/</g, "&#60;").replace(/>/g, "&#62;");
+          // replace newlines with <br />
+          text = text.replace(/\n/g, "<br />");
+          // add links to urls
+          text = text.replace(/(http:\/\/[^\s]+)/g, "<a href=\"\$1\">\$1</a>");
+          return text;
+        },
+
+        // Initialize and add the map
+        initMap: function() {
+          app.googleMap = new google.maps.Map(document.getElementById('google-map-view'), {zoom: 11, center: {lat: 61.87416667, lng: 9.15472222}, mapTypeId: 'terrain'});
+          //var marker = new google.maps.Marker({position: rikssenter, map: app.googleMap});
+        },
+
+        // Pan map to position
+        panMap: function(position) {
+          console.log("Pan map to:", position);
+          app.googleMap.panTo(position);
         }
       };
 
-      m.mount(document.body, main, {});
-
-      // Initialize and add the map
-      function initMap() {
-        var googleMap = new google.maps.Map(document.getElementById('google-map-view'), {zoom: 11, center: {lat: 61.87416667, lng: 9.15472222}, mapTypeId: 'terrain'});
-        //var marker = new google.maps.Marker({position: rikssenter, map: app.googleMap});
-      }
-
-      // Get takeoff data, update if necessary
-      function getTakeoffData() {
-        var lastUpdated = localStorage.getItem("flightlog_last_updated") || 0;
-        var now = new Date().getTime();
-        var fetchDays = Math.ceil((now - lastUpdated) / 86400000);
-        var takeoffs = JSON.parse(localStorage.getItem("flightlog_takeoffs") || "{}");
-        if (fetchDays > 5) {
-          fetch("https://cors-anywhere.herokuapp.com/http://flightlog.org/?returntype=xml&rqtid=12&d=" + fetchDays, {
-            headers: {
-              "Origin": null
-            }
-          })
-            .then(response => response.text())
-            .then(str => (new window.DOMParser()).parseFromString(str, "text/xml"))
-            .then(data => {
-              var starts = data.getElementsByTagName("start");
-              console.log("Updated takeoffs:", starts.length);
-              for (i = 0; i < starts.length; ++i) {
-                var takeoffId = starts[i].childNodes[0].textContent;
-                var takeoffData = takeoffs[takeoffId] || {};
-                takeoffData.id = takeoffId;
-                takeoffData.name = starts[i].childNodes[1].textContent;
-                takeoffData.description = starts[i].childNodes[2].textContent;
-                takeoffData.lat = parseFloat(starts[i].childNodes[3].textContent);
-                takeoffData.lng = parseFloat(starts[i].childNodes[4].textContent);
-                takeoffData.wind = parseInt(starts[i].childNodes[5].textContent);
-                takeoffData.alt = parseInt(starts[i].childNodes[9].textContent);
-                takeoffData.altdiff = parseInt(starts[i].childNodes[10].textContent);
-                takeoffs[takeoffId] = takeoffData;
-              }
-              localStorage.setItem("flightlog_takeoffs", JSON.stringify(this.takeoffs));
-              localStorage.setItem("flightlog_last_updated", now);
-            });
-        }
-        return takeoffs;
-      }
+      // mount app
+      m.mount(document.body, app);
     </script>
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCq8s3A3SxPHvjlqagRp_JVcfTgU-lh7mo&callback=initMap"></script>
-
-
-    <!--
-    <div id="flywithme"></div>
-
-    <script id="app" type="text/x-template">
-      <div>
-        <div id="takeoff-list">
-          <input type="text">
-          <br>
-          <div :id="'takeoff-' + takeoff.id" class="takeoff" v-for="takeoff in listTakeoffs">
-           <svg class="exits-image" viewBox="-105 -105 210 210">
-              <circle r="104" stroke="black" stroke-width="2" fill="none" />
-              <path v-show="(takeoff.wind & (1 << 7)) != 0" class="n" d="M 0 0 L -38.268 -92.388 A 100 100 0 0 1 38.268 -92.388 Z" stroke="none" fill="#05c70f" />
-              <path v-show="(takeoff.wind & (1 << 6)) != 0" class="ne" d="M 0 0 L 38.268 -92.388 A 100 100 0 0 1 92.388 -38.268 Z" stroke="none" fill="#05c70f" />
-              <path v-show="(takeoff.wind & (1 << 5)) != 0" class="e" d="M 0 0 L 92.388 -38.268 A 100 100 0 0 1 92.388 38.268 Z" stroke="none" fill="#05c70f" />
-              <path v-show="(takeoff.wind & (1 << 4)) != 0" class="se" d="M 0 0 L 92.388 38.268 A 100 100 0 0 1 38.268 92.388 Z" stroke="none" fill="#05c70f" />
-              <path v-show="(takeoff.wind & (1 << 3)) != 0" class="s" d="M 0 0 L 38.268 92.388 A 100 100 0 0 1 -38.268 92.388 Z" stroke="none" fill="#05c70f" />
-              <path v-show="(takeoff.wind & (1 << 2)) != 0" class="sw" d="M 0 0 L -38.268 92.388 A 100 100 0 0 1 -92.388 38.268 Z" stroke="none" fill="#05c70f" />
-              <path v-show="(takeoff.wind & (1 << 1)) != 0" class="w" d="M 0 0 L -92.388 38.268 A 100 100 0 0 1 -92.388 -38.268 Z" stroke="none" fill="#05c70f" />
-              <path v-show="(takeoff.wind & (1 << 0)) != 0" class="nw" d="M 0 0 L -92.388 -38.268 A 100 100 0 0 1 -38.268 -92.388 Z" stroke="none" fill="#05c70f" />
-            </svg>
-            <span class="takeoff-name" @click="panMap(takeoff)">{{ takeoff.name }}</span>
-            <img class="noaa-image" src="images/NOAA.svg" />
-            <img class="gmaps-image" src="images/GoogleMaps.svg" />
-          </div>
-        </div>
-
-        <div is="takeoff-details"></div>
-
-        <div id="google-map-view"></div>
-      </div>
-    </script>
-
-    <script id="takeoff-details" type="text/x-template">
-      <div :takeoff="takeoff" v-if="takeoff">
-        <span class="takeoff-details-name">{{ takeoff.name }}</span>
-        <span class="takeoff-details-description" v-html="textToHtml(takeoff.description)"></span>
-      </div>
-    </script>
-
-    <script>
-      Vue.component('takeoff-details', {
-        props: {
-          takeoff: Object
-        },
-        data: function() {
-          return {
-          }
-        },
-        template: '#takeoff-details'
-      });
-
-      var app = new Vue({
-        el: '#flywithme',
-        data: {
-          takeoffs: JSON.parse(localStorage.getItem("flightlog_takeoffs") || "{}"),
-          takeoff: null,
-          googleMap: null
-        },
-        template: '#app',
-        computed: {
-          listTakeoffs: function() {
-            // TODO: replace with function to allow filter on text and/or lat/lng
-            this.takeoff = this.takeoffs["4"];
-            return Object.values(this.takeoffs).slice(0, 10);
-          }
-        },
-        methods: {
-          getFlightlogTakeoffs: function() {
-            var lastUpdated = localStorage.getItem("flightlog_last_updated") || 0;
-            var now = new Date().getTime();
-            var fetchDays = Math.ceil((now - lastUpdated) / 86400000);
-            if (fetchDays > 5) {
-              fetch("https://cors-anywhere.herokuapp.com/http://flightlog.org/?returntype=xml&rqtid=12&d=" + fetchDays, {
-                headers: {
-                  "Origin": null
-                }
-              })
-                .then(response => response.text())
-                .then(str => (new window.DOMParser()).parseFromString(str, "text/xml"))
-                .then(data => {
-                  var starts = data.getElementsByTagName("start");
-                  console.log("Updated takeoffs:", starts.length);
-                  for (i = 0; i < starts.length; ++i) {
-                    var takeoffId = starts[i].childNodes[0].textContent;
-                    var takeoffData = this.takeoffs[takeoffId] || {};
-                    takeoffData.id = takeoffId;
-                    takeoffData.name = starts[i].childNodes[1].textContent;
-                    takeoffData.description = starts[i].childNodes[2].textContent;
-                    takeoffData.lat = parseFloat(starts[i].childNodes[3].textContent);
-                    takeoffData.lng = parseFloat(starts[i].childNodes[4].textContent);
-                    takeoffData.wind = parseInt(starts[i].childNodes[5].textContent);
-                    takeoffData.alt = parseInt(starts[i].childNodes[9].textContent);
-                    takeoffData.altdiff = parseInt(starts[i].childNodes[10].textContent);
-                    Vue.set(this.takeoffs, takeoffData.id, takeoffData);
-                  }
-                  localStorage.setItem("flightlog_takeoffs", JSON.stringify(this.takeoffs));
-                  localStorage.setItem("flightlog_last_updated", now);
-                });
-            }
-          },
-
-          textToHtml: function(text) {
-            // escape dangerous characters
-            text = text.replace(/"/g, "&#34;").replace(/'/g, "&#39;").replace(/</g, "&#60;").replace(/>/g, "&#62;");
-            // replace newlines with <br />
-            text = text.replace(/\n/g, "<br />");
-            // add links to urls
-            text = text.replace(/(http:\/\/[^\s]+)/g, "<a href=\"\$1\">\$1</a>");
-            return text;
-          },
-
-          panMap: function(takeoff) {
-            console.log("Pan to:", takeoff.lat, takeoff.lng);
-            this.takeoff = takeoff;
-            this.googleMap.panTo({lat: takeoff.lat, lng: takeoff.lng});
-          }
-        }
-      });
-
-      app.getFlightlogTakeoffs();
-
-      // Initialize and add the map
-      function initMap() {
-        app.googleMap = new google.maps.Map(document.getElementById('google-map-view'), {zoom: 11, center: {lat: 61.87416667, lng: 9.15472222}, mapTypeId: 'terrain'});
-        //var marker = new google.maps.Marker({position: rikssenter, map: app.googleMap});
-      }
-
-      /*
-      navigator.geolocation.getCurrentPosition(function(location) {
-        console.log(location.coords.latitude);
-        console.log(location.coords.longitude);
-        console.log(location.coords.accuracy);
-      });
-      */
-    </script>
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCq8s3A3SxPHvjlqagRp_JVcfTgU-lh7mo&callback=initMap"></script>
-    -->
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCq8s3A3SxPHvjlqagRp_JVcfTgU-lh7mo&callback=app.initMap"></script>
   </body>
 </html>
