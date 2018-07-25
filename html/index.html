@@ -6,7 +6,9 @@
     <script src="https://unpkg.com/vue"></script>
     <style>
       * {
+      /*
         border: 1px solid;
+      */
       }
 
       #takeoff-list {
@@ -29,11 +31,11 @@
 
       #takeoff-details {
         position: absolute;
-          top: 0;
-          left: 0;
-          bottom: 0;
-          width: 500px;
-          margin: 8px;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        width: 500px;
+        margin: 8px;
       }
 
       .takeoff-details-name {
@@ -88,7 +90,7 @@
     <div id="flywithme"></div>
 
     <script id="app" type="text/x-template">
-      <div id="main">
+      <div>
         <div id="takeoff-list">
           <input type="text">
           <br>
@@ -104,22 +106,37 @@
               <path v-show="(takeoff.wind & (1 << 1)) != 0" class="w" d="M 0 0 L -92.388 38.268 A 100 100 0 0 1 -92.388 -38.268 Z" stroke="none" fill="#05c70f" />
               <path v-show="(takeoff.wind & (1 << 0)) != 0" class="nw" d="M 0 0 L -92.388 -38.268 A 100 100 0 0 1 -38.268 -92.388 Z" stroke="none" fill="#05c70f" />
             </svg>
-            <span class="takeoff-name" @click="panMap(takeoff.lat, takeoff.lng)">{{ takeoff.name }}</span>
+            <span class="takeoff-name" @click="panMap(takeoff)">{{ takeoff.name }}</span>
             <img class="noaa-image" src="images/NOAA.svg" />
             <img class="gmaps-image" src="images/GoogleMaps.svg" />
           </div>
         </div>
 
-        <div v-if="takeoff" id="takeoff-details">
-          <span class="takeoff-details-name">{{ takeoff.name }}</span>
-          <span v-html="textToHtml(takeoff.description)"></span>
-        </div>
+        <div is="takeoff-details"></div>
 
         <div id="google-map-view"></div>
       </div>
     </script>
 
+    <script id="takeoff-details" type="text/x-template">
+      <div :takeoff="takeoff" v-if="takeoff">
+        <span class="takeoff-details-name">{{ takeoff.name }}</span>
+        <span class="takeoff-details-description" v-html="textToHtml(takeoff.description)"></span>
+      </div>
+    </script>
+
     <script>
+      Vue.component('takeoff-details', {
+        props: {
+          takeoff: Object
+        },
+        data: function() {
+          return {
+          }
+        },
+        template: '#takeoff-details'
+      });
+
       var app = new Vue({
         el: '#flywithme',
         data: {
@@ -180,9 +197,10 @@
             return text;
           },
 
-          panMap: function(lat, lng) {
-            console.log("Pan to:", lat, lng);
-            this.googleMap.panTo({lat: lat, lng: lng});
+          panMap: function(takeoff) {
+            console.log("Pan to:", takeoff.lat, takeoff.lng);
+            this.takeoff = takeoff;
+            this.googleMap.panTo({lat: takeoff.lat, lng: takeoff.lng});
           }
         }
       });
