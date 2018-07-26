@@ -111,12 +111,23 @@
       };
 
       var takeoffList = {
+        takeoffSearch: "",
+        takeoffs: [],
+
+        setTakeoffSearch: function(value) {
+          takeoffList.takeoffSearch = value;
+          takeoffList.takeoffs = Object.values(app.getTakeoffData()).filter((takeoff) => takeoff.name.match(new RegExp(takeoffList.takeoffSearch, "i")));
+        },
+
+        oninit: function(vnode) {
+          takeoffList.takeoffs = app.getTakeoffData();
+        },
+
         view: function(vnode) {
-          var takeoffs = app.getTakeoffData();
           return m("div", {id: "takeoff-list"}, [
-            m("input", {type: "text"}),
+            m("input", {oninput: m.withAttr("value", this.setTakeoffSearch), value: this.takeoffSearch}),
             m("br"),
-            m("div", Object.values(takeoffs).slice(0, 10).map(function(takeoff) {
+            m("div", Object.values(this.takeoffs).slice(0, 10).map(function(takeoff) {
               return m(takeoffListEntry, {key: takeoff.id, takeoff: takeoff})
             }))
           ]);
