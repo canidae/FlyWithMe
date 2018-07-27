@@ -211,7 +211,7 @@
       var takeoffList = {
         view: (vnode) => {
           return m("div", {id: "takeoff-list"}, [
-            m("input", {oninput: m.withAttr("value", (text) => {FWM.searchText = text}), value: FWM.searchText}),
+            m("input", {onblur: (el) => {setTimeout(() => {el.target.focus()}, 10)}, oninput: m.withAttr("value", (text) => {FWM.searchText = text}), value: FWM.searchText}),
             m("br"),
             m("div", Object.values(FWM.takeoffs).filter((takeoff) => takeoff.name.match(new RegExp(FWM.searchText, "i"))).sort(FWM.sortTakeoffList).slice(0, 10).map((takeoff) => {
               return m(takeoffListEntry, {key: takeoff.id, takeoff: takeoff})
