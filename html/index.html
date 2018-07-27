@@ -161,6 +161,11 @@
           console.log("Pan map to:", position);
           FWM.googleMap.panTo(position);
           console.log(FWM.googleMap.getBounds().getNorthEast().lat());
+        },
+
+        toggleFavourite: (takeoff) => {
+          takeoff.favourite = !takeoff.favourite;
+          localStorage.setItem("flightlog_takeoffs", JSON.stringify(FWM.takeoffs));
         }
       };
 
@@ -180,8 +185,8 @@
               m("path", {visibility: (takeoff.wind & (1 << 0)) != 0 ? "visible" : "hidden", d: "M 0 0 L -92.388 -38.268 A 100 100 0 0 1 -38.268 -92.388 Z", stroke: "none", fill: "#05c70f"})
             ]),
             m("span", {class: "takeoff-name", onclick: () => {FWM.panMap(takeoff)}}, takeoff.name),
-            m("svg", {class: "favourite-image", width: "255", height: "240", viewBox: "0 0 51 48"}, [
-              m("path", {fill: "none", stroke: "#000", d: "m25,1 6,17h18l-14,11 5,17-15-10-15,10 5-17-14-11h18z"})
+            m("svg", {class: "favourite-image", viewBox: "0 0 51 48", onclick: () => {FWM.toggleFavourite(takeoff)}}, [
+              m("path", {fill: takeoff.favourite ? "yellow" : "none", stroke: "#000", d: "m25,1 6,17h18l-14,11 5,17-15-10-15,10 5-17-14-11h18z"})
             ]),
             m("img", {class: "noaa-image", src: "images/NOAA.svg"}),
             m("img", {class: "gmaps-image", src: "images/GoogleMaps.svg"})
