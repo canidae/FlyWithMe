@@ -28,28 +28,15 @@
         margin: 8px;
       }
 
-      #takeoff-details {
-        position: absolute;
-        top: 0;
-        left: 0;
-        bottom: 0;
-        width: 500px;
-        margin: 8px;
-      }
-
-      .takeoff-details-name {
-      }
-
-      .takeoff-details-description {
-        position: absolute;
-        left: 0;
-        right: 0;
-        top: 50px;
-      }
-
       .takeoff {
         position: relative;
         height: 50px;
+      }
+
+      .takeoff-exits-image {
+        position: absolute;
+        width: 48px;
+        height: 48px;
       }
 
       .takeoff-name {
@@ -59,39 +46,34 @@
         cursor: pointer;
       }
 
-      .exits-image {
+      .takeoff-expand-image {
         position: absolute;
-        width: 50px;
-        height: 50px;
-      }
-
-      .favourite-image {
-        position: absolute;
-        top: 0;
-        right: 0;
-        width: 50px;
-        height: 50px;
-        cursor: pointer;
-      }
-
-      .noaa-image {
-        position: absolute;
-        top: 0;
-        right: 50px;
-        width: 50px;
-        height: 50px;
-        cursor: pointer;
-      }
-
-      .gmaps-image {
-        position: absolute;
-        top: 0;
         right: 100px;
-        width: 50px;
-        height: 50px;
+        width: 48px;
+        height: 48px;
         cursor: pointer;
       }
 
+      .takeoff-favourite-image {
+        position: absolute;
+        right: 50px;
+        width: 48px;
+        height: 48px;
+        cursor: pointer;
+      }
+
+      .takeoff-noaa-image {
+        position: absolute;
+        right: 0;
+        width: 48px;
+        height: 48px;
+        cursor: pointer;
+      }
+
+      .takeoff-description {
+        position: absolute;
+        top: 50px;
+      }
     </style>
   </head>
   <body>
@@ -101,6 +83,7 @@
         googleMap: null,
         searchText: "",
         takeoffs: [],
+        sortedTakeoffs: [],
 
         // get takeoff data, update if necessary
         updateTakeoffData: () => {
@@ -163,12 +146,23 @@
           console.log(FWM.googleMap.getBounds().getNorthEast().lat());
         },
 
+        // expand takeoff details
+        showDetails: (el, takeoff) => {
+          console.log(el, takeoff);
+        },
+
+        // toggle takeoff favouritability
         toggleFavourite: (takeoff) => {
           takeoff.favourite = !takeoff.favourite;
           localStorage.setItem("flightlog_takeoffs", JSON.stringify(FWM.takeoffs));
         },
 
-        sortTakeoffList: (a, b) => {
+        sortTakeoffs: () => {
+            FWM.sortedTakeoffs = Object.values(FWM.takeoffs).filter((takeoff) => takeoff.name.match(new RegExp(FWM.searchText, "i"))).sort(FWM.takeoffSortComparator).slice(0, 20);
+        },
+
+        // sort takeoff based on favouritability, distance & name
+        takeoffSortComparator: (a, b) => {
           if (a.favourite && !b.favourite) {
             return -1;
           } else if (!a.favourite && b.favourite) {
@@ -187,7 +181,7 @@
         view: (vnode) => {
           var takeoff = vnode.attrs.takeoff;
           return m("div", {id: takeoff.id, class: "takeoff", onmouseover: () => {}, onmouseout: () => {}}, [
-            m("svg", {class: "exits-image", viewBox: "-105 -105 210 210"}, [
+            m("svg", {class: "takeoff-exits-image", viewBox: "-105 -105 210 210"}, [
               m("circle", {r: "104", stroke: "black", "stroke-width": "2", fill: "none"}),
               m("path", {visibility: (takeoff.wind & (1 << 7)) != 0 ? "visible" : "hidden", d: "M 0 0 L -38.268 -92.388 A 100 100 0 0 1  38.268 -92.388 Z", stroke: "none", fill: "#05c70f"}),
               m("path", {visibility: (takeoff.wind & (1 << 6)) != 0 ? "visible" : "hidden", d: "M 0 0 L  38.268 -92.388 A 100 100 0 0 1  92.388 -38.268 Z", stroke: "none", fill: "#05c70f"}),
@@ -199,11 +193,14 @@
               m("path", {visibility: (takeoff.wind & (1 << 0)) != 0 ? "visible" : "hidden", d: "M 0 0 L -92.388 -38.268 A 100 100 0 0 1 -38.268 -92.388 Z", stroke: "none", fill: "#05c70f"})
             ]),
             m("span", {class: "takeoff-name", onclick: () => {FWM.panMap(takeoff)}}, takeoff.name),
-            m("svg", {class: "favourite-image", viewBox: "0 0 51 48", onclick: () => {FWM.toggleFavourite(takeoff)}}, [
+            m("svg", {class: "takeoff-expand-image", onclick: () => {FWM.showDetails(this, takeoff)}, viewBox: "-105 -105 210 210"}, [
+              m("path", {d: "M -80 -30 L 0 30 L 80 -30", stroke: "black", "stroke-width": "16", fill: "none"})
+            ]),
+            m("svg", {class: "takeoff-favourite-image", viewBox: "0 0 51 48", onclick: () => {FWM.toggleFavourite(takeoff)}}, [
               m("path", {fill: takeoff.favourite ? "yellow" : "none", stroke: "#000", d: "m25,1 6,17h18l-14,11 5,17-15-10-15,10 5-17-14-11h18z"})
             ]),
-            m("img", {class: "noaa-image", src: "images/NOAA.svg"}),
-            m("img", {class: "gmaps-image", src: "images/GoogleMaps.svg"})
+            m("img", {class: "takeoff-noaa-image", src: "images/NOAA.svg"}),
+            m("div", {class: "takeoff-description", style: "visibility: hidden;"}, takeoff.description)
           ]);
         }
       };
@@ -211,9 +208,9 @@
       var takeoffList = {
         view: (vnode) => {
           return m("div", {id: "takeoff-list"}, [
-            m("input", {onblur: (el) => {setTimeout(() => {el.target.focus()}, 10)}, oninput: m.withAttr("value", (text) => {FWM.searchText = text}), value: FWM.searchText}),
+            m("input", {onblur: (el) => {setTimeout(() => {el.target.focus()}, 10)}, oninput: m.withAttr("value", (text) => {FWM.searchText = text; FWM.sortTakeoffs();}), value: FWM.searchText}),
             m("br"),
-            m("div", Object.values(FWM.takeoffs).filter((takeoff) => takeoff.name.match(new RegExp(FWM.searchText, "i"))).sort(FWM.sortTakeoffList).slice(0, 10).map((takeoff) => {
+            m("div", FWM.sortedTakeoffs.map((takeoff) => {
               return m(takeoffListEntry, {key: takeoff.id, takeoff: takeoff})
             }))
           ]);
@@ -223,6 +220,7 @@
       var main = {
         oninit: (vnode) => {
           FWM.updateTakeoffData();
+          FWM.sortTakeoffs();
         },
 
         view: () => {
