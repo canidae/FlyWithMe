@@ -10,6 +10,14 @@
       */
       }
 
+      body {
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+      }
+
       #takeoff-list {
         position: absolute;
         top: 0;
@@ -17,6 +25,8 @@
         bottom: 0;
         width: 500px;
         margin: 8px;
+        overflow: scroll;
+        overflow-x: hidden;
       }
 
       #google-map-view {
@@ -30,43 +40,67 @@
 
       .takeoff {
         position: relative;
-        height: 50px;
+        height: 40px;
+        cursor: pointer;
+        margin: 4px 0 4px 0;
       }
 
       .takeoff-exits-image {
         position: absolute;
-        width: 48px;
-        height: 48px;
+        width: 38px;
+        height: 38px;
       }
 
       .takeoff-name {
         position: absolute;
         left: 50px;
-        height: 50px;
-        cursor: pointer;
+        right: 150px;
+        height: 20px;
+        white-space: nowrap;
+        overflow: hidden;
+      }
+
+      .takeoff-alt {
+        position: absolute;
+        top: 20px;
+        left: 50px;
+        width: 110px;
+        height: 20px;
+        white-space: nowrap;
+        overflow: hidden;
+      }
+
+      .takeoff-alt-diff {
+        position: absolute;
+        top: 20px;
+        left: 180px;
+        width: 100px;
+        height: 20px;
+        white-space: nowrap;
+        overflow: hidden;
       }
 
       .takeoff-expand-image {
         position: absolute;
-        right: 100px;
-        width: 48px;
-        height: 48px;
+        right: 91px;
+        width: 38px;
+        height: 38px;
         cursor: pointer;
       }
 
       .takeoff-favourite-image {
         position: absolute;
-        right: 50px;
-        width: 48px;
-        height: 48px;
+        right: 48px;
+        width: 38px;
+        height: 38px;
         cursor: pointer;
       }
 
       .takeoff-noaa-image {
         position: absolute;
-        right: 0;
-        width: 48px;
-        height: 48px;
+        right: 5px;
+        width: 38px;
+        height: 38px;
         cursor: pointer;
       }
 
@@ -180,7 +214,7 @@
       var takeoffListEntry = {
         view: (vnode) => {
           var takeoff = vnode.attrs.takeoff;
-          return m("div", {id: takeoff.id, class: "takeoff", onmouseover: () => {}, onmouseout: () => {}}, [
+          return m("div", {id: takeoff.id, class: "takeoff", style: vnode.attrs.style, onclick: () => {FWM.panMap(takeoff)}, onmouseover: () => {}, onmouseout: () => {}}, [
             m("svg", {class: "takeoff-exits-image", viewBox: "-105 -105 210 210"}, [
               m("circle", {r: "104", stroke: "black", "stroke-width": "2", fill: "none"}),
               m("path", {visibility: (takeoff.wind & (1 << 7)) != 0 ? "visible" : "hidden", d: "M 0 0 L -38.268 -92.388 A 100 100 0 0 1  38.268 -92.388 Z", stroke: "none", fill: "#05c70f"}),
@@ -192,14 +226,16 @@
               m("path", {visibility: (takeoff.wind & (1 << 1)) != 0 ? "visible" : "hidden", d: "M 0 0 L -92.388  38.268 A 100 100 0 0 1 -92.388 -38.268 Z", stroke: "none", fill: "#05c70f"}),
               m("path", {visibility: (takeoff.wind & (1 << 0)) != 0 ? "visible" : "hidden", d: "M 0 0 L -92.388 -38.268 A 100 100 0 0 1 -38.268 -92.388 Z", stroke: "none", fill: "#05c70f"})
             ]),
-            m("span", {class: "takeoff-name", onclick: () => {FWM.panMap(takeoff)}}, takeoff.name),
-            m("svg", {class: "takeoff-expand-image", onclick: () => {FWM.showDetails(this, takeoff)}, viewBox: "-105 -105 210 210"}, [
+            m("span", {class: "takeoff-name"}, takeoff.name),
+            m("span", {class: "takeoff-alt"}, "Height: " + takeoff.alt),
+            m("span", {class: "takeoff-alt-diff"}, "Diff: " + takeoff.altdiff),
+            m("svg", {class: "takeoff-expand-image", onclick: (e) => {FWM.showDetails(this, takeoff); e.stopPropagation();}, viewBox: "-105 -105 210 210"}, [
               m("path", {d: "M -80 -30 L 0 30 L 80 -30", stroke: "black", "stroke-width": "16", fill: "none"})
             ]),
-            m("svg", {class: "takeoff-favourite-image", viewBox: "0 0 51 48", onclick: () => {FWM.toggleFavourite(takeoff)}}, [
+            m("svg", {class: "takeoff-favourite-image", viewBox: "0 0 51 48", onclick: (e) => {FWM.toggleFavourite(takeoff); e.stopPropagation();}}, [
               m("path", {fill: takeoff.favourite ? "yellow" : "none", stroke: "#000", d: "m25,1 6,17h18l-14,11 5,17-15-10-15,10 5-17-14-11h18z"})
             ]),
-            m("img", {class: "takeoff-noaa-image", src: "images/NOAA.svg"}),
+            m("img", {class: "takeoff-noaa-image", src: "images/NOAA.svg", onclick: (e) => {e.stopPropagation();}}),
             m("div", {class: "takeoff-description", style: "visibility: hidden;"}, takeoff.description)
           ]);
         }
@@ -208,10 +244,11 @@
       var takeoffList = {
         view: (vnode) => {
           return m("div", {id: "takeoff-list"}, [
+            m("span", "Search:"),
             m("input", {onblur: (el) => {setTimeout(() => {el.target.focus()}, 10)}, oninput: m.withAttr("value", (text) => {FWM.searchText = text; FWM.sortTakeoffs();}), value: FWM.searchText}),
             m("br"),
-            m("div", FWM.sortedTakeoffs.map((takeoff) => {
-              return m(takeoffListEntry, {key: takeoff.id, takeoff: takeoff})
+            m("div", FWM.sortedTakeoffs.map((takeoff, index) => {
+              return m(takeoffListEntry, {key: takeoff.id, takeoff: takeoff, style: "background-color: " + (index % 2 == 0 ? "#fff;" : "#eee;")})
             }))
           ]);
         }
