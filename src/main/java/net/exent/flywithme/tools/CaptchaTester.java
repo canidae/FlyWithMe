@@ -1,6 +1,6 @@
-package net.exent.flywithme.server.tools;
+package net.exent.flywithme.tools;
 
-import net.exent.flywithme.server.util.NoaaProxy;
+import net.exent.flywithme.util.NoaaProxy;
 
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;

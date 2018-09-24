@@ -1,4 +1,4 @@
-package net.exent.flywithme.server.util;
+package net.exent.flywithme.util;
 
 import com.google.appengine.api.memcache.ErrorHandlers;
 import com.google.appengine.api.memcache.MemcacheService;
@@ -6,9 +6,8 @@ import com.google.appengine.api.memcache.MemcacheServiceException;
 import com.google.appengine.api.memcache.MemcacheServiceFactory;
 import com.googlecode.objectify.ObjectifyService;
 
-import net.exent.flywithme.server.bean.Forecast;
-import net.exent.flywithme.server.bean.Pilot;
-import net.exent.flywithme.server.bean.Takeoff;
+import net.exent.flywithme.bean.Forecast;
+import net.exent.flywithme.bean.Takeoff;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,13 +23,12 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
 public class DataStore {
     private static final Logger log = Logger.getLogger(DataStore.class.getName());
     private static final String TAKEOFFS_RECENTLY_UPDATED_KEY_PREFIX = "takeoffs_recently_updated_";
-    private static final String ALL_PILOTS_KEY = "all_pilots";
     private static final long FORECAST_CACHE_LIFETIME = 21600000; // 6 hours
 
     static {
         ObjectifyService.register(Forecast.class);
-        ObjectifyService.register(Pilot.class);
         ObjectifyService.register(Takeoff.class);
+        ObjectifyService.init();
     }
 
     public static Takeoff loadTakeoff(long takeoffId) {
@@ -76,55 +74,6 @@ public class DataStore {
                 .list();
         memcacheSaveLargeList(key, takeoffs);
         return takeoffs;
-    }
-
-    public static Pilot loadPilot(String pilotId) {
-        String key = "pilot_" + pilotId;
-        Pilot pilot = (Pilot) memcacheLoad(key);
-        if (pilot == null) {
-            log.info("Loading pilot from datastore");
-            pilot = ofy().load().type(Pilot.class).id(pilotId).now();
-            memcacheSave(key, pilot);
-        }
-        return pilot;
-    }
-
-    public static void savePilot(Pilot pilot) {
-        log.info("Saving pilot to datastore");
-        ofy().save().entity(pilot).now();
-        String key = "pilot_" + pilot.getId();
-        memcacheSave(key, pilot);
-        memcacheDeleteLargeList(ALL_PILOTS_KEY); // NOTE: important
-    }
-
-    public static void deletePilot(String pilotId) {
-        Pilot pilot = loadPilot(pilotId);
-        if (pilot == null) {
-            return;
-        }
-        String key = "pilot_" + pilot.getId();
-        log.info("Deleting pilot from datastore");
-        ofy().delete().entity(pilot).now();
-        memcacheDelete(key);
-        memcacheDeleteLargeList(ALL_PILOTS_KEY); // NOTE: important
-    }
-
-    public static List<Pilot> getAllPilots() {
-        List<Object> cachedPilots = memcacheLoadLargeList(ALL_PILOTS_KEY);
-        if (cachedPilots != null) {
-            try {
-                List<Pilot> pilots = new ArrayList<>();
-                for (Object object : cachedPilots)
-                    pilots.add((Pilot) object);
-                return pilots;
-            } catch (Exception e) {
-                log.log(Level.WARNING, "Something's wrong with memcache entry for all pilots", e);
-            }
-        }
-        log.info("Loading all pilots from datastore");
-        List<Pilot> pilots = ofy().load().type(Pilot.class).list();
-        memcacheSaveLargeList(ALL_PILOTS_KEY, pilots);
-        return pilots;
     }
 
     public static Forecast loadForecast(long takeoffId, Forecast.ForecastType type, long validFor) {

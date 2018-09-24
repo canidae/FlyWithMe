@@ -1,29 +1,12 @@
-package net.exent.flywithme.server.util;
+package net.exent.flywithme.util;
 
-import com.google.appengine.api.datastore.DatastoreService;
-import com.google.appengine.api.datastore.DatastoreServiceFactory;
-import com.google.appengine.api.datastore.Entity;
-import com.google.appengine.repackaged.com.google.api.client.util.SecurityUtils;
-import com.google.appengine.tools.remoteapi.RemoteApiInstaller;
-import com.google.appengine.tools.remoteapi.RemoteApiOptions;
-import com.googlecode.objectify.ObjectifyService;
-
-import net.exent.flywithme.server.bean.Takeoff;
+import net.exent.flywithme.bean.Takeoff;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.EOFException;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.net.URL;
-import java.security.GeneralSecurityException;
-import java.security.PrivateKey;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -33,8 +16,6 @@ import java.util.regex.Pattern;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-
-import static com.googlecode.objectify.ObjectifyService.ofy;
 
 /**
  * Tool for fetching data from flightlog.org.
@@ -68,7 +49,7 @@ public class FlightlogProxy {
         }
 
         @Override
-        public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
+        public void startElement(String namespaceURI, String localName, String qName, Attributes atts) {
             if ("start".equals(qName)) {
                 currentTakeoff = new Takeoff();
                 long now = System.currentTimeMillis();
@@ -80,12 +61,12 @@ public class FlightlogProxy {
         }
 
         @Override
-        public void characters (char ch[], int start, int length) throws SAXException {
+        public void characters (char ch[], int start, int length) {
             currentData.append(ch, start, length);
         }
 
         @Override
-        public void endElement (String uri, String localName, String qName) throws SAXException {
+        public void endElement (String uri, String localName, String qName) {
             switch (qName) {
                 case "start":
                     takeoffs.add(currentTakeoff);
@@ -156,6 +137,7 @@ public class FlightlogProxy {
         }
     }
 
+    /* TODO: handle building up entire database from scratch: should probably just supply a prefetched takeoffs.xml
     public static void main(String... args) throws Exception {
         List<Takeoff> takeoffs = fetchUpdatedTakeoffs(999999); // 999999 days ago should fetch all takeoffs from flightlog
         if (takeoffs != null) {
@@ -173,12 +155,12 @@ public class FlightlogProxy {
             }
             outputStream.close();
 
-            /* test flywithme.dat by reading it (had some unexplainable issues where the file somehow got corrupted) */
+            // test flywithme.dat by reading it (had some unexplainable issues where the file somehow got corrupted)
             DataInputStream inputStream = new DataInputStream(new FileInputStream("flywithme.dat"));
             try {
                 long imported = inputStream.readLong();
                 while (true) {
-                    /* loop breaks once we get an EOFException */
+                    // loop breaks once we get an EOFException
                     int takeoffId = inputStream.readShort();
                     String name = inputStream.readUTF();
                     String description = inputStream.readUTF();
@@ -216,4 +198,5 @@ public class FlightlogProxy {
             System.out.println("Unable to fetch takeoffs from server...?");
         }
     }
+    */
 }

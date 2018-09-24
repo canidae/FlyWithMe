@@ -1,4 +1,4 @@
-package net.exent.flywithme.server.bean;
+package net.exent.flywithme.bean;
 
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;

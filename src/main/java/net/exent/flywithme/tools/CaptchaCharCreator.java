@@ -1,4 +1,4 @@
-package net.exent.flywithme.server.tools;
+package net.exent.flywithme.tools;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
