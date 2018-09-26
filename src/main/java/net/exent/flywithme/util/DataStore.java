@@ -26,7 +26,6 @@ public class DataStore {
     static {
         ObjectifyService.register(Forecast.class);
         ObjectifyService.register(Takeoff.class);
-        ObjectifyService.init();
     }
 
     public static Takeoff loadTakeoff(long takeoffId) {

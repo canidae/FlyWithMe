@@ -20,7 +20,8 @@ import java.util.List;
 public class FlyWithMe extends HttpServlet {
     private static final Log log = new Log();
 
-    static {
+    @Override
+    public void init() {
         ObjectifyService.init();
     }
 
