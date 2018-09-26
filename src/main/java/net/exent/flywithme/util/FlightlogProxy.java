@@ -6,11 +6,11 @@ import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.helpers.DefaultHandler;
 
+import java.io.File;
+import java.io.FileReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -21,20 +21,26 @@ import javax.xml.parsers.SAXParserFactory;
  * Tool for fetching data from flightlog.org.
  */
 public class FlightlogProxy {
-    private static final Logger log = Logger.getLogger(FlightlogProxy.class.getName());
+    private static final Log log = new Log();
 
     private static final String UPDATED_URL = "http://flightlog.org/?returntype=xml&rqtid=12&d=";
     private static final Pattern UNICODE_PATTERN = Pattern.compile("&#(\\d+);", Pattern.DOTALL);
 
     public static List<Takeoff> fetchUpdatedTakeoffs(long days) {
         try {
-            URL url = new URL(UPDATED_URL + days);
-            SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
             TakeoffDataHandler takeoffDataHandler = new TakeoffDataHandler();
-            saxParser.parse(new InputSource(url.openStream()), takeoffDataHandler);
+            SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
+            if (days > 365) {
+                // not updated in a year, most likely an empty database
+                saxParser.parse(new InputSource(new FileReader(new File("resources", "flightlog.org.xml"))), takeoffDataHandler);
+            } else {
+                // less than a year since last update, takeoff database likely exist
+                URL url = new URL(UPDATED_URL + days);
+                saxParser.parse(new InputSource(url.openStream()), takeoffDataHandler);
+            }
             return takeoffDataHandler.getTakeoffs();
         } catch (Exception e) {
-            log.log(Level.WARNING, "Unable to fetch list of updated takeoffs within the last " + days + " days", e);
+            log.w(e, "Unable to fetch list of updated takeoffs within the last ", days, " days");
         }
         return null;
     }

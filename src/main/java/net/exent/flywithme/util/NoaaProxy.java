@@ -24,8 +24,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -33,7 +31,7 @@ import java.util.regex.Pattern;
  * Tool for fetching data from ready.noaa.gov.
  */
 public class NoaaProxy {
-    private static final Logger log = Logger.getLogger(NoaaProxy.class.getName());
+    private static final Log log = new Log();
 
     private static final int CAPTCHA_Y_OFFSET = 36;
     private static final int BLACK = -16777216;
@@ -70,7 +68,7 @@ public class NoaaProxy {
     static {
         try {
             captchaCharacters = new HashMap<>();
-            File directory = new File("captcha_bitmaps");
+            File directory = new File("resources", "captcha_bitmaps");
             for (File file : directory.listFiles()) {
                 GifDecoder.GifImage image = GifDecoder.read(new FileInputStream(file));
                 int[] pixels = image.getFrame(0);
@@ -119,9 +117,9 @@ public class NoaaProxy {
                         return meteogramImage;
                 }
             } catch (Exception e) {
-                log.log(Level.WARNING, "Failed fetching meteogram image", e);
+                log.w(e, "Failed fetching meteogram image");
             }
-            log.info("No meteogram image returned, updating cached data and trying to solve new captcha");
+            log.i("No meteogram image returned, updating cached data and trying to solve new captcha");
             updateFieldsAndCaptcha(latitude, longitude);
         }
         return null;
@@ -161,10 +159,10 @@ public class NoaaProxy {
                         }
                     }
                 } catch (Exception e) {
-                    log.log(Level.WARNING, "Failed fetching sounding profile/theta/text images", e);
+                    log.w(e, "Failed fetching sounding profile/theta/text images");
                 }
             }
-            log.info("No sounding profile/theta/text images returned, updating cached data and trying to solve new captcha");
+            log.i("No sounding profile/theta/text images returned, updating cached data and trying to solve new captcha");
             updateFieldsAndCaptcha(latitude, longitude);
         }
         return null;
@@ -193,13 +191,13 @@ public class NoaaProxy {
                     continue;
                 noaaCaptcha = solveCaptcha(fetchImage(NOAA_URL + captchaImageUrl));
             } catch (Exception e) {
-                log.log(Level.WARNING, "Failed fetching CAPTCHA image", e);
+                log.w(e, "Failed fetching CAPTCHA image");
             }
         }
     }
 
     private static URLConnection fetchPage(String url) {
-        log.info("Fetching page: " + url);
+        log.i("Fetching page: ", url);
         try {
             URLConnection urlConnection = new URL(url).openConnection();
             urlConnection.setConnectTimeout(60000);
@@ -212,7 +210,7 @@ public class NoaaProxy {
                 urlConnection.connect();
                 return urlConnection;
             } catch (Exception e2) {
-                log.log(Level.WARNING, "Unable to fetch page: " + url, e);
+                log.w(e, "Unable to fetch page: ", url);
             }
         }
         return null;
@@ -228,7 +226,7 @@ public class NoaaProxy {
             in.close();
             return sb.toString();
         } catch (Exception e) {
-            log.log(Level.WARNING, "Unable to fetch page content", e);
+            log.w(e, "Unable to fetch page content");
         }
         return null;
     }
@@ -263,13 +261,13 @@ public class NoaaProxy {
                 baos.write(buffer, 0, read);
             return baos.toByteArray();
         } catch (Exception e) {
-            log.log(Level.WARNING, "Unable to fetch image", e);
+            log.w(e, "Unable to fetch image");
         }
         return null;
     }
 
     public static String solveCaptcha(byte[] captchaImage) throws Exception {
-        log.info("CAPTCHA image size: " + captchaImage.length);
+        log.i("CAPTCHA image size: ", captchaImage.length);
         GifDecoder.GifImage image = GifDecoder.read(captchaImage);
         List<CaptchaStringMatch> possibleMatches = findPossibleCaptchas(image, 0, image.getWidth() / 4, new ArrayList<CaptchaCharacterMatch>());
         Collections.sort(possibleMatches, new Comparator<CaptchaStringMatch>() {
@@ -281,10 +279,10 @@ public class NoaaProxy {
         });
         if (possibleMatches.size() > 0) {
             String captcha = possibleMatches.get(0).captcha;
-            log.info("Found " + possibleMatches.size() + " possible CAPTCHA matches, I think this is correct: " + captcha);
+            log.i("Found ", possibleMatches.size(), " possible CAPTCHA matches, I think this is correct: ", captcha);
             return captcha;
         } else {
-            log.info("Unable to solve this CAPTCHA");
+            log.i("Unable to solve this CAPTCHA");
             return null;
         }
     }

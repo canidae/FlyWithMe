@@ -11,8 +11,6 @@ import net.exent.flywithme.bean.Takeoff;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
@@ -21,7 +19,7 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
  * It will also use Memcache to reduce amount of calls to Google Datastore (which is limited by a quota).
  */
 public class DataStore {
-    private static final Logger log = Logger.getLogger(DataStore.class.getName());
+    private static final Log log = new Log();
     private static final String TAKEOFFS_RECENTLY_UPDATED_KEY_PREFIX = "takeoffs_recently_updated_";
     private static final long FORECAST_CACHE_LIFETIME = 21600000; // 6 hours
 
@@ -35,7 +33,7 @@ public class DataStore {
         String key = "takeoff_" + takeoffId;
         Takeoff takeoff = (Takeoff) memcacheLoad(key);
         if (takeoff == null) {
-            log.info("Loading takeoff from datastore");
+            log.i("Loading takeoff from datastore");
             takeoff = ofy().load().type(Takeoff.class).id(takeoffId).now();
             memcacheSave(key, takeoff);
         }
@@ -43,7 +41,7 @@ public class DataStore {
     }
 
     public static void saveTakeoff(Takeoff takeoff) {
-        log.info("Saving takeoff to datastore");
+        log.i("Saving takeoff to datastore");
         ofy().save().entity(takeoff).now();
         String key = "takeoff_" + takeoff.getId();
         memcacheSave(key, takeoff);
@@ -51,7 +49,7 @@ public class DataStore {
 
     public static Takeoff getLastCheckedTakeoff() {
         // this is only called when updating takeoffs (not very often), no need to memcache
-        log.info("Loading last checked takeoff from datastore");
+        log.i("Loading last checked takeoff from datastore");
         return ofy().load().type(Takeoff.class).order("-lastChecked").first().now();
     }
 
@@ -65,10 +63,10 @@ public class DataStore {
                     takeoffs.add((Takeoff) object);
                 return takeoffs;
             } catch (Exception e) {
-                log.log(Level.WARNING, "Something's wrong with memcache entry for recently updated takeoffs", e);
+                log.w(e, "Something's wrong with memcache entry for recently updated takeoffs");
             }
         }
-        log.info("Loading recently updated takeoffs from datastore");
+        log.i("Loading recently updated takeoffs from datastore");
         List<Takeoff> takeoffs = ofy().load().type(Takeoff.class)
                 .filter("lastUpdated >=", updatedAfter)
                 .list();
@@ -81,7 +79,7 @@ public class DataStore {
         String key = "forecast_" + takeoffId + "_" + type + "_" + now / FORECAST_CACHE_LIFETIME + "_" + validFor;
         Forecast forecast = (Forecast) memcacheLoad(key);
         if (forecast == null) {
-            log.info("Loading forecast from datastore");
+            log.i("Loading forecast from datastore");
             forecast = ofy().load().type(Forecast.class)
                     .filter("takeoffId", takeoffId)
                     .filter("type", type)
@@ -94,7 +92,7 @@ public class DataStore {
     }
 
     public static void saveForecast(Forecast forecast) {
-        log.info("Saving forecast to datastore");
+        log.i("Saving forecast to datastore");
         ofy().save().entity(forecast).now();
         String key = "forecast_" + forecast.getTakeoffId() + "_" + forecast.getType() + "_" + System.currentTimeMillis() / FORECAST_CACHE_LIFETIME + "_" + forecast.getValidFor();
         memcacheSave(key, forecast);
@@ -111,7 +109,7 @@ public class DataStore {
             memcache.setErrorHandler(ErrorHandlers.getStrict());
             return memcache.get(key);
         } catch (Exception e) {
-            log.log(Level.WARNING, "Unable to load object from memcache. Key: " + key, e);
+            log.w(e, "Unable to load object from memcache. Key: ", key);
             return null;
         }
     }
@@ -122,7 +120,7 @@ public class DataStore {
             memcache.setErrorHandler(ErrorHandlers.getStrict());
             memcache.put(key, object);
         } catch (Exception e) {
-            log.log(Level.WARNING, "Unable to save object to memcache. Key: " + key, e);
+            log.w(e, "Unable to save object to memcache. Key: ", key);
         }
     }
 
@@ -132,7 +130,7 @@ public class DataStore {
             memcache.setErrorHandler(ErrorHandlers.getStrict());
             return memcache.delete(key);
         } catch (Exception e) {
-            log.log(Level.WARNING, "Unable to delete object from memcache. Key: " + key, e);
+            log.w(e, "Unable to delete object from memcache. Key: ", key);
             return false;
         }
     }
@@ -148,14 +146,14 @@ public class DataStore {
             for (int chunk = 0; chunk < chunks; ++chunk) {
                 List subList = (List) memcache.get(keyPrefix + chunk);
                 if (subList == null) {
-                    log.warning("Seems like we're missing some chunks, must read again from datastore");
+                    log.w("Seems like we're missing some chunks, must read again from datastore");
                     return null;
                 }
                 result.addAll(subList);
             }
             return result;
         } catch (Exception e) {
-            log.log(Level.WARNING, "Unable to load large list from memcache. Key prefix: " + keyPrefix, e);
+            log.w(e, "Unable to load large list from memcache. Key prefix: ", keyPrefix);
             return null;
         }
     }
@@ -183,7 +181,7 @@ public class DataStore {
                 }
             }
         } catch (Exception e) {
-            log.log(Level.WARNING, "Unable to save large list to memcache. Key prefix: " + keyPrefix, e);
+            log.w(e, "Unable to save large list to memcache. Key prefix: ", keyPrefix);
         }
     }
 
@@ -193,7 +191,7 @@ public class DataStore {
             memcache.setErrorHandler(ErrorHandlers.getStrict());
             return memcache.delete(keyPrefix); // enough to just delete the entry with chunk size
         } catch (Exception e) {
-            log.log(Level.WARNING, "Unable to delete large list from memcache. Key prefix: " + keyPrefix, e);
+            log.w(e, "Unable to delete large list from memcache. Key prefix: ", keyPrefix);
             return false;
         }
     }

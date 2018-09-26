@@ -5,6 +5,7 @@ import net.exent.flywithme.bean.Forecast;
 import net.exent.flywithme.bean.Takeoff;
 import net.exent.flywithme.util.DataStore;
 import net.exent.flywithme.util.FlightlogProxy;
+import net.exent.flywithme.util.Log;
 import net.exent.flywithme.util.NoaaProxy;
 
 import javax.servlet.annotation.WebServlet;
@@ -14,13 +15,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 @WebServlet(name = "FlyWithMe", value = "/flywithme")
 public class FlyWithMe extends HttpServlet {
-    private static final Logger log = Logger.getLogger(FlyWithMe.class.getName());
-
+    private static final Log log = new Log();
 
     static {
         ObjectifyService.init();
@@ -44,8 +42,9 @@ public class FlyWithMe extends HttpServlet {
            - /thermals
          */
         String path = request.getPathInfo();
+        log.d("Request: ", path);
         if (path.equals("/takeoffs")) {
-            System.out.println("hello");
+            updateTakeoffData();
         }
     }
 
@@ -58,7 +57,7 @@ public class FlyWithMe extends HttpServlet {
         // need to fetch forecast
         Takeoff takeoff = DataStore.loadTakeoff(takeoffId);
         if (takeoff == null) {
-            log.warning("Client asked for meteogram for a takeoff that doesn't seem to exist in our database: " + takeoffId);
+            log.w("Client asked for meteogram for a takeoff that doesn't seem to exist in our database: ", takeoffId);
             return null;
         }
         forecast = new Forecast();
@@ -74,7 +73,7 @@ public class FlyWithMe extends HttpServlet {
         timestamp = (timestamp / 10800) * 10800000; // aligns timestamp with valid values for sounding (sounding every 3rd hour) and converts to milliseconds
         long now = System.currentTimeMillis();
         if (timestamp < now - 86400000) { // 86400000 = 1 day
-            log.info("Client tried to retrieve sounding for takeoff '" + takeoffId + "' with timestamp '" + timestamp + "', but that timestamp was a long time ago");
+            log.i("Client tried to retrieve sounding for takeoff '", takeoffId, "' with timestamp '", timestamp, "', but that timestamp was a long time ago");
             return null;
         }
         Forecast profile = DataStore.loadForecast(takeoffId, Forecast.ForecastType.PROFILE, timestamp);
@@ -91,7 +90,7 @@ public class FlyWithMe extends HttpServlet {
         // need to fetch sounding, theta and text
         Takeoff takeoff = DataStore.loadTakeoff(takeoffId);
         if (takeoff == null) {
-            log.warning("Client asked for sounding for a takeoff that doesn't seem to exist in our database: " + takeoffId);
+            log.w("Client asked for sounding for a takeoff that doesn't seem to exist in our database: ", takeoffId);
             return null;
         }
         List<byte[]> images = NoaaProxy.fetchSounding(takeoff.getLatitude(), takeoff.getLongitude(), timestamp);
@@ -138,24 +137,24 @@ public class FlyWithMe extends HttpServlet {
         long daysToCheck = Math.round((double) (System.currentTimeMillis() - lastChecked) / 86400000.0) + 1;
         if (daysToCheck <= 1)
             return; // less than a day since we last checked
-        log.info("Checking for updated takeoffs within the last " + daysToCheck + " days");
+        log.i("Checking for updated takeoffs within the last ", daysToCheck, " days");
 
         List<Takeoff> takeoffs = FlightlogProxy.fetchUpdatedTakeoffs(daysToCheck);
         if (takeoffs != null) {
-            log.info("Found " + takeoffs.size() + " takeoffs updated within the last " + daysToCheck + " days");
+            log.i("Found ", takeoffs.size(), " takeoffs updated within the last ", daysToCheck, " days");
             for (Takeoff updatedTakeoff : takeoffs) {
-                log.info("Attempting to update takeoff with ID " + updatedTakeoff.getId());
+                log.i("Attempting to update takeoff with ID ", updatedTakeoff.getId());
                 try {
                     Takeoff existing = DataStore.loadTakeoff(updatedTakeoff.getId());
                     if (updatedTakeoff.equals(existing)) {
                         updatedTakeoff.setLastUpdated(existing.getLastUpdated()); // data not changed, keep "lastUpdated"
-                        log.info("No new data for takeoff with ID " + updatedTakeoff.getId());
+                        log.i("No new data for takeoff with ID ", updatedTakeoff.getId());
                     } else {
-                        log.info("Updated data for takeoff with ID " + updatedTakeoff.getId());
+                        log.i("Updated data for takeoff with ID ", updatedTakeoff.getId());
                     }
                     DataStore.saveTakeoff(updatedTakeoff);
                 } catch (Exception e) {
-                    log.log(Level.WARNING, "Unable to update data for takeoff with ID " + updatedTakeoff.getId(), e);
+                    log.w(e, "Unable to update data for takeoff with ID ", updatedTakeoff.getId());
                 }
             }
         }
