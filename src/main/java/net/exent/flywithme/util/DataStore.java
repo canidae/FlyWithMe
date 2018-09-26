@@ -48,7 +48,7 @@ public class DataStore {
     }
 
     public static Takeoff getLastCheckedTakeoff() {
-        // this is only called when updating takeoffs (not very often), no need to memcache
+        // TODO: this is now called much more often, we must memcache this (or save as variable in FlyWithMe)
         log.i("Loading last checked takeoff from datastore");
         return ofy().load().type(Takeoff.class).order("-lastChecked").first().now();
     }

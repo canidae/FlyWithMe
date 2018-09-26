@@ -51,8 +51,18 @@ public class Log {
     }
 
     private void log(Level level, Throwable throwable, Object... data) {
-        System.out.println(dateFormat.format(new Date()) + " [" + level.name() + "] <" + name + "> " + Stream.of(data).map(Object::toString).collect(Collectors.joining()));
+        StringBuilder sb = new StringBuilder(dateFormat.format(new Date()));
+        sb.append(" [").append(level.name()).append("] [").append(name).append("] ");
+        for (Object d : data)
+            sb.append(d);
+        String msg = sb.toString();
+        System.out.println(msg);
         if (throwable != null)
             throwable.printStackTrace();
+        if (level == Level.E) {
+            System.err.println(msg);
+            if (throwable != null)
+                throwable.printStackTrace(System.err);
+        }
     }
 }
