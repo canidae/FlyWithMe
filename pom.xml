@@ -13,6 +13,11 @@
     <failOnMissingWebXml>false</failOnMissingWebXml>
   </properties>
 
+  <!-- Local testing:
+  1. google-cloud-sdk/bin/gcloud beta emulators datastore start --no-store-on-disk
+  2. GOOGLE_CLOUD_PROJECT=dev DATASTORE_EMULATOR_HOST=localhost:8081 mvn appengine:run
+  -->
+
   <dependencies>
     <dependency>
       <groupId>com.google.appengine</groupId>
