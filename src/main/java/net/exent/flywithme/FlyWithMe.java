@@ -1,5 +1,9 @@
 package net.exent.flywithme;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializer;
 import com.googlecode.objectify.ObjectifyService;
 import net.exent.flywithme.bean.Forecast;
 import net.exent.flywithme.bean.Takeoff;
@@ -14,15 +18,29 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Base64;
+import java.util.Collections;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @WebServlet(name = "FlyWithMe", value = "/flywithme")
 public class FlyWithMe extends HttpServlet {
     private static final Log log = new Log();
 
+    private static final Pattern takeoffsUrl = Pattern.compile("^/takeoffs$");
+    private static final Pattern meteogramUrl = Pattern.compile("^/takeoffs/(\\d+)/meteogram$");
+    private static final Pattern soundingUrl = Pattern.compile("^/takeoffs/(\\d+)/sounding/(\\d+)$");
+    private static final Pattern updateTakeoffDataUrl = Pattern.compile("^/task/updateTakeoffData$");
+
+    private static Gson gson;
+
     @Override
     public void init() {
         ObjectifyService.init();
+        GsonBuilder builder = new GsonBuilder();
+        builder.registerTypeAdapter(byte[].class, (JsonSerializer<byte[]>) (src, typeOfSrc, context) -> new JsonPrimitive(Base64.getEncoder().encodeToString(src)));
+        gson = builder.create();
     }
 
     @Override
@@ -38,17 +56,27 @@ public class FlyWithMe extends HttpServlet {
            - /takeoffs
            - /takeoffs/<id>
            - /takeoffs/<id>/meteogram
-           - /takeoffs/<id>/sounding
+           - /takeoffs/<id>/sounding/<timestamp>
            - /landings
            - /thermals
+           - /task/updateTakeoffData
          */
         String path = request.getPathInfo();
         log.d("Request: ", path);
-        if (path.equals("/takeoffs")) {
-
-        } else if (path.equals("/task/updateTakeoffData")) {
+        Matcher m;
+        if ((m = takeoffsUrl.matcher(path)).matches()) {
+        } else if ((m = meteogramUrl.matcher(path)).matches()) {
+            writeForecastResponse(response, Collections.singletonList(getMeteogram(Long.parseLong(m.group(1)))));
+        } else if ((m = soundingUrl.matcher(path)).matches()) {
+            writeForecastResponse(response, getSounding(Long.parseLong(m.group(1)), Long.parseLong(m.group(2))));
+        } else if ((m = updateTakeoffDataUrl.matcher(path)).matches()) {
             updateTakeoffData();
         }
+    }
+
+    private void writeForecastResponse(HttpServletResponse response, List<Forecast> forecast) throws IOException {
+        response.setContentType("application/json");
+        response.getOutputStream().print(gson.toJson(forecast));
     }
 
     private Forecast getMeteogram(long takeoffId) {
@@ -72,7 +100,7 @@ public class FlyWithMe extends HttpServlet {
         return forecast;
     }
 
-    public List<Forecast> getSounding(long takeoffId, long timestamp) {
+    private List<Forecast> getSounding(long takeoffId, long timestamp) {
         timestamp = (timestamp / 10800) * 10800000; // aligns timestamp with valid values for sounding (sounding every 3rd hour) and converts to milliseconds
         long now = System.currentTimeMillis();
         if (timestamp < now - 86400000) { // 86400000 = 1 day
@@ -129,7 +157,7 @@ public class FlyWithMe extends HttpServlet {
         return Arrays.asList(profile, theta, text);
     }
 
-    public List<Takeoff> getUpdatedTakeoffs(long updatedAfter) {
+    private List<Takeoff> getUpdatedTakeoffs(long updatedAfter) {
         return DataStore.getRecentlyUpdatedTakeoffs(updatedAfter);
     }
 
