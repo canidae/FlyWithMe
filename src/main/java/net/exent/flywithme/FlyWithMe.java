@@ -45,6 +45,8 @@ public class FlyWithMe extends HttpServlet {
         String path = request.getPathInfo();
         log.d("Request: ", path);
         if (path.equals("/takeoffs")) {
+
+        } else if (path.equals("/task/updateTakeoffData")) {
             updateTakeoffData();
         }
     }
