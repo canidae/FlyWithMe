@@ -42,15 +42,6 @@ public class Takeoff implements Serializable {
         return this;
     }
 
-    public long getLastChecked() {
-        return lastChecked;
-    }
-
-    public Takeoff setLastChecked(long lastChecked) {
-        this.lastChecked = lastChecked;
-        return this;
-    }
-
     public String getName() {
         return name;
     }

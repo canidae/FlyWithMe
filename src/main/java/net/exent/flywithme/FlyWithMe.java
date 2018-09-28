@@ -164,7 +164,7 @@ public class FlyWithMe extends HttpServlet {
     private void updateTakeoffData() {
         // check for takeoffs updated after the last time we checked a takeoff
         Takeoff takeoff = DataStore.getLastCheckedTakeoff();
-        long lastChecked = takeoff == null ? 0 : takeoff.getLastChecked();
+        long lastChecked = takeoff == null ? 0 : takeoff.getLastUpdated();
         long daysToCheck = Math.round((double) (System.currentTimeMillis() - lastChecked) / 86400000.0) + 1;
         if (daysToCheck <= 1)
             return; // less than a day since we last checked

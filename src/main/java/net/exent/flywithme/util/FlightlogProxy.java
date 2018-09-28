@@ -9,6 +9,9 @@ import org.xml.sax.helpers.DefaultHandler;
 import java.io.File;
 import java.io.FileReader;
 import java.net.URL;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -25,6 +28,7 @@ public class FlightlogProxy {
 
     private static final String UPDATED_URL = "http://flightlog.org/?returntype=xml&rqtid=12&d=";
     private static final Pattern UNICODE_PATTERN = Pattern.compile("&#(\\d+);", Pattern.DOTALL);
+    private static final DateTimeFormatter timestampParser = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public static List<Takeoff> fetchUpdatedTakeoffs(long days) {
         try {
@@ -36,6 +40,7 @@ public class FlightlogProxy {
             } else {
                 // less than a year since last update, takeoff database likely exist
                 URL url = new URL(UPDATED_URL + days);
+                log.d("Fetching updated takeoffs: ", url);
                 saxParser.parse(new InputSource(url.openStream()), takeoffDataHandler);
             }
             return takeoffDataHandler.getTakeoffs();
@@ -56,14 +61,10 @@ public class FlightlogProxy {
 
         @Override
         public void startElement(String namespaceURI, String localName, String qName, Attributes atts) {
-            if ("start".equals(qName)) {
+            if ("start".equals(qName))
                 currentTakeoff = new Takeoff();
-                long now = System.currentTimeMillis();
-                currentTakeoff.setLastChecked(now);
-                currentTakeoff.setLastUpdated(now);
-            } else {
+            else
                 currentData.setLength(0);
-            }
         }
 
         @Override
@@ -127,7 +128,7 @@ public class FlightlogProxy {
                     break;
 
                 case "updatedtime":
-                    // ignored
+                    currentTakeoff.setLastUpdated(LocalDateTime.parse(currentData.toString(), timestampParser).atZone(ZoneId.of("Europe/Oslo")).toEpochSecond() * 1000);
                     break;
             }
         }

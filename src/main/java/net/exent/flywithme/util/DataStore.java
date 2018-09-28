@@ -47,9 +47,8 @@ public class DataStore {
     }
 
     public static Takeoff getLastCheckedTakeoff() {
-        // TODO: this is now called much more often, we must memcache this (or save as variable in FlyWithMe)
-        log.i("Loading last checked takeoff from datastore");
-        return ofy().load().type(Takeoff.class).order("-lastChecked").first().now();
+        log.i("Loading last updated takeoff from datastore");
+        return ofy().load().type(Takeoff.class).order("-lastUpdated").first().now();
     }
 
     public static List<Takeoff> getRecentlyUpdatedTakeoffs(long updatedAfter) {
