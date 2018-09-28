@@ -65,18 +65,24 @@ public class FlyWithMe extends HttpServlet {
         log.d("Request: ", path);
         Matcher m;
         if ((m = takeoffsUrl.matcher(path)).matches()) {
+            long lastUpdated = Long.parseLong(request.getParameter("lastUpdated"));
+            writeJsonResponse(response, getTakeoffs(lastUpdated));
         } else if ((m = meteogramUrl.matcher(path)).matches()) {
-            writeForecastResponse(response, Collections.singletonList(getMeteogram(Long.parseLong(m.group(1)))));
+            writeJsonResponse(response, Collections.singletonList(getMeteogram(Long.parseLong(m.group(1)))));
         } else if ((m = soundingUrl.matcher(path)).matches()) {
-            writeForecastResponse(response, getSounding(Long.parseLong(m.group(1)), Long.parseLong(m.group(2))));
+            writeJsonResponse(response, getSounding(Long.parseLong(m.group(1)), Long.parseLong(m.group(2))));
         } else if ((m = updateTakeoffDataUrl.matcher(path)).matches()) {
             updateTakeoffData();
         }
     }
 
-    private void writeForecastResponse(HttpServletResponse response, List<Forecast> forecast) throws IOException {
+    private void writeJsonResponse(HttpServletResponse response, Object data) throws IOException {
         response.setContentType("application/json");
-        response.getOutputStream().print(gson.toJson(forecast));
+        response.getWriter().print(gson.toJson(data));
+    }
+
+    private List<Takeoff> getTakeoffs(long updatedAfter) {
+        return DataStore.getTakeoffs(updatedAfter);
     }
 
     private Forecast getMeteogram(long takeoffId) {
@@ -155,10 +161,6 @@ public class FlyWithMe extends HttpServlet {
         text.setImage(images.get(2));
         DataStore.saveForecast(text);
         return Arrays.asList(profile, theta, text);
-    }
-
-    private List<Takeoff> getUpdatedTakeoffs(long updatedAfter) {
-        return DataStore.getRecentlyUpdatedTakeoffs(updatedAfter);
     }
 
     private void updateTakeoffData() {

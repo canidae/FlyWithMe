@@ -51,7 +51,7 @@ public class DataStore {
         return ofy().load().type(Takeoff.class).order("-lastUpdated").first().now();
     }
 
-    public static List<Takeoff> getRecentlyUpdatedTakeoffs(long updatedAfter) {
+    public static List<Takeoff> getTakeoffs(long updatedAfter) {
         String key = TAKEOFFS_RECENTLY_UPDATED_KEY_PREFIX + updatedAfter;
         List<Object> cachedTakeoffs = memcacheLoadLargeList(key);
         if (cachedTakeoffs != null) {
@@ -66,7 +66,7 @@ public class DataStore {
         }
         log.i("Loading recently updated takeoffs from datastore");
         List<Takeoff> takeoffs = ofy().load().type(Takeoff.class)
-                .filter("lastUpdated >=", updatedAfter)
+                .filter("lastUpdated >", updatedAfter)
                 .list();
         memcacheSaveLargeList(key, takeoffs);
         return takeoffs;

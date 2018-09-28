@@ -47,7 +47,7 @@
         <artifactId>appengine-maven-plugin</artifactId>
         <version>1.3.2</version>
         <configuration>
-          <cloudSdkPath>/home/vidwah/tmp/google-cloud-sdk</cloudSdkPath>
+          <cloudSdkPath>google-cloud-sdk</cloudSdkPath>
         </configuration>
       </plugin>
     </plugins>
