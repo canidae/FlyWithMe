@@ -68,7 +68,7 @@ public class FlyWithMe extends HttpServlet {
             long lastUpdated = Long.parseLong(request.getParameter("lastUpdated"));
             writeJsonResponse(response, getTakeoffs(lastUpdated));
         } else if ((m = meteogramUrl.matcher(path)).matches()) {
-            writeJsonResponse(response, Collections.singletonList(getMeteogram(Long.parseLong(m.group(1)))));
+            writeJsonResponse(response, getMeteogram(Long.parseLong(m.group(1))));
         } else if ((m = soundingUrl.matcher(path)).matches()) {
             writeJsonResponse(response, getSounding(Long.parseLong(m.group(1)), Long.parseLong(m.group(2))));
         } else if ((m = updateTakeoffDataUrl.matcher(path)).matches()) {
@@ -107,7 +107,7 @@ public class FlyWithMe extends HttpServlet {
     }
 
     private List<Forecast> getSounding(long takeoffId, long timestamp) {
-        timestamp = (timestamp / 10800) * 10800000; // aligns timestamp with valid values for sounding (sounding every 3rd hour) and converts to milliseconds
+        timestamp = (timestamp / 10800000) * 10800000; // aligns timestamp with valid values for sounding (sounding every 3rd hour)
         long now = System.currentTimeMillis();
         if (timestamp < now - 86400000) { // 86400000 = 1 day
             log.i("Client tried to retrieve sounding for takeoff '", takeoffId, "' with timestamp '", timestamp, "', but that timestamp was a long time ago");

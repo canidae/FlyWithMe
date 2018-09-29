@@ -21,6 +21,7 @@ var FWM = {
   searchText: "",
   takeoffs: [],
   sortedTakeoffs: [],
+  forecast: {},
 
   // get takeoff data, update if necessary
   updateTakeoffData: () => {
@@ -85,6 +86,26 @@ var FWM = {
     FWM.sortTakeoffs();
   },
 
+  fetchMeteogram: (takeoff) => {
+    fetch("/takeoffs/" + takeoff.id + "/meteogram")
+      .then(response => response.json())
+      .then(data => {
+        FWM.forecast.meteogram = "data:image/gif;base64," + data.image;
+        m.redraw();
+      });
+  },
+
+  fetchSounding: (takeoff, timestamp) => {
+    fetch("/takeoffs/" + takeoff.id + "/sounding/" + timestamp)
+      .then(response => response.json())
+      .then(data => {
+        FWM.forecast.sounding = "data:image/gif;base64," + data[0].image;
+        FWM.forecast.theta = "data:image/gif;base64," + data[1].image;
+        FWM.forecast.text = "data:image/gif;base64," + data[2].image;
+        m.redraw();
+      });
+  },
+
   sortTakeoffs: () => {
     FWM.sortedTakeoffs = Object.values(FWM.takeoffs).filter((takeoff) => takeoff.name.match(new RegExp(FWM.searchText, "i"))).sort(FWM.takeoffSortComparator).slice(0, 20);
     m.redraw();
@@ -119,14 +140,14 @@ var takeoffListEntry = {
         height: "38px"
       }}, [
         m("circle", {r: "104", stroke: "black", "stroke-width": "2", fill: "none"}),
-        m("path", {visibility: (takeoff.wind & (1 << 7)) != 0 ? "visible" : "hidden", d: "M 0 0 L -38.268 -92.388 A 100 100 0 0 1  38.268 -92.388 Z", stroke: "none", fill: "#05c70f"}),
-        m("path", {visibility: (takeoff.wind & (1 << 6)) != 0 ? "visible" : "hidden", d: "M 0 0 L  38.268 -92.388 A 100 100 0 0 1  92.388 -38.268 Z", stroke: "none", fill: "#05c70f"}),
-        m("path", {visibility: (takeoff.wind & (1 << 5)) != 0 ? "visible" : "hidden", d: "M 0 0 L  92.388 -38.268 A 100 100 0 0 1  92.388  38.268 Z", stroke: "none", fill: "#05c70f"}),
-        m("path", {visibility: (takeoff.wind & (1 << 4)) != 0 ? "visible" : "hidden", d: "M 0 0 L  92.388  38.268 A 100 100 0 0 1  38.268  92.388 Z", stroke: "none", fill: "#05c70f"}),
-        m("path", {visibility: (takeoff.wind & (1 << 3)) != 0 ? "visible" : "hidden", d: "M 0 0 L  38.268  92.388 A 100 100 0 0 1 -38.268  92.388 Z", stroke: "none", fill: "#05c70f"}),
-        m("path", {visibility: (takeoff.wind & (1 << 2)) != 0 ? "visible" : "hidden", d: "M 0 0 L -38.268  92.388 A 100 100 0 0 1 -92.388  38.268 Z", stroke: "none", fill: "#05c70f"}),
-        m("path", {visibility: (takeoff.wind & (1 << 1)) != 0 ? "visible" : "hidden", d: "M 0 0 L -92.388  38.268 A 100 100 0 0 1 -92.388 -38.268 Z", stroke: "none", fill: "#05c70f"}),
-        m("path", {visibility: (takeoff.wind & (1 << 0)) != 0 ? "visible" : "hidden", d: "M 0 0 L -92.388 -38.268 A 100 100 0 0 1 -38.268 -92.388 Z", stroke: "none", fill: "#05c70f"})
+        m("path", {visibility: (takeoff.exits & (1 << 7)) != 0 ? "visible" : "hidden", d: "M 0 0 L -38.268 -92.388 A 100 100 0 0 1  38.268 -92.388 Z", stroke: "none", fill: "#05c70f"}),
+        m("path", {visibility: (takeoff.exits & (1 << 6)) != 0 ? "visible" : "hidden", d: "M 0 0 L  38.268 -92.388 A 100 100 0 0 1  92.388 -38.268 Z", stroke: "none", fill: "#05c70f"}),
+        m("path", {visibility: (takeoff.exits & (1 << 5)) != 0 ? "visible" : "hidden", d: "M 0 0 L  92.388 -38.268 A 100 100 0 0 1  92.388  38.268 Z", stroke: "none", fill: "#05c70f"}),
+        m("path", {visibility: (takeoff.exits & (1 << 4)) != 0 ? "visible" : "hidden", d: "M 0 0 L  92.388  38.268 A 100 100 0 0 1  38.268  92.388 Z", stroke: "none", fill: "#05c70f"}),
+        m("path", {visibility: (takeoff.exits & (1 << 3)) != 0 ? "visible" : "hidden", d: "M 0 0 L  38.268  92.388 A 100 100 0 0 1 -38.268  92.388 Z", stroke: "none", fill: "#05c70f"}),
+        m("path", {visibility: (takeoff.exits & (1 << 2)) != 0 ? "visible" : "hidden", d: "M 0 0 L -38.268  92.388 A 100 100 0 0 1 -92.388  38.268 Z", stroke: "none", fill: "#05c70f"}),
+        m("path", {visibility: (takeoff.exits & (1 << 1)) != 0 ? "visible" : "hidden", d: "M 0 0 L -92.388  38.268 A 100 100 0 0 1 -92.388 -38.268 Z", stroke: "none", fill: "#05c70f"}),
+        m("path", {visibility: (takeoff.exits & (1 << 0)) != 0 ? "visible" : "hidden", d: "M 0 0 L -92.388 -38.268 A 100 100 0 0 1 -38.268 -92.388 Z", stroke: "none", fill: "#05c70f"})
       ]),
       m("span", {style: {
         position: "absolute",
@@ -144,7 +165,7 @@ var takeoffListEntry = {
         height: "20px",
         "white-space": "nowrap",
         overflow: "hidden"
-      }}, "Height: " + takeoff.alt),
+      }}, "Height: " + takeoff.asl),
       m("span", {style: {
         position: "absolute",
         top: "20px",
@@ -153,7 +174,7 @@ var takeoffListEntry = {
         height: "20px",
         "white-space": "nowrap",
         overflow: "hidden"
-      }}, "Diff: " + takeoff.altdiff),
+      }}, "Diff: " + takeoff.height),
       m("svg", {style: {
         position: "absolute",
         right: "91px",
@@ -178,7 +199,7 @@ var takeoffListEntry = {
         width: "38px",
         height: "38px",
         cursor: "pointer"
-      }, src: "images/NOAA.svg", onclick: (e) => {e.stopPropagation();}}),
+      }, src: "images/NOAA.svg", onclick: (e) => {FWM.fetchMeteogram(takeoff); FWM.fetchSounding(takeoff, new Date().getTime() + 10800000); e.stopPropagation();}}),
       m("div", {style: {
         position: "absolute",
         top: "50px",
@@ -210,6 +231,36 @@ var takeoffList = {
   }
 };
 
+var forecastView = {
+  view: (vnode) => {
+    return m("div", {style: {
+      position: "absolute",
+      top: "0",
+      left: "500px",
+      height: "200px",
+      right: "0",
+      margin: "8px"
+    }}, [
+      m("img", {
+        name: "meteogram",
+        src: FWM.forecast.meteogram
+      }),
+      m("img", {
+        name: "sounding",
+        src: FWM.forecast.sounding
+      }),
+      m("img", {
+        name: "theta",
+        src: FWM.forecast.theta
+      }),
+      m("img", {
+        name: "text",
+        src: FWM.forecast.text
+      })
+    ])
+  }
+};
+
 var main = {
   oninit: (vnode) => {
     FWM.updateTakeoffData();
@@ -219,9 +270,10 @@ var main = {
   view: () => {
     return m("main", [
       m(takeoffList),
+      m(forecastView),
       m("div", {id: "google-map-view", style: {
         position: "absolute",
-        top: "0",
+        top: "200px",
         left: "500px",
         right: "0",
         bottom: "0",
