@@ -18,7 +18,7 @@ public class Forecast implements Serializable {
     @Id private Long id;
     @Index private long takeoffId;
     @Index private ForecastType type;
-    @Index private long lastUpdated;
+    @Index private long updated;
     @Index private long validFor; // used by sounding as those are only valid for a certain time of a day
     private byte[] image;
 
@@ -38,12 +38,12 @@ public class Forecast implements Serializable {
         this.type = type;
     }
 
-    public long getLastUpdated() {
-        return lastUpdated;
+    public long getUpdated() {
+        return updated;
     }
 
-    public void setLastUpdated(long lastUpdated) {
-        this.lastUpdated = lastUpdated;
+    public void setUpdated(long updated) {
+        this.updated = updated;
     }
 
     public long getValidFor() {

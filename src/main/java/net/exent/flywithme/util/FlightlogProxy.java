@@ -88,15 +88,15 @@ public class FlightlogProxy {
                     break;
 
                 case "description":
-                    currentTakeoff.setDescription(convertHtmlUnicodeCodeToActualUnicode(currentData.toString()).trim());
+                    currentTakeoff.setDesc(convertHtmlUnicodeCodeToActualUnicode(currentData.toString()).trim());
                     break;
 
                 case "lat":
-                    currentTakeoff.setLatitude(Float.parseFloat(currentData.toString()));
+                    currentTakeoff.setLat(Float.parseFloat(currentData.toString()));
                     break;
 
                 case "lon":
-                    currentTakeoff.setLongitude(Float.parseFloat(currentData.toString()));
+                    currentTakeoff.setLng(Float.parseFloat(currentData.toString()));
                     break;
 
                 case "wind":
@@ -128,7 +128,7 @@ public class FlightlogProxy {
                     break;
 
                 case "updatedtime":
-                    currentTakeoff.setLastUpdated(LocalDateTime.parse(currentData.toString(), timestampParser).atZone(ZoneId.of("Europe/Oslo")).toEpochSecond() * 1000);
+                    currentTakeoff.setUpdated(LocalDateTime.parse(currentData.toString(), timestampParser).atZone(ZoneId.of("Europe/Oslo")).toEpochSecond() * 1000);
                     break;
             }
         }
@@ -153,11 +153,11 @@ public class FlightlogProxy {
             for (Takeoff takeoff : takeoffs) {
                 outputStream.writeShort((short) takeoff.getId());
                 outputStream.writeUTF(takeoff.getName());
-                outputStream.writeUTF(takeoff.getDescription());
+                outputStream.writeUTF(takeoff.getDesc());
                 outputStream.writeShort(takeoff.getAsl());
                 outputStream.writeShort(takeoff.getHeight());
-                outputStream.writeFloat(takeoff.getLatitude());
-                outputStream.writeFloat(takeoff.getLongitude());
+                outputStream.writeFloat(takeoff.getLat());
+                outputStream.writeFloat(takeoff.getLng());
                 outputStream.writeShort(takeoff.getExits());
             }
             outputStream.close();

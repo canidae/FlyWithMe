@@ -14,14 +14,13 @@ public class Takeoff implements Serializable {
     @Id private long id;
 
     // takeoff data
-    @Index private long lastUpdated;
-    @Index private long lastChecked;
+    @Index private long updated;
     private String name;
-    private String description;
+    private String desc;
     private int asl;
     private int height;
-    private float latitude;
-    private float longitude;
+    private float lat;
+    private float lng;
     private int exits;
 
     public long getId() {
@@ -33,12 +32,12 @@ public class Takeoff implements Serializable {
         return this;
     }
 
-    public long getLastUpdated() {
-        return lastUpdated;
+    public long getUpdated() {
+        return updated;
     }
 
-    public Takeoff setLastUpdated(long lastUpdated) {
-        this.lastUpdated = lastUpdated;
+    public Takeoff setUpdated(long updated) {
+        this.updated = updated;
         return this;
     }
 
@@ -51,12 +50,12 @@ public class Takeoff implements Serializable {
         return this;
     }
 
-    public String getDescription() {
-        return description;
+    public String getDesc() {
+        return desc;
     }
 
-    public Takeoff setDescription(String description) {
-        this.description = description;
+    public Takeoff setDesc(String desc) {
+        this.desc = desc;
         return this;
     }
 
@@ -78,21 +77,21 @@ public class Takeoff implements Serializable {
         return this;
     }
 
-    public float getLatitude() {
-        return latitude;
+    public float getLat() {
+        return lat;
     }
 
-    public Takeoff setLatitude(float latitude) {
-        this.latitude = latitude;
+    public Takeoff setLat(float lat) {
+        this.lat = lat;
         return this;
     }
 
-    public float getLongitude() {
-        return longitude;
+    public float getLng() {
+        return lng;
     }
 
-    public Takeoff setLongitude(float longitude) {
-        this.longitude = longitude;
+    public Takeoff setLng(float lng) {
+        this.lng = lng;
         return this;
     }
 
@@ -111,7 +110,7 @@ public class Takeoff implements Serializable {
             return false;
         Takeoff takeoff = (Takeoff) object;
         return getId() == takeoff.getId() && getAsl() == takeoff.getAsl() && getHeight() == takeoff.getHeight()
-                && getLatitude() == takeoff.getLatitude() && getLongitude() == takeoff.getLongitude()
-                && getExits() == takeoff.getExits() && getName().equals(takeoff.getName()) && getDescription().equals(takeoff.getDescription());
+                && getLat() == takeoff.getLat() && getLng() == takeoff.getLng()
+                && getExits() == takeoff.getExits() && getName().equals(takeoff.getName()) && getDesc().equals(takeoff.getDesc());
     }
 }

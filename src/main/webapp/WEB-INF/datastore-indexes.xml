@@ -3,12 +3,12 @@
     <datastore-index kind="Forecast" ancestor="false" source="manual">
         <property name="takeoffId" direction="asc"/>
         <property name="type" direction="asc"/>
-        <property name="lastUpdated" direction="asc"/>
+        <property name="updated" direction="asc"/>
     </datastore-index>
     <datastore-index kind="Forecast" ancestor="false" source="manual">
         <property name="takeoffId" direction="asc"/>
         <property name="type" direction="asc"/>
         <property name="validFor" direction="asc"/>
-        <property name="lastUpdated" direction="asc"/>
+        <property name="updated" direction="asc"/>
     </datastore-index>
 </datastore-indexes>

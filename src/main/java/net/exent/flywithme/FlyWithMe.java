@@ -19,7 +19,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Base64;
-import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -100,8 +99,8 @@ public class FlyWithMe extends HttpServlet {
         forecast = new Forecast();
         forecast.setTakeoffId(takeoffId);
         forecast.setType(Forecast.ForecastType.METEOGRAM);
-        forecast.setLastUpdated(System.currentTimeMillis() / 1000);
-        forecast.setImage(NoaaProxy.fetchMeteogram(takeoff.getLatitude(), takeoff.getLongitude()));
+        forecast.setUpdated(System.currentTimeMillis() / 1000);
+        forecast.setImage(NoaaProxy.fetchMeteogram(takeoff.getLat(), takeoff.getLng()));
         DataStore.saveForecast(forecast);
         return forecast;
     }
@@ -130,7 +129,7 @@ public class FlyWithMe extends HttpServlet {
             log.w("Client asked for sounding for a takeoff that doesn't seem to exist in our database: ", takeoffId);
             return null;
         }
-        List<byte[]> images = NoaaProxy.fetchSounding(takeoff.getLatitude(), takeoff.getLongitude(), timestamp);
+        List<byte[]> images = NoaaProxy.fetchSounding(takeoff.getLat(), takeoff.getLng(), timestamp);
         if (images == null || images.size() != 3)
             return null;
         // convert "now" and "timestamp" from milliseconds to seconds
@@ -140,7 +139,7 @@ public class FlyWithMe extends HttpServlet {
         profile = new Forecast();
         profile.setTakeoffId(takeoffId);
         profile.setType(Forecast.ForecastType.PROFILE);
-        profile.setLastUpdated(now);
+        profile.setUpdated(now);
         profile.setValidFor(timestamp);
         profile.setImage(images.get(0));
         DataStore.saveForecast(profile);
@@ -148,7 +147,7 @@ public class FlyWithMe extends HttpServlet {
         Forecast theta = new Forecast();
         theta.setTakeoffId(takeoffId);
         theta.setType(Forecast.ForecastType.THETA);
-        theta.setLastUpdated(now);
+        theta.setUpdated(now);
         theta.setValidFor(timestamp);
         theta.setImage(images.get(1));
         DataStore.saveForecast(theta);
@@ -156,7 +155,7 @@ public class FlyWithMe extends HttpServlet {
         Forecast text = new Forecast();
         text.setTakeoffId(takeoffId);
         text.setType(Forecast.ForecastType.TEXT);
-        text.setLastUpdated(now);
+        text.setUpdated(now);
         text.setValidFor(timestamp);
         text.setImage(images.get(2));
         DataStore.saveForecast(text);
@@ -166,7 +165,7 @@ public class FlyWithMe extends HttpServlet {
     private void updateTakeoffData() {
         // check for takeoffs updated after the last time we checked a takeoff
         Takeoff takeoff = DataStore.getLastCheckedTakeoff();
-        long lastChecked = takeoff == null ? 0 : takeoff.getLastUpdated();
+        long lastChecked = takeoff == null ? 0 : takeoff.getUpdated();
         long daysToCheck = Math.round((double) (System.currentTimeMillis() - lastChecked) / 86400000.0) + 1;
         if (daysToCheck <= 1)
             return; // less than a day since we last checked
@@ -180,7 +179,7 @@ public class FlyWithMe extends HttpServlet {
                 try {
                     Takeoff existing = DataStore.loadTakeoff(updatedTakeoff.getId());
                     if (updatedTakeoff.equals(existing)) {
-                        updatedTakeoff.setLastUpdated(existing.getLastUpdated()); // data not changed, keep "lastUpdated"
+                        updatedTakeoff.setUpdated(existing.getUpdated()); // data not changed, keep "updated" as it is
                         log.i("No new data for takeoff with ID ", updatedTakeoff.getId());
                     } else {
                         log.i("Updated data for takeoff with ID ", updatedTakeoff.getId());
