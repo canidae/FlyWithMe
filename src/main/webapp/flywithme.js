@@ -30,8 +30,8 @@ var FWM = {
     FWM.takeoffs = JSON.parse(DB.decompress("flightlog_takeoffs") || "{}");
     if (Math.ceil((now - lastUpdated) / 86400000) > 5) {
       fetch("/takeoffs?lastUpdated=" + lastUpdated)
-        .then(response => response.json())
-        .then(data => {
+        .then((response) => response.json())
+        .then((data) => {
           var count = 0;
           for (i in data) {
             var takeoff = data[i];
@@ -88,8 +88,8 @@ var FWM = {
 
   fetchMeteogram: (takeoff) => {
     fetch("/takeoffs/" + takeoff.id + "/meteogram")
-      .then(response => response.json())
-      .then(data => {
+      .then((response) => response.json())
+      .then((data) => {
         FWM.forecast.meteogram = "data:image/gif;base64," + data.image;
         m.redraw();
       });
@@ -97,8 +97,8 @@ var FWM = {
 
   fetchSounding: (takeoff, timestamp) => {
     fetch("/takeoffs/" + takeoff.id + "/sounding/" + timestamp)
-      .then(response => response.json())
-      .then(data => {
+      .then((response) => response.json())
+      .then((data) => {
         FWM.forecast.sounding = "data:image/gif;base64," + data[0].image;
         FWM.forecast.theta = "data:image/gif;base64," + data[1].image;
         FWM.forecast.text = "data:image/gif;base64," + data[2].image;
@@ -199,17 +199,12 @@ var takeoffListEntry = {
         width: "38px",
         height: "38px",
         cursor: "pointer"
-      }, src: "images/NOAA.svg", onclick: (e) => {FWM.fetchMeteogram(takeoff); FWM.fetchSounding(takeoff, new Date().getTime() + 10800000); e.stopPropagation();}}),
-      m("div", {style: {
-        position: "absolute",
-        top: "50px",
-        visibility: "hidden"
-      }}, takeoff.description)
+      }, src: "images/NOAA.svg", onclick: (e) => {FWM.fetchMeteogram(takeoff); FWM.fetchSounding(takeoff, new Date().getTime() + 10800000); e.stopPropagation();}})
     ]);
   }
 };
 
-var takeoffList = {
+var takeoffListView = {
   view: (vnode) => {
     return m("div", {style: {
         position: "absolute",
@@ -228,6 +223,14 @@ var takeoffList = {
         return m(takeoffListEntry, {key: takeoff.id, takeoff: takeoff, index: index})
       }))
     ]);
+  }
+};
+
+var takeoffView = {
+  view: (vnode) => {
+    return m("div", {style: {
+
+    }})
   }
 };
 
@@ -269,7 +272,8 @@ var main = {
 
   view: () => {
     return m("main", [
-      m(takeoffList),
+      m(takeoffListView),
+      m(takeoffView),
       m(forecastView),
       m("div", {id: "google-map-view", style: {
         position: "absolute",
