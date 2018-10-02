@@ -8,11 +8,11 @@ var DB = {
   },
 
   compress: (key, value) => {
-    localStorage.setItem(key, LZString.compressToUTF16(value));
+    DB.set(key, LZString.compressToUTF16(value));
   },
 
   decompress: (key) => {
-    return LZString.decompressFromUTF16(localStorage.getItem(key));
+    return LZString.decompressFromUTF16(DB.get(key));
   }
 }
 
