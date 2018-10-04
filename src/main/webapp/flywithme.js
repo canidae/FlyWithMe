@@ -25,9 +25,9 @@ var FWM = {
 
   // get takeoff data, update if necessary
   updateTakeoffData: () => {
-    var lastUpdated = DB.get("flightlog_last_updated") || 0;
+    var lastUpdated = DB.get("takeoffs_updated") || 0;
     var now = new Date().getTime();
-    FWM.takeoffs = JSON.parse(DB.decompress("flightlog_takeoffs") || "{}");
+    FWM.takeoffs = JSON.parse(DB.decompress("takeoffs") || "{}");
     if (Math.ceil((now - lastUpdated) / 86400000) > 5) {
       fetch("/takeoffs?lastUpdated=" + lastUpdated)
         .then((response) => response.json())
@@ -42,8 +42,8 @@ var FWM = {
             }
           }
           console.log("Updated takeoffs:", count);
-          DB.compress("flightlog_takeoffs", JSON.stringify(FWM.takeoffs));
-          DB.set("flightlog_last_updated", lastUpdated);
+          DB.compress("takeoffs", JSON.stringify(FWM.takeoffs));
+          DB.set("takeoffs_updated", lastUpdated);
           FWM.sortTakeoffs();
         });
     }
@@ -272,9 +272,27 @@ var main = {
 
   view: () => {
     return m("main", [
-      m(takeoffListView),
-      m(takeoffView),
-      m(forecastView),
+      m("div", {style: {
+          position: "absolute",
+          top: "0",
+          left: "0",
+          bottom: "0",
+          width: "500px",
+          margin: "8px",
+          overflow: "scroll",
+          "overflow-x": "hidden"
+      }}, m(takeoffListView)),
+      m("div", {style: {
+        // TODO
+      }}, m(takeoffView)),
+      m("div", {style: {
+        position: "absolute",
+        top: "0",
+        left: "500px",
+        height: "200px",
+        right: "0",
+        margin: "8px"
+      }}, m(forecastView)),
       m("div", {id: "google-map-view", style: {
         position: "absolute",
         top: "200px",
