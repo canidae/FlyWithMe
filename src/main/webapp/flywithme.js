@@ -127,13 +127,7 @@ var FWM = {
 var takeoffListEntry = {
   view: (vnode) => {
     var takeoff = vnode.attrs.takeoff;
-    return m("div", {id: takeoff.id, style: {
-      position: "relative",
-      height: "40px",
-      cursor: "pointer",
-      margin: "4px 0 4px 0",
-      "background-color": vnode.attrs.index % 2 == 0 ? "#fff" : "#ddd"
-    }, onclick: () => {FWM.panMap(takeoff)}, onmouseover: () => {}, onmouseout: () => {}}, [
+    return [
       m("svg", {viewBox: "-105 -105 210 210", style: {
         position: "absolute",
         width: "38px",
@@ -200,50 +194,45 @@ var takeoffListEntry = {
         height: "38px",
         cursor: "pointer"
       }, src: "images/NOAA.svg", onclick: (e) => {FWM.fetchMeteogram(takeoff); FWM.fetchSounding(takeoff, new Date().getTime() + 10800000); e.stopPropagation();}})
-    ]);
+    ];
   }
 };
 
 var takeoffListView = {
   view: (vnode) => {
-    return m("div", {style: {
-        position: "absolute",
-        top: "0",
-        left: "0",
-        bottom: "0",
-        width: "500px",
-        margin: "8px",
-        overflow: "scroll",
-        "overflow-x": "hidden"
-    }}, [
+    return [
       m("span", "Search:"),
       m("input", {onblur: (el) => {setTimeout(() => {el.target.focus()}, 10)}, oninput: m.withAttr("value", (text) => {FWM.searchText = text; FWM.sortTakeoffs();}), value: FWM.searchText}),
       m("br"),
       m("div", FWM.sortedTakeoffs.map((takeoff, index) => {
-        return m(takeoffListEntry, {key: takeoff.id, takeoff: takeoff, index: index})
+        return m("div", {id: takeoff.id, key: takeoff.id, style: {
+          position: "relative",
+          height: "40px",
+          cursor: "pointer",
+          margin: "4px 0 4px 0",
+          "background-color": index % 2 == 0 ? "#fff" : "#ddd"
+        }, onclick: () => {FWM.panMap(takeoff)}}, m(takeoffListEntry, {takeoff: takeoff, index: index}));
       }))
-    ]);
+    ];
   }
 };
 
 var takeoffView = {
   view: (vnode) => {
-    return m("div", {style: {
-
-    }})
+    return [
+      m("div", {style: {
+      }}),
+      m("div", {style: {
+      }}),
+      m("div", {style: {
+      }})
+    ];
   }
 };
 
 var forecastView = {
   view: (vnode) => {
-    return m("div", {style: {
-      position: "absolute",
-      top: "0",
-      left: "500px",
-      height: "200px",
-      right: "0",
-      margin: "8px"
-    }}, [
+    return [
       m("img", {
         name: "meteogram",
         src: FWM.forecast.meteogram
@@ -260,7 +249,7 @@ var forecastView = {
         name: "text",
         src: FWM.forecast.text
       })
-    ])
+    ];
   }
 };
 

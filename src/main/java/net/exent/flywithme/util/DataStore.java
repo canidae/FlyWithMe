@@ -48,7 +48,7 @@ public class DataStore {
 
     public static Takeoff getLastCheckedTakeoff() {
         log.i("Loading last updated takeoff from datastore");
-        return ofy().load().type(Takeoff.class).order("-lastUpdated").first().now();
+        return ofy().load().type(Takeoff.class).order("-updated").first().now();
     }
 
     public static List<Takeoff> getTakeoffs(long updatedAfter) {
@@ -66,7 +66,7 @@ public class DataStore {
         }
         log.i("Loading recently updated takeoffs from datastore");
         List<Takeoff> takeoffs = ofy().load().type(Takeoff.class)
-                .filter("lastUpdated >", updatedAfter)
+                .filter("updated >", updatedAfter)
                 .list();
         memcacheSaveLargeList(key, takeoffs);
         return takeoffs;
@@ -82,7 +82,7 @@ public class DataStore {
                     .filter("takeoffId", takeoffId)
                     .filter("type", type)
                     .filter("validFor", validFor)
-                    .filter("lastUpdated >", (now - FORECAST_CACHE_LIFETIME / 2) / 1000)
+                    .filter("updated >", (now - FORECAST_CACHE_LIFETIME / 2) / 1000)
                     .first().now();
             memcacheSave(key, forecast);
         }
@@ -98,7 +98,7 @@ public class DataStore {
 
     public static void cleanCache() {
         // clean forecasts cached in datastore
-        ofy().delete().entities(ofy().load().type(Forecast.class).filter("lastUpdated <=", (System.currentTimeMillis() - FORECAST_CACHE_LIFETIME) / 1000).list());
+        ofy().delete().entities(ofy().load().type(Forecast.class).filter("updated <=", (System.currentTimeMillis() - FORECAST_CACHE_LIFETIME) / 1000).list());
     }
 
     private static Object memcacheLoad(String key) {
