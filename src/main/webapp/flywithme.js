@@ -22,6 +22,37 @@ var FWM = {
   takeoffs: [],
   sortedTakeoffs: [],
   forecast: {},
+  css: {
+    takeoffListView: {
+        position: "absolute",
+        top: "0",
+        left: "0",
+        bottom: "0",
+        width: "500px",
+        margin: "8px",
+        overflow: "scroll",
+        "overflow-x": "hidden"
+    },
+    takeoffView: {
+
+    },
+    forecastView: {
+      position: "absolute",
+      top: "0",
+      left: "500px",
+      height: "400px",
+      right: "0",
+      margin: "8px"
+    },
+    googleMapView: {
+      position: "absolute",
+      top: "400px",
+      left: "500px",
+      right: "0",
+      bottom: "0",
+      margin: "8px"
+    }
+  },
 
   // get takeoff data, update if necessary
   updateTakeoffData: () => {
@@ -117,7 +148,6 @@ var FWM = {
       return -1;
     } else if (!a.favourite && b.favourite) {
       return 1;
-    /* TODO: distance */
     } else {
       return ("" + a.name).localeCompare(b.name);
     }
@@ -261,30 +291,14 @@ var main = {
 
   view: () => {
     return m("main", [
-      m(takeoffListView, {style: {
-          position: "absolute",
-          top: "0",
-          left: "0",
-          bottom: "0",
-          width: "500px",
-          margin: "8px",
-          overflow: "scroll",
-          "overflow-x": "hidden"
-      }}),
-      m(takeoffView, {style: {
-        // TODO
-      }}),
-      m(forecastView, {style: {
-        position: "absolute",
-        top: "0",
-        left: "500px",
-        height: "200px",
-        right: "0",
-        margin: "8px"
-      }}),
+      m(takeoffListView, {style: FWM.css.takeoffListView}),
+      m(takeoffView, {style: FWM.css.takeoffView}),
+      m(forecastView, {style: FWM.css.forecastView}),
       m("div", {id: "google-map-view", style: {
+        // TODO: if using FWM.css.googleMapView then google maps spasms out... why?
+        // neither did this seem to help: onupdate: () => {google.maps.event.trigger(FWM.googleMap, "resize");}
         position: "absolute",
-        top: "200px",
+        top: "400px",
         left: "500px",
         right: "0",
         bottom: "0",

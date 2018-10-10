@@ -5,9 +5,15 @@
 }
 
 body {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   bottom: 0;
   right: 0;
+}
+
+img {
+  height: 100%;
+  width: 25%;
+  object-fit: contain;
 }
