@@ -127,7 +127,7 @@ var FWM = {
 var takeoffListEntry = {
   view: (vnode) => {
     var takeoff = vnode.attrs.takeoff;
-    return [
+    return m("div", {style: vnode.attrs.style, onclick: () => {FWM.panMap(takeoff)}}, [
       m("svg", {viewBox: "-105 -105 210 210", style: {
         position: "absolute",
         width: "38px",
@@ -194,45 +194,45 @@ var takeoffListEntry = {
         height: "38px",
         cursor: "pointer"
       }, src: "images/NOAA.svg", onclick: (e) => {FWM.fetchMeteogram(takeoff); FWM.fetchSounding(takeoff, new Date().getTime() + 10800000); e.stopPropagation();}})
-    ];
+    ]);
   }
 };
 
 var takeoffListView = {
   view: (vnode) => {
-    return [
+    return m("div", {style: vnode.attrs.style}, [
       m("span", "Search:"),
       m("input", {onblur: (el) => {setTimeout(() => {el.target.focus()}, 10)}, oninput: m.withAttr("value", (text) => {FWM.searchText = text; FWM.sortTakeoffs();}), value: FWM.searchText}),
       m("br"),
       m("div", FWM.sortedTakeoffs.map((takeoff, index) => {
-        return m("div", {id: takeoff.id, key: takeoff.id, style: {
+        return m(takeoffListEntry, {takeoff: takeoff, style: {
           position: "relative",
           height: "40px",
           cursor: "pointer",
           margin: "4px 0 4px 0",
           "background-color": index % 2 == 0 ? "#fff" : "#ddd"
-        }, onclick: () => {FWM.panMap(takeoff)}}, m(takeoffListEntry, {takeoff: takeoff, index: index}));
+        }});
       }))
-    ];
+    ]);
   }
 };
 
 var takeoffView = {
   view: (vnode) => {
-    return [
+    return m("div", {style: vnode.attrs.style}, [
       m("div", {style: {
       }}),
       m("div", {style: {
       }}),
       m("div", {style: {
       }})
-    ];
+    ]);
   }
 };
 
 var forecastView = {
   view: (vnode) => {
-    return [
+    return m("div", {style: vnode.attrs.style}, [
       m("img", {
         name: "meteogram",
         src: FWM.forecast.meteogram
@@ -249,7 +249,7 @@ var forecastView = {
         name: "text",
         src: FWM.forecast.text
       })
-    ];
+    ]);
   }
 };
 
@@ -261,7 +261,7 @@ var main = {
 
   view: () => {
     return m("main", [
-      m("div", {style: {
+      m(takeoffListView, {style: {
           position: "absolute",
           top: "0",
           left: "0",
@@ -270,18 +270,18 @@ var main = {
           margin: "8px",
           overflow: "scroll",
           "overflow-x": "hidden"
-      }}, m(takeoffListView)),
-      m("div", {style: {
+      }}),
+      m(takeoffView, {style: {
         // TODO
-      }}, m(takeoffView)),
-      m("div", {style: {
+      }}),
+      m(forecastView, {style: {
         position: "absolute",
         top: "0",
         left: "500px",
         height: "200px",
         right: "0",
         margin: "8px"
-      }}, m(forecastView)),
+      }}),
       m("div", {id: "google-map-view", style: {
         position: "absolute",
         top: "200px",
