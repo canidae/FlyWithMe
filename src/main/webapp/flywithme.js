@@ -80,13 +80,6 @@ var FWM = {
     }
   },
 
-  // initialize and add the map
-  initGoogleMap: () => {
-    FWM.googleMap = new google.maps.Map(document.getElementById('google-map-view'), {zoom: 11, center: {lat: 61.87416667, lng: 9.15472222}, mapTypeId: 'terrain'});
-    //var marker = new google.maps.Marker({position: rikssenter, map: FWM.googleMap});
-    //FWM.googleMap.data.loadGeoJson('https://raw.githubusercontent.com/relet/pg-xc/master/geojson/luftrom.geojson');
-  },
-
   // convert text to html
   textToHtml: (text) => {
     // escape dangerous characters
@@ -283,6 +276,22 @@ var forecastView = {
   }
 };
 
+var googleMapView = {
+  oncreate: (vnode) => {
+    FWM.googleMap = new google.maps.Map(vnode.dom, {zoom: 11, center: {lat: 61.87416667, lng: 9.15472222}, mapTypeId: 'terrain'});
+    //var marker = new google.maps.Marker({position: rikssenter, map: FWM.googleMap});
+    //FWM.googleMap.data.loadGeoJson('https://raw.githubusercontent.com/relet/pg-xc/master/geojson/luftrom.geojson');
+  },
+
+  onupdate: (vnode) => {
+    console.log(vnode);
+  },
+
+  view: () => {
+    return m("div", {id: "google-map-view", style: {height: "100%"}});
+  }
+};
+
 var main = {
   oninit: (vnode) => {
     FWM.updateTakeoffData();
@@ -294,16 +303,7 @@ var main = {
       m("div", {style: FWM.css.takeoffListView}, m(takeoffListView)),
       m("div", {style: FWM.css.takeoffView}, m(takeoffView)),
       m("div", {style: FWM.css.forecastView}, m(forecastView)),
-      m("div", {id: "google-map-view", style: {
-        // TODO: if using FWM.css.googleMapView then google maps spasms out... why?
-        // neither did this seem to help: onupdate: () => {google.maps.event.trigger(FWM.googleMap, "resize");}
-        position: "absolute",
-        top: "400px",
-        left: "500px",
-        right: "0",
-        bottom: "0",
-        margin: "8px"
-      }})
+      m("div", {style: FWM.css.googleMapView}, m(googleMapView))
     ]);
   },
 };
