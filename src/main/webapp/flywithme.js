@@ -283,10 +283,6 @@ var googleMapView = {
     //FWM.googleMap.data.loadGeoJson('https://raw.githubusercontent.com/relet/pg-xc/master/geojson/luftrom.geojson');
   },
 
-  onupdate: (vnode) => {
-    console.log(vnode);
-  },
-
   view: () => {
     return m("div", {id: "google-map-view", style: {height: "100%"}});
   }
