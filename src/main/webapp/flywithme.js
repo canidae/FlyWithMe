@@ -23,9 +23,16 @@ var FWM = {
   sortedTakeoffs: [],
   forecast: {},
   css: {
-    takeoffListView: {
+    nav: {
+      top: "0",
+      left: "0",
+      right: "0",
+      height: "50px",
+      background: "lightskyblue"
+    },
+    takeoffList: {
         position: "absolute",
-        top: "0",
+        top: "50px",
         left: "0",
         bottom: "0",
         width: "500px",
@@ -33,20 +40,20 @@ var FWM = {
         overflow: "scroll",
         "overflow-x": "hidden"
     },
-    takeoffView: {
+    takeoff: {
 
     },
-    forecastView: {
+    forecast: {
       position: "absolute",
-      top: "0",
+      top: "50px",
       left: "500px",
       height: "400px",
       right: "0",
       margin: "8px"
     },
-    googleMapView: {
+    googleMap: {
       position: "absolute",
-      top: "400px",
+      top: "450px",
       left: "500px",
       right: "0",
       bottom: "0",
@@ -283,8 +290,17 @@ var googleMapView = {
     //FWM.googleMap.data.loadGeoJson('https://raw.githubusercontent.com/relet/pg-xc/master/geojson/luftrom.geojson');
   },
 
-  view: () => {
+  view: (vnode) => {
     return m("div", {id: "google-map-view", style: {height: "100%"}});
+  }
+};
+
+var nav = {
+  view: (vnode) => {
+    return [
+      m("img", {src: "images/logo.png"}),
+      m("img", {src: "images/GoogleMaps.svg"})
+    ];
   }
 };
 
@@ -294,15 +310,24 @@ var main = {
     FWM.sortTakeoffs();
   },
 
-  view: () => {
-    return m("main", [
-      m("div", {style: FWM.css.takeoffListView}, m(takeoffListView)),
-      m("div", {style: FWM.css.takeoffView}, m(takeoffView)),
-      m("div", {style: FWM.css.forecastView}, m(forecastView)),
-      m("div", {style: FWM.css.googleMapView}, m(googleMapView))
-    ]);
+  view: (vnode) => {
+    return [
+      m("div", {style: FWM.css.takeoffList}, m(takeoffListView)),
+      m("div", {style: FWM.css.takeoff}, m(takeoffView)),
+      m("div", {style: FWM.css.forecast}, m(forecastView)),
+      m("div", {style: FWM.css.googleMap}, m(googleMapView))
+    ];
   },
 };
 
+var body = {
+  view: (vnode) => {
+    return [
+      m("nav", {style: FWM.css.nav}, m(nav)),
+      m("main", m(main))
+    ];
+  }
+}
+
 // mount main
-m.mount(document.body, main);
+m.mount(document.body, body);
