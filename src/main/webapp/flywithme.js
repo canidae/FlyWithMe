@@ -19,6 +19,7 @@ var DB = {
 var FWM = {
   googleMap: null,
   searchText: "",
+  takeoff: {},
   takeoffs: [],
   sortedTakeoffs: [],
   forecast: {},
@@ -41,12 +42,19 @@ var FWM = {
         "overflow-x": "hidden"
     },
     takeoff: {
-
+      position: "absolute",
+      top: "50px",
+      left: "500px",
+      bottom: "0",
+      width: "500px",
+      margin: "8px",
+      overflow: "scroll",
+      "overflow-x": "hidden"
     },
     forecast: {
       position: "absolute",
       top: "50px",
-      left: "500px",
+      left: "1000px",
       height: "400px",
       right: "0",
       margin: "8px"
@@ -54,7 +62,7 @@ var FWM = {
     googleMap: {
       position: "absolute",
       top: "450px",
-      left: "500px",
+      left: "1000px",
       right: "0",
       bottom: "0",
       margin: "8px"
@@ -107,7 +115,7 @@ var FWM = {
 
   // expand takeoff details
   showDetails: (el, takeoff) => {
-    console.log(el, takeoff);
+    FWM.takeoff = takeoff;
   },
 
   // toggle takeoff favouritability
@@ -241,7 +249,7 @@ var takeoffListView = {
           cursor: "pointer",
           margin: "4px 0 4px 0",
           "background-color": index % 2 == 0 ? "#fff" : "#ddd"
-        }, onclick: () => {FWM.panMap(takeoff)}}, m(takeoffListEntry, {takeoff: takeoff, index: index}));
+        }, onclick: () => {FWM.panMap(takeoff)}}, m(takeoffListEntry, {takeoff: takeoff}));
       }))
     ];
   }
@@ -250,8 +258,12 @@ var takeoffListView = {
 var takeoffView = {
   view: (vnode) => {
     return [
-      m("div", {style: {
-      }}),
+      m("div", {id: FWM.takeoff.id, key: FWM.takeoff.id, style: {
+        position: "relative",
+        height: "40px",
+        cursor: "pointer",
+        margin: "4px 0 4px 0"
+      }}, m(takeoffListEntry, {takeoff: FWM.takeoff})),
       m("div", {style: {
       }}),
       m("div", {style: {
