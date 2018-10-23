@@ -265,18 +265,30 @@ var forecastView = {
     return [
       m("img", {
         name: "meteogram",
+        height: "100%",
+        width: "25%",
+        "object-fit": "contain",
         src: FWM.forecast.meteogram
       }),
       m("img", {
         name: "sounding",
+        height: "100%",
+        width: "25%",
+        "object-fit": "contain",
         src: FWM.forecast.sounding
       }),
       m("img", {
         name: "theta",
+        height: "100%",
+        width: "25%",
+        "object-fit": "contain",
         src: FWM.forecast.theta
       }),
       m("img", {
         name: "text",
+        height: "100%",
+        width: "25%",
+        "object-fit": "contain",
         src: FWM.forecast.text
       })
     ];
@@ -298,8 +310,16 @@ var googleMapView = {
 var nav = {
   view: (vnode) => {
     return [
-      m("img", {src: "images/logo.png"}),
-      m("img", {src: "images/GoogleMaps.svg"})
+      m("img", {
+        src: "images/logo.png",
+        height: "100%",
+        "object-fit": "contain"
+      }),
+      m("img", {
+        src: "images/GoogleMaps.svg",
+        height: "100%",
+        "object-fit": "contain"
+      })
     ];
   }
 };
