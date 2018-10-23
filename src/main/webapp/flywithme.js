@@ -97,6 +97,9 @@ var FWM = {
 
   // convert text to html
   textToHtml: (text) => {
+    if (!text) {
+      return text;
+    }
     // escape dangerous characters
     text = text.replace(/"/g, "&#34;").replace(/'/g, "&#39;").replace(/</g, "&#60;").replace(/>/g, "&#62;");
     // replace newlines with <br />
@@ -114,7 +117,7 @@ var FWM = {
   },
 
   // expand takeoff details
-  showDetails: (el, takeoff) => {
+  showDetails: (takeoff) => {
     FWM.takeoff = takeoff;
   },
 
@@ -209,15 +212,6 @@ var takeoffListEntry = {
       }}, "Diff: " + takeoff.height),
       m("svg", {style: {
         position: "absolute",
-        right: "91px",
-        width: "38px",
-        height: "38px",
-        cursor: "pointer"
-      }, onclick: (e) => {FWM.showDetails(this, takeoff); e.stopPropagation();}, viewBox: "-105 -105 210 210"}, [
-        m("path", {d: "M -80 -30 L 0 30 L 80 -30", stroke: "black", "stroke-width": "16", fill: "none"})
-      ]),
-      m("svg", {style: {
-        position: "absolute",
         right: "48px",
         width: "38px",
         height: "38px",
@@ -249,7 +243,7 @@ var takeoffListView = {
           cursor: "pointer",
           margin: "4px 0 4px 0",
           "background-color": index % 2 == 0 ? "#fff" : "#ddd"
-        }, onclick: () => {FWM.panMap(takeoff)}}, m(takeoffListEntry, {takeoff: takeoff}));
+        }, onclick: () => {FWM.showDetails(takeoff)}}, m(takeoffListEntry, {takeoff: takeoff}));
       }))
     ];
   }
@@ -265,9 +259,7 @@ var takeoffView = {
         margin: "4px 0 4px 0"
       }}, m(takeoffListEntry, {takeoff: FWM.takeoff})),
       m("div", {style: {
-      }}),
-      m("div", {style: {
-      }})
+      }}, m.trust(FWM.textToHtml(FWM.takeoff.desc)))
     ];
   }
 };
