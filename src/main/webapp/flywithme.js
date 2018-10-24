@@ -37,7 +37,6 @@ var FWM = {
         left: "0",
         bottom: "0",
         width: "500px",
-        margin: "8px",
         overflow: "scroll",
         "overflow-x": "hidden"
     },
@@ -47,7 +46,6 @@ var FWM = {
       left: "500px",
       bottom: "0",
       width: "500px",
-      margin: "8px",
       overflow: "scroll",
       "overflow-x": "hidden"
     },
@@ -56,16 +54,14 @@ var FWM = {
       top: "50px",
       left: "1000px",
       height: "400px",
-      right: "0",
-      margin: "8px"
+      right: "0"
     },
     googleMap: {
       position: "absolute",
       top: "450px",
       left: "1000px",
       right: "0",
-      bottom: "0",
-      margin: "8px"
+      bottom: "0"
     }
   },
 
@@ -238,7 +234,6 @@ var takeoffListView = {
           position: "relative",
           height: "40px",
           cursor: "pointer",
-          margin: "4px 0 4px 0",
           "background-color": index % 2 == 0 ? "#fff" : "#ddd"
         }, onclick: () => {FWM.showDetails(takeoff)}}, m(takeoffListEntry, {takeoff: takeoff}));
       }))
@@ -252,8 +247,7 @@ var takeoffView = {
       m("div", {id: FWM.takeoff.id, key: FWM.takeoff.id, style: {
         position: "relative",
         height: "40px",
-        cursor: "pointer",
-        margin: "4px 0 4px 0"
+        cursor: "pointer"
       }}, m(takeoffListEntry, {takeoff: FWM.takeoff})),
       m("div", {style: {
       }}, m.trust(FWM.textToHtml(FWM.takeoff.desc)))
