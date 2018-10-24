@@ -315,18 +315,35 @@ var nav = {
         height: "100%",
         "object-fit": "contain"
       }),
-      m("input", {
+      m("div", {
         style: {
           position: "absolute",
           top: "0",
           left: "100px",
-          right: "0",
-        },
-        placeholder: "Search",
-        value: FWM.searchText,
-        onblur: (el) => {setTimeout(() => {el.target.focus()}, 10)},
-        oninput: m.withAttr("value", (text) => {FWM.searchText = text; FWM.sortTakeoffs();})
-      })
+          right: "71px"
+        }
+      }, m("input", {
+          style: {
+            height: "100%",
+            width: "100%"
+          },
+          placeholder: "Search",
+          value: FWM.searchText,
+          onblur: (el) => {setTimeout(() => {el.target.focus()}, 10)},
+          oninput: m.withAttr("value", (text) => {FWM.searchText = text; FWM.sortTakeoffs();})
+        })
+      ),
+      m("svg", {viewBox: "-105 -105 210 210", style: {
+        position: "absolute",
+        top: "0",
+        right: "0",
+        width: "50px",
+        height: "50px",
+        cursor: "pointer"
+      }}, [
+        m("line", {x1: "-60", y1: "-40", x2: "60", y2: "-40", stroke: "black", "stroke-width": "20"}),
+        m("line", {x1: "-60", y1: "40", x2: "60", y2: "40", stroke: "black", "stroke-width": "20"})
+      ])
     ];
   }
 };
