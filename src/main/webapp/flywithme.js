@@ -233,9 +233,6 @@ var takeoffListEntry = {
 var takeoffListView = {
   view: (vnode) => {
     return [
-      m("span", "Search:"),
-      m("input", {onblur: (el) => {setTimeout(() => {el.target.focus()}, 10)}, oninput: m.withAttr("value", (text) => {FWM.searchText = text; FWM.sortTakeoffs();}), value: FWM.searchText}),
-      m("br"),
       m("div", FWM.sortedTakeoffs.map((takeoff, index) => {
         return m("div", {id: takeoff.id, key: takeoff.id, style: {
           position: "relative",
@@ -323,6 +320,18 @@ var nav = {
         src: "images/GoogleMaps.svg",
         height: "100%",
         "object-fit": "contain"
+      }),
+      m("input", {
+        style: {
+          position: "absolute",
+          top: "0",
+          left: "100px",
+          right: "0",
+        },
+        placeholder: "Search",
+        value: FWM.searchText,
+        onblur: (el) => {setTimeout(() => {el.target.focus()}, 10)},
+        oninput: m.withAttr("value", (text) => {FWM.searchText = text; FWM.sortTakeoffs();})
       })
     ];
   }
