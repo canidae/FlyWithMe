@@ -23,46 +23,9 @@ var FWM = {
   takeoffs: [],
   sortedTakeoffs: [],
   forecast: {},
-  css: {
-    nav: {
-      top: "0",
-      left: "0",
-      right: "0",
-      height: "50px",
-      background: "lightskyblue"
-    },
-    takeoffList: {
-        position: "absolute",
-        top: "50px",
-        left: "0",
-        bottom: "0",
-        width: "500px",
-        overflow: "scroll",
-        "overflow-x": "hidden"
-    },
-    takeoff: {
-      position: "absolute",
-      top: "50px",
-      left: "500px",
-      bottom: "0",
-      width: "500px",
-      overflow: "scroll",
-      "overflow-x": "hidden"
-    },
-    forecast: {
-      position: "absolute",
-      top: "50px",
-      left: "1000px",
-      height: "400px",
-      right: "0"
-    },
-    googleMap: {
-      position: "absolute",
-      top: "450px",
-      left: "1000px",
-      right: "0",
-      bottom: "0"
-    }
+  dividers: {
+    horizontal: "50px",
+    vertical: "500px"
   },
 
   // get takeoff data, update if necessary
@@ -356,10 +319,38 @@ var main = {
 
   view: (vnode) => {
     return [
-      m("div", {style: FWM.css.takeoffList}, m(takeoffListView)),
-      m("div", {style: FWM.css.takeoff}, m(takeoffView)),
-      m("div", {style: FWM.css.forecast}, m(forecastView)),
-      m("div", {style: FWM.css.googleMap}, m(googleMapView))
+      m("div", {style: {
+          position: "absolute",
+          top: FWM.dividers.horizontal,
+          left: "0",
+          bottom: "0",
+          width: FWM.dividers.vertical,
+          overflow: "scroll",
+          "overflow-x": "hidden"
+      }}, m(takeoffListView)),
+      m("div", {style: {
+        position: "absolute",
+        top: FWM.dividers.horizontal,
+        left: "0",
+        bottom: "0",
+        width: FWM.dividers.vertical,
+        overflow: "scroll",
+        "overflow-x": "hidden"
+      }}, m(takeoffView)),
+      m("div", {style: {
+        position: "absolute",
+        top: FWM.dividers.horizontal,
+        left: FWM.dividers.vertical,
+        bottom: "0",
+        right: "0"
+      }}, m(forecastView)),
+      m("div", {style: {
+        position: "absolute",
+        top: FWM.dividers.horizontal,
+        left: FWM.dividers.vertical,
+        right: "0",
+        bottom: "0"
+      }}, m(googleMapView))
     ];
   },
 };
@@ -367,7 +358,14 @@ var main = {
 var body = {
   view: (vnode) => {
     return [
-      m("nav", {style: FWM.css.nav}, m(nav)),
+      m("nav", {style: {
+        position: "absolute",
+        top: "0",
+        left: "0",
+        right: "0",
+        height: FWM.dividers.horizontal,
+        background: "lightskyblue"
+      }}, m(nav)),
       m("main", m(main))
     ];
   }
