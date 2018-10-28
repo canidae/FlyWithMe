@@ -20,7 +20,7 @@ var FWM = {
   googleMap: null,
   searchText: "",
   takeoff: {},
-  takeoffs: [],
+  takeoffs: {},
   sortedTakeoffs: [],
   forecast: {},
   dividers: {
@@ -50,6 +50,9 @@ var FWM = {
           DB.compress("takeoffs", JSON.stringify(FWM.takeoffs));
           DB.set("takeoffs_updated", lastUpdated);
           FWM.sortTakeoffs();
+          Object.values(FWM.takeoffs).map((takeoff) => {
+            var marker = new google.maps.Marker({position: {lat: takeoff.lat, lng: takeoff.lng}, title: takeoff.name, map: FWM.googleMap});
+          });
         });
     }
   },
@@ -218,6 +221,17 @@ var takeoffView = {
   }
 };
 
+var googleMapView = {
+  oncreate: (vnode) => {
+    FWM.googleMap = new google.maps.Map(vnode.dom, {zoom: 11, center: {lat: 61.87416667, lng: 9.15472222}, mapTypeId: 'terrain'});
+    //FWM.googleMap.data.loadGeoJson('https://raw.githubusercontent.com/relet/pg-xc/master/geojson/luftrom.geojson');
+  },
+
+  view: (vnode) => {
+    return m("div", {id: "google-map-view", style: {height: "100%"}});
+  }
+};
+
 var forecastView = {
   view: (vnode) => {
     return [
@@ -250,18 +264,6 @@ var forecastView = {
         src: FWM.forecast.text
       })
     ];
-  }
-};
-
-var googleMapView = {
-  oncreate: (vnode) => {
-    FWM.googleMap = new google.maps.Map(vnode.dom, {zoom: 11, center: {lat: 61.87416667, lng: 9.15472222}, mapTypeId: 'terrain'});
-    //var marker = new google.maps.Marker({position: rikssenter, map: FWM.googleMap});
-    //FWM.googleMap.data.loadGeoJson('https://raw.githubusercontent.com/relet/pg-xc/master/geojson/luftrom.geojson');
-  },
-
-  view: (vnode) => {
-    return m("div", {id: "google-map-view", style: {height: "100%"}});
   }
 };
 
@@ -329,6 +331,7 @@ var main = {
         "overflow-x": "hidden"
       }}, m(takeoffListView)),
       m("div", {style: {
+        display: "none",
         position: "absolute",
         top: FWM.dividers.horizontal,
         left: "0",
@@ -341,16 +344,17 @@ var main = {
         position: "absolute",
         top: FWM.dividers.horizontal,
         left: FWM.dividers.vertical,
-        bottom: "0",
-        right: "0"
-      }}, m(forecastView)),
+        right: "0",
+        bottom: "0"
+      }}, m(googleMapView)),
       m("div", {style: {
+        display: "none",
         position: "absolute",
         top: FWM.dividers.horizontal,
         left: FWM.dividers.vertical,
-        right: "0",
-        bottom: "0"
-      }}, m(googleMapView))
+        bottom: "0",
+        right: "0"
+      }}, m(forecastView))
     ];
   },
 };
