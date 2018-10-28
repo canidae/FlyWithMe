@@ -320,13 +320,13 @@ var main = {
   view: (vnode) => {
     return [
       m("div", {style: {
-          position: "absolute",
-          top: FWM.dividers.horizontal,
-          left: "0",
-          bottom: "0",
-          width: FWM.dividers.vertical,
-          overflow: "scroll",
-          "overflow-x": "hidden"
+        position: "absolute",
+        top: FWM.dividers.horizontal,
+        left: "0",
+        bottom: "0",
+        width: FWM.dividers.vertical,
+        overflow: "auto",
+        "overflow-x": "hidden"
       }}, m(takeoffListView)),
       m("div", {style: {
         position: "absolute",
@@ -334,7 +334,7 @@ var main = {
         left: "0",
         bottom: "0",
         width: FWM.dividers.vertical,
-        overflow: "scroll",
+        overflow: "auto",
         "overflow-x": "hidden"
       }}, m(takeoffView)),
       m("div", {style: {
