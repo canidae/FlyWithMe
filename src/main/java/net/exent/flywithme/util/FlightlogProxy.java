@@ -36,6 +36,7 @@ public class FlightlogProxy {
             SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
             if (days > 365) {
                 // not updated in a year, most likely an empty database
+                log.d("Reading takeoffs from file: flightlog.org.xml");
                 saxParser.parse(new InputSource(new FileReader(new File("resources", "flightlog.org.xml"))), takeoffDataHandler);
             } else {
                 // less than a year since last update, takeoff database likely exist

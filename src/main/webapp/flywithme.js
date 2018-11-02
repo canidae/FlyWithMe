@@ -19,6 +19,7 @@ var DB = {
 var FWM = {
   googleMap: null,
   searchText: "",
+  show_desc_takeoff_id: -1,
   takeoff: {},
   takeoffs: {},
   sortedTakeoffs: [],
@@ -78,11 +79,6 @@ var FWM = {
     console.log(FWM.googleMap.getBounds().getNorthEast().lat());
   },
 
-  // expand takeoff details
-  showDetails: (takeoff) => {
-    FWM.takeoff = takeoff;
-  },
-
   // toggle takeoff favouritability
   toggleFavourite: (takeoff) => {
     takeoff.favourite = !takeoff.favourite;
@@ -132,9 +128,9 @@ var takeoffListEntry = {
     var takeoff = vnode.attrs.takeoff;
     return [
       m("svg", {viewBox: "-105 -105 210 210", style: {
-        position: "absolute",
-        width: "38px",
-        height: "38px"
+        position: "relative",
+        width: "40px",
+        height: "40px"
       }}, [
         m("circle", {r: "104", stroke: "black", "stroke-width": "2", fill: "none"}),
         m("path", {visibility: (takeoff.exits & (1 << 7)) != 0 ? "visible" : "hidden", d: "M 0 0 L -38.268 -92.388 A 100 100 0 0 1  38.268 -92.388 Z", stroke: "none", fill: "#05c70f"}),
@@ -187,37 +183,24 @@ var takeoffListEntry = {
         width: "38px",
         height: "38px",
         cursor: "pointer"
-      }, src: "images/NOAA.svg", onclick: (e) => {FWM.fetchMeteogram(takeoff); FWM.fetchSounding(takeoff, new Date().getTime() + 10800000); e.stopPropagation();}})
+      }, src: "images/NOAA.svg", onclick: (e) => {FWM.fetchMeteogram(takeoff); FWM.fetchSounding(takeoff, new Date().getTime() + 10800000); e.stopPropagation();}}),
+      m("div", {style: {
+        position: "relative",
+        display: FWM.show_desc_takeoff_id == takeoff.id ? "block" : "none"
+      }}, m.trust(FWM.textToHtml(takeoff.desc)))
     ];
   }
 };
 
 var takeoffListView = {
   view: (vnode) => {
-    return [
-      m("div", FWM.sortedTakeoffs.map((takeoff, index) => {
-        return m("div", {id: takeoff.id, key: takeoff.id, style: {
-          position: "relative",
-          height: "40px",
-          cursor: "pointer",
-          "background-color": index % 2 == 0 ? "#fff" : "#ddd"
-        }, onclick: () => {FWM.showDetails(takeoff)}}, m(takeoffListEntry, {takeoff: takeoff}));
-      }))
-    ];
-  }
-};
-
-var takeoffView = {
-  view: (vnode) => {
-    return [
-      m("div", {id: FWM.takeoff.id, key: FWM.takeoff.id, style: {
+    return FWM.sortedTakeoffs.map((takeoff, index) => {
+      return m("div", {id: takeoff.id, key: takeoff.id, style: {
         position: "relative",
-        height: "40px",
-        cursor: "pointer"
-      }}, m(takeoffListEntry, {takeoff: FWM.takeoff})),
-      m("div", {style: {
-      }}, m.trust(FWM.textToHtml(FWM.takeoff.desc)))
-    ];
+        cursor: "pointer",
+        "background-color": index % 2 == 0 ? "#fff" : "#ddd"
+      }, onclick: () => {FWM.show_desc_takeoff_id = takeoff.id;}}, m(takeoffListEntry, {takeoff: takeoff}));
+    });
   }
 };
 
@@ -330,16 +313,6 @@ var main = {
         overflow: "auto",
         "overflow-x": "hidden"
       }}, m(takeoffListView)),
-      m("div", {style: {
-        display: "none",
-        position: "absolute",
-        top: FWM.dividers.horizontal,
-        left: "0",
-        bottom: "0",
-        width: FWM.dividers.vertical,
-        overflow: "auto",
-        "overflow-x": "hidden"
-      }}, m(takeoffView)),
       m("div", {style: {
         position: "absolute",
         top: FWM.dividers.horizontal,
