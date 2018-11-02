@@ -199,7 +199,7 @@ var takeoffListView = {
         position: "relative",
         cursor: "pointer",
         "background-color": index % 2 == 0 ? "#fff" : "#ddd"
-      }, onclick: () => {FWM.show_desc_takeoff_id = takeoff.id;}}, m(takeoffListEntry, {takeoff: takeoff}));
+      }, onclick: () => {FWM.show_desc_takeoff_id = (FWM.show_desc_takeoff_id == takeoff.id) ? -1 : takeoff.id;}}, m(takeoffListEntry, {takeoff: takeoff}));
     });
   }
 };
