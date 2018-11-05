@@ -65,18 +65,18 @@ var FWM = {
                 anchor: new google.maps.Point(20, 20)
               }
             });
-            marker.addListener('click', function() {
+            marker.addListener('click', () => {
               info.open(FWM.googleMap, marker);
             });
             return marker;
           });
           var markerClusterer = new MarkerClusterer(FWM.googleMap, markers, {imagePath: "libs/google_maps_v3/"});
           // the following prevent zooming in when dragging the map where initial click was on a marker
-          google.maps.event.addListener(FWM.googleMap, 'dragstart', function() {
+          google.maps.event.addListener(FWM.googleMap, 'dragstart', () => {
             markerClusterer.zoomOnClick_ = false;
           });
-          google.maps.event.addListener(FWM.googleMap, 'mouseup', function() {
-            setTimeout(function() {
+          google.maps.event.addListener(FWM.googleMap, 'mouseup', () => {
+            setTimeout(() => {
               markerClusterer.zoomOnClick_ = true;
             }, 50);
           });
