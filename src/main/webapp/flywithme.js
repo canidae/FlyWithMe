@@ -70,7 +70,16 @@ var FWM = {
             });
             return marker;
           });
-          var markerCluster = new MarkerClusterer(FWM.googleMap, markers, {imagePath: "libs/google_maps_v3/"});
+          var markerClusterer = new MarkerClusterer(FWM.googleMap, markers, {imagePath: "libs/google_maps_v3/"});
+          // the following prevent zooming in when dragging the map where initial click was on a marker
+          google.maps.event.addListener(FWM.googleMap, 'dragstart', function() {
+            markerClusterer.zoomOnClick_ = false;
+          });
+          google.maps.event.addListener(FWM.googleMap, 'mouseup', function() {
+            setTimeout(function() {
+              markerClusterer.zoomOnClick_ = true;
+            }, 50);
+          });
         });
     }
   },
