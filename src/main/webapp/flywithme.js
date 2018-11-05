@@ -58,7 +58,12 @@ var FWM = {
             var marker = new google.maps.Marker({
               position: {lat: takeoff.lat, lng: takeoff.lng},
               title: takeoff.name,
-              label: takeoff.name[0]
+              label: takeoff.name[0],
+              icon: {
+                url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(FWM.takeoffExitsToSvg(takeoff.exits)),
+                scaledSize: new google.maps.Size(40, 40),
+                anchor: new google.maps.Point(20, 20)
+              }
             });
             marker.addListener('click', function() {
               info.open(FWM.googleMap, marker);
@@ -77,11 +82,26 @@ var FWM = {
     }
     // escape dangerous characters
     text = text.replace(/"/g, "&#34;").replace(/'/g, "&#39;").replace(/</g, "&#60;").replace(/>/g, "&#62;");
-    // replace newlines with <br />
-    text = text.replace(/\n/g, "<br />");
     // add links to urls
     text = text.replace(/(http:\/\/[^\s]+)/g, "<a href=\"\$1\">\$1</a>");
+    // replace newlines with <br />
+    text = text.replace(/\n/g, "<br />");
     return text;
+  },
+
+  // create SVG of takeoff exits
+  takeoffExitsToSvg: (exits, style) => {
+    return "<svg xmlns='http://www.w3.org/2000/svg' viewBox='-105 -105 210 210' style='" + (style || "") + "'>" +
+      "<circle r='104' stroke='black' stroke-width='2' fill='none'></circle>" +
+      "<path visibility='" + ((exits & (1 << 7)) != 0 ? "visible" : "hidden") + "' d='M 0 0 L -38.268 -92.388 A 100 100 0 0 1  38.268 -92.388 Z' stroke='none' fill='#05c70f'></path>" +
+      "<path visibility='" + ((exits & (1 << 6)) != 0 ? "visible" : "hidden") + "' d='M 0 0 L  38.268 -92.388 A 100 100 0 0 1  92.388 -38.268 Z' stroke='none' fill='#05c70f'></path>" +
+      "<path visibility='" + ((exits & (1 << 5)) != 0 ? "visible" : "hidden") + "' d='M 0 0 L  92.388 -38.268 A 100 100 0 0 1  92.388  38.268 Z' stroke='none' fill='#05c70f'></path>" +
+      "<path visibility='" + ((exits & (1 << 4)) != 0 ? "visible" : "hidden") + "' d='M 0 0 L  92.388  38.268 A 100 100 0 0 1  38.268  92.388 Z' stroke='none' fill='#05c70f'></path>" +
+      "<path visibility='" + ((exits & (1 << 3)) != 0 ? "visible" : "hidden") + "' d='M 0 0 L  38.268  92.388 A 100 100 0 0 1 -38.268  92.388 Z' stroke='none' fill='#05c70f'></path>" +
+      "<path visibility='" + ((exits & (1 << 2)) != 0 ? "visible" : "hidden") + "' d='M 0 0 L -38.268  92.388 A 100 100 0 0 1 -92.388  38.268 Z' stroke='none' fill='#05c70f'></path>" +
+      "<path visibility='" + ((exits & (1 << 1)) != 0 ? "visible" : "hidden") + "' d='M 0 0 L -92.388  38.268 A 100 100 0 0 1 -92.388 -38.268 Z' stroke='none' fill='#05c70f'></path>" +
+      "<path visibility='" + ((exits & (1 << 0)) != 0 ? "visible" : "hidden") + "' d='M 0 0 L -92.388 -38.268 A 100 100 0 0 1 -38.268 -92.388 Z' stroke='none' fill='#05c70f'></path>" +
+      "</svg>";
   },
 
   // pan map to position
@@ -139,21 +159,7 @@ var takeoffListEntry = {
   view: (vnode) => {
     var takeoff = vnode.attrs.takeoff;
     return [
-      m("svg", {viewBox: "-105 -105 210 210", style: {
-        position: "relative",
-        width: "40px",
-        height: "40px"
-      }}, [
-        m("circle", {r: "104", stroke: "black", "stroke-width": "2", fill: "none"}),
-        m("path", {visibility: (takeoff.exits & (1 << 7)) != 0 ? "visible" : "hidden", d: "M 0 0 L -38.268 -92.388 A 100 100 0 0 1  38.268 -92.388 Z", stroke: "none", fill: "#05c70f"}),
-        m("path", {visibility: (takeoff.exits & (1 << 6)) != 0 ? "visible" : "hidden", d: "M 0 0 L  38.268 -92.388 A 100 100 0 0 1  92.388 -38.268 Z", stroke: "none", fill: "#05c70f"}),
-        m("path", {visibility: (takeoff.exits & (1 << 5)) != 0 ? "visible" : "hidden", d: "M 0 0 L  92.388 -38.268 A 100 100 0 0 1  92.388  38.268 Z", stroke: "none", fill: "#05c70f"}),
-        m("path", {visibility: (takeoff.exits & (1 << 4)) != 0 ? "visible" : "hidden", d: "M 0 0 L  92.388  38.268 A 100 100 0 0 1  38.268  92.388 Z", stroke: "none", fill: "#05c70f"}),
-        m("path", {visibility: (takeoff.exits & (1 << 3)) != 0 ? "visible" : "hidden", d: "M 0 0 L  38.268  92.388 A 100 100 0 0 1 -38.268  92.388 Z", stroke: "none", fill: "#05c70f"}),
-        m("path", {visibility: (takeoff.exits & (1 << 2)) != 0 ? "visible" : "hidden", d: "M 0 0 L -38.268  92.388 A 100 100 0 0 1 -92.388  38.268 Z", stroke: "none", fill: "#05c70f"}),
-        m("path", {visibility: (takeoff.exits & (1 << 1)) != 0 ? "visible" : "hidden", d: "M 0 0 L -92.388  38.268 A 100 100 0 0 1 -92.388 -38.268 Z", stroke: "none", fill: "#05c70f"}),
-        m("path", {visibility: (takeoff.exits & (1 << 0)) != 0 ? "visible" : "hidden", d: "M 0 0 L -92.388 -38.268 A 100 100 0 0 1 -38.268 -92.388 Z", stroke: "none", fill: "#05c70f"})
-      ]),
+      m.trust(FWM.takeoffExitsToSvg(takeoff.exits, "position: relative; width: 40px; height: 40px")),
       m("span", {style: {
         position: "absolute",
         left: "50px",
@@ -180,7 +186,7 @@ var takeoffListEntry = {
         "white-space": "nowrap",
         overflow: "hidden"
       }}, "Diff: " + takeoff.height),
-      m("svg", {style: {
+      m("svg", {xmlns: "http://www.w3.org/2000/svg", style: {
         position: "absolute",
         right: "48px",
         width: "40px",
@@ -293,7 +299,7 @@ var nav = {
           oninput: m.withAttr("value", (text) => {FWM.searchText = text; FWM.sortTakeoffs();})
         })
       ),
-      m("svg", {viewBox: "-105 -105 210 210", style: {
+      m("svg", {xmlns: "http://www.w3.org/2000/svg", viewBox: "-105 -105 210 210", style: {
         position: "absolute",
         top: "0",
         right: "0",
