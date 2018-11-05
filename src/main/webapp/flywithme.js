@@ -51,9 +51,21 @@ var FWM = {
           DB.compress("takeoffs", JSON.stringify(FWM.takeoffs));
           DB.set("takeoffs_updated", lastUpdated);
           FWM.sortTakeoffs();
-          Object.values(FWM.takeoffs).map((takeoff) => {
-            var marker = new google.maps.Marker({position: {lat: takeoff.lat, lng: takeoff.lng}, title: takeoff.name, map: FWM.googleMap});
+          var markers = Object.values(FWM.takeoffs).map((takeoff) => {
+            var info = new google.maps.InfoWindow({
+              content: "<div><h1>" + takeoff.name + "</h1><p>" + FWM.textToHtml(takeoff.desc) + "</p></div>"
+            });
+            var marker = new google.maps.Marker({
+              position: {lat: takeoff.lat, lng: takeoff.lng},
+              title: takeoff.name,
+              label: takeoff.name[0]
+            });
+            marker.addListener('click', function() {
+              info.open(FWM.googleMap, marker);
+            });
+            return marker;
           });
+          var markerCluster = new MarkerClusterer(FWM.googleMap, markers, {imagePath: "libs/google_maps_v3/"});
         });
     }
   },
@@ -171,8 +183,8 @@ var takeoffListEntry = {
       m("svg", {style: {
         position: "absolute",
         right: "48px",
-        width: "38px",
-        height: "38px",
+        width: "40px",
+        height: "40px",
         cursor: "pointer"
       }, viewBox: "0 0 51 48", onclick: (e) => {FWM.toggleFavourite(takeoff); e.stopPropagation();}}, [
         m("path", {fill: takeoff.favourite ? "yellow" : "none", stroke: "#000", d: "m25,1 6,17h18l-14,11 5,17-15-10-15,10 5-17-14-11h18z"})
@@ -180,8 +192,8 @@ var takeoffListEntry = {
       m("img", {style: {
         position: "absolute",
         right: "5px",
-        width: "38px",
-        height: "38px",
+        width: "40px",
+        height: "40px",
         cursor: "pointer"
       }, src: "images/NOAA.svg", onclick: (e) => {FWM.fetchMeteogram(takeoff); FWM.fetchSounding(takeoff, new Date().getTime() + 10800000); e.stopPropagation();}}),
       m("div", {style: {
@@ -315,7 +327,7 @@ var main = {
       }}, m(takeoffListView)),
       m("div", {style: {
         position: "absolute",
-        top: FWM.dividers.horizontal,
+        top: "0",
         left: FWM.dividers.vertical,
         right: "0",
         bottom: "0"
@@ -323,7 +335,7 @@ var main = {
       m("div", {style: {
         display: "none",
         position: "absolute",
-        top: FWM.dividers.horizontal,
+        top: "0",
         left: FWM.dividers.vertical,
         bottom: "0",
         right: "0"
@@ -339,8 +351,8 @@ var body = {
         position: "absolute",
         top: "0",
         left: "0",
-        right: "0",
         height: FWM.dividers.horizontal,
+        width: FWM.dividers.vertical,
         background: "lightskyblue"
       }}, m(nav)),
       m("main", m(main))
