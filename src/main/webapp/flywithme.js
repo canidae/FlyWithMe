@@ -18,6 +18,7 @@ var DB = {
 
 var FWM = {
   googleMap: null,
+  infoWindow: null,
   takeoffs: {},
   dividers: {
     horizontal: "50px",
@@ -55,9 +56,7 @@ var FWM = {
           DB.set("takeoffs_updated", lastUpdated);
           FWM.sortTakeoffs();
           var markers = Object.values(FWM.takeoffs).map((takeoff) => {
-            var info = new google.maps.InfoWindow({
-              content: "<div><h1>" + takeoff.name + "</h1><p>" + FWM.textToHtml(takeoff.desc) + "</p></div>"
-            });
+            FWM.infoWindow = new google.maps.InfoWindow({});
             var marker = new google.maps.Marker({
               position: {lat: takeoff.lat, lng: takeoff.lng},
               title: takeoff.name,
@@ -69,7 +68,8 @@ var FWM = {
               }
             });
             marker.addListener('click', () => {
-              info.open(FWM.googleMap, marker);
+              FWM.infoWindow.setContent("<div><h1>" + takeoff.name + "</h1><p>" + FWM.textToHtml(takeoff.desc) + "</p></div>");
+              FWM.infoWindow.open(FWM.googleMap, marker);
             });
             return marker;
           });
