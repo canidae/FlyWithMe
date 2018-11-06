@@ -18,15 +18,18 @@ var DB = {
 
 var FWM = {
   googleMap: null,
-  searchText: "",
-  show_desc_takeoff_id: -1,
-  takeoff: {},
   takeoffs: {},
-  sortedTakeoffs: [],
-  forecast: {},
   dividers: {
     horizontal: "50px",
     vertical: "500px"
+  },
+
+  /* FWM.active keeps track of user's current selection */
+  active: {
+    sortedTakeoffs: [],
+    searchText: "",
+    takeoff: {},
+    forecast: {}
   },
 
   // get takeoff data, update if necessary
@@ -113,13 +116,6 @@ var FWM = {
       "</svg>";
   },
 
-  // pan map to position
-  panMap: (position) => {
-    console.log("Pan map to:", position);
-    FWM.googleMap.panTo(position);
-    console.log(FWM.googleMap.getBounds().getNorthEast().lat());
-  },
-
   // toggle takeoff favouritability
   toggleFavourite: (takeoff) => {
     takeoff.favourite = !takeoff.favourite;
@@ -131,7 +127,7 @@ var FWM = {
     fetch("/takeoffs/" + takeoff.id + "/meteogram")
       .then((response) => response.json())
       .then((data) => {
-        FWM.forecast.meteogram = "data:image/gif;base64," + data.image;
+        FWM.active.forecast.meteogram = "data:image/gif;base64," + data.image;
         m.redraw();
       });
   },
@@ -140,15 +136,15 @@ var FWM = {
     fetch("/takeoffs/" + takeoff.id + "/sounding/" + timestamp)
       .then((response) => response.json())
       .then((data) => {
-        FWM.forecast.sounding = "data:image/gif;base64," + data[0].image;
-        FWM.forecast.theta = "data:image/gif;base64," + data[1].image;
-        FWM.forecast.text = "data:image/gif;base64," + data[2].image;
+        FWM.active.forecast.sounding = "data:image/gif;base64," + data[0].image;
+        FWM.active.forecast.theta = "data:image/gif;base64," + data[1].image;
+        FWM.active.forecast.text = "data:image/gif;base64," + data[2].image;
         m.redraw();
       });
   },
 
   sortTakeoffs: () => {
-    FWM.sortedTakeoffs = Object.values(FWM.takeoffs).filter((takeoff) => takeoff.name.match(new RegExp(FWM.searchText, "i"))).sort(FWM.takeoffSortComparator).slice(0, 20);
+    FWM.active.sortedTakeoffs = Object.values(FWM.takeoffs).filter((takeoff) => takeoff.name.match(new RegExp(FWM.active.searchText, "i"))).sort(FWM.takeoffSortComparator).slice(0, 20);
     m.redraw();
   },
 
@@ -213,7 +209,7 @@ var takeoffListEntry = {
       }, src: "images/NOAA.svg", onclick: (e) => {FWM.fetchMeteogram(takeoff); FWM.fetchSounding(takeoff, new Date().getTime() + 10800000); e.stopPropagation();}}),
       m("div", {style: {
         position: "relative",
-        display: FWM.show_desc_takeoff_id == takeoff.id ? "block" : "none"
+        display: FWM.active.takeoff.id == takeoff.id ? "block" : "none"
       }}, m.trust(FWM.textToHtml(takeoff.desc)))
     ];
   }
@@ -221,12 +217,26 @@ var takeoffListEntry = {
 
 var takeoffListView = {
   view: (vnode) => {
-    return FWM.sortedTakeoffs.map((takeoff, index) => {
+    return FWM.active.sortedTakeoffs.map((takeoff, index) => {
       return m("div", {id: takeoff.id, key: takeoff.id, style: {
         position: "relative",
         cursor: "pointer",
         "background-color": index % 2 == 0 ? "#fff" : "#ddd"
-      }, onclick: () => {FWM.show_desc_takeoff_id = (FWM.show_desc_takeoff_id == takeoff.id) ? -1 : takeoff.id;}}, m(takeoffListEntry, {takeoff: takeoff}));
+      }, onclick: () => {
+        if (FWM.active.takeoff.id == takeoff.id) {
+          FWM.googleMap.panTo(FWM.active.prevMapCenter);
+          FWM.googleMap.setZoom(FWM.active.prevMapZoom);
+          FWM.active.takeoff = {};
+        } else {
+          if (FWM.active.takeoff.id == null) {
+            FWM.active.prevMapCenter = FWM.googleMap.getCenter();
+            FWM.active.prevMapZoom = FWM.googleMap.getZoom();
+          }
+          FWM.active.takeoff = takeoff;
+          FWM.googleMap.panTo(takeoff);
+          FWM.googleMap.setZoom(14);
+        }
+      }}, m(takeoffListEntry, {takeoff: takeoff}));
     });
   }
 };
@@ -250,28 +260,28 @@ var forecastView = {
         height: "100%",
         width: "25%",
         "object-fit": "contain",
-        src: FWM.forecast.meteogram
+        src: FWM.active.forecast.meteogram
       }),
       m("img", {
         name: "sounding",
         height: "100%",
         width: "25%",
         "object-fit": "contain",
-        src: FWM.forecast.sounding
+        src: FWM.active.forecast.sounding
       }),
       m("img", {
         name: "theta",
         height: "100%",
         width: "25%",
         "object-fit": "contain",
-        src: FWM.forecast.theta
+        src: FWM.active.forecast.theta
       }),
       m("img", {
         name: "text",
         height: "100%",
         width: "25%",
         "object-fit": "contain",
-        src: FWM.forecast.text
+        src: FWM.active.forecast.text
       })
     ];
   }
@@ -303,9 +313,9 @@ var nav = {
             width: "100%"
           },
           placeholder: "Search",
-          value: FWM.searchText,
+          value: FWM.active.searchText,
           onblur: (el) => {setTimeout(() => {el.target.focus()}, 10)},
-          oninput: m.withAttr("value", (text) => {FWM.searchText = text; FWM.sortTakeoffs();})
+          oninput: m.withAttr("value", (text) => {FWM.active.searchText = text; FWM.sortTakeoffs();})
         })
       ),
       m("svg", {xmlns: "http://www.w3.org/2000/svg", viewBox: "-105 -105 210 210", style: {
