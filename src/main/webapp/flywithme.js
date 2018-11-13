@@ -255,32 +255,23 @@ var googleMapView = {
 var forecastView = {
   view: (vnode) => {
     return [
+      m("button", {
+        onclick: () => FWM.active.forecast = {}
+      }, "Close"),
       m("img", {
         name: "meteogram",
-        height: "100%",
-        width: "25%",
-        "object-fit": "contain",
         src: FWM.active.forecast.meteogram
       }),
       m("img", {
         name: "sounding",
-        height: "100%",
-        width: "25%",
-        "object-fit": "contain",
         src: FWM.active.forecast.sounding
       }),
       m("img", {
         name: "theta",
-        height: "100%",
-        width: "25%",
-        "object-fit": "contain",
         src: FWM.active.forecast.theta
       }),
       m("img", {
         name: "text",
-        height: "100%",
-        width: "25%",
-        "object-fit": "contain",
         src: FWM.active.forecast.text
       })
     ];
@@ -358,12 +349,14 @@ var main = {
         bottom: "0"
       }}, m(googleMapView)),
       m("div", {style: {
-        display: "none",
+        display: (FWM.active.forecast.meteogram ? "block" : "none"),
         position: "absolute",
         top: "0",
         left: FWM.dividers.vertical,
         bottom: "0",
-        right: "0"
+        right: "0",
+        overflow: "auto",
+        background: "white"
       }}, m(forecastView))
     ];
   },
