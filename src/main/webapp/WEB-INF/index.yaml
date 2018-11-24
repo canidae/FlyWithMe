@@ -1,0 +1,22 @@
+indexes:
+
+- kind: Forecast
+  ancestor: no
+  properties:
+  - name: takeoffId
+    direction: asc
+  - name: type
+    direction: asc
+  - name: updated
+    direction: asc
+
+- kind: Forecast
+  properties:
+  - name: takeoffId
+    direction: asc
+  - name: type
+    direction: asc
+  - name: validFor
+    direction: asc
+  - name: updated
+    direction: asc

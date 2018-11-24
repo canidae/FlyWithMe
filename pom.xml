@@ -48,6 +48,7 @@
         <version>1.3.2</version>
         <configuration>
           <cloudSdkPath>google-cloud-sdk</cloudSdkPath>
+          <project>api-project-650451827361</project>
         </configuration>
       </plugin>
     </plugins>

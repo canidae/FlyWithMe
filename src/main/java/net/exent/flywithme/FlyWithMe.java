@@ -172,23 +172,18 @@ public class FlyWithMe extends HttpServlet {
         log.i("Checking for updated takeoffs within the last ", daysToCheck, " days");
 
         List<Takeoff> takeoffs = FlightlogProxy.fetchUpdatedTakeoffs(daysToCheck);
-        if (takeoffs != null) {
-            log.i("Found ", takeoffs.size(), " takeoffs updated within the last ", daysToCheck, " days");
-            for (Takeoff updatedTakeoff : takeoffs) {
-                log.i("Attempting to update takeoff with ID ", updatedTakeoff.getId());
-                try {
-                    Takeoff existing = DataStore.loadTakeoff(updatedTakeoff.getId());
-                    if (updatedTakeoff.equals(existing)) {
-                        updatedTakeoff.setUpdated(existing.getUpdated()); // data not changed, keep "updated" as it is
-                        log.i("No new data for takeoff with ID ", updatedTakeoff.getId());
-                    } else {
-                        log.i("Updated data for takeoff with ID ", updatedTakeoff.getId());
-                    }
+        if (takeoffs == null)
+            return;
+        log.i("Found ", takeoffs.size(), " takeoffs updated within the last ", daysToCheck, " days");
+        takeoffs.stream().sorted((t1, t2) -> (int) ((t1.getUpdated() - t2.getUpdated()) / 1000)).forEach(updatedTakeoff -> {
+            try {
+                Takeoff existing = DataStore.loadTakeoff(updatedTakeoff.getId());
+                if (!updatedTakeoff.equals(existing))
                     DataStore.saveTakeoff(updatedTakeoff);
-                } catch (Exception e) {
-                    log.w(e, "Unable to update data for takeoff with ID ", updatedTakeoff.getId());
-                }
+                log.i("Updated takeoff(", updatedTakeoff.getId(), "), last updated: ", updatedTakeoff.getUpdated());
+            } catch (Exception e) {
+                log.w(e, "Unable to update takeoff(", updatedTakeoff.getId(), ")");
             }
-        }
+        });
     }
 }

@@ -3,11 +3,9 @@ package net.exent.flywithme.util;
 import net.exent.flywithme.bean.Takeoff;
 
 import org.xml.sax.Attributes;
-import org.xml.sax.InputSource;
 import org.xml.sax.helpers.DefaultHandler;
 
-import java.io.File;
-import java.io.FileReader;
+import java.io.*;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -26,7 +24,7 @@ import javax.xml.parsers.SAXParserFactory;
 public class FlightlogProxy {
     private static final Log log = new Log();
 
-    private static final String UPDATED_URL = "http://flightlog.org/?returntype=xml&rqtid=12&d=";
+    private static final String UPDATED_URL = "https://flightlog.org/?returntype=xml&rqtid=12&d=";
     private static final Pattern UNICODE_PATTERN = Pattern.compile("&#(\\d+);", Pattern.DOTALL);
     private static final DateTimeFormatter timestampParser = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
@@ -34,16 +32,18 @@ public class FlightlogProxy {
         try {
             TakeoffDataHandler takeoffDataHandler = new TakeoffDataHandler();
             SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
-            if (days > 365) {
-                // not updated in a year, most likely an empty database
-                log.d("Reading takeoffs from file: flightlog.org.xml");
-                saxParser.parse(new InputSource(new FileReader(new File("resources", "flightlog.org.xml"))), takeoffDataHandler);
-            } else {
-                // less than a year since last update, takeoff database likely exist
-                URL url = new URL(UPDATED_URL + days);
-                log.d("Fetching updated takeoffs: ", url);
-                saxParser.parse(new InputSource(url.openStream()), takeoffDataHandler);
+            URL url = new URL(UPDATED_URL + days);
+            log.d("Fetching updated takeoffs: ", url);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            BufferedReader br = new BufferedReader(new InputStreamReader(url.openStream()));
+            String line;
+            while ((line = br.readLine()) != null) {
+                // work-around for malformed xml from flightlog.org
+                if ("<?xml version=\"1.0\" encoding=\"UTF-8\"?><starts>".equals(line))
+                    line = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<starts>";
+                baos.write((line + "\n").getBytes());
             }
+            saxParser.parse(new ByteArrayInputStream(baos.toByteArray()), takeoffDataHandler);
             return takeoffDataHandler.getTakeoffs();
         } catch (Exception e) {
             log.w(e, "Unable to fetch list of updated takeoffs within the last ", days, " days");
