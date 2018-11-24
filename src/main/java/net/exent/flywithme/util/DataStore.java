@@ -68,7 +68,8 @@ public class DataStore {
         List<Takeoff> takeoffs = ofy().load().type(Takeoff.class)
                 .filter("updated >", updatedAfter)
                 .list();
-        memcacheSaveLargeList(key, takeoffs);
+        if (takeoffs != null && !takeoffs.isEmpty())
+            memcacheSaveLargeList(key, takeoffs);
         return takeoffs;
     }
 
@@ -102,6 +103,7 @@ public class DataStore {
     }
 
     private static Object memcacheLoad(String key) {
+        log.d("Loading from memcache: ", key);
         try {
             MemcacheService memcache = MemcacheServiceFactory.getMemcacheService();
             memcache.setErrorHandler(ErrorHandlers.getStrict());
@@ -113,6 +115,7 @@ public class DataStore {
     }
 
     private static void memcacheSave(String key, Object object) {
+        log.d("Saving to memcache: ", key);
         try {
             MemcacheService memcache = MemcacheServiceFactory.getMemcacheService();
             memcache.setErrorHandler(ErrorHandlers.getStrict());
@@ -123,6 +126,7 @@ public class DataStore {
     }
 
     private static boolean memcacheDelete(String key) {
+        log.d("Deleting from memcache: ", key);
         try {
             MemcacheService memcache = MemcacheServiceFactory.getMemcacheService();
             memcache.setErrorHandler(ErrorHandlers.getStrict());
@@ -134,6 +138,7 @@ public class DataStore {
     }
 
     private static List<Object> memcacheLoadLargeList(String keyPrefix) {
+        log.d("Loading large list from memcache: ", keyPrefix);
         try {
             MemcacheService memcache = MemcacheServiceFactory.getMemcacheService();
             memcache.setErrorHandler(ErrorHandlers.getStrict());
@@ -157,6 +162,7 @@ public class DataStore {
     }
 
     private static void memcacheSaveLargeList(String keyPrefix, List list) {
+        log.d("Saving large list to memcache: ", keyPrefix);
         try {
             MemcacheService memcache = MemcacheServiceFactory.getMemcacheService();
             memcache.setErrorHandler(ErrorHandlers.getStrict());
@@ -184,6 +190,7 @@ public class DataStore {
     }
 
     private static boolean memcacheDeleteLargeList(String keyPrefix) {
+        log.d("Deleting large list from memcache: ", keyPrefix);
         try {
             MemcacheService memcache = MemcacheServiceFactory.getMemcacheService();
             memcache.setErrorHandler(ErrorHandlers.getStrict());
