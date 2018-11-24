@@ -38,53 +38,51 @@ var FWM = {
     var lastUpdated = DB.get("takeoffs_updated") || 0;
     var now = new Date().getTime();
     FWM.takeoffs = JSON.parse(DB.decompress("takeoffs") || "{}");
-    if (Math.ceil((now - lastUpdated) / 86400000) > 5) {
-      fetch("/takeoffs?lastUpdated=" + lastUpdated)
-        .then((response) => response.json())
-        .then((data) => {
-          var count = 0;
-          for (i in data) {
-            var takeoff = data[i];
-            FWM.takeoffs[takeoff.id] = takeoff;
-            ++count;
-            if (takeoff.lastUpdated > lastUpdated) {
-              lastUpdated = takeoff.lastUpdated
-            }
+    fetch("/takeoffs?lastUpdated=" + lastUpdated)
+    .then((response) => response.json())
+    .then((data) => {
+      var count = 0;
+      for (i in data) {
+        var takeoff = data[i];
+        FWM.takeoffs[takeoff.id] = takeoff;
+        ++count;
+        if (takeoff.updated > lastUpdated) {
+          lastUpdated = takeoff.updated
+        }
+      }
+      console.log("Updated takeoffs:", count);
+      DB.compress("takeoffs", JSON.stringify(FWM.takeoffs));
+      DB.set("takeoffs_updated", lastUpdated);
+      FWM.sortTakeoffs();
+      var markers = Object.values(FWM.takeoffs).map((takeoff) => {
+        FWM.infoWindow = new google.maps.InfoWindow({});
+        var marker = new google.maps.Marker({
+          position: {lat: takeoff.lat, lng: takeoff.lng},
+          title: takeoff.name,
+          label: takeoff.name[0],
+          icon: {
+            url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(FWM.takeoffExitsToSvg(takeoff.exits)),
+            scaledSize: new google.maps.Size(40, 40),
+            anchor: new google.maps.Point(20, 20)
           }
-          console.log("Updated takeoffs:", count);
-          DB.compress("takeoffs", JSON.stringify(FWM.takeoffs));
-          DB.set("takeoffs_updated", lastUpdated);
-          FWM.sortTakeoffs();
-          var markers = Object.values(FWM.takeoffs).map((takeoff) => {
-            FWM.infoWindow = new google.maps.InfoWindow({});
-            var marker = new google.maps.Marker({
-              position: {lat: takeoff.lat, lng: takeoff.lng},
-              title: takeoff.name,
-              label: takeoff.name[0],
-              icon: {
-                url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(FWM.takeoffExitsToSvg(takeoff.exits)),
-                scaledSize: new google.maps.Size(40, 40),
-                anchor: new google.maps.Point(20, 20)
-              }
-            });
-            marker.addListener('click', () => {
-              FWM.infoWindow.setContent("<div><h1>" + takeoff.name + "</h1><p>" + FWM.textToHtml(takeoff.desc) + "</p></div>");
-              FWM.infoWindow.open(FWM.googleMap, marker);
-            });
-            return marker;
-          });
-          var markerClusterer = new MarkerClusterer(FWM.googleMap, markers, {imagePath: "libs/google_maps_v3/"});
-          // the following prevent zooming in when dragging the map where initial click was on a marker
-          google.maps.event.addListener(FWM.googleMap, 'dragstart', () => {
-            markerClusterer.zoomOnClick_ = false;
-          });
-          google.maps.event.addListener(FWM.googleMap, 'mouseup', () => {
-            setTimeout(() => {
-              markerClusterer.zoomOnClick_ = true;
-            }, 50);
-          });
         });
-    }
+        marker.addListener('click', () => {
+          FWM.infoWindow.setContent("<div><h1>" + takeoff.name + "</h1><p>" + FWM.textToHtml(takeoff.desc) + "</p></div>");
+          FWM.infoWindow.open(FWM.googleMap, marker);
+        });
+        return marker;
+      });
+      var markerClusterer = new MarkerClusterer(FWM.googleMap, markers, {imagePath: "libs/google_maps_v3/"});
+      // the following prevent zooming in when dragging the map where initial click was on a marker
+      google.maps.event.addListener(FWM.googleMap, 'dragstart', () => {
+        markerClusterer.zoomOnClick_ = false;
+      });
+      google.maps.event.addListener(FWM.googleMap, 'mouseup', () => {
+        setTimeout(() => {
+          markerClusterer.zoomOnClick_ = true;
+        }, 50);
+      });
+    });
   },
 
   // convert text to html
