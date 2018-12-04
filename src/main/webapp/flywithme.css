@@ -13,3 +13,10 @@ body {
   bottom: 0;
   right: 0;
 }
+
+/* animations */
+@keyframes loading {
+  from {opacity: 1;}
+  50% {opacity: 0;}
+  to {opacity: 1;}
+}

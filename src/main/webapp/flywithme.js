@@ -122,16 +122,25 @@ var FWM = {
   },
 
   fetchMeteogram: (takeoff) => {
+    FWM.active.forecast.takeoff = takeoff;
+    FWM.active.forecast.loading = takeoff.id;
     fetch("/takeoffs/" + takeoff.id + "/meteogram")
       .then((response) => response.json())
       .then((data) => {
         FWM.active.forecast.meteogram = "data:image/gif;base64," + data.image;
+        FWM.active.forecast.loading = null;
         m.redraw();
       });
   },
 
-  fetchSounding: (takeoff, timestamp) => {
-    fetch("/takeoffs/" + takeoff.id + "/sounding/" + timestamp)
+  fetchSounding: (hours) => {
+    FWM.active.forecast.soundingHour = hours;
+    var timestamp = new Date();
+    timestamp.setUTCHours(hours);
+    timestamp.setUTCMinutes(0);
+    timestamp.setUTCSeconds(0);
+    timestamp.setUTCMilliseconds(0);
+    fetch("/takeoffs/" + FWM.active.forecast.takeoff.id + "/sounding/" + timestamp.getTime())
       .then((response) => response.json())
       .then((data) => {
         FWM.active.forecast.sounding = "data:image/gif;base64," + data[0].image;
@@ -203,8 +212,9 @@ var takeoffListEntry = {
         right: "5px",
         width: "40px",
         height: "40px",
+        animation: FWM.active.forecast.loading == takeoff.id ? "loading 2s infinite" : null,
         cursor: "pointer"
-      }, src: "images/NOAA.svg", onclick: (e) => {FWM.fetchMeteogram(takeoff); FWM.fetchSounding(takeoff, new Date().getTime() + 10800000); e.stopPropagation();}}),
+      }, src: "images/NOAA.svg", onclick: (e) => {FWM.fetchMeteogram(takeoff); e.stopPropagation();}}),
       m("div", {style: {
         position: "relative",
         display: FWM.active.takeoff.id == takeoff.id ? "block" : "none"
@@ -252,10 +262,35 @@ var googleMapView = {
 
 var forecastView = {
   view: (vnode) => {
+    var forecastOptions = [];
+    forecastOptions.push(m("option", {
+      value: "sounding",
+      disabled: "disabled"
+    }, "Sounding"));
+    var dateOptions = {
+      weekday: "short",
+      hour: "2-digit",
+      minute: "2-digit",
+      timeZoneName: "short",
+      hour12: false
+    }
+    for (i = 12; i <= 96; i += 3) {
+      var soundingDate = new Date();
+      soundingDate.setUTCHours(i);
+      soundingDate.setUTCMinutes(0);
+      forecastOptions.push(m("option", {
+        value: i
+      }, "Sounding " + soundingDate.toLocaleDateString(undefined, dateOptions)));
+    }
     return [
       m("button", {
         onclick: () => FWM.active.forecast = {}
       }, "Close"),
+      m("select", {
+        selectedIndex: FWM.active.forecast.soundingHour ? (FWM.active.forecast.soundingHour - 9) / 3 : 0,
+        onchange: m.withAttr("selectedIndex", (index) => {FWM.fetchSounding(index * 3 + 9);})
+      }, forecastOptions),
+      m("br"),
       m("img", {
         name: "meteogram",
         src: FWM.active.forecast.meteogram
