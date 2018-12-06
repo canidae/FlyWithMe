@@ -12,6 +12,7 @@ Pull requests are most welcome, but they must adhere to these rules:
 * The contribution you provide must either be, or be compatible with the [CC BY](https://creativecommons.org/licenses/by/4.0/) license.
 * FlyWithMe is [CC BY-NC-SA](https://creativecommons.org/licenses/by-nc-sa/4.0/) licensed, obviously you must agree that your contribution will end up with this license.
 * I will attribute you for your contribution, but it likely won't be more than a simple list, possibly not even visible in the application.
+* Keep the pull requests small, don't fix or add multiple things in one pull request.
 * Try to use the same coding style as already present in the source.
 * I may, and likely will, alter the code you supply to suit my taste.
 
