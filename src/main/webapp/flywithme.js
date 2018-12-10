@@ -358,11 +358,6 @@ var nav = {
 };
 
 var main = {
-  oninit: (vnode) => {
-    FWM.updateTakeoffData();
-    FWM.sortTakeoffs();
-  },
-
   view: (vnode) => {
     return [
       m("div", {style: {
@@ -396,6 +391,11 @@ var main = {
 };
 
 var body = {
+  oninit: (vnode) => {
+    FWM.updateTakeoffData();
+    FWM.sortTakeoffs();
+  },
+
   view: (vnode) => {
     return [
       m("nav", {style: {
