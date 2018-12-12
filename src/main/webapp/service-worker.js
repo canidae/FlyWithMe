@@ -1,6 +1,9 @@
 var CACHE = "flywithme";
 
-self.addEventListener('fetch', (e) => {
+self.addEventListener("fetch", (e) => {
+  if (e.request.url.indexOf(".googleapis.com") !== -1) {
+    return;
+  }
   e.respondWith(fromCache(e.request).then((response) => {
     return response || fromBackend(e.request);
   }));
