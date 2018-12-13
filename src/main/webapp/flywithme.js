@@ -117,6 +117,7 @@ var FWM = {
   // toggle takeoff favouritability
   toggleFavourite: (takeoff) => {
     takeoff.favourite = !takeoff.favourite;
+    // TODO: slow, save favourites in own list?
     DB.compress("flightlog_takeoffs", JSON.stringify(FWM.takeoffs));
     FWM.sortTakeoffs();
   },
@@ -151,7 +152,12 @@ var FWM = {
   },
 
   sortTakeoffs: () => {
-    FWM.active.sortedTakeoffs = Object.values(FWM.takeoffs).filter((takeoff) => takeoff.name.match(new RegExp(FWM.active.searchText, "i"))).sort(FWM.takeoffSortComparator).slice(0, 20);
+    FWM.active.sortedTakeoffs = Object.values(FWM.takeoffs)
+      .filter((takeoff) => takeoff.name.match(new RegExp(FWM.active.searchText, "i")))
+      .filter((takeoff) => takeoff.lat != 0.0 || takeoff.lng != 0.0)
+      .filter((takeoff) => takeoff.name.length > 3)
+      .filter((takeoff) => takeoff.desc.length > 3)
+      .sort(FWM.takeoffSortComparator).slice(0, 20);
     m.redraw();
   },
 
@@ -161,9 +167,23 @@ var FWM = {
       return -1;
     } else if (!a.favourite && b.favourite) {
       return 1;
+    } else if (FWM.position && FWM.position.latitude && FWM.position.longitude) {
+      return FWM.calculateDistance(FWM.position.latitude, FWM.position.longitude, a.lat, a.lng) - FWM.calculateDistance(FWM.position.latitude, FWM.position.longitude, b.lat, b.lng);
     } else {
       return ("" + a.name).localeCompare(b.name);
     }
+  },
+
+  calculateDistance: (lat1, lon1, lat2, lon2) => {
+    var radlat1 = Math.PI * lat1 / 180;
+    var radlat2 = Math.PI * lat2 / 180;
+    var radtheta = Math.PI * (lon1 - lon2) / 180;
+    var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+    if (dist > 1) {
+      dist = 1;
+    }
+    dist = Math.acos(dist) * 180 / Math.PI * 60 * 1.1515 * 1.609344;
+    return dist;
   }
 };
 
@@ -401,6 +421,13 @@ var body = {
   oninit: (vnode) => {
     FWM.updateTakeoffData();
     FWM.sortTakeoffs();
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition((position) => {
+        FWM.position = position.coords;
+        FWM.googleMap.panTo({lat: FWM.position.latitude, lng: FWM.position.longitude});
+        FWM.sortTakeoffs();
+      });
+    }
   },
 
   view: (vnode) => {
