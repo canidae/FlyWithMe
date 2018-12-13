@@ -56,18 +56,18 @@ var FWM = {
       FWM.sortTakeoffs();
       var markers = Object.values(FWM.takeoffs).map((takeoff) => {
         FWM.infoWindow = new google.maps.InfoWindow({});
+        var takeoffExitsHtml = FWM.takeoffExitsToSvg(takeoff.exits, "width: 40px; height: 40px");
         var marker = new google.maps.Marker({
           position: {lat: takeoff.lat, lng: takeoff.lng},
           title: takeoff.name,
-          label: takeoff.name[0],
           icon: {
-            url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(FWM.takeoffExitsToSvg(takeoff.exits)),
+            url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(takeoffExitsHtml),
             scaledSize: new google.maps.Size(40, 40),
             anchor: new google.maps.Point(20, 20)
           }
         });
         marker.addListener('click', () => {
-          FWM.infoWindow.setContent("<div><h1>" + takeoff.name + "</h1><p>" + FWM.textToHtml(takeoff.desc) + "</p></div>");
+          FWM.infoWindow.setContent("<div><h1>" + takeoff.name + takeoffExitsHtml + "</h1><p>" + FWM.textToHtml(takeoff.desc) + "</p></div>");
           FWM.infoWindow.open(FWM.googleMap, marker);
         });
         return marker;
@@ -198,9 +198,16 @@ var takeoffListEntry = {
         "white-space": "nowrap",
         overflow: "hidden"
       }}, "Diff: " + takeoff.height),
+      m("img", {style: {
+        position: "absolute",
+        right: "95px",
+        width: "40px",
+        height: "40px",
+        cursor: "pointer",
+      }, src: "images/navigate.svg"}),
       m("svg", {xmlns: "http://www.w3.org/2000/svg", style: {
         position: "absolute",
-        right: "48px",
+        right: "50px",
         width: "40px",
         height: "40px",
         cursor: "pointer"
