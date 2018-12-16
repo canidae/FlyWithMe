@@ -1,25 +1,27 @@
-var DB = {
-  set: (key, value) => {
-    localStorage.setItem(key, value);
-  },
+/* shims for ancient browsers */
+window.requestIdleCallback = window.requestIdleCallback || ((cb) => {
+  var start = Date.now();
+  return setTimeout(() => {
+    cb({
+      didTimeout: false,
+      timeRemaining: () => {
+        return Math.max(0, 50 - (Date.now() - start));
+      }
+    });
+  }, 1);
+});
 
-  get: (key) => {
-    return localStorage.getItem(key);
-  },
+window.cancelIdleCallback = window.cancelIdleCallback || ((id) => {
+  clearTimeout(id);
+});
 
-  compress: (key, value) => {
-    DB.set(key, LZString.compressToUTF16(value));
-  },
+/* keeping track of data and user settings */
+var DB = JSON.parse(LZString.decompressFromUTF16(localStorage.getItem("FWM")) || "{}");
 
-  decompress: (key) => {
-    return LZString.decompressFromUTF16(DB.get(key));
-  }
-}
-
+/* logic for FWM */
 var FWM = {
   googleMap: null,
   infoWindow: null,
-  takeoffs: {},
   dividers: {
     horizontal: "50px",
     vertical: "500px"
@@ -33,28 +35,44 @@ var FWM = {
     forecast: {}
   },
 
-  // get takeoff data, update if necessary
+  // save data/settings
+  save: () => {
+    if (FWM._idleCallbackId) {
+      window.cancelIdleCallback(FWM._idleCallbackId);
+    }
+    window.requestIdleCallback(() => {
+      localStorage.setItem("FWM", LZString.compressToUTF16(JSON.stringify(DB)));
+      FWM._idleCallbackId = null;
+    });
+  },
+
+  // update takeoff data
   updateTakeoffData: () => {
-    var lastUpdated = DB.get("takeoffs_updated") || 0;
+    if (!DB.takeoffs) {
+      DB.takeoffs = {};
+    }
+    if (!DB.lastUpdated) {
+      DB.lastUpdated = 0;
+    }
     var now = new Date().getTime();
-    FWM.takeoffs = JSON.parse(DB.decompress("takeoffs") || "{}");
-    fetch("/takeoffs?lastUpdated=" + lastUpdated)
+    fetch("/takeoffs?lastUpdated=" + DB.lastUpdated)
     .then((response) => response.json())
     .then((data) => {
       var count = 0;
       for (i in data) {
         var takeoff = data[i];
-        FWM.takeoffs[takeoff.id] = takeoff;
+        DB.takeoffs[takeoff.id] = takeoff;
         ++count;
-        if (takeoff.updated > lastUpdated) {
-          lastUpdated = takeoff.updated
+        if (takeoff.updated > DB.lastUpdated) {
+          DB.lastUpdated = takeoff.updated
         }
       }
       console.log("Updated takeoffs:", count);
-      DB.compress("takeoffs", JSON.stringify(FWM.takeoffs));
-      DB.set("takeoffs_updated", lastUpdated);
+      FWM.save();
+
+      /* TODO: below should not be here */
       FWM.sortTakeoffs();
-      var markers = Object.values(FWM.takeoffs).map((takeoff) => {
+      var markers = Object.values(DB.takeoffs).map((takeoff) => {
         FWM.infoWindow = new google.maps.InfoWindow({});
         var takeoffExitsHtml = FWM.takeoffExitsToSvg(takeoff.exits, "width: 40px; height: 40px");
         var marker = new google.maps.Marker({
@@ -116,10 +134,10 @@ var FWM = {
 
   // toggle takeoff favouritability
   toggleFavourite: (takeoff) => {
-    takeoff.favourite = !takeoff.favourite;
-    // TODO: slow, save favourites in own list?
-    DB.compress("flightlog_takeoffs", JSON.stringify(FWM.takeoffs));
+    var takeoffs = DB.takeoffs || {};
+    takeoffs[takeoff.id].favourite = !takeoffs[takeoff.id].favourite;
     FWM.sortTakeoffs();
+    FWM.save();
   },
 
   fetchMeteogram: (takeoff) => {
@@ -152,7 +170,7 @@ var FWM = {
   },
 
   sortTakeoffs: () => {
-    FWM.active.sortedTakeoffs = Object.values(FWM.takeoffs)
+    FWM.active.sortedTakeoffs = Object.values(DB.takeoffs || {})
       .filter((takeoff) => takeoff.name.match(new RegExp(FWM.active.searchText, "i")))
       .filter((takeoff) => takeoff.lat != 0.0 || takeoff.lng != 0.0)
       .filter((takeoff) => takeoff.name.length > 3)
