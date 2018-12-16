@@ -179,7 +179,7 @@ public class NoaaProxy {
         for (int a = 0; a < 3 && noaaCaptcha == null; ++a) {
             try {
                 noaaUserId = getOne(fetchPageContent(NOAA_URL + "/ready2-bin/main.pl?Lat=" + latitude + "&Lon=" + longitude), NOAA_USERID_PATTERN);
-                String content = fetchPageContent(NOAA_URL + "/ready2-bin/metcycle.pl?product=metgram1&userid=" + noaaUserId + "&metdata=GFS&mdatacfg=GFS&Lat=" + latitude + "&Lon=" + longitude);
+                String content = fetchPageContent(NOAA_URL + "/ready2-bin/metcycle.pl?product=metgram1&userid=" + noaaUserId + "&m=GFS|GFS&Lat=" + latitude + "&Lon=" + longitude);
                 noaaMetCyc = getOne(content, NOAA_METCYC_PATTERN).replace(' ', '+');
                 content = fetchPageContent(NOAA_URL + "/ready2-bin/metgram1.pl?userid=" + noaaUserId + "&metdata=GFS&mdatacfg=GFS&Lat=" + latitude + "&Lon=" + longitude + "&metext=gfsf&metcyc=" + noaaMetCyc);
                 noaaMetDir = getOne(content, NOAA_METDIR_PATTERN);

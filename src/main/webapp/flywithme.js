@@ -71,7 +71,7 @@ var TakeoffListEntry = {
         right: "5px",
         width: "40px",
         height: "40px",
-        animation: FWM.forecast.loading == takeoff.id ? "loading 2s infinite" : null,
+        animation: Forecast.loading == takeoff.id ? "loading 2s infinite" : null,
         cursor: "pointer"
       }, src: "images/NOAA.svg", onclick: (e) => {FWM.fetchMeteogram(takeoff); e.stopPropagation();}}),
       m("div", {style: {
@@ -182,6 +182,11 @@ var GoogleMap = {
 
 /* forecast view for a takeoff */
 var Forecast = {
+  takeoff: null,
+  loading: null,
+  soundingHour: null,
+  images: {},
+
   view: (vnode) => {
     var forecastOptions = [];
     forecastOptions.push(m("option", {
@@ -205,28 +210,28 @@ var Forecast = {
     }
     return [
       m("button", {
-        onclick: () => FWM.forecast = {}
+        onclick: () => Forecast.images = {}
       }, "Close"),
       m("select", {
-        selectedIndex: FWM.forecast.soundingHour ? (FWM.forecast.soundingHour - 9) / 3 : 0,
+        selectedIndex: Forecast.soundingHour ? (Forecast.soundingHour - 9) / 3 : 0,
         onchange: m.withAttr("selectedIndex", (index) => {FWM.fetchSounding(index * 3 + 9);})
       }, forecastOptions),
       m("br"),
       m("img", {
         name: "meteogram",
-        src: FWM.forecast.meteogram
+        src: Forecast.images.meteogram
       }),
       m("img", {
         name: "sounding",
-        src: FWM.forecast.sounding
+        src: Forecast.images.sounding
       }),
       m("img", {
         name: "theta",
-        src: FWM.forecast.theta
+        src: Forecast.images.theta
       }),
       m("img", {
         name: "text",
-        src: FWM.forecast.text
+        src: Forecast.images.text
       })
     ];
   }
@@ -364,7 +369,7 @@ var FWM = {
           bottom: "0"
         }}, m(GoogleMap)),
         m("div", {style: {
-          display: (FWM.forecast.meteogram ? "block" : "none"),
+          display: (Forecast.images.meteogram ? "block" : "none"),
           position: "absolute",
           top: "0",
           left: FWM.dividers.vertical,
@@ -473,30 +478,30 @@ var FWM = {
   },
 
   fetchMeteogram: (takeoff) => {
-    FWM.forecast.takeoff = takeoff;
-    FWM.forecast.loading = takeoff.id;
+    Forecast.takeoff = takeoff;
+    Forecast.loading = takeoff.id;
     fetch("/takeoffs/" + takeoff.id + "/meteogram")
       .then((response) => response.json())
       .then((data) => {
-        FWM.forecast.meteogram = "data:image/gif;base64," + data.image;
-        FWM.forecast.loading = null;
+        Forecast.images.meteogram = "data:image/gif;base64," + data.image;
+        Forecast.loading = null;
         m.redraw();
       });
   },
 
   fetchSounding: (hours) => {
-    FWM.forecast.soundingHour = hours;
+    Forecast.soundingHour = hours;
     var timestamp = new Date();
     timestamp.setUTCHours(hours);
     timestamp.setUTCMinutes(0);
     timestamp.setUTCSeconds(0);
     timestamp.setUTCMilliseconds(0);
-    fetch("/takeoffs/" + FWM.forecast.takeoff.id + "/sounding/" + timestamp.getTime())
+    fetch("/takeoffs/" + Forecast.takeoff.id + "/sounding/" + timestamp.getTime())
       .then((response) => response.json())
       .then((data) => {
-        FWM.forecast.sounding = "data:image/gif;base64," + data[0].image;
-        FWM.forecast.theta = "data:image/gif;base64," + data[1].image;
-        FWM.forecast.text = "data:image/gif;base64," + data[2].image;
+        Forecast.images.sounding = "data:image/gif;base64," + data[0].image;
+        Forecast.images.theta = "data:image/gif;base64," + data[1].image;
+        Forecast.images.text = "data:image/gif;base64," + data[2].image;
         m.redraw();
       });
   },
