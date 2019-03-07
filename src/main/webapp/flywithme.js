@@ -128,7 +128,7 @@ var GoogleMap = {
   markerClusterer: null,
 
   oncreate: (vnode) => {
-    GoogleMap.map = new google.maps.Map(vnode.dom, {zoom: 11, mapTypeId: 'terrain'});
+    GoogleMap.map = new google.maps.Map(vnode.dom, {zoom: 11, center: {lat: FWM.position.latitude, lng: FWM.position.longitude}, mapTypeId: 'terrain'});
 
     // TODO: show airspace
     //GoogleMap.map.data.loadGeoJson('https://raw.githubusercontent.com/relet/pg-xc/master/geojson/luftrom.geojson');
