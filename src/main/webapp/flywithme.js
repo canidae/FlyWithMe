@@ -15,8 +15,89 @@ window.cancelIdleCallback = window.cancelIdleCallback || ((id) => {
   clearTimeout(id);
 });
 
+/* event listeners */
+window.addEventListener("resize", function() {
+  if (window.innerWidth >= 1400) {
+    FWM.layout = "large";
+  } else {
+    FWM.layout = "small";
+  }
+});
+
 /* data we want to persist */
 var DB = JSON.parse(LZString.decompressFromUTF16(localStorage.getItem("FWM")) || "{}");
+
+/* themes */
+var themes = {
+  white: {
+    background: "white"
+  }
+};
+
+/* layouts */
+var layouts = {
+  large: {
+    showOptions(visible) {
+        this.options.style.display = (visible ? "block" : "none");
+        this.takeoffList.style.display = (visible ? "none" : "block");
+    },
+    nav: {
+      style: {
+        position: "absolute",
+        top: "0",
+        left: "0",
+        height: "50px",
+        width: "500px"
+      }
+    },
+    takeoffList: {
+      style: {
+        position: "absolute",
+        top: "50px",
+        left: "0",
+        bottom: "0",
+        width: "500px",
+        overflow: "auto",
+        "overflow-x": "hidden"
+      }
+    },
+    options: {
+      style: {
+        display: "none",
+        position: "absolute",
+        top: "50px",
+        left: "0",
+        bottom: "0",
+        width: "500px",
+        overflow: "auto",
+        "overflow-x": "hidden"
+      }
+    },
+    googleMap: {
+      style: {
+        position: "absolute",
+        top: "0",
+        left: "500px",
+        right: "0",
+        bottom: "0"
+      }
+    },
+    forecast: {
+      style: {
+        display: "none",
+        position: "absolute",
+        top: "0",
+        left: "500px",
+        bottom: "0",
+        right: "0",
+        overflow: "auto"
+      }
+    }
+  },
+  small: {
+    // TODO
+  }
+};
 
 /* a single entry in the takeoff list */
 var TakeoffListEntry = {
@@ -253,6 +334,8 @@ var Options = {
 
 /* the single page app tying it all together */
 var FWM = {
+  theme: "white",
+  layout: "large",
   showOptions: false,
   searchText: "",
   position: {latitude: 61.87416667, longitude: 9.15472222},
@@ -261,12 +344,6 @@ var FWM = {
 
   // TODO: move this to Forecast
   forecast: {}, // current requested/displayed forecast
-
-  // dividers for the panels
-  dividers: {
-    horizontal: "50px",
-    vertical: "500px"
-  },
 
   oninit: (vnode) => {
     FWM.updateTakeoffData();
@@ -282,14 +359,7 @@ var FWM = {
 
   view: (vnode) => {
     return [
-      m("nav", {style: {
-        position: "absolute",
-        top: "0",
-        left: "0",
-        height: FWM.dividers.horizontal,
-        width: FWM.dividers.vertical,
-        background: "lightskyblue"
-      }}, [
+      m("nav", {style: {...layouts[FWM.layout].nav.style, ...themes[FWM.theme]}}, [
         m("img", {
           src: "images/logo.png",
           height: "100%",
@@ -330,6 +400,7 @@ var FWM = {
             cursor: "pointer"
           },
           onclick: () => {
+            layouts[FWM.layout].showOptions(true);
             FWM.showOptions = !FWM.showOptions;
             if (!FWM.showOptions) {
               FWM.updateSettings();
@@ -341,43 +412,10 @@ var FWM = {
         ])
       ]),
       m("main", [
-        m("div", {style: {
-          display: FWM.showOptions ? "none" : "block",
-          position: "absolute",
-          top: FWM.dividers.horizontal,
-          left: "0",
-          bottom: "0",
-          width: FWM.dividers.vertical,
-          overflow: "auto",
-          "overflow-x": "hidden"
-        }}, m(TakeoffList)),
-        m("div", {style: {
-          display: FWM.showOptions ? "block" : "none",
-          position: "absolute",
-          top: FWM.dividers.horizontal,
-          left: "0",
-          bottom: "0",
-          width: FWM.dividers.vertical,
-          overflow: "auto",
-          "overflow-x": "hidden"
-        }}, m(Options)),
-        m("div", {style: {
-          position: "absolute",
-          top: "0",
-          left: FWM.dividers.vertical,
-          right: "0",
-          bottom: "0"
-        }}, m(GoogleMap)),
-        m("div", {style: {
-          display: (Forecast.images.meteogram ? "block" : "none"),
-          position: "absolute",
-          top: "0",
-          left: FWM.dividers.vertical,
-          bottom: "0",
-          right: "0",
-          overflow: "auto",
-          background: "white"
-        }}, m(Forecast))
+        m("div", {style: {...layouts[FWM.layout].takeoffList.style, ...themes[FWM.theme]}}, m(TakeoffList)),
+        m("div", {style: {...layouts[FWM.layout].options.style, ...themes[FWM.theme]}}, m(Options)),
+        m("div", {style: {...layouts[FWM.layout].googleMap.style, ...themes[FWM.theme]}}, m(GoogleMap)),
+        m("div", {style: {...layouts[FWM.layout].forecast.style, ...themes[FWM.theme]}}, m(Forecast))
       ])
     ];
   },
