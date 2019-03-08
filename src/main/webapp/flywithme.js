@@ -37,9 +37,21 @@ var themes = {
 /* layouts */
 var layouts = {
   large: {
+    showTakeoffList(visible) {
+      this.takeoffList.style.display = (visible ? "block" : "none");
+      this.options.style.display = (visible ? "none" : "block");
+    },
+    showGoogleMap(visible) {
+      this.googleMap.style.display = (visible ? "block" : "none");
+      this.forecast.style.display = (visible ? "none" : "block");
+    },
+    showForecast(visible) {
+      this.forecast.style.display = (visible ? "block" : "none");
+      this.googleMap.style.display = (visible ? "none" : "block");
+    },
     showOptions(visible) {
-        this.options.style.display = (visible ? "block" : "none");
-        this.takeoffList.style.display = (visible ? "none" : "block");
+      this.options.style.display = (visible ? "block" : "none");
+      this.takeoffList.style.display = (visible ? "none" : "block");
     },
     nav: {
       style: {
@@ -336,7 +348,7 @@ var Options = {
 var FWM = {
   theme: "white",
   layout: "large",
-  showOptions: false,
+  showOptions: false, // TODO: should be handled in layout
   searchText: "",
   position: {latitude: 61.87416667, longitude: 9.15472222},
   takeoffs: [], // DB.takeoffs with uninteresting entries filtered out
@@ -400,8 +412,9 @@ var FWM = {
             cursor: "pointer"
           },
           onclick: () => {
-            layouts[FWM.layout].showOptions(true);
             FWM.showOptions = !FWM.showOptions;
+            layouts[FWM.layout].showOptions(FWM.showOptions);
+
             if (!FWM.showOptions) {
               FWM.updateSettings();
             }
