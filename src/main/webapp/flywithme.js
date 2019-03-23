@@ -37,72 +37,36 @@ var themes = {
 /* layouts */
 var layouts = {
   large: {
-    showTakeoffList(visible) {
-      this.takeoffList.style.display = (visible ? "block" : "none");
-      this.options.style.display = (visible ? "none" : "block");
-    },
-    showGoogleMap(visible) {
-      this.googleMap.style.display = (visible ? "block" : "none");
-      this.forecast.style.display = (visible ? "none" : "block");
-    },
-    showForecast(visible) {
-      this.forecast.style.display = (visible ? "block" : "none");
-      this.googleMap.style.display = (visible ? "none" : "block");
-    },
-    showOptions(visible) {
-      this.options.style.display = (visible ? "block" : "none");
-      this.takeoffList.style.display = (visible ? "none" : "block");
-    },
-    nav: {
-      style: {
-        position: "absolute",
-        top: "0",
-        left: "0",
-        height: "50px",
-        width: "500px"
-      }
-    },
-    takeoffList: {
-      style: {
-        position: "absolute",
-        top: "50px",
-        left: "0",
-        bottom: "0",
-        width: "500px",
-        overflow: "auto",
-        "overflow-x": "hidden"
-      }
-    },
-    options: {
-      style: {
-        display: "none",
-        position: "absolute",
-        top: "50px",
-        left: "0",
-        bottom: "0",
-        width: "500px",
-        overflow: "auto",
-        "overflow-x": "hidden"
-      }
-    },
-    googleMap: {
-      style: {
-        position: "absolute",
-        top: "0",
-        left: "500px",
-        right: "0",
-        bottom: "0"
-      }
-    },
-    forecast: {
-      style: {
-        display: "none",
-        position: "absolute",
-        top: "0",
-        left: "500px",
-        bottom: "0",
-        right: "0",
-        overflow: "auto"
+    panes: {
+      top: {
+        style: {
+          position: "absolute",
+          top: "0",
+          left: "0",
+          height: "50px",
+          width: "500px"
+        },
+        paneStack: ["nav"]
+      },
+      left: {
+        style: {
+          position: "absolute",
+          top: "50px",
+          left: "0",
+          bottom: "0",
+          width: "500px"
+        },
+        paneStack: ["takeoffList", "options"]
+      },
+      right: {
+        style: {
+          position: "absolute",
+          top: "0",
+          left: "500px",
+          right: "0",
+          bottom: "0"
+        },
+        paneStack: ["googleMap", "forecast"]
       }
     }
   },
@@ -335,10 +299,16 @@ var Options = {
   view: (vnode) => {
     return [
       m("h1", "Takeoff filters"),
-      m("input[type=checkbox]", {id: "hide_missing_coords", checked: DB.hide_missing_coords, onclick: m.withAttr("checked", () => {DB.hide_missing_coords = !DB.hide_missing_coords;})}),
+      m("input[type=checkbox]", {id: "hide_missing_coords", checked: DB.hide_missing_coords, onclick: m.withAttr("checked", () => {
+        DB.hide_missing_coords = !DB.hide_missing_coords;
+        FWM.updateSettings();
+      })}),
       m("label", {"for": "hide_missing_coords"}, "Hide takeoffs with missing coordinates"),
       m("br"),
-      m("input[type=checkbox]", {id: "hide_short_info", checked: DB.hide_short_info, onclick: m.withAttr("checked", () => {DB.hide_short_info = !DB.hide_short_info;})}),
+      m("input[type=checkbox]", {id: "hide_short_info", checked: DB.hide_short_info, onclick: m.withAttr("checked", () => {
+        DB.hide_short_info = !DB.hide_short_info;
+        FWM.updateSettings();
+      })}),
       m("label", {"for": "hide_short_info"}, "Hide takeoffs with short name/description")
     ];
   }
@@ -348,7 +318,6 @@ var Options = {
 var FWM = {
   theme: "white",
   layout: "large",
-  showOptions: false, // TODO: should be handled in layout
   searchText: "",
   position: {latitude: 61.87416667, longitude: 9.15472222},
   takeoffs: [], // DB.takeoffs with uninteresting entries filtered out
@@ -371,7 +340,7 @@ var FWM = {
 
   view: (vnode) => {
     return [
-      m("nav", {style: {...layouts[FWM.layout].nav.style, ...themes[FWM.theme]}}, [
+      m("nav", FWM.getPaneStyle("nav"), [
         m("img", {
           src: "images/logo.png",
           height: "100%",
@@ -412,12 +381,7 @@ var FWM = {
             cursor: "pointer"
           },
           onclick: () => {
-            FWM.showOptions = !FWM.showOptions;
-            layouts[FWM.layout].showOptions(FWM.showOptions);
-
-            if (!FWM.showOptions) {
-              FWM.updateSettings();
-            }
+            FWM.setWindowVisibility("options", true);
           }
         }, [
           m("line", {x1: "-60", y1: "-40", x2: "60", y2: "-40", stroke: "black", "stroke-width": "20"}),
@@ -425,10 +389,10 @@ var FWM = {
         ])
       ]),
       m("main", [
-        m("div", {style: {...layouts[FWM.layout].takeoffList.style, ...themes[FWM.theme]}}, m(TakeoffList)),
-        m("div", {style: {...layouts[FWM.layout].options.style, ...themes[FWM.theme]}}, m(Options)),
-        m("div", {style: {...layouts[FWM.layout].googleMap.style, ...themes[FWM.theme]}}, m(GoogleMap)),
-        m("div", {style: {...layouts[FWM.layout].forecast.style, ...themes[FWM.theme]}}, m(Forecast))
+        m("div", FWM.getPaneStyle("options"), m(Options)),
+        m("div", FWM.getPaneStyle("forecast"), m(Forecast)),
+        m("div", FWM.getPaneStyle("googleMap"), m(GoogleMap)),
+        m("div", FWM.getPaneStyle("takeoffList"), m(TakeoffList))
       ])
     ];
   },
@@ -445,6 +409,27 @@ var FWM = {
         FWM._idleCallbackId = null;
       });
     }, 3000);
+  },
+
+  setWindowVisibility(name, visible) {
+    Object.entries(layouts[FWM.layout].panes).forEach(([paneName, pane]) => {
+      var index = pane.paneStack.indexOf(name);
+      if (index >= 0) {
+        pane.paneStack.splice(index, 1);
+        pane.paneStack.splice(visible ? 0 : pane.paneStack.length, 0, name);
+      }
+    });
+  },
+
+  getPaneStyle(name) {
+    var paneKeys = Object.keys(layouts[FWM.layout].panes);
+    for (var i = 0; i < paneKeys.length; ++i) {
+      var pane = layouts[FWM.layout].panes[paneKeys[i]];
+      var index = pane.paneStack.indexOf(name);
+      if (index >= 0) {
+        return {style: {...pane.style, ...themes[FWM.theme], ...{"display": (index == 0 ? "block" : "none")}}};
+      }
+    }
   },
 
   // update takeoff data
