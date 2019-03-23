@@ -314,6 +314,59 @@ var Options = {
   }
 };
 
+var Nav = {
+  view: (vnode) => {
+    return [
+      m("img", {
+        src: "images/logo.png",
+        height: "100%",
+        "object-fit": "contain"
+      }),
+      m("img", {
+        src: "images/GoogleMaps.svg",
+        height: "100%",
+        "object-fit": "contain"
+      }),
+      m("div", {
+        style: {
+          position: "absolute",
+          top: "0",
+          left: "100px",
+          right: "71px"
+        }
+      }, m("input", {
+        style: {
+          height: "100%",
+          width: "100%"
+        },
+        placeholder: "Search",
+        value: FWM.searchText,
+        onblur: (el) => {setTimeout(() => {el.target.focus()}, 10)},
+        oninput: m.withAttr("value", (text) => {FWM.searchText = text;})
+      })
+      ),
+      m("svg", {
+        xmlns: "http://www.w3.org/2000/svg",
+        viewBox: "-105 -105 210 210",
+        style: {
+          position: "absolute",
+          top: "0",
+          right: "0",
+          width: "50px",
+          height: "50px",
+          cursor: "pointer"
+        },
+        onclick: () => {
+          FWM.setWindowVisibility("options", true);
+        }
+      }, [
+        m("line", {x1: "-60", y1: "-40", x2: "60", y2: "-40", stroke: "black", "stroke-width": "20"}),
+        m("line", {x1: "-60", y1: "40", x2: "60", y2: "40", stroke: "black", "stroke-width": "20"})
+      ])
+    ];
+  }
+};
+
 /* the single page app tying it all together */
 var FWM = {
   theme: "white",
@@ -340,54 +393,7 @@ var FWM = {
 
   view: (vnode) => {
     return [
-      m("nav", FWM.getPaneStyle("nav"), [
-        m("img", {
-          src: "images/logo.png",
-          height: "100%",
-          "object-fit": "contain"
-        }),
-        m("img", {
-          src: "images/GoogleMaps.svg",
-          height: "100%",
-          "object-fit": "contain"
-        }),
-        m("div", {
-          style: {
-            position: "absolute",
-            top: "0",
-            left: "100px",
-            right: "71px"
-          }
-        }, m("input", {
-          style: {
-            height: "100%",
-            width: "100%"
-          },
-          placeholder: "Search",
-          value: FWM.searchText,
-          onblur: (el) => {setTimeout(() => {el.target.focus()}, 10)},
-          oninput: m.withAttr("value", (text) => {FWM.searchText = text;})
-        })
-        ),
-        m("svg", {
-          xmlns: "http://www.w3.org/2000/svg",
-          viewBox: "-105 -105 210 210",
-          style: {
-            position: "absolute",
-            top: "0",
-            right: "0",
-            width: "50px",
-            height: "50px",
-            cursor: "pointer"
-          },
-          onclick: () => {
-            FWM.setWindowVisibility("options", true);
-          }
-        }, [
-          m("line", {x1: "-60", y1: "-40", x2: "60", y2: "-40", stroke: "black", "stroke-width": "20"}),
-          m("line", {x1: "-60", y1: "40", x2: "60", y2: "40", stroke: "black", "stroke-width": "20"})
-        ])
-      ]),
+      m("nav", FWM.getPaneStyle("nav"), m(Nav)),
       m("main", [
         m("div", FWM.getPaneStyle("options"), m(Options)),
         m("div", FWM.getPaneStyle("forecast"), m(Forecast)),
