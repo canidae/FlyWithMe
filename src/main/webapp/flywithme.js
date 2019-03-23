@@ -320,12 +320,24 @@ var Nav = {
       m("img", {
         src: "images/logo.png",
         height: "100%",
-        "object-fit": "contain"
+        "object-fit": "contain",
+        style: {
+          cursor: "pointer"
+        },
+        onclick: () => {
+          FWM.setWindowVisibility("takeoffList", true);
+        }
       }),
       m("img", {
         src: "images/GoogleMaps.svg",
         height: "100%",
-        "object-fit": "contain"
+        "object-fit": "contain",
+        style: {
+          cursor: "pointer"
+        },
+        onclick: () => {
+          FWM.setWindowVisibility("googleMap", true);
+        }
       }),
       m("div", {
         style: {
