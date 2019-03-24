@@ -135,14 +135,22 @@ var TakeoffListEntry = {
         width: "40px",
         height: "40px",
         cursor: "pointer",
-      }, src: "images/navigate.svg"}),
+      }, src: "images/navigate.svg", onclick: (e) => {
+        var origin = new google.maps.LatLng(FWM.position.latitude, FWM.position.longitude);
+        var destination = new google.maps.LatLng(takeoff.lat, takeoff.lng);
+        GoogleMap.calculateRoute(origin, destination);
+        e.stopPropagation();
+      }}),
       m("svg", {xmlns: "http://www.w3.org/2000/svg", style: {
         position: "absolute",
         right: "50px",
         width: "40px",
         height: "40px",
         cursor: "pointer"
-      }, viewBox: "0 0 51 48", onclick: (e) => {FWM.toggleFavourite(takeoff); e.stopPropagation();}}, [
+      }, viewBox: "0 0 51 48", onclick: (e) => {
+        FWM.toggleFavourite(takeoff);
+        e.stopPropagation();
+      }}, [
         m("path", {fill: takeoff.favourite ? "yellow" : "none", stroke: "#000", d: "m25,1 6,17h18l-14,11 5,17-15-10-15,10 5-17-14-11h18z"})
       ]),
       m("img", {style: {
@@ -152,7 +160,10 @@ var TakeoffListEntry = {
         height: "40px",
         animation: Forecast.loading == takeoff.id ? "loading 2s infinite" : null,
         cursor: "pointer"
-      }, src: "images/NOAA.svg", onclick: (e) => {FWM.fetchMeteogram(takeoff); e.stopPropagation();}}),
+      }, src: "images/NOAA.svg", onclick: (e) => {
+        FWM.fetchMeteogram(takeoff);
+        e.stopPropagation();
+      }}),
       m("div", {style: {
         position: "relative",
         display: FWM.takeoff.id == takeoff.id ? "block" : "none"
@@ -203,11 +214,16 @@ var TakeoffList = {
 /* map view of takeoffs */
 var GoogleMap = {
   map: null,
+  directionsServer: null,
+  directionsRenderer: null,
   infoWindow: null,
   markerClusterer: null,
 
   oncreate: (vnode) => {
     GoogleMap.map = new google.maps.Map(vnode.dom, {zoom: 11, center: {lat: FWM.position.latitude, lng: FWM.position.longitude}, mapTypeId: 'terrain'});
+    GoogleMap.directionsService = new google.maps.DirectionsService;
+    GoogleMap.directionsDisplay = new google.maps.DirectionsRenderer;
+    GoogleMap.directionsDisplay.setMap(GoogleMap.map);
 
     // TODO: show airspace
     //GoogleMap.map.data.loadGeoJson('https://raw.githubusercontent.com/relet/pg-xc/master/geojson/luftrom.geojson');
@@ -218,6 +234,20 @@ var GoogleMap = {
 
   view: (vnode) => {
     return m("div", {id: "google-map-view", style: {height: "100%"}});
+  },
+
+  calculateRoute: (origin, destination) => {
+    GoogleMap.directionsService.route({
+      origin: origin,
+      destination: destination,
+      travelMode: "DRIVING"
+    }, function(response, status) {
+      if (status === "OK") {
+        GoogleMap.directionsDisplay.setDirections(response);
+      } else {
+        console.log("Directions request failed due to " + status);
+      }
+    });
   },
 
   updateMapMarkers: () => {
@@ -593,6 +623,7 @@ var FWM = {
     fetch("/takeoffs/" + takeoff.id + "/meteogram")
       .then((response) => response.json())
       .then((data) => {
+        // TODO: clear sounding if we asked for meteogram for another takeoff than currently displayed
         Forecast.images.meteogram = "data:image/gif;base64," + data.image;
         Forecast.loading = null;
         FWM.setWindowVisibility("forecast", true);
