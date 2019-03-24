@@ -289,9 +289,10 @@ public class NoaaProxy {
 
     private static List<CaptchaStringMatch> findPossibleCaptchas(GifDecoder.GifImage image, int startX, int stopX, List<CaptchaCharacterMatch> characterMatches) {
         List<CaptchaStringMatch> matches = new ArrayList<>();
-        List<CaptchaCharacterMatch> possibleCaptchaCharacters = characterMatches.size() == 7 ? new ArrayList<CaptchaCharacterMatch>() : findNextPossibleCaptchaCharacters(image, startX, stopX);
+        // TODO: amount of characters seems to vary a bit (typically 6 or 7), should support dynamic amount of characters
+        List<CaptchaCharacterMatch> possibleCaptchaCharacters = characterMatches.size() == 6 ? new ArrayList<CaptchaCharacterMatch>() : findNextPossibleCaptchaCharacters(image, startX, stopX);
         if (possibleCaptchaCharacters.isEmpty()) {
-            if (characterMatches.size() == 7) {
+            if (characterMatches.size() == 6) {
                 CaptchaStringMatch match = new CaptchaStringMatch();
                 for (CaptchaCharacterMatch character : characterMatches) {
                     match.captcha = match.captcha + character.character;

@@ -17,11 +17,12 @@ window.cancelIdleCallback = window.cancelIdleCallback || ((id) => {
 
 /* event listeners */
 window.addEventListener("resize", function() {
-  if (window.innerWidth >= 1400) {
+  if (window.innerWidth >= 1000) {
     FWM.layout = "large";
   } else {
     FWM.layout = "small";
   }
+  m.redraw();
 });
 
 /* data we want to persist */
@@ -71,7 +72,28 @@ var layouts = {
     }
   },
   small: {
-    // TODO
+    panes: {
+      top: {
+        style: {
+          position: "absolute",
+          top: "0",
+          left: "0",
+          right: "0",
+          height: "50px"
+        },
+        paneStack: ["nav"]
+      },
+      content: {
+        style: {
+          position: "absolute",
+          top: "50px",
+          left: "0",
+          right: "0",
+          bottom: "0"
+        },
+        paneStack: ["takeoffList", "googleMap", "forecast", "options"]
+      }
+    }
   }
 };
 
