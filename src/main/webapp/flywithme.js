@@ -427,12 +427,12 @@ var FWM = {
 
   view: (vnode) => {
     return [
-      m("nav", FWM.getPaneStyle("nav"), m(Nav)),
+      m("nav", FWM.getStyle("nav"), m(Nav)),
       m("main", [
-        m("div", FWM.getPaneStyle("options"), m(Options)),
-        m("div", FWM.getPaneStyle("forecast"), m(Forecast)),
-        m("div", FWM.getPaneStyle("googleMap"), m(GoogleMap)),
-        m("div", FWM.getPaneStyle("takeoffList"), m(TakeoffList))
+        m("div", FWM.getStyle("options"), m(Options)),
+        m("div", FWM.getStyle("forecast"), m(Forecast)),
+        m("div", FWM.getStyle("googleMap"), m(GoogleMap)),
+        m("div", FWM.getStyle("takeoffList"), m(TakeoffList))
       ])
     ];
   },
@@ -461,7 +461,7 @@ var FWM = {
     });
   },
 
-  getPaneStyle(name) {
+  getStyle(name) {
     var paneKeys = Object.keys(layouts[FWM.layout].panes);
     for (var i = 0; i < paneKeys.length; ++i) {
       var pane = layouts[FWM.layout].panes[paneKeys[i]];
