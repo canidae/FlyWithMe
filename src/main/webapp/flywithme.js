@@ -289,7 +289,7 @@ var Forecast = {
     }
     return [
       m("button", {
-        onclick: () => Forecast.images = {}
+        onclick: () => {FWM.setWindowVisibility("forecast", false);}
       }, "Close"),
       m("select", {
         selectedIndex: Forecast.soundingHour ? (Forecast.soundingHour - 9) / 3 : 0,
@@ -561,6 +561,7 @@ var FWM = {
       .then((data) => {
         Forecast.images.meteogram = "data:image/gif;base64," + data.image;
         Forecast.loading = null;
+        FWM.setWindowVisibility("forecast", true);
         m.redraw();
       });
   },
@@ -578,6 +579,7 @@ var FWM = {
         Forecast.images.sounding = "data:image/gif;base64," + data[0].image;
         Forecast.images.theta = "data:image/gif;base64," + data[1].image;
         Forecast.images.text = "data:image/gif;base64," + data[2].image;
+        FWM.setWindowVisibility("forecast", true);
         m.redraw();
       });
   },
