@@ -288,30 +288,64 @@ var Forecast = {
       }, "Sounding " + soundingDate.toLocaleDateString(undefined, dateOptions)));
     }
     return [
-      m("button", {
-        onclick: () => {FWM.setWindowVisibility("forecast", false);}
-      }, "Close"),
-      m("select", {
-        selectedIndex: Forecast.soundingHour ? (Forecast.soundingHour - 9) / 3 : 0,
-        onchange: m.withAttr("selectedIndex", (index) => {FWM.fetchSounding(index * 3 + 9);})
-      }, forecastOptions),
-      m("br"),
-      m("img", {
-        name: "meteogram",
-        src: Forecast.images.meteogram
-      }),
-      m("img", {
-        name: "sounding",
-        src: Forecast.images.sounding
-      }),
-      m("img", {
-        name: "theta",
-        src: Forecast.images.theta
-      }),
-      m("img", {
-        name: "text",
-        src: Forecast.images.text
-      })
+      m("div", {style: {
+        position: "absolute",
+        top: "0",
+        left: "0",
+        right: "0",
+        height: "50px"
+      }}, [
+        m("button", {
+          onclick: () => {FWM.setWindowVisibility("forecast", false);}
+        }, "Close"),
+        m("select", {
+          selectedIndex: Forecast.soundingHour ? (Forecast.soundingHour - 9) / 3 : 0,
+          onchange: m.withAttr("selectedIndex", (index) => {FWM.fetchSounding(index * 3 + 9);})
+        }, forecastOptions)
+      ]),
+      m("div", {style: {
+        position: "absolute",
+        top: "50px",
+        left: "0",
+        right: "0",
+        bottom: "0",
+        "overflow-y": "hidden",
+        "overflow-x": "scroll",
+        "white-space": "nowrap"
+      }}, [
+        m("img", {
+          style: {
+            "max-height": "100%",
+            "max-width": "100%"
+          },
+          name: "meteogram",
+          src: Forecast.images.meteogram
+        }),
+        m("img", {
+          style: {
+            "max-height": "100%",
+            "max-width": "100%"
+          },
+          name: "sounding",
+          src: Forecast.images.sounding
+        }),
+        m("img", {
+          style: {
+            "max-height": "100%",
+            "max-width": "100%"
+          },
+          name: "theta",
+          src: Forecast.images.theta
+        }),
+        m("img", {
+          style: {
+            "max-height": "100%",
+            "max-width": "100%"
+          },
+          name: "text",
+          src: Forecast.images.text
+        })
+      ])
     ];
   }
 };
