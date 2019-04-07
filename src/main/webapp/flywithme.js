@@ -600,7 +600,7 @@ var FWM = {
   // toggle takeoff favouritability
   toggleFavourite: (takeoff) => {
     takeoff.favourite = !takeoff.favourite;
-    DB.Takeoffs.set(tmpTakeoff.id, tmpTakeoff);
+    DB.Takeoffs.set(takeoff.id, takeoff);
   },
 
   fetchMeteogram: (takeoff) => {
