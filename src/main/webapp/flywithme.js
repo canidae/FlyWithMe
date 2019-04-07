@@ -184,7 +184,10 @@ var TakeoffList = {
         return ("" + a.name).localeCompare(b.name);
       }
     };
-    return FWM.takeoffs.filter((takeoff) => takeoff.name.match(new RegExp(FWM.searchText, "i"))).sort(comparator).slice(0, 20).map((takeoff, index) => {
+    return m("div", {style: {
+      height: "100%",
+      "overflow-y": "auto"
+    }}, FWM.takeoffs.filter((takeoff) => takeoff.name.match(new RegExp(FWM.searchText, "i"))).sort(comparator).slice(0, 20).map((takeoff, index) => {
       return m("div", {id: takeoff.id, key: takeoff.id, style: {
         position: "relative",
         cursor: "pointer",
@@ -205,7 +208,7 @@ var TakeoffList = {
           GoogleMap.map.setZoom(14);
         }
       }}, m(TakeoffListEntry, {takeoff: takeoff}));
-    });
+    }));
   }
 };
 
