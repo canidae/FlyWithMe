@@ -15,6 +15,39 @@ window.cancelIdleCallback = window.cancelIdleCallback || ((id) => {
   clearTimeout(id);
 });
 
+/* persisted data */
+var DB = {
+  Settings: null,
+  Takeoffs: null
+};
+
+Object.keys(DB).forEach(async (storeName) => {
+  var store = new idbKeyval.Store(storeName);
+  var cache = {};
+
+  DB[storeName] = {
+    all: () => {
+      return cache;
+    },
+
+    get: (key, defaultValue) => {
+      return cache[key] || defaultValue;
+    },
+
+    set: (key, value) => {
+      cache[key] = value;
+      idbKeyval.set(key, value, store).catch(err => console.log(err));
+    }
+  };
+
+  idbKeyval.keys(store).then(keys => {
+    keys.forEach(key => {
+      idbKeyval.get(key, store).then(val => cache[key] = val).catch(err => console.log(err));
+    });
+    m.redraw();
+  }).catch(err => console.log(err));
+});
+
 /* event listeners */
 window.addEventListener("resize", function() {
   if (window.innerWidth >= 1000) {
@@ -24,9 +57,6 @@ window.addEventListener("resize", function() {
   }
   m.redraw();
 });
-
-/* data we want to persist */
-var DB = JSON.parse(LZString.decompressFromUTF16(localStorage.getItem("FWM")) || "{}");
 
 /* themes */
 var themes = {
@@ -367,14 +397,14 @@ var Options = {
   view: (vnode) => {
     return [
       m("h1", "Takeoff filters"),
-      m("input[type=checkbox]", {id: "hide_missing_coords", checked: DB.hide_missing_coords, onclick: m.withAttr("checked", () => {
-        DB.hide_missing_coords = !DB.hide_missing_coords;
+      m("input[type=checkbox]", {id: "hide_missing_coords", checked: DB.Settings.get("hide_missing_coords"), onclick: m.withAttr("checked", () => {
+        DB.Settings.set("hide_missing_coords", !DB.Settings.get("hide_missing_coords"));
         FWM.updateSettings();
       })}),
       m("label", {"for": "hide_missing_coords"}, "Hide takeoffs with missing coordinates"),
       m("br"),
-      m("input[type=checkbox]", {id: "hide_short_info", checked: DB.hide_short_info, onclick: m.withAttr("checked", () => {
-        DB.hide_short_info = !DB.hide_short_info;
+      m("input[type=checkbox]", {id: "hide_short_info", checked: DB.Settings.get("hide_short_info"), onclick: m.withAttr("checked", () => {
+        DB.Settings.set("hide_short_info", !DB.Settings.get("hide_short_info"));
         FWM.updateSettings();
       })}),
       m("label", {"for": "hide_short_info"}, "Hide takeoffs with short name/description")
@@ -461,7 +491,6 @@ var FWM = {
 
   oninit: (vnode) => {
     FWM.updateTakeoffData();
-    FWM.updateSettings();
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition((position) => {
         FWM.position = position.coords;
@@ -481,20 +510,6 @@ var FWM = {
         m("div", FWM.getStyle("takeoffList"), m(TakeoffList))
       ])
     ];
-  },
-
-  // save data/settings
-  save: () => {
-    // wait a short time, attempting to avoid freezing ui when user is active
-    setTimeout(() => {
-      if (FWM._idleCallbackId) {
-        window.cancelIdleCallback(FWM._idleCallbackId);
-      }
-      FWM._idleCallbackId = window.requestIdleCallback(() => {
-        localStorage.setItem("FWM", LZString.compressToUTF16(JSON.stringify(DB)));
-        FWM._idleCallbackId = null;
-      });
-    }, 3000);
   },
 
   setWindowVisibility(name, visible) {
@@ -520,47 +535,37 @@ var FWM = {
 
   // update takeoff data
   updateTakeoffData: () => {
-    if (!DB.takeoffs) {
-      DB.takeoffs = {};
-    }
-    if (!DB.lastUpdated) {
-      DB.lastUpdated = 0;
-    }
+    var lastUpdated = DB.Settings.get("last_updated", 0);
     var now = new Date().getTime();
-    fetch("/takeoffs?lastUpdated=" + DB.lastUpdated)
+    fetch("/takeoffs?lastUpdated=" + lastUpdated)
     .then((response) => response.json())
     .then((data) => {
       var count = 0;
       for (i in data) {
         var takeoff = data[i];
-        DB.takeoffs[takeoff.id] = takeoff;
+        DB.Takeoffs.set(takeoff.id, takeoff);
         ++count;
-        if (takeoff.updated > DB.lastUpdated) {
-          DB.lastUpdated = takeoff.updated
+        if (takeoff.updated > lastUpdated) {
+          lastUpdated = takeoff.updated;
         }
       }
+      DB.Settings.set("last_updated", lastUpdated);
       console.log("Updated takeoffs:", count);
-      FWM.save();
+      console.log("Last updated:", lastUpdated);
+      FWM.updateSettings();
     });
   },
 
   // update/init settings
   updateSettings: () => {
-    // set default values of undefined settings
-    if (DB.hide_missing_coords == undefined) {
-      DB.hide_missing_coords = true;
-    }
-    if (DB.hide_short_info == undefined) {
-      DB.hide_short_info = true;
-    }
     // update list of takeoffs we're to display in UI
-    FWM.takeoffs = Object.values(DB.takeoffs || {})
-      .filter((takeoff) => !(DB.hide_missing_coords && (takeoff.lat == 0.0 && takeoff.lng == 0.0)))
-      .filter((takeoff) => !(DB.hide_short_info && (takeoff.name.length <= 3 || takeoff.desc.length <= 3)));
+    FWM.takeoffs = Object.values(DB.Takeoffs.all())
+      .filter((takeoff) => !(DB.Settings.get("hide_missing_coords") && (takeoff.lat == 0.0 && takeoff.lng == 0.0)))
+      .filter((takeoff) => !(DB.Settings.get("hide_short_info") && (takeoff.name.length <= 3 || takeoff.desc.length <= 3)));
     // redraw map markers
     GoogleMap.updateMapMarkers();
-    // save
-    FWM.save();
+    // redraw rest of ui
+    m.redraw();
   },
 
   // convert text to html
@@ -594,9 +599,8 @@ var FWM = {
 
   // toggle takeoff favouritability
   toggleFavourite: (takeoff) => {
-    var takeoffs = DB.takeoffs || {};
-    takeoffs[takeoff.id].favourite = !takeoffs[takeoff.id].favourite;
-    FWM.save();
+    takeoff.favourite = !takeoff.favourite;
+    DB.Takeoffs.set(tmpTakeoff.id, tmpTakeoff);
   },
 
   fetchMeteogram: (takeoff) => {
