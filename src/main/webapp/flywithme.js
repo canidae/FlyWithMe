@@ -1,29 +1,13 @@
-/* shims for ancient browsers */
-window.requestIdleCallback = window.requestIdleCallback || ((cb) => {
-  var start = Date.now();
-  return setTimeout(() => {
-    cb({
-      didTimeout: false,
-      timeRemaining: () => {
-        return Math.max(0, 50 - (Date.now() - start));
-      }
-    });
-  }, 1);
-});
-
-window.cancelIdleCallback = window.cancelIdleCallback || ((id) => {
-  clearTimeout(id);
-});
-
 /* persisted data */
 var DB = {
-  Settings: null,
-  Takeoffs: null
+  settings: null,
+  takeoffs: null
 };
 
-Object.keys(DB).forEach(async (storeName) => {
+Object.keys(DB).forEach((storeName) => {
   var store = new idbKeyval.Store(storeName);
   var cache = {};
+  var initCallbacks = [];
 
   DB[storeName] = {
     all: () => {
@@ -37,6 +21,10 @@ Object.keys(DB).forEach(async (storeName) => {
     set: (key, value) => {
       cache[key] = value;
       idbKeyval.set(key, value, store).catch(err => console.log(err));
+    },
+
+    addInitCallback: (callback) => {
+      initCallbacks.push(callback);
     }
   };
 
@@ -44,29 +32,26 @@ Object.keys(DB).forEach(async (storeName) => {
     keys.forEach(key => {
       idbKeyval.get(key, store).then(val => cache[key] = val).catch(err => console.log(err));
     });
-    m.redraw();
+    initCallbacks.forEach(callback => {
+      callback();
+    });
   }).catch(err => console.log(err));
 });
 
 /* event listeners */
 window.addEventListener("resize", function() {
-  if (window.innerWidth >= 1000) {
-    FWM.layout = "large";
-  } else {
-    FWM.layout = "small";
-  }
-  m.redraw();
+  FWM.updateLayout();
 });
 
 /* themes */
-var themes = {
+var Themes = {
   white: {
     background: "white"
   }
 };
 
 /* layouts */
-var layouts = {
+var Layouts = {
   large: {
     panes: {
       top: {
@@ -397,14 +382,14 @@ var Options = {
   view: (vnode) => {
     return [
       m("h1", "Takeoff filters"),
-      m("input[type=checkbox]", {id: "hide_missing_coords", checked: DB.Settings.get("hide_missing_coords"), onclick: m.withAttr("checked", () => {
-        DB.Settings.set("hide_missing_coords", !DB.Settings.get("hide_missing_coords"));
+      m("input[type=checkbox]", {id: "hide_missing_coords", checked: DB.settings.get("hide_missing_coords"), onclick: m.withAttr("checked", () => {
+        DB.settings.set("hide_missing_coords", !DB.settings.get("hide_missing_coords"));
         FWM.updateSettings();
       })}),
       m("label", {"for": "hide_missing_coords"}, "Hide takeoffs with missing coordinates"),
       m("br"),
-      m("input[type=checkbox]", {id: "hide_short_info", checked: DB.Settings.get("hide_short_info"), onclick: m.withAttr("checked", () => {
-        DB.Settings.set("hide_short_info", !DB.Settings.get("hide_short_info"));
+      m("input[type=checkbox]", {id: "hide_short_info", checked: DB.settings.get("hide_short_info"), onclick: m.withAttr("checked", () => {
+        DB.settings.set("hide_short_info", !DB.settings.get("hide_short_info"));
         FWM.updateSettings();
       })}),
       m("label", {"for": "hide_short_info"}, "Hide takeoffs with short name/description")
@@ -490,7 +475,10 @@ var FWM = {
   forecast: {}, // current requested/displayed forecast
 
   oninit: (vnode) => {
-    FWM.updateTakeoffData();
+    FWM.updateLayout();
+    DB.takeoffs.addInitCallback(() => {
+      FWM.updateTakeoffData();
+    });
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition((position) => {
         FWM.position = position.coords;
@@ -512,8 +500,17 @@ var FWM = {
     ];
   },
 
-  setWindowVisibility(name, visible) {
-    Object.entries(layouts[FWM.layout].panes).forEach(([paneName, pane]) => {
+  updateLayout: () => {
+    if (window.innerWidth >= 1000) {
+      FWM.layout = "large";
+    } else {
+      FWM.layout = "small";
+    }
+    m.redraw();
+  },
+
+  setWindowVisibility: (name, visible) => {
+    Object.entries(Layouts[FWM.layout].panes).forEach(([paneName, pane]) => {
       var index = pane.paneStack.indexOf(name);
       if (index >= 0) {
         pane.paneStack.splice(index, 1);
@@ -522,20 +519,20 @@ var FWM = {
     });
   },
 
-  getStyle(name) {
-    var paneKeys = Object.keys(layouts[FWM.layout].panes);
+  getStyle: (name) => {
+    var paneKeys = Object.keys(Layouts[FWM.layout].panes);
     for (var i = 0; i < paneKeys.length; ++i) {
-      var pane = layouts[FWM.layout].panes[paneKeys[i]];
+      var pane = Layouts[FWM.layout].panes[paneKeys[i]];
       var index = pane.paneStack.indexOf(name);
       if (index >= 0) {
-        return {style: {...pane.style, ...themes[FWM.theme], ...{"display": (index == 0 ? "block" : "none")}}};
+        return {style: {...pane.style, ...Themes[FWM.theme], ...{"display": (index == 0 ? "block" : "none")}}};
       }
     }
   },
 
   // update takeoff data
   updateTakeoffData: () => {
-    var lastUpdated = DB.Settings.get("last_updated", 0);
+    var lastUpdated = DB.settings.get("last_updated", 0);
     var now = new Date().getTime();
     fetch("/takeoffs?lastUpdated=" + lastUpdated)
     .then((response) => response.json())
@@ -543,13 +540,13 @@ var FWM = {
       var count = 0;
       for (i in data) {
         var takeoff = data[i];
-        DB.Takeoffs.set(takeoff.id, takeoff);
+        DB.takeoffs.set(takeoff.id, takeoff);
         ++count;
         if (takeoff.updated > lastUpdated) {
           lastUpdated = takeoff.updated;
         }
       }
-      DB.Settings.set("last_updated", lastUpdated);
+      DB.settings.set("last_updated", lastUpdated);
       console.log("Updated takeoffs:", count);
       console.log("Last updated:", lastUpdated);
       FWM.updateSettings();
@@ -559,9 +556,9 @@ var FWM = {
   // update/init settings
   updateSettings: () => {
     // update list of takeoffs we're to display in UI
-    FWM.takeoffs = Object.values(DB.Takeoffs.all())
-      .filter((takeoff) => !(DB.Settings.get("hide_missing_coords") && (takeoff.lat == 0.0 && takeoff.lng == 0.0)))
-      .filter((takeoff) => !(DB.Settings.get("hide_short_info") && (takeoff.name.length <= 3 || takeoff.desc.length <= 3)));
+    FWM.takeoffs = Object.values(DB.takeoffs.all())
+      .filter((takeoff) => !(DB.settings.get("hide_missing_coords") && (takeoff.lat == 0.0 && takeoff.lng == 0.0)))
+      .filter((takeoff) => !(DB.settings.get("hide_short_info") && (takeoff.name.length <= 3 || takeoff.desc.length <= 3)));
     // redraw map markers
     GoogleMap.updateMapMarkers();
     // redraw rest of ui
@@ -600,7 +597,7 @@ var FWM = {
   // toggle takeoff favouritability
   toggleFavourite: (takeoff) => {
     takeoff.favourite = !takeoff.favourite;
-    DB.Takeoffs.set(takeoff.id, takeoff);
+    DB.takeoffs.set(takeoff.id, takeoff);
   },
 
   fetchMeteogram: (takeoff) => {
