@@ -13,9 +13,7 @@
   </head>
   <body>
     <script>
-      if ("serviceWorker" in navigator) {
-        navigator.serviceWorker.register("/service-worker.js");
-      }
+      navigator.serviceWorker && navigator.serviceWorker.register('/service-worker.js');
     </script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD9u2oocZyN2gdcoYhFj1zuF7UmzUXxy6I"></script>
     <script src="libs/google_maps_v3/markerclusterer.js"></script>

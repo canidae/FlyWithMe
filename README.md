@@ -2,7 +2,7 @@
 **FlyWithMe is in the process of being rewritten from an Android application to a web page, where the goal is to
 make it well adapted not just to computers, but also devices like phones and tablets (aka.
 [PWA](https://en.wikipedia.org/wiki/Progressive_web_applications)).
-This will take some time, the application is currently in an alfa state.**
+This will take some time, the application is currently in an alpha state.**
 
 FlyWithMe is an application aimed at hangglider and paraglider pilots, that gathers flight site information from
 [flightlog.org](https://flightlog.org/), and gives you easy access to weather forecasts from [NOAA](https://www.noaa.gov/).

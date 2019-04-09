@@ -1,63 +1,31 @@
 var CACHE = "flywithme";
 
-
-self.addEventListener('install', function(e) {
-  self.skipWaiting();
-});
-
-self.addEventListener('activate', function(e) {
-  self.registration.unregister()
-    .then(function() {
-      return self.clients.matchAll();
-    })
-    .then(function(clients) {
-      clients.forEach(client => client.navigate(client.url))
-    });
-});
-
-
-/*
-self.addEventListener("fetch", (e) => {
-  console.log("fetch", e);
-  if (e.request.url.indexOf(".googleapis.com") !== -1) {
-    return;
-  }
-  e.respondWith(fromCache(e.request).then((response) => {
-    return response || fromBackend(e.request);
+self.addEventListener('install', e => {
+  e.waitUntil(caches.open(CACHE).then(cache => {
+    return cache.addAll([
+      "/flywithme.css",
+      "/flywithme.js",
+      "/index.html",
+      "/icon.png",
+      "/manifest.json",
+      "/images/GoogleMaps.svg",
+      "/images/logo.png",
+      "/images/navigate.svg",
+      "/images/NOAA.svg",
+      "/libs/google_maps_v3/1.png",
+      "/libs/google_maps_v3/2.png",
+      "/libs/google_maps_v3/3.png",
+      "/libs/google_maps_v3/4.png",
+      "/libs/google_maps_v3/5.png",
+      "/libs/google_maps_v3/markerclusterer.js",
+      "/libs/idb-keyval_3.2.0/idb-keyval-iife.min.js",
+      "/libs/mithril-3.0.1/mithril.min.js"
+    ]);
   }));
-  e.waitUntil(fromBackend(e.request).then(refresh));
 });
 
-function fromCache(request) {
-  console.log("fromCache", response);
-  return caches.open(CACHE).then((cache) => {
-    return cache.match(request);
-  });
-}
-
-function fromBackend(request) {
-  console.log("fromBackend", request);
-  return caches.open(CACHE).then((cache) => {
-    return fetch(request).then((response) => {
-      return cache.put(request, response.clone()).then(() => {
-        return response;
-      });
-    });
-  });
-}
-
-function refresh(response) {
-  console.log("refresh", response);
-  return self.clients.matchAll().then((clients) => {
-      return clients.forEach((client) => {
-        var message = {
-          type: "refresh",
-          url: response.url,
-          eTag: response.headers.get("ETag")
-        };
-        client.postMessage(JSON.stringify(message));
-        return response;
-      });
-  });
-}
-*/
+self.addEventListener('fetch', e => {
+  e.respondWith(fetch(e.request) || caches.match(e.request).then(response => {
+    return response;
+  }));
+});
