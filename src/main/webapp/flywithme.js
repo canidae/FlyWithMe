@@ -199,31 +199,55 @@ var TakeoffList = {
         return ("" + a.name).localeCompare(b.name);
       }
     };
-    return m("div", {style: {
-      height: "100%",
-      "overflow-y": "auto"
-    }}, FWM.takeoffs.filter((takeoff) => takeoff.name.match(new RegExp(FWM.searchText, "i"))).sort(comparator).slice(0, 20).map((takeoff, index) => {
-      return m("div", {id: takeoff.id, key: takeoff.id, style: {
-        position: "relative",
-        cursor: "pointer",
-        "background-color": index % 2 == 0 ? "#fff" : "#ddd"
-      }, onclick: () => {
-        if (FWM.takeoff.id == takeoff.id) {
-          GoogleMap.map.panTo(FWM.prevMapCenter);
-          GoogleMap.map.setZoom(FWM.prevMapZoom);
-          FWM.takeoff = {};
-        } else {
-          if (FWM.takeoff.id == null) {
-            FWM.prevMapCenter = GoogleMap.map.getCenter();
-            FWM.prevMapZoom = GoogleMap.map.getZoom();
+    if (Object.keys(DB.takeoffs.all()).length > 0) {
+      return m("div", {style: {
+        height: "100%",
+        "overflow-y": "auto"
+      }}, FWM.takeoffs.filter((takeoff) => takeoff.name.match(new RegExp(FWM.searchText, "i"))).sort(comparator).slice(0, 20).map((takeoff, index) => {
+        return m("div", {id: takeoff.id, key: takeoff.id, style: {
+          position: "relative",
+          cursor: "pointer",
+          "background-color": index % 2 == 0 ? "#fff" : "#ddd"
+        }, onclick: () => {
+          if (FWM.takeoff.id == takeoff.id) {
+            GoogleMap.map.panTo(FWM.prevMapCenter);
+            GoogleMap.map.setZoom(FWM.prevMapZoom);
+            FWM.takeoff = {};
+          } else {
+            if (FWM.takeoff.id == null) {
+              FWM.prevMapCenter = GoogleMap.map.getCenter();
+              FWM.prevMapZoom = GoogleMap.map.getZoom();
+            }
+            FWM.takeoff = takeoff;
+            // TODO (not just here): don't access GoogleMap.map directly, create methods instead (which also checks that GoogleMap.map is valid)
+            GoogleMap.map.panTo(takeoff);
+            GoogleMap.map.setZoom(14);
           }
-          FWM.takeoff = takeoff;
-          // TODO (not just here): don't access GoogleMap.map directly, create methods instead (which also checks that GoogleMap.map is valid)
-          GoogleMap.map.panTo(takeoff);
-          GoogleMap.map.setZoom(14);
-        }
-      }}, m(TakeoffListEntry, {takeoff: takeoff}));
-    }));
+        }}, m(TakeoffListEntry, {takeoff: takeoff}));
+      }));
+    } else {
+      // probably loading
+      return m("div", {style: {
+        height: "100%",
+        "overflow-y": "auto"
+      }}, [
+        m("h1", {style: {
+          width: "100%",
+          animation: "loading 2s infinite",
+          "text-align": "center"
+        }}, "Loading..."),
+        m("p", {style: {
+          width: "100%",
+          "text-align": "center"
+        }}, "(probably)"),
+        m("p", {style: {
+          "margin-top": "10px"
+        }}, [
+          m("strong", "Tip: "),
+          "On a mobile device? Look for \"Add to home screen\" for easy access to Fly With Me!"
+        ])
+      ]);
+    }
   }
 };
 
