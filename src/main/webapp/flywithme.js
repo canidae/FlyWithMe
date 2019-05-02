@@ -244,7 +244,7 @@ var TakeoffList = {
           "margin-top": "10px"
         }}, [
           m("strong", "Tip: "),
-          "On a mobile device? Look for \"Add to home screen\" for easy access to Fly With Me!"
+          m("p", "On a mobile device? Look for \"Add to home screen\" for easy access to Fly With Me!")
         ])
       ]);
     }
