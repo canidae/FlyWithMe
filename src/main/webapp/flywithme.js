@@ -29,11 +29,14 @@ Object.keys(DB).forEach((storeName) => {
   };
 
   idbKeyval.keys(store).then(keys => {
+    var promises = [];
     keys.forEach(key => {
-      idbKeyval.get(key, store).then(val => cache[key] = val).catch(err => console.log(err));
+      promises.push(idbKeyval.get(key, store).then(val => cache[key] = val).catch(err => console.log(err)));
     });
-    initCallbacks.forEach(callback => {
-      callback();
+    Promise.all(promises).then(() => {
+      initCallbacks.forEach(callback => {
+        callback();
+      });
     });
   }).catch(err => console.log(err));
 });
