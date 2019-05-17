@@ -56,61 +56,108 @@ var Themes = {
 /* layouts */
 var Layouts = {
   large: {
-    panes: {
-      top: {
-        style: {
-          position: "absolute",
-          top: "0",
-          left: "0",
-          height: "50px",
-          width: "500px"
-        },
-        paneStack: ["nav"]
-      },
-      left: {
+    top: {
+      style: {
+        position: "absolute",
+        top: "0",
+        left: "0",
+        height: "50px",
+        width: "500px"
+      }
+    },
+    content: [
+      {
         style: {
           position: "absolute",
           top: "50px",
           left: "0",
           bottom: "0",
           width: "500px"
-        },
-        paneStack: ["takeoffList", "options"]
+        }
       },
-      right: {
+      {
         style: {
           position: "absolute",
           top: "0",
           left: "500px",
           right: "0",
           bottom: "0"
-        },
-        paneStack: ["googleMap", "forecast"]
+        }
       }
-    }
+    ]
   },
   small: {
-    panes: {
-      top: {
-        style: {
-          position: "absolute",
-          top: "0",
-          left: "0",
-          right: "0",
-          height: "50px"
-        },
-        paneStack: ["nav"]
-      },
-      content: {
+    top: {
+      style: {
+        position: "absolute",
+        top: "0",
+        left: "0",
+        right: "0",
+        height: "50px"
+      }
+    },
+    content: [
+      {
         style: {
           position: "absolute",
           top: "50px",
           left: "0",
           right: "0",
           bottom: "0"
-        },
-        paneStack: ["takeoffList", "googleMap", "forecast", "options"]
+        }
       }
+    ]
+  }
+};
+
+/* pages */
+var Pages = {
+  home: {
+    view: () => {
+      var layout = Layouts[FWM.layout];
+      return [
+        m("nav", layout.top, m(Nav)),
+        m("main", [
+          m("div", layout.content[0], m(TakeoffList)),
+          ...(layout.content.length > 1 ? [m("div", layout.content[1], m(GoogleMap))] : [])
+        ])
+      ]
+    }
+  },
+  map: {
+    view: () => {
+      var layout = Layouts[FWM.layout];
+      return [
+        m("nav", layout.top, m(Nav)),
+        m("main", [
+          ...(layout.content.length > 1 ? [m("div", layout.content[0], m(TakeoffList))] : [m("div", layout.content[0], m(GoogleMap))]),
+          ...(layout.content.length > 1 ? [m("div", layout.content[1], m(GoogleMap))] : [])
+        ])
+      ]
+    }
+  },
+  options: {
+    view: () => {
+      var layout = Layouts[FWM.layout];
+      return [
+        m("nav", layout.top, m(Nav)),
+        m("main", [
+          m("div", layout.content[0], m(Options)),
+          ...(layout.content.length > 1 ? [m("div", layout.content[1], m(GoogleMap))] : [])
+        ])
+      ]
+    }
+  },
+  forecast: {
+    view: () => {
+      var layout = Layouts[FWM.layout];
+      return [
+        m("nav", layout.top, m(Nav)),
+        m("main", [
+          ...(layout.content.length > 1 ? [m("div", layout.content[0], m(TakeoffList))] : [m("div", layout.content[0], m(Forecast))]),
+          ...(layout.content.length > 1 ? [m("div", layout.content[1], m(Forecast))] : [])
+        ])
+      ]
     }
   }
 };
@@ -256,7 +303,7 @@ var TakeoffList = {
           m("p", [
             "Site is still under development, check ",
             m("a[href=https://github.com/canidae/FlyWithMe/issues]", "GitHub"),
-            " for reported issues"
+            " for reported issues."
           ])
         ])
       ]);
@@ -360,7 +407,7 @@ var Forecast = {
         height: "50px"
       }}, [
         m("button", {
-          onclick: () => {FWM.setWindowVisibility("forecast", false);}
+          onclick: () => {m.route.set("/");}
         }, "Close"),
         m("select", {
           selectedIndex: Forecast.soundingHour ? (Forecast.soundingHour - 9) / 3 : 0,
@@ -445,7 +492,7 @@ var Nav = {
           cursor: "pointer"
         },
         onclick: () => {
-          FWM.setWindowVisibility("takeoffList", true);
+          m.route.set("/");
         }
       }),
       m("img", {
@@ -456,7 +503,7 @@ var Nav = {
           cursor: "pointer"
         },
         onclick: () => {
-          FWM.setWindowVisibility("googleMap", true);
+          m.route.set("/map");
         }
       }),
       m("div", {
@@ -489,7 +536,7 @@ var Nav = {
           cursor: "pointer"
         },
         onclick: () => {
-          FWM.setWindowVisibility("options", true);
+          m.route.set("/options");
         }
       }, [
         m("line", {x1: "-60", y1: "-40", x2: "60", y2: "-40", stroke: "black", "stroke-width": "20"}),
@@ -511,7 +558,7 @@ var FWM = {
   // TODO: move this to Forecast
   forecast: {}, // current requested/displayed forecast
 
-  oninit: (vnode) => {
+  init: () => {
     FWM.updateLayout();
     DB.takeoffs.addInitCallback(() => {
       FWM.updateTakeoffData();
@@ -525,18 +572,6 @@ var FWM = {
     }
   },
 
-  view: (vnode) => {
-    return [
-      m("nav", FWM.getStyle("nav"), m(Nav)),
-      m("main", [
-        m("div", FWM.getStyle("options"), m(Options)),
-        m("div", FWM.getStyle("forecast"), m(Forecast)),
-        m("div", FWM.getStyle("googleMap"), m(GoogleMap)),
-        m("div", FWM.getStyle("takeoffList"), m(TakeoffList))
-      ])
-    ];
-  },
-
   updateLayout: () => {
     if (window.innerWidth >= 1000) {
       FWM.layout = "large";
@@ -544,27 +579,6 @@ var FWM = {
       FWM.layout = "small";
     }
     m.redraw();
-  },
-
-  setWindowVisibility: (name, visible) => {
-    Object.entries(Layouts[FWM.layout].panes).forEach(([paneName, pane]) => {
-      var index = pane.paneStack.indexOf(name);
-      if (index >= 0) {
-        pane.paneStack.splice(index, 1);
-        pane.paneStack.splice(visible ? 0 : pane.paneStack.length, 0, name);
-      }
-    });
-  },
-
-  getStyle: (name) => {
-    var paneKeys = Object.keys(Layouts[FWM.layout].panes);
-    for (var i = 0; i < paneKeys.length; ++i) {
-      var pane = Layouts[FWM.layout].panes[paneKeys[i]];
-      var index = pane.paneStack.indexOf(name);
-      if (index >= 0) {
-        return {style: {...pane.style, ...Themes[FWM.theme], ...{"display": (index == 0 ? "block" : "none")}}};
-      }
-    }
   },
 
   // update takeoff data
@@ -646,7 +660,7 @@ var FWM = {
         // TODO: clear sounding if we asked for meteogram for another takeoff than currently displayed
         Forecast.images.meteogram = "data:image/gif;base64," + data.image;
         Forecast.loading = null;
-        FWM.setWindowVisibility("forecast", true);
+        m.route.set("/forecast"); // TODO: takeoff id
         m.redraw();
       });
   },
@@ -664,7 +678,7 @@ var FWM = {
         Forecast.images.sounding = "data:image/gif;base64," + data[0].image;
         Forecast.images.theta = "data:image/gif;base64," + data[1].image;
         Forecast.images.text = "data:image/gif;base64," + data[2].image;
-        FWM.setWindowVisibility("forecast", true);
+        m.route.set("/forecast"); // TODO: takeoff id
         m.redraw();
       });
   },
@@ -682,5 +696,13 @@ var FWM = {
   }
 };
 
-// mount app
-m.mount(document.body, FWM);
+/* routing */
+m.route(document.body, "/", {
+    "/": Pages.home,
+    "/map": Pages.map,
+    "/options": Pages.options,
+    "/forecast/:takeoffId": Pages.forecast
+})
+
+// init FWM
+FWM.init();
