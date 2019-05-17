@@ -247,7 +247,17 @@ var TakeoffList = {
           "margin-top": "10px"
         }}, [
           m("strong", "Tip: "),
-          m("p", "On a mobile device? Look for \"Add to home screen\" for easy access to Fly With Me!")
+          m("p", "On a mobile device? Look for \"Add to home screen\" for easy access to Fly With Me!"),
+        ]),
+        m("p", {style: {
+          "margin-top": "10px"
+        }}, [
+          m("strong", "Problems?"),
+          m("p", [
+            "Site is still under development, check ",
+            m("a[href=https://github.com/canidae/FlyWithMe/issues]", "GitHub"),
+            " for reported issues"
+          ])
         ])
       ]);
     }
