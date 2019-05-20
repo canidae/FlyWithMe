@@ -43,29 +43,23 @@ Object.keys(DB).forEach((storeName) => {
 
 /* event listeners */
 window.addEventListener("resize", function() {
-  FWM.updateLayout();
+  m.redraw();
 });
-
-/* themes */
-var Themes = {
-  white: {
-    background: "white"
-  }
-};
 
 /* layouts */
 var Layouts = {
   large: {
-    top: {
-      style: {
-        position: "absolute",
-        top: "0",
-        left: "0",
-        height: "50px",
-        width: "500px"
-      }
-    },
-    content: [
+    panels: [
+      {
+        style: {
+          position: "absolute",
+          top: "0",
+          left: "0",
+          height: "50px",
+          width: "500px"
+        },
+        panes: ["nav"]
+      },
       {
         style: {
           position: "absolute",
@@ -73,7 +67,8 @@ var Layouts = {
           left: "0",
           bottom: "0",
           width: "500px"
-        }
+        },
+        panes: ["takeoffList", "options"]
       },
       {
         style: {
@@ -82,21 +77,23 @@ var Layouts = {
           left: "500px",
           right: "0",
           bottom: "0"
-        }
+        },
+        panes: ["googleMap", "forecast"]
       }
     ]
   },
   small: {
-    top: {
-      style: {
-        position: "absolute",
-        top: "0",
-        left: "0",
-        right: "0",
-        height: "50px"
-      }
-    },
-    content: [
+    panels: [
+      {
+        style: {
+          position: "absolute",
+          top: "0",
+          left: "0",
+          right: "0",
+          height: "50px"
+        },
+        panes: ["nav"]
+      },
       {
         style: {
           position: "absolute",
@@ -104,61 +101,10 @@ var Layouts = {
           left: "0",
           right: "0",
           bottom: "0"
-        }
+        },
+        panes: ["takeoffList", "options", "googleMap", "forecast"]
       }
     ]
-  }
-};
-
-/* pages */
-var Pages = {
-  home: {
-    view: () => {
-      var layout = Layouts[FWM.layout];
-      return [
-        m("nav", layout.top, m(Nav)),
-        m("main", [
-          m("div", layout.content[0], m(TakeoffList)),
-          ...(layout.content.length > 1 ? [m("div", layout.content[1], m(GoogleMap))] : [])
-        ])
-      ]
-    }
-  },
-  map: {
-    view: () => {
-      var layout = Layouts[FWM.layout];
-      return [
-        m("nav", layout.top, m(Nav)),
-        m("main", [
-          ...(layout.content.length > 1 ? [m("div", layout.content[0], m(TakeoffList))] : [m("div", layout.content[0], m(GoogleMap))]),
-          ...(layout.content.length > 1 ? [m("div", layout.content[1], m(GoogleMap))] : [])
-        ])
-      ]
-    }
-  },
-  options: {
-    view: () => {
-      var layout = Layouts[FWM.layout];
-      return [
-        m("nav", layout.top, m(Nav)),
-        m("main", [
-          m("div", layout.content[0], m(Options)),
-          ...(layout.content.length > 1 ? [m("div", layout.content[1], m(GoogleMap))] : [])
-        ])
-      ]
-    }
-  },
-  forecast: {
-    view: () => {
-      var layout = Layouts[FWM.layout];
-      return [
-        m("nav", layout.top, m(Nav)),
-        m("main", [
-          ...(layout.content.length > 1 ? [m("div", layout.content[0], m(TakeoffList))] : [m("div", layout.content[0], m(Forecast))]),
-          ...(layout.content.length > 1 ? [m("div", layout.content[1], m(Forecast))] : [])
-        ])
-      ]
-    }
   }
 };
 
@@ -548,8 +494,6 @@ var Nav = {
 
 /* the single page app tying it all together */
 var FWM = {
-  theme: "white",
-  layout: "large",
   searchText: "",
   position: {latitude: 61.87416667, longitude: 9.15472222},
   takeoffs: [], // DB.takeoffs with uninteresting entries filtered out
@@ -558,8 +502,7 @@ var FWM = {
   // TODO: move this to Forecast
   forecast: {}, // current requested/displayed forecast
 
-  init: () => {
-    FWM.updateLayout();
+  oninit: () => {
     DB.takeoffs.addInitCallback(() => {
       FWM.updateTakeoffData();
     });
@@ -572,13 +515,33 @@ var FWM = {
     }
   },
 
-  updateLayout: () => {
-    if (window.innerWidth >= 1000) {
-      FWM.layout = "large";
-    } else {
-      FWM.layout = "small";
-    }
-    m.redraw();
+  view: (vnode) => {
+    var layout = Layouts[FWM.layout];
+    return [
+      m("div", {id: "routehack", style: {display: "none"}}),
+      m("nav", FWM.getStyle("nav"), m(Nav)),
+      m("main", [
+        m("div", FWM.getStyle("takeoffList"), m(TakeoffList)),
+        m("div", FWM.getStyle("options"), m(Options)),
+        m("div", FWM.getStyle("googleMap"), m(GoogleMap)),
+        m("div", FWM.getStyle("forecast"), m(Forecast))
+      ])
+    ];
+  },
+
+  layout: () => {
+    return window.innerWidth >= 1000 ? "large" : "small";
+  },
+
+  getStyle: (name) => {
+    var panels = Layouts[FWM.layout()].panels;
+    for (var i = 0; i < panels.length; ++i) {
+      var index = panels[i].panes.indexOf(name);
+      if (index >= 0) {
+        return {style: {...panels[i].style, ...{"display": (index == 0 ? "block" : "none")}}};
+      }
+    };
+    console.log("No pane found for", name);
   },
 
   // update takeoff data
@@ -658,8 +621,8 @@ var FWM = {
       .then((response) => response.json())
       .then((data) => {
         // TODO: clear sounding if we asked for meteogram for another takeoff than currently displayed
-        Forecast.images.meteogram = "data:image/gif;base64," + data.image;
         Forecast.loading = null;
+        Forecast.images.meteogram = "data:image/gif;base64," + data.image;
         m.route.set("/forecast"); // TODO: takeoff id
         m.redraw();
       });
@@ -696,13 +659,28 @@ var FWM = {
   }
 };
 
-/* routing */
-m.route(document.body, "/", {
-    "/": Pages.home,
-    "/map": Pages.map,
-    "/options": Pages.options,
-    "/forecast/:takeoffId": Pages.forecast
-})
+/* init FWM */
+m.mount(document.body, FWM);
 
-// init FWM
-FWM.init();
+/* routing */
+function route(name) {
+  return {
+    view() {
+      Layouts[FWM.layout()].panels.forEach((panel) => {
+        var index = panel.panes.indexOf(name);
+        if (index >= 0) {
+          panel.panes.splice(index, 1);
+          panel.panes.splice(0, 0, name);
+        }
+      });
+      m.redraw();
+    }
+  }
+}
+
+m.route(document.getElementById("routehack"), "/", {
+  "/": route("takeoffList"),
+  "/map": route("googleMap"),
+  "/options": route("options"),
+  "/forecast/:takeoffId": route("forecast")
+})
