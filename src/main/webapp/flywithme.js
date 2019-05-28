@@ -678,6 +678,7 @@ function route(name) {
   }
 }
 
+// TODO: render, see: https://mithril.js.org/route.html#wrapping-a-layout-component
 m.route(document.getElementById("routehack"), "/", {
   "/": route("takeoffList"),
   "/map": route("googleMap"),
