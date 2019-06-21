@@ -623,7 +623,7 @@ var FWM = {
         // TODO: clear sounding if we asked for meteogram for another takeoff than currently displayed
         Forecast.loading = null;
         Forecast.images.meteogram = "data:image/gif;base64," + data.image;
-        m.route.set("/forecast"); // TODO: takeoff id
+        m.route.set("/forecast/" + takeoff.id);
         m.redraw();
       });
   },
@@ -641,7 +641,7 @@ var FWM = {
         Forecast.images.sounding = "data:image/gif;base64," + data[0].image;
         Forecast.images.theta = "data:image/gif;base64," + data[1].image;
         Forecast.images.text = "data:image/gif;base64," + data[2].image;
-        m.route.set("/forecast"); // TODO: takeoff id
+        m.route.set("/forecast/" + takeoff.id);
         m.redraw();
       });
   },
