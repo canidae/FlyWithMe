@@ -658,9 +658,6 @@ var FWM = {
   }
 };
 
-/* init FWM */
-//m.mount(document.body, FWM);
-
 /* routing */
 function route(name) {
   return {
@@ -677,7 +674,7 @@ function route(name) {
   }
 }
 
-// TODO: render, see: https://mithril.js.org/route.html#wrapping-a-layout-component
+// TODO: routing doesn't always work: click NOAA, then back. won't show map (on large layout)
 m.route(document.body, "/", {
   "/": route("takeoffList"),
   "/map": route("googleMap"),
