@@ -518,7 +518,6 @@ var FWM = {
   view: (vnode) => {
     var layout = Layouts[FWM.layout];
     return [
-      m("div", {id: "routehack", style: {display: "none"}}),
       m("nav", FWM.getStyle("nav"), m(Nav)),
       m("main", [
         m("div", FWM.getStyle("takeoffList"), m(TakeoffList)),
@@ -660,12 +659,12 @@ var FWM = {
 };
 
 /* init FWM */
-m.mount(document.body, FWM);
+//m.mount(document.body, FWM);
 
 /* routing */
 function route(name) {
   return {
-    view() {
+    render: () => {
       Layouts[FWM.layout()].panels.forEach((panel) => {
         var index = panel.panes.indexOf(name);
         if (index >= 0) {
@@ -673,13 +672,13 @@ function route(name) {
           panel.panes.splice(0, 0, name);
         }
       });
-      m.redraw();
+      return m(FWM);
     }
   }
 }
 
 // TODO: render, see: https://mithril.js.org/route.html#wrapping-a-layout-component
-m.route(document.getElementById("routehack"), "/", {
+m.route(document.body, "/", {
   "/": route("takeoffList"),
   "/map": route("googleMap"),
   "/options": route("options"),
