@@ -274,9 +274,37 @@ var GoogleMap = {
   oncreate: (vnode) => {
     // TODO: google may not be defined, need to do this when google is initialized
     GoogleMap.map = new google.maps.Map(vnode.dom, {zoom: 11, center: {lat: FWM.position.latitude, lng: FWM.position.longitude}, mapTypeId: 'terrain'});
+    GoogleMap.infoWindow = new google.maps.InfoWindow({});
+    google.maps.event.addListener(GoogleMap.infoWindow, "closeclick", () => {
+      GoogleMap.map.data.revertStyle();
+    });
 
-    // TODO: show airspace
-    //GoogleMap.map.data.loadGeoJson('https://raw.githubusercontent.com/relet/pg-xc/master/geojson/luftrom.geojson');
+    GoogleMap.map.data.loadGeoJson('https://raw.githubusercontent.com/relet/pg-xc/master/geojson/luftrom.geojson');
+    //GoogleMap.map.data.loadGeoJson('resources/luftrom.geojson');
+    GoogleMap.map.data.setStyle((feature) => {
+      return {
+        fillColor: feature.getProperty("fillColor"),
+        fillOpacity: feature.getProperty("fillOpacity"),
+        strokeWeight: 1
+      };
+    });
+
+    GoogleMap.map.data.addListener('click', (e) => {
+      var content = "<div>";
+      content += "<h1>" + e.feature.getProperty("name") + "</h1>";
+      content += "<p><strong>Class:</strong> " + e.feature.getProperty("class") + "</p>";
+      content += "<p><strong>Vertical limits:</strong> " + e.feature.getProperty("from (m amsl)") + " to " + e.feature.getProperty("to (m amsl)") + " meters (AMSL)</p>";
+      var source = e.feature.getProperty("source_href");
+      content += "<p><strong>Source:</strong> <a href=\"" + source + "\">" + source + "</a></p>";
+      content += "</div>";
+      GoogleMap.infoWindow.setContent(content);
+      GoogleMap.infoWindow.setPosition(e.latLng);
+      GoogleMap.infoWindow.open(GoogleMap.map);
+
+      // mark the clicked airspace
+      GoogleMap.map.data.revertStyle();
+      GoogleMap.map.data.overrideStyle(e.feature, {fillOpacity: 0.9});
+    });
     
     // show takeoff map markers
     GoogleMap.updateMapMarkers();
@@ -310,7 +338,6 @@ var GoogleMap = {
       return;
     }
     var markers = FWM.takeoffs.map((takeoff) => {
-      GoogleMap.infoWindow = new google.maps.InfoWindow({});
       var takeoffExitsHtml = FWM.takeoffExitsToSvg(takeoff.exits, "width: 40px; height: 40px");
       var marker = new google.maps.Marker({
         position: {lat: takeoff.lat, lng: takeoff.lng},
