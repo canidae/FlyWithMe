@@ -659,15 +659,17 @@ var FWM = {
 };
 
 /* routing */
-function route(name) {
+function route(names) {
   return {
     render: () => {
       Layouts[FWM.layout()].panels.forEach((panel) => {
-        var index = panel.panes.indexOf(name);
-        if (index >= 0) {
-          panel.panes.splice(index, 1);
-          panel.panes.splice(0, 0, name);
-        }
+        names.forEach((name) => {
+          var index = panel.panes.indexOf(name);
+          if (index >= 0) {
+            panel.panes.splice(index, 1);
+            panel.panes.splice(0, 0, name);
+          }
+        });
       });
       return m(FWM);
     }
@@ -676,8 +678,8 @@ function route(name) {
 
 // TODO: routing doesn't always work: click NOAA, then back. won't show map (on large layout)
 m.route(document.body, "/", {
-  "/": route("takeoffList"),
-  "/map": route("googleMap"),
-  "/options": route("options"),
-  "/forecast/:takeoffId": route("forecast")
+  "/": route(["takeoffList", "googleMap"]),
+  "/map": route(["googleMap", "takeoffList"]),
+  "/options": route(["options", "googleMap"]),
+  "/forecast/:takeoffId": route(["forecast", "takeoffList"])
 })
