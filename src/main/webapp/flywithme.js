@@ -218,6 +218,7 @@ var TakeoffList = {
       }));
     } else {
       // probably loading
+      // TODO: load favourited takeoffs first and display those for quicker boot?
       return m("div", {style: {
         height: "100%",
         "overflow-y": "auto"
@@ -429,13 +430,13 @@ var Options = {
       m("h1", "Takeoff filters"),
       m("input[type=checkbox]", {id: "hide_missing_coords", checked: DB.settings.get("hide_missing_coords"), onclick: m.withAttr("checked", () => {
         DB.settings.set("hide_missing_coords", !DB.settings.get("hide_missing_coords"));
-        FWM.updateSettings();
+        FWM.updateTakeoffList();
       })}),
       m("label", {"for": "hide_missing_coords"}, "Hide takeoffs with missing coordinates"),
       m("br"),
       m("input[type=checkbox]", {id: "hide_short_info", checked: DB.settings.get("hide_short_info"), onclick: m.withAttr("checked", () => {
         DB.settings.set("hide_short_info", !DB.settings.get("hide_short_info"));
-        FWM.updateSettings();
+        FWM.updateTakeoffList();
       })}),
       m("label", {"for": "hide_short_info"}, "Hide takeoffs with short name/description")
     ];
@@ -557,7 +558,6 @@ var FWM = {
   // update takeoff data
   updateTakeoffData: () => {
     var lastUpdated = DB.settings.get("last_updated", 0);
-    var now = new Date().getTime();
     fetch("/takeoffs?lastUpdated=" + lastUpdated)
     .then((response) => response.json())
     .then((data) => {
@@ -573,12 +573,12 @@ var FWM = {
       DB.settings.set("last_updated", lastUpdated);
       console.log("Updated takeoffs:", count);
       console.log("Last updated:", lastUpdated);
-      FWM.updateSettings();
+      FWM.updateTakeoffList();
     });
   },
 
   // update/init settings
-  updateSettings: () => {
+  updateTakeoffList: () => {
     // update list of takeoffs we're to display in UI
     FWM.takeoffs = Object.values(DB.takeoffs.all())
       .filter((takeoff) => !(DB.settings.get("hide_missing_coords") && (takeoff.lat == 0.0 && takeoff.lng == 0.0)))
