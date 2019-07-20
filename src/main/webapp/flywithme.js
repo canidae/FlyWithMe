@@ -715,8 +715,8 @@ var FWM = {
 function route(names) {
   return {
     render: () => {
-      Layouts[FWM.layout()].panels.forEach((panel) => {
-        names.forEach((name) => {
+      names.slice().reverse().forEach((name) => {
+        Layouts[FWM.layout()].panels.forEach((panel) => {
           var index = panel.panes.indexOf(name);
           if (index >= 0) {
             panel.panes.splice(index, 1);
