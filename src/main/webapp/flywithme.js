@@ -1,7 +1,8 @@
 /* persisted data */
 var DB = {
   settings: null,
-  takeoffs: null
+  takeoffs: null,
+  favourited: null
 };
 
 Object.keys(DB).forEach((storeName) => {
@@ -197,29 +198,20 @@ var TakeoffList = {
         return ("" + a.name).localeCompare(b.name);
       }
     };
-    if (Object.keys(DB.takeoffs.all()).length > 0) {
-      return m("div", {style: {
-        height: "100%",
-        "overflow-y": "auto"
-      }}, FWM.takeoffs.filter((takeoff) => takeoff.name.match(new RegExp(FWM.searchText, "i"))).sort(comparator).slice(0, 20).map((takeoff, index) => {
-        return m("div", {id: takeoff.id, key: takeoff.id, style: {
-          position: "relative",
-          cursor: "pointer",
-          "background-color": index % 2 == 0 ? "#fff" : "#ddd"
-        }, onclick: () => {
-          if (TakeoffList.takeoff.id == takeoff.id) {
-            GoogleMap.moveBack();
-            TakeoffList.takeoff = {};
-          } else {
-            TakeoffList.takeoff = takeoff;
-            GoogleMap.moveTo(takeoff, 14);
-          }
-        }}, m(TakeoffListEntry, {takeoff: takeoff, showDesc: TakeoffList.takeoff.id == takeoff.id}));
-      }));
-    } else {
-      // probably loading
-      // TODO: load favourited takeoffs first and display those for quicker boot?
-      return m("div", {style: {
+    var loading = FWM.takeoffs.length <= 0;
+    var takeoffs = loading ? Object.values(DB.favourited.all()) : FWM.takeoffs;
+    var loadingInfo = null;
+    if (loading) {
+      var favouriteTip = null;
+      if (!takeoffs || takeoffs.length <= 0) {
+        favouriteTip = m("p", {style: {
+          "margin-top": "10px"
+        }}, [
+          m("strong", "Another tip: "),
+          m("p", "Favourited takeoffs will load much quicker than other takeoffs!"),
+        ]);
+      }
+      loadingInfo = m("div", {style: {
         height: "100%",
         "overflow-y": "auto"
       }}, [
@@ -238,6 +230,7 @@ var TakeoffList = {
           m("strong", "Tip: "),
           m("p", "On a mobile device? Look for \"Add to home screen\" for easy access to Fly With Me!"),
         ]),
+        favouriteTip,
         m("p", {style: {
           "margin-top": "10px"
         }}, [
@@ -250,6 +243,24 @@ var TakeoffList = {
         ])
       ]);
     }
+    return m("div", {style: {
+      height: "100%",
+      "overflow-y": "auto"
+    }}, takeoffs.filter((takeoff) => takeoff.name.match(new RegExp(FWM.searchText, "i"))).sort(comparator).slice(0, 20).map((takeoff, index) => {
+      return m("div", {id: takeoff.id, key: takeoff.id, style: {
+        position: "relative",
+        cursor: "pointer",
+        "background-color": index % 2 == 0 ? "#fff" : "#ddd"
+      }, onclick: () => {
+        if (TakeoffList.takeoff.id == takeoff.id) {
+          GoogleMap.moveBack();
+          TakeoffList.takeoff = {};
+        } else {
+          TakeoffList.takeoff = takeoff;
+          GoogleMap.moveTo(takeoff, 14);
+        }
+      }}, m(TakeoffListEntry, {takeoff: takeoff, showDesc: TakeoffList.takeoff.id == takeoff.id}));
+    }), loadingInfo);
   }
 };
 
@@ -515,6 +526,9 @@ var FWM = {
   takeoffs: [], // DB.takeoffs with uninteresting entries filtered out
 
   oninit: () => {
+    DB.favourited.addInitCallback(() => {
+      m.redraw();
+    });
     DB.takeoffs.addInitCallback(() => {
       FWM.updateTakeoffData();
     });
@@ -622,6 +636,7 @@ var FWM = {
   toggleFavourite: (takeoff) => {
     takeoff.favourite = !takeoff.favourite;
     DB.takeoffs.set(takeoff.id, takeoff);
+    DB.favourited.set(takeoff.id, takeoff.favourite ? takeoff : null);
   },
 
   fetchMeteogram: (takeoff) => {
