@@ -611,7 +611,7 @@ var FWM = {
     // escape dangerous characters
     text = text.replace(/"/g, "&#34;").replace(/'/g, "&#39;").replace(/</g, "&#60;").replace(/>/g, "&#62;");
     // add links to urls
-    text = text.replace(/(http:\/\/[^\s]+)/g, "<a href=\"\$1\">\$1</a>");
+    text = text.replace(/(http:\/\/[^\s]+)/g, "<a href=\"\$1\" target=\"_blank\" onclick=\"event.stopPropagation();\">\$1</a>");
     // replace newlines with <br />
     text = text.replace(/\n/g, "<br />");
     return text;
