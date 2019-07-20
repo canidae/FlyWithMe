@@ -300,7 +300,7 @@ var GoogleMap = {
   moveBack: () => {
     if (GoogleMap.prevView.latLng) {
       GoogleMap.moveTo(GoogleMap.prevView.latLng, GoogleMap.prevView.zoom);
-      googleMap.prevView = {};
+      GoogleMap.prevView = {};
     }
   },
 
