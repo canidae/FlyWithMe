@@ -175,7 +175,7 @@ var TakeoffListEntry = {
       }}),
       m("div", {style: {
         position: "relative",
-        display: FWM.takeoff.id == takeoff.id ? "block" : "none"
+        display: vnode.attrs.showDesc ? "block" : "none"
       }}, m.trust(FWM.textToHtml(takeoff.desc)))
     ];
   }
@@ -183,6 +183,8 @@ var TakeoffListEntry = {
 
 /* list of takeoffs */
 var TakeoffList = {
+  takeoff: {}, // selected takeoff
+
   view: (vnode) => {
     var comparator = (a, b) => {
       if (a.favourite && !b.favourite) {
@@ -205,21 +207,14 @@ var TakeoffList = {
           cursor: "pointer",
           "background-color": index % 2 == 0 ? "#fff" : "#ddd"
         }, onclick: () => {
-          if (FWM.takeoff.id == takeoff.id) {
-            GoogleMap.map.panTo(FWM.prevMapCenter);
-            GoogleMap.map.setZoom(FWM.prevMapZoom);
-            FWM.takeoff = {};
+          if (TakeoffList.takeoff.id == takeoff.id) {
+            GoogleMap.moveBack();
+            TakeoffList.takeoff = {};
           } else {
-            if (FWM.takeoff.id == null) {
-              FWM.prevMapCenter = GoogleMap.map.getCenter();
-              FWM.prevMapZoom = GoogleMap.map.getZoom();
-            }
-            FWM.takeoff = takeoff;
-            // TODO (not just here): don't access GoogleMap.map directly, create methods instead (which also checks that GoogleMap.map is valid)
-            GoogleMap.map.panTo(takeoff);
-            GoogleMap.map.setZoom(14);
+            TakeoffList.takeoff = takeoff;
+            GoogleMap.moveTo(takeoff, 14);
           }
-        }}, m(TakeoffListEntry, {takeoff: takeoff}));
+        }}, m(TakeoffListEntry, {takeoff: takeoff, showDesc: TakeoffList.takeoff.id == takeoff.id}));
       }));
     } else {
       // probably loading
@@ -262,8 +257,10 @@ var GoogleMap = {
   map: null,
   infoWindow: null,
   markerClusterer: null,
+  prevView: {},
 
   oncreate: (vnode) => {
+    // TODO: google may not be defined, need to do this when google is initialized
     GoogleMap.map = new google.maps.Map(vnode.dom, {zoom: 11, center: {lat: FWM.position.latitude, lng: FWM.position.longitude}, mapTypeId: 'terrain'});
 
     // TODO: show airspace
@@ -275,6 +272,24 @@ var GoogleMap = {
 
   view: (vnode) => {
     return m("div", {id: "google-map-view", style: {height: "100%"}});
+  },
+
+  moveTo: (latLng, zoom) => {
+    if (GoogleMap.map) {
+      GoogleMap.prevView.latLng = GoogleMap.map.getCenter();
+      GoogleMap.prevView.zoom = GoogleMap.map.getZoom();
+      GoogleMap.map.panTo(latLng);
+      if (zoom) {
+        GoogleMap.map.setZoom(zoom);
+      }
+    }
+  },
+
+  moveBack: () => {
+    if (GoogleMap.prevView.latLng) {
+      GoogleMap.moveTo(GoogleMap.prevView.latLng, GoogleMap.prevView.zoom);
+      googleMap.prevView = {};
+    }
   },
 
   updateMapMarkers: () => {
@@ -497,10 +512,6 @@ var FWM = {
   searchText: "",
   position: {latitude: 61.87416667, longitude: 9.15472222},
   takeoffs: [], // DB.takeoffs with uninteresting entries filtered out
-  takeoff: {}, // selected takeoff
-
-  // TODO: move this to Forecast
-  forecast: {}, // current requested/displayed forecast
 
   oninit: () => {
     DB.takeoffs.addInitCallback(() => {
@@ -509,7 +520,7 @@ var FWM = {
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition((position) => {
         FWM.position = position.coords;
-        GoogleMap.map.panTo({lat: FWM.position.latitude, lng: FWM.position.longitude});
+        GoogleMap.moveTo({lat: FWM.position.latitude, lng: FWM.position.longitude});
         m.redraw();
       });
     }
@@ -676,7 +687,6 @@ function route(names) {
   }
 }
 
-// TODO: routing doesn't always work: click NOAA, then back. won't show map (on large layout)
 m.route(document.body, "/", {
   "/": route(["takeoffList", "googleMap"]),
   "/map": route(["googleMap", "takeoffList"]),
