@@ -143,15 +143,8 @@ var TakeoffList = {
     };
     var loading = FWM.takeoffs.length <= 0;
     var takeoffs = loading ? Object.values(DB.favourited.all()) : FWM.takeoffs;
-    return m("div", {style: {
-      height: "100%",
-      "overflow-y": "auto"
-    }}, takeoffs.filter((takeoff) => takeoff.name.match(new RegExp(FWM.searchText, "i"))).sort(comparator).slice(0, 20).map((takeoff, index) => {
-      return m("div", {id: takeoff.id, key: takeoff.id, style: {
-        position: "relative",
-        cursor: "pointer",
-        "background-color": index % 2 == 0 ? "#fff" : "#ddd"
-      }, onclick: () => {
+    return m("div#takeoffListDiv", takeoffs.filter((takeoff) => takeoff.name.match(new RegExp(FWM.searchText, "i"))).sort(comparator).slice(0, 20).map((takeoff, index) => {
+      return m("div.takeoffListRow" + (index % 2 == 0 ? "" : ".alt"), {id: takeoff.id, key: takeoff.id, onclick: () => {
         if (TakeoffList.takeoff.id == takeoff.id) {
           GoogleMap.moveBack();
           TakeoffList.takeoff = {};
@@ -161,42 +154,26 @@ var TakeoffList = {
         }
       }}, m(TakeoffListEntry, {takeoff: takeoff, showDesc: TakeoffList.takeoff.id == takeoff.id}));
     }),
-    m("div" + (loading ? "" : ".hidden"), {style: {
-      height: "100%",
-      "overflow-y": "auto"
-    }}, [
-      m("h1", {style: {
-        width: "100%",
-        animation: "loading 2s infinite",
-        "text-align": "center"
-      }}, "Loading..."),
-      m("p", {style: {
-        width: "100%",
-        "text-align": "center"
-      }}, "(probably)"),
-      m("p", {style: {
-        "margin-top": "10px"
-      }}, [
-        m("strong", "Tip: "),
-        m("p", "On a mobile device? Look for \"Add to home screen\" for easy access to Fly With Me!"),
-      ]),
-      m("p" + (!takeoffs || takeoffs.length <= 0 ? "" : ".hidden"), {style: {
-        "margin-top": "10px"
-      }}, [
-        m("strong", "Another tip: "),
-        m("p", "Favourited takeoffs will load much quicker than other takeoffs!"),
-      ]),
-      m("p", {style: {
-        "margin-top": "10px"
-      }}, [
-        m("strong", "Problems?"),
+      m("div#loadingDiv" + (loading ? "" : ".hidden"), [
+        m("h1", "Loading..."),
         m("p", [
-          "Site is still under development, check ",
-          m("a[href=https://github.com/canidae/FlyWithMe/issues]", "GitHub"),
-          " for reported issues."
+          m("strong", "Tip: "),
+          m("p", "On a mobile device? Look for \"Add to home screen\" for easy access to Fly With Me!"),
+        ]),
+        m("p" + (!takeoffs || takeoffs.length <= 0 ? "" : ".hidden"), [
+          m("strong", "Another tip: "),
+          m("p", "Favourited takeoffs will load much quicker than other takeoffs!"),
+        ]),
+        m("p", [
+          m("strong", "Problems?"),
+          m("p", [
+            "Site is still under development, check ",
+            m("a[href=https://github.com/canidae/FlyWithMe/issues]", "GitHub"),
+            " for reported issues."
+          ])
         ])
       ])
-    ]));
+    );
   }
 };
 
@@ -241,7 +218,7 @@ var GoogleMap = {
       GoogleMap.map.data.revertStyle();
       GoogleMap.map.data.overrideStyle(e.feature, {fillOpacity: 0.9});
     });
-    
+
     // show takeoff map markers
     GoogleMap.updateMapMarkers();
   },
@@ -491,22 +468,22 @@ var FWM = {
   updateTakeoffData: () => {
     var lastUpdated = DB.settings.get("last_updated", 0);
     fetch("/takeoffs?lastUpdated=" + lastUpdated)
-    .then((response) => response.json())
-    .then((data) => {
-      var count = 0;
-      for (i in data) {
-        var takeoff = data[i];
-        DB.takeoffs.set(takeoff.id, takeoff);
-        ++count;
-        if (takeoff.updated > lastUpdated) {
-          lastUpdated = takeoff.updated;
+      .then((response) => response.json())
+      .then((data) => {
+        var count = 0;
+        for (i in data) {
+          var takeoff = data[i];
+          DB.takeoffs.set(takeoff.id, takeoff);
+          ++count;
+          if (takeoff.updated > lastUpdated) {
+            lastUpdated = takeoff.updated;
+          }
         }
-      }
-      DB.settings.set("last_updated", lastUpdated);
-      console.log("Updated takeoffs:", count);
-      console.log("Last updated:", lastUpdated);
-      FWM.updateTakeoffList();
-    });
+        DB.settings.set("last_updated", lastUpdated);
+        console.log("Updated takeoffs:", count);
+        console.log("Last updated:", lastUpdated);
+        FWM.updateTakeoffList();
+      });
   },
 
   // update/init settings

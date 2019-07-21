@@ -79,6 +79,36 @@ body {
   right: 0;
 }
 
+.panel.takeoffList #takeoffListDiv {
+  height: 100%;
+  overflow-y: auto;
+}
+
+.panel.takeoffList .takeoffListRow {
+  position: relative;
+  cursor: pointer;
+  background-color: #fff;
+}
+
+.panel.takeoffList .takeoffListRow.alt {
+  background-color: #ddd;
+}
+
+.panel.takeoffList #loadingDiv {
+  height: 100%;
+  overflow-y: auto;
+}
+
+.panel.takeoffList #loadingDiv h1 {
+  width: 100%;
+  animation: loading 2s infinite;
+  text-align: center;
+}
+
+.panel.takeoffList #loadingDiv p {
+  margin-top: 10px;
+}
+
 /* google map panel */
 .panel.googleMap {
   bottom: 0;
