@@ -482,7 +482,6 @@ var FWM = {
         Forecast.images.sounding = "data:image/gif;base64," + data[0].image;
         Forecast.images.theta = "data:image/gif;base64," + data[1].image;
         Forecast.images.text = "data:image/gif;base64," + data[2].image;
-        m.route.set("/forecast/" + takeoff.id);
         m.redraw();
       });
   },
