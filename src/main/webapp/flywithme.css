@@ -170,6 +170,10 @@ body {
   left: 0;
 }
 
+.panel.googleMap #google-map-view {
+  height: 100%;
+}
+
 /* options panel */
 .panel.options {
   left: 0;
@@ -197,6 +201,30 @@ body {
 
 .panel.forecast.small {
   left: 0;
+}
+
+.panel.forecast #forecastSelectionDiv {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50px;
+}
+
+.panel.forecast #forecastImagesDiv {
+  position: absolute;
+  top: 50px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow-y: hidden;
+  overflow-x: scroll;
+  white-space: nowrap;
+}
+
+.panel.forecast img {
+  max-width: 100%;
+  max-height: 100%;
 }
 
 /* animations */
