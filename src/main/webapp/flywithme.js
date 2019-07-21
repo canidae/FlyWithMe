@@ -358,16 +358,7 @@ var GoogleMap = {
       GoogleMap.markerClusterer.clearMarkers();
     }
     GoogleMap.markerClusterer = new MarkerClusterer(GoogleMap.map, markers, {imagePath: "libs/google_maps_v3/"});
-    // the following prevent zooming in when dragging the map where initial click was on a marker
-    google.maps.event.addListener(GoogleMap.map, 'dragstart', () => {
-      GoogleMap.markerClusterer.zoomOnClick_ = false;
-    });
-    google.maps.event.addListener(GoogleMap.map, 'mouseup', () => {
-      setTimeout(() => {
-        GoogleMap.markerClusterer.zoomOnClick_ = true;
-      }, 50);
-    });
-  },
+  }
 };
 
 /* forecast view for a takeoff */
