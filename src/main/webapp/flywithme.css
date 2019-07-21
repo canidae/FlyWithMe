@@ -1,9 +1,7 @@
+/* basic elements */
 * {
   margin: 0;
   padding: 0;
-  /*
-  border: 1px solid;
-  */
 }
 
 body {
@@ -12,6 +10,91 @@ body {
   left: 0;
   bottom: 0;
   right: 0;
+}
+
+/* general classes */
+.hidden {
+  display: none;
+}
+
+.panel {
+  --nav-height: 50px;
+  --divider: 500px;
+  position: absolute;
+  top: var(--nav-height);
+}
+
+/* nav panel */
+nav.panel {
+  top: 0;
+  left: 0;
+  height: var(--nav-height);
+}
+
+nav.panel.large {
+  width: var(--divider);
+}
+
+nav.panel.small {
+  right: 0;
+}
+
+/* takeoff list panel */
+.panel.takeoffList {
+  left: 0;
+  bottom: 0;
+}
+
+.panel.takeoffList.large {
+  width: var(--divider);
+}
+
+.panel.takeoffList.small {
+  right: 0;
+}
+
+/* google map panel */
+.panel.googleMap {
+  bottom: 0;
+  right: 0;
+}
+
+.panel.googleMap.large {
+  top: 0;
+  left: var(--divider);
+}
+
+.panel.googleMap.small {
+  left: 0;
+}
+
+/* options panel */
+.panel.options {
+  left: 0;
+  bottom: 0;
+}
+
+.panel.options.large {
+  width: var(--divider);
+}
+
+.panel.takeofffList.small {
+  right: 0;
+}
+
+/* forecast panel */
+.panel.forecast {
+  bottom: 0;
+  right: 0;
+}
+
+.panel.forecast.large {
+  top: 0;
+  left: var(--divider);
+}
+
+.panel.forecast.small {
+  left: 0;
 }
 
 /* animations */

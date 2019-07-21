@@ -47,68 +47,6 @@ window.addEventListener("resize", function() {
   m.redraw();
 });
 
-/* layouts */
-var Layouts = {
-  large: {
-    panels: [
-      {
-        style: {
-          position: "absolute",
-          top: "0",
-          left: "0",
-          height: "50px",
-          width: "500px"
-        },
-        panes: ["nav"]
-      },
-      {
-        style: {
-          position: "absolute",
-          top: "50px",
-          left: "0",
-          bottom: "0",
-          width: "500px"
-        },
-        panes: ["takeoffList", "options"]
-      },
-      {
-        style: {
-          position: "absolute",
-          top: "0",
-          left: "500px",
-          right: "0",
-          bottom: "0"
-        },
-        panes: ["googleMap", "forecast"]
-      }
-    ]
-  },
-  small: {
-    panels: [
-      {
-        style: {
-          position: "absolute",
-          top: "0",
-          left: "0",
-          right: "0",
-          height: "50px"
-        },
-        panes: ["nav"]
-      },
-      {
-        style: {
-          position: "absolute",
-          top: "50px",
-          left: "0",
-          right: "0",
-          bottom: "0"
-        },
-        panes: ["takeoffList", "options", "googleMap", "forecast"]
-      }
-    ]
-  }
-};
-
 /* a single entry in the takeoff list */
 var TakeoffListEntry = {
   view: (vnode) => {
@@ -501,6 +439,7 @@ var Nav = {
         style: {
           position: "absolute",
           top: "0",
+          bottom: "0",
           left: "100px",
           right: "71px"
         }
@@ -559,31 +498,20 @@ var FWM = {
   },
 
   view: (vnode) => {
-    var layout = Layouts[FWM.layout];
+    var showPanels = vnode.attrs.showPanels;
+    var layout = window.innerWidth >= 1000 ? "large" : "small";
+    if (layout == "small") {
+      showPanels.length = 1;
+    }
     return [
-      m("nav", FWM.getStyle("nav"), m(Nav)),
+      m("nav.panel." + layout, m(Nav)),
       m("main", [
-        m("div", FWM.getStyle("takeoffList"), m(TakeoffList)),
-        m("div", FWM.getStyle("options"), m(Options)),
-        m("div", FWM.getStyle("googleMap"), m(GoogleMap)),
-        m("div", FWM.getStyle("forecast"), m(Forecast))
+        m("div.panel.takeoffList." + layout + (showPanels.includes("takeoffList") ? "" : ".hidden"), m(TakeoffList)),
+        m("div.panel.options." + layout + (showPanels.includes("options") ? "" : ".hidden"), m(Options)),
+        m("div.panel.googleMap." + layout + (showPanels.includes("googleMap") ? "" : ".hidden"), m(GoogleMap)),
+        m("div.panel.forecast." + layout + (showPanels.includes("forecast") ? "" : ".hidden"), m(Forecast))
       ])
     ];
-  },
-
-  layout: () => {
-    return window.innerWidth >= 1000 ? "large" : "small";
-  },
-
-  getStyle: (name) => {
-    var panels = Layouts[FWM.layout()].panels;
-    for (var i = 0; i < panels.length; ++i) {
-      var index = panels[i].panes.indexOf(name);
-      if (index >= 0) {
-        return {style: {...panels[i].style, ...{"display": (index == 0 ? "block" : "none")}}};
-      }
-    };
-    console.log("No pane found for", name);
   },
 
   // update takeoff data
@@ -702,19 +630,10 @@ var FWM = {
 };
 
 /* routing */
-function route(names) {
+function route(showPanels) {
   return {
     render: () => {
-      names.slice().reverse().forEach((name) => {
-        Layouts[FWM.layout()].panels.forEach((panel) => {
-          var index = panel.panes.indexOf(name);
-          if (index >= 0) {
-            panel.panes.splice(index, 1);
-            panel.panes.splice(0, 0, name);
-          }
-        });
-      });
-      return m(FWM);
+      return m(FWM, {showPanels: showPanels});
     }
   }
 }
