@@ -20,8 +20,13 @@ Object.keys(DB).forEach((storeName) => {
     },
 
     set: (key, value) => {
-      cache[key] = value;
-      idbKeyval.set(key, value, store).catch(err => console.log(err));
+      if (value == null) {
+        delete cache[key];
+        idbKeyval.del(key, store);
+      } else {
+        cache[key] = value;
+        idbKeyval.set(key, value, store).catch(err => console.log(err));
+      }
     },
 
     addInitCallback: (callback) => {
@@ -140,15 +145,6 @@ var TakeoffList = {
     var takeoffs = loading ? Object.values(DB.favourited.all()) : FWM.takeoffs;
     var loadingInfo = null;
     if (loading) {
-      var favouriteTip = null;
-      if (!takeoffs || takeoffs.length <= 0) {
-        favouriteTip = m("p", {style: {
-          "margin-top": "10px"
-        }}, [
-          m("strong", "Another tip: "),
-          m("p", "Favourited takeoffs will load much quicker than other takeoffs!"),
-        ]);
-      }
       loadingInfo = m("div", {style: {
         height: "100%",
         "overflow-y": "auto"
@@ -168,7 +164,12 @@ var TakeoffList = {
           m("strong", "Tip: "),
           m("p", "On a mobile device? Look for \"Add to home screen\" for easy access to Fly With Me!"),
         ]),
-        favouriteTip,
+        m("p" + (!takeoffs || takeoffs.length <= 0 ? "" : ".hidden"), {style: {
+          "margin-top": "10px"
+        }}, [
+          m("strong", "Another tip: "),
+          m("p", "Favourited takeoffs will load much quicker than other takeoffs!"),
+        ]),
         m("p", {style: {
           "margin-top": "10px"
         }}, [
