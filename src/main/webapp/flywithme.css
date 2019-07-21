@@ -25,17 +25,17 @@ body {
 }
 
 /* nav panel */
-nav.panel {
+.panel.nav {
   top: 0;
   left: 0;
   height: var(--nav-height);
 }
 
-nav.panel.large {
+.panel.nav.large {
   width: var(--divider);
 }
 
-nav.panel.small {
+.panel.nav.small {
   right: 0;
 }
 

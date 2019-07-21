@@ -504,8 +504,8 @@ var FWM = {
       showPanels.length = 1;
     }
     return [
-      m("nav.panel." + layout, m(Nav)),
       m("main", [
+        m("div.panel.nav." + layout, m(Nav)),
         m("div.panel.takeoffList." + layout + (showPanels.includes("takeoffList") ? "" : ".hidden"), m(TakeoffList)),
         m("div.panel.options." + layout + (showPanels.includes("options") ? "" : ".hidden"), m(Options)),
         m("div.panel.googleMap." + layout + (showPanels.includes("googleMap") ? "" : ".hidden"), m(GoogleMap)),
