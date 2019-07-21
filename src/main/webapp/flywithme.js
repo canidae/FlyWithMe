@@ -417,9 +417,6 @@ var Nav = {
         src: "images/logo.png",
         height: "100%",
         "object-fit": "contain",
-        style: {
-          cursor: "pointer"
-        },
         onclick: () => {
           m.route.set("/");
         }
@@ -428,42 +425,20 @@ var Nav = {
         src: "images/GoogleMaps.svg",
         height: "100%",
         "object-fit": "contain",
-        style: {
-          cursor: "pointer"
-        },
         onclick: () => {
           m.route.set("/map");
         }
       }),
-      m("div", {
-        style: {
-          position: "absolute",
-          top: "0",
-          bottom: "0",
-          left: "100px",
-          right: "71px"
-        }
-      }, m("input", {
-        style: {
-          height: "100%",
-          width: "100%"
-        },
-        placeholder: "Search",
-        value: FWM.searchText,
-        oninput: m.withAttr("value", (text) => {FWM.searchText = text;})
-      })
+      m("div#searchDiv",
+        m("input#searchInput", {
+          placeholder: "Search",
+          value: FWM.searchText,
+          oninput: m.withAttr("value", (text) => {FWM.searchText = text;})
+        })
       ),
-      m("svg", {
+      m("svg#optionsButton", {
         xmlns: "http://www.w3.org/2000/svg",
         viewBox: "-105 -105 210 210",
-        style: {
-          position: "absolute",
-          top: "0",
-          right: "0",
-          width: "50px",
-          height: "50px",
-          cursor: "pointer"
-        },
         onclick: () => {
           m.route.set("/options");
         }

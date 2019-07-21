@@ -39,6 +39,32 @@ body {
   right: 0;
 }
 
+.panel.nav img {
+  cursor: pointer;
+}
+
+.panel.nav #searchDiv {
+  position: absolute;
+  top: 0;
+  left: 100px;
+  bottom: 0;
+  right: 71px;
+}
+
+.panel.nav #searchInput {
+  height: 100%;
+  width: 100%;
+}
+
+.panel.nav #optionsButton {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 50px;
+  width: 50px;
+  cursor: pointer;
+}
+
 /* takeoff list panel */
 .panel.takeoffList {
   left: 0;
