@@ -17,6 +17,10 @@ body {
   display: none;
 }
 
+.loading {
+  animation: loading 2s infinite;
+}
+
 .panel {
   --nav-height: 50px;
   --divider: 500px;
@@ -94,6 +98,49 @@ body {
   background-color: #ddd;
 }
 
+.panel.takeoffList .takeoffListRow span {
+  position: absolute;
+  height: 20px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.panel.takeoffList .takeoffListRow span.takeoffListEntryName {
+  left: 50px;
+  right: 150px;
+}
+
+.panel.takeoffList .takeoffListRow span.takeoffListEntryAsl {
+  top: 20px;
+  left: 50px;
+  right: 110px;
+}
+
+.panel.takeoffList .takeoffListRow span.takeoffListEntryHeight {
+  top: 20px;
+  left: 180px;
+  right: 100px;
+}
+
+.panel.takeoffList .takeoffListRow img,.panel.takeoffList .takeoffListRow svg {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+}
+
+.panel.takeoffList .takeoffListRow img.navigate {
+  right: 95px;
+}
+
+.panel.takeoffList .takeoffListRow img.noaa {
+  right: 5px;
+}
+
+.panel.takeoffList .takeoffListRow svg.favourite {
+  right: 50px;
+}
+
 .panel.takeoffList #loadingDiv {
   height: 100%;
   overflow-y: auto;
@@ -101,7 +148,6 @@ body {
 
 .panel.takeoffList #loadingDiv h1 {
   width: 100%;
-  animation: loading 2s infinite;
   text-align: center;
 }
 

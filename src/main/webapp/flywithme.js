@@ -58,69 +58,24 @@ var TakeoffListEntry = {
     var takeoff = vnode.attrs.takeoff;
     return [
       m.trust(FWM.takeoffExitsToSvg(takeoff.exits, "position: relative; width: 40px; height: 40px")),
-      m("span", {style: {
-        position: "absolute",
-        left: "50px",
-        right: "150px",
-        height: "20px",
-        "white-space": "nowrap",
-        overflow: "hidden"
-      }}, takeoff.name),
-      m("span", {style: {
-        position: "absolute",
-        top: "20px",
-        left: "50px",
-        width: "110px",
-        height: "20px",
-        "white-space": "nowrap",
-        overflow: "hidden"
-      }}, "Height: " + takeoff.asl),
-      m("span", {style: {
-        position: "absolute",
-        top: "20px",
-        left: "180px",
-        width: "100px",
-        height: "20px",
-        "white-space": "nowrap",
-        overflow: "hidden"
-      }}, "Diff: " + takeoff.height),
-      m("img", {style: {
-        position: "absolute",
-        right: "95px",
-        width: "40px",
-        height: "40px",
-        cursor: "pointer",
-      }, src: "images/navigate.svg", onclick: (e) => {
+      m("span.takeoffListEntryName", takeoff.name),
+      m("span.takeoffListEntryAsl", "ASL: " + takeoff.asl),
+      m("span.takeoffListEntryHeight", "Height: " + takeoff.height),
+      m("img.navigate", {src: "images/navigate.svg", onclick: (e) => {
         window.open("http://maps.google.com/maps?saddr=" + FWM.position.latitude + "," + FWM.position.longitude + "&daddr=" + takeoff.lat + "," + takeoff.lng + "&mode=driving");
         e.stopPropagation();
       }}),
-      m("svg", {xmlns: "http://www.w3.org/2000/svg", style: {
-        position: "absolute",
-        right: "50px",
-        width: "40px",
-        height: "40px",
-        cursor: "pointer"
-      }, viewBox: "0 0 51 48", onclick: (e) => {
+      m("svg.favourite", {xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 51 48", onclick: (e) => {
         FWM.toggleFavourite(takeoff);
         e.stopPropagation();
       }}, [
         m("path", {fill: takeoff.favourite ? "yellow" : "none", stroke: "#000", d: "m25,1 6,17h18l-14,11 5,17-15-10-15,10 5-17-14-11h18z"})
       ]),
-      m("img", {style: {
-        position: "absolute",
-        right: "5px",
-        width: "40px",
-        height: "40px",
-        animation: Forecast.loading == takeoff.id ? "loading 2s infinite" : null,
-        cursor: "pointer"
-      }, src: "images/NOAA.svg", onclick: (e) => {
+      m("img.noaa" + (Forecast.loading == takeoff.id ? ".loading" : ""), {src: "images/NOAA.svg", onclick: (e) => {
         FWM.fetchMeteogram(takeoff);
         e.stopPropagation();
       }}),
-      m("div", {style: {
-        position: "relative",
-        display: vnode.attrs.showDesc ? "block" : "none"
-      }}, m.trust(FWM.textToHtml(takeoff.desc)))
+      m("div" + (vnode.attrs.showDesc ? "" : ".hidden"), m.trust(FWM.textToHtml(takeoff.desc)))
     ];
   }
 };
@@ -155,7 +110,7 @@ var TakeoffList = {
       }}, m(TakeoffListEntry, {takeoff: takeoff, showDesc: TakeoffList.takeoff.id == takeoff.id}));
     }),
       m("div#loadingDiv" + (loading ? "" : ".hidden"), [
-        m("h1", "Loading..."),
+        m("h1.loading", "Loading..."),
         m("p", [
           m("strong", "Tip: "),
           m("p", "On a mobile device? Look for \"Add to home screen\" for easy access to Fly With Me!"),
