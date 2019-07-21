@@ -143,45 +143,6 @@ var TakeoffList = {
     };
     var loading = FWM.takeoffs.length <= 0;
     var takeoffs = loading ? Object.values(DB.favourited.all()) : FWM.takeoffs;
-    var loadingInfo = null;
-    if (loading) {
-      loadingInfo = m("div", {style: {
-        height: "100%",
-        "overflow-y": "auto"
-      }}, [
-        m("h1", {style: {
-          width: "100%",
-          animation: "loading 2s infinite",
-          "text-align": "center"
-        }}, "Loading..."),
-        m("p", {style: {
-          width: "100%",
-          "text-align": "center"
-        }}, "(probably)"),
-        m("p", {style: {
-          "margin-top": "10px"
-        }}, [
-          m("strong", "Tip: "),
-          m("p", "On a mobile device? Look for \"Add to home screen\" for easy access to Fly With Me!"),
-        ]),
-        m("p" + (!takeoffs || takeoffs.length <= 0 ? "" : ".hidden"), {style: {
-          "margin-top": "10px"
-        }}, [
-          m("strong", "Another tip: "),
-          m("p", "Favourited takeoffs will load much quicker than other takeoffs!"),
-        ]),
-        m("p", {style: {
-          "margin-top": "10px"
-        }}, [
-          m("strong", "Problems?"),
-          m("p", [
-            "Site is still under development, check ",
-            m("a[href=https://github.com/canidae/FlyWithMe/issues]", "GitHub"),
-            " for reported issues."
-          ])
-        ])
-      ]);
-    }
     return m("div", {style: {
       height: "100%",
       "overflow-y": "auto"
@@ -199,7 +160,43 @@ var TakeoffList = {
           GoogleMap.moveTo(takeoff, 14);
         }
       }}, m(TakeoffListEntry, {takeoff: takeoff, showDesc: TakeoffList.takeoff.id == takeoff.id}));
-    }), loadingInfo);
+    }),
+    m("div" + (loading ? "" : ".hidden"), {style: {
+      height: "100%",
+      "overflow-y": "auto"
+    }}, [
+      m("h1", {style: {
+        width: "100%",
+        animation: "loading 2s infinite",
+        "text-align": "center"
+      }}, "Loading..."),
+      m("p", {style: {
+        width: "100%",
+        "text-align": "center"
+      }}, "(probably)"),
+      m("p", {style: {
+        "margin-top": "10px"
+      }}, [
+        m("strong", "Tip: "),
+        m("p", "On a mobile device? Look for \"Add to home screen\" for easy access to Fly With Me!"),
+      ]),
+      m("p" + (!takeoffs || takeoffs.length <= 0 ? "" : ".hidden"), {style: {
+        "margin-top": "10px"
+      }}, [
+        m("strong", "Another tip: "),
+        m("p", "Favourited takeoffs will load much quicker than other takeoffs!"),
+      ]),
+      m("p", {style: {
+        "margin-top": "10px"
+      }}, [
+        m("strong", "Problems?"),
+        m("p", [
+          "Site is still under development, check ",
+          m("a[href=https://github.com/canidae/FlyWithMe/issues]", "GitHub"),
+          " for reported issues."
+        ])
+      ])
+    ]));
   }
 };
 
