@@ -511,7 +511,6 @@ var Nav = {
         },
         placeholder: "Search",
         value: FWM.searchText,
-        onblur: (el) => {setTimeout(() => {el.target.focus()}, 10)},
         oninput: m.withAttr("value", (text) => {FWM.searchText = text;})
       })
       ),
